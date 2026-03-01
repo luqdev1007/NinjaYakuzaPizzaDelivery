@@ -1,14 +1,10 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
-using Assets._Project.Develop.Runtime.Gameplay.Features.Mines;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Timers;
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.Utilites.DataProviders;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.States
@@ -26,16 +22,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         public PreperationState CreatePreperationState(float time)
         {
-            return new PreperationState(
-                _gameplayTimersService, 
-                _container.Resolve<GameplayScreenPresenter>(), 
-                time, 
-                _container.Resolve<MinePlacementService>());
+            return new PreperationState();
         }
 
         public StageProcessState CreateStageProcessState()
         {
-            return new StageProcessState(_container.Resolve<StageProviderService>(), _container.Resolve<GameplayScreenPresenter>());
+            return new StageProcessState(_container.Resolve<StageProviderService>());
         }
 
         public WinState CreateWinState(GameplayInputArgs inputArgs)
@@ -57,7 +49,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         public GameplayStateMachine CreateGameplayStateMachine(GameplayInputArgs inputArgs)
         {
             StageProviderService stageProviderService = _container.Resolve<StageProviderService>();
-            MainHeroesHolderService mainHeroHolderService = _container.Resolve<MainHeroesHolderService>();
+            MainHeroHolderService mainHeroHolderService = _container.Resolve<MainHeroHolderService>();
 
             GameplayStateMachine coreLoopState = CreateCoreLoopState();
 
@@ -71,15 +63,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             ICompositeCondition coreLoopToDefeatStateCondition = new CompositeCondition(LogicOperations.Or)
                 .Add(new FuncCondition(() =>
                 {
-                    if (mainHeroHolderService.MainShip != null)
-                        return mainHeroHolderService.IsMainShipDestroyed();
-
-                    return false;
-                }))
-                .Add(new FuncCondition(() =>
-                {
-                    if (mainHeroHolderService.MainHeroes != null)
-                        return mainHeroHolderService.IsAllHeroesDead();
+                    if (mainHeroHolderService.MainHero != null)
+                        return mainHeroHolderService.MainHero.IsDead.Value;
 
                     return false;
                 }));

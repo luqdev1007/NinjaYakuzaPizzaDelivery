@@ -19,7 +19,6 @@ using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Assets._Project.Develop.Runtime.Utilites.RaycastManagment;
-using Assets._Project.Develop.Runtime.Meta.Features.ShipUpgrades;
 
 namespace Assets._Project.Develop.Infrastructure.EntryPoint
 {
@@ -50,8 +49,6 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             container.RegisterAsSingle(CreateProjectPresentersFactory);
 
             container.RegisterAsSingle(CreateWalletService).NonLazy();
-
-            container.RegisterAsSingle(CreatePlayerMainShipDataProvider).NonLazy();
 
             container.RegisterAsSingle(CreateSurfaceRaycaster);
         }
@@ -100,9 +97,6 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
 
             return new ConfigsProviderService(resourcesConfigsLoader);
         }
-
-        private static PlayerMainShipDataProvider CreatePlayerMainShipDataProvider(DIContainer container)
-            => new PlayerMainShipDataProvider(container.Resolve<PlayerDataProvider>());
 
         private static ResourcesAssetsLoader CreateResourcesAssetsLoader(DIContainer container) 
             => new ResourcesAssetsLoader();

@@ -1,13 +1,7 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
-using Assets._Project.Develop.Runtime.Gameplay.Features.AI.States;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
-using Assets._Project.Develop.Runtime.Utilites.Conditions;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using Assets._Project.Develop.Runtime.Utilites.Timer;
-using System;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
 {
@@ -28,6 +22,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
         }
 
+        // examples
+        /*
         private AIStateMachine CreateRandomMovementStateMachine(Entity entity)
         {
             List<IDisposable> disposables = new List<IDisposable>();
@@ -56,7 +52,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
 
             return stateMachine;
         }
-
+        */
+        
+        /*
         public StateMachineBrain CreateCaptainBrain(Entity entity)
         {
             AIStateMachine stateMachine = CreateRandomMovementStateMachine(entity);
@@ -66,7 +64,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
 
             return brain;
         }
-
+        */
+        
+        /*
         public StateMachineBrain CreateWizardBrain(Entity entity, ITargetSelector targetSelector)
         {
             AIStateMachine combatState = CreateAutoAttackStateMachine(entity);
@@ -100,7 +100,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
 
             return brain;
         }
-
+        */
+        
+        /*
         private AIStateMachine CreateAutoAttackStateMachine(Entity entity)
         {
             RotateToTargetState rotateToTargetState = new RotateToTargetState(entity);
@@ -149,7 +151,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
 
             return stateMachine;
         }
-
+        */
+        
+        /*
         public StateMachineBrain CreateMoveToClosestTargetStateMachine(Entity entity)
         {
             FindTargetState findTargetState = new FindTargetState(new NearestDamagableTargetSelector(entity), _entitiesLifeContext, entity);
@@ -176,7 +180,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
 
             return brain;
         }
-
+        */
+        
         public void CreateEmptyBrain(Entity entity)
         {
             // Debug.Log("no brains for " + entity.Transform.gameObject.name + " yet");

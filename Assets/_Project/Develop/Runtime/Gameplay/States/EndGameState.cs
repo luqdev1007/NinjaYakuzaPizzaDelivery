@@ -22,8 +22,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             base.Enter();
 
             _inputService.IsEnabled = false;
-
-            _gameplayScreenPresenter.HideUI();
         }
 
         public override void Exit()

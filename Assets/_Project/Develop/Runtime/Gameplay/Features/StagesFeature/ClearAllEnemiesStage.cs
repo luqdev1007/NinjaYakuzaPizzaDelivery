@@ -14,8 +14,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
     public class ClearAllEnemiesStage : IStage
     {
         private ClearAllEnemiesStageConfig _config;
-        private EnemiesFactory _enemiesFactory;
-        private VehiclesFactory _vehiclesFactory;
         private EntitiesLifeContext _entitiesLifeContext;
 
         private ReactiveEvent _completed = new();
@@ -26,14 +24,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
         public ClearAllEnemiesStage(
             ClearAllEnemiesStageConfig config,
-            EnemiesFactory enemiesFactory,
-            EntitiesLifeContext entitiesLifeContext,
-            VehiclesFactory vehiclesFactory)
+            EntitiesLifeContext entitiesLifeContext)
         {
             _config = config;
-            _enemiesFactory = enemiesFactory;
             _entitiesLifeContext = entitiesLifeContext;
-            _vehiclesFactory = vehiclesFactory;
         }
 
         public IReadOnlyEvent Completed => _completed;
@@ -94,10 +88,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         {
             Vector3 randomOffsetXZ = new Vector3(Random.Range(-5, 5), 0, Random.Range(-5, 5));
 
-            Entity spawnedEnemy = _vehiclesFactory.Create(
+
+            Entity spawnedEnemy = null; 
+            /*
+                _vehiclesFactory.Create(
                 SpawnerProvider.GetRandomSpawner().transform, 
                 Teams.Enemies, 
                 enemyItemConfig.EnemyConfig);
+            */
 
             spawnedEnemy.Transform.position += randomOffsetXZ;
 

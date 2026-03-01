@@ -6,15 +6,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 {
     public class TransformRotateWithLinearVelocitySystem : IInitializableSystem, IUpdatableSystem
     {
-        private Transform _transform;
         private Rigidbody _rigidbody;
+
+        private Transform _transform;
 
         private const float MinThresholdVelocityValue = 1f;
 
         public void OnInit(Entity entity)
         {
+            // _rigidbody = entity.Rigidbody;
+
             _transform = entity.Transform;
-            _rigidbody = entity.Rigidbody;
 
             _rigidbody.useGravity = false;
         }

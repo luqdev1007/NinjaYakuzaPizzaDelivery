@@ -1,11 +1,9 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
-using Assets._Project.Develop.Runtime.Gameplay.Features.Mines;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Endgame;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.DataProviders;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
-using System;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay
 {
@@ -24,7 +22,8 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         {
             return new GameplayScreenPresenter(
                 view,
-                _container.Resolve<MinePlacementService>()
+                _container.Resolve<ICoroutinesPerformer>(),
+                _container.Resolve<SceneSwitcherService>()
                 );
         }
 

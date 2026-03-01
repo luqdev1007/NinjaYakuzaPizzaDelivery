@@ -1,6 +1,5 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using System;
@@ -25,10 +24,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
         }
 
-        public Entity Create(Transform parent, ProjectileCreationContext ctx, SimpleProjectileConfig config)
+        public Entity Create(Transform parent, ProjectileCreationContext ctx) // SimpleProjectileConfig config)
         {
-            Entity entity;
+            Entity entity = null;
 
+            /*
             switch (config)
             {
                 case SimpleProjectileConfig simpleProjectileConfig:
@@ -39,6 +39,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
                 default:
                     throw new ArgumentException($"Not support {config.GetType()} type config");
             }
+            */
 
             _entitiesLifeContext.Add(entity);
 

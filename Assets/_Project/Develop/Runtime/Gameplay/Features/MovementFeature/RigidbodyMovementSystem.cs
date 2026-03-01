@@ -8,16 +8,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 {
     public class RigidbodyMovementSystem : IInitializableSystem, IUpdatableSystem
     {
+        private Rigidbody _rigidbody;
+
         private ReactiveVariable<Vector3> _moveDirection;
         private ReactiveVariable<float> _moveSpeed;
-        private Rigidbody _rigidbody;
         private ICondition _canMove;
 
         public void OnInit(Entity entity)
         {
+            // _rigidbody = entity.Rigidbody;
             _moveDirection = entity.MoveDirection;
             _moveSpeed = entity.MoveSpeed;
-            _rigidbody = entity.Rigidbody;
             _canMove = entity.CanMove;
         }
 

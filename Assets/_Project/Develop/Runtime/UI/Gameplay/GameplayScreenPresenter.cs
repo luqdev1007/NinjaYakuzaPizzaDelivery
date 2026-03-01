@@ -1,35 +1,40 @@
 ﻿using Assets._Project.Develop.Runtime.UI.Core;
 using System.Collections.Generic;
 using System;
-using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
-using Assets._Project.Develop.Runtime.Utilites.Timer;
-using Assets._Project.Develop.Runtime.Gameplay.Features.Mines;
-using UnityEngine;
+using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay
 {
     public class GameplayScreenPresenter : IPresenter
     {
         private readonly GameplayScreenView _view;
-        private readonly MinePlacementService _minePlacementService;
+
+        // services 
+        private readonly ICoroutinesPerformer _coroutinesPerformer;
+        private readonly SceneSwitcherService _sceneSwitcherService;
 
         private List<IDisposable> _disposables = new();
 
         private readonly List<IPresenter> _childPresenters = new();
 
         public GameplayScreenPresenter(
-            GameplayScreenView view, 
-            MinePlacementService minePlacementService)
+            GameplayScreenView view,
+            ICoroutinesPerformer coroutinesPerformer,
+            SceneSwitcherService sceneSwitcherService)
         {
             _view = view;
-            _minePlacementService = minePlacementService;
+
+            // services 
+            _coroutinesPerformer = coroutinesPerformer;
+            _sceneSwitcherService = sceneSwitcherService;
         }
 
         public void Initialize()
         {
             _view.Init();
 
-            _view.UpgradesPanelView.CreateMineButton.OnHoldComplete += CreateMine;
+            _view.BackToMenuButton.onClick.AddListener(BackToMenu);
             
             foreach (IPresenter presenter in _childPresenters)
                 presenter.Initialize();
@@ -37,7 +42,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
         public void Dispose()
         {
-            _view.UpgradesPanelView.CreateMineButton.OnHoldComplete -= CreateMine;
+            _view.BackToMenuButton.onClick.RemoveListener(BackToMenu);
 
             foreach (var disposable in _disposables)
                 disposable.Dispose();
@@ -48,59 +53,9 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             _disposables.Clear();
         }
 
-        public void HideUI()
+        private void BackToMenu()
         {
-            _view.HealthView.Hide();
-        }
-
-        public void SubscribeHealthViewToEntity(Entity entity)
-        {
-            _view.HealthView.Init(entity.CurrentHealth, entity.MaxHealth);
-            _view.HealthView.Show();
-        }
-
-        public void ShowAnnouncement(string header, string subheader = "")
-        {
-            _view.AnouncementView.SetText(header, subheader);
-            _view.AnouncementView.Show();
-        }
-
-        public void ShowPreperationTimer(TimerService timerService)
-        {
-            _view.PrepTimerView.Show();
-
-            _disposables.Add(timerService.CurrentTime.Subscribe(OnTimerChanged));
-            _disposables.Add(timerService.CooldownEnded.Subscribe(OnTimerEnded));
-
-            timerService.Restart();
-        }
-
-        public void HideUpgradesPanel()
-        {
-            _view.UpgradesPanelView.Hide();
-        }
-
-        public void ShowUpgradesPanel()
-        {
-            _view.UpgradesPanelView.Show();
-        }
-
-        private void CreateMine()
-        {
-            if (_minePlacementService.IsPlacing)
-                _minePlacementService.CancelPlacement();
-            else
-                _minePlacementService.BeginPlacement();
-        }
-
-        private void OnTimerEnded()
-        {
-            _view.PrepTimerView.Hide();
-        }
-
-        private void OnTimerChanged(float arg1, float timeLeft)
-        {
-            _view.TimerText.text = ((int)timeLeft).ToString();
+            _coroutinesPerformer.StartPerform(_sceneSwitcherService.ProcessingSwitchTo(Scenes.MainMenu));
         }
     }
 }

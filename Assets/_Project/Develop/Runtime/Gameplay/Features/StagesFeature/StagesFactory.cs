@@ -22,9 +22,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
                 case ClearAllEnemiesStageConfig clearAllEnemiesStageConfig:
                     return new ClearAllEnemiesStage(
                         clearAllEnemiesStageConfig,
-                        _container.Resolve<EnemiesFactory>(),
-                        _container.Resolve<EntitiesLifeContext>(),
-                        _container.Resolve<VehiclesFactory>());
+                        _container.Resolve<EntitiesLifeContext>());
 
                 default:
                     throw new ArgumentException($"Not supported {stageConfig.GetType()} type config");

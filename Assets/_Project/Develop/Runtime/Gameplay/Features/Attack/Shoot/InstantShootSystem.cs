@@ -1,5 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities.Projectiles;
-using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
@@ -33,7 +32,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack.Shoot
             _entity = entity;
 
             _attackDelayEndEvent = entity.AttackDelayEndEvent;
-            _damage = entity.InstantAttackDamage;
+            _damage = entity.AttackDamage;
             _shootPoint = entity.ShootPoint;
 
             _attackDelayDisposable = _attackDelayEndEvent.Subscribe(OnAttackDelayEnd);
@@ -53,7 +52,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack.Shoot
             Vector3 originPos = _shootPoint.position;
 
             Vector3 direction = (targetPos - originPos).normalized;
+
+            /*
             SimpleProjectileConfig config = _configsProviderService.GetConfig<SimpleProjectileConfig>();
+            
             config.GravityScale = 0;
 
             _projectilesFactory.Create(
@@ -65,6 +67,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack.Shoot
                 shootDirection: direction),
                 config
                 );
+            */
         }
     }
 }

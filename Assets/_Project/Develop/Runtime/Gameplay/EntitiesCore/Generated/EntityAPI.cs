@@ -2,54 +2,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 {
 	public partial class Entity
 	{
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Vehicles.MoveSinkSpeed MoveSinkSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Vehicles.MoveSinkSpeed>();
-
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> MoveSinkSpeed => MoveSinkSpeedC.Value;
-
-		public bool TryGetMoveSinkSpeed(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Vehicles.MoveSinkSpeed component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMoveSinkSpeed()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Vehicles.MoveSinkSpeed() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMoveSinkSpeed(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Vehicles.MoveSinkSpeed() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Vehicles.RotationSinkSpeed RotationSinkSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Vehicles.RotationSinkSpeed>();
-
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> RotationSinkSpeed => RotationSinkSpeedC.Value;
-
-		public bool TryGetRotationSinkSpeed(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Vehicles.RotationSinkSpeed component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddRotationSinkSpeed()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Vehicles.RotationSinkSpeed() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddRotationSinkSpeed(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Vehicles.RotationSinkSpeed() {Value = value}); 
-		}
-
 		public Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team TeamC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team>();
 
 		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Teams> Team => TeamC.Value;
@@ -377,33 +329,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.MainHeroTag MainHeroTagC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.MainHeroTag>();
 
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.MainHeroes> MainHeroTag => MainHeroTagC.Value;
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> MainHeroTag => MainHeroTagC.Value;
 
-		public bool TryGetMainHeroTag(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.MainHeroes> value)
+		public bool TryGetMainHeroTag(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> value)
 		{
 			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.MainHeroTag component);
 			if (result)
 				value = component.Value;
 			else
-				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.MainHeroes>);
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity>);
 			return result;
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMainHeroTag()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.MainHeroTag() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.MainHeroes>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.MainHeroTag() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity>() }); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMainHeroTag(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.MainHeroes> value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMainHeroTag(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.MainHeroTag() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.MainShipTag MainShipTagC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.MainShipTag>();
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMainShipTag()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.MainShipTag() ); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.CurrentHealth CurrentHealthC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.CurrentHealth>();
@@ -634,73 +579,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDisableCollidersOnDeath(System.Collections.Generic.List<UnityEngine.Collider> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.DisableCollidersOnDeath() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.ExplosionRange ExplosionRangeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.ExplosionRange>();
-
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> ExplosionRange => ExplosionRangeC.Value;
-
-		public bool TryGetExplosionRange(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.ExplosionRange component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionRange()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.ExplosionRange() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionRange(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.ExplosionRange() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.ExplosionDamage ExplosionDamageC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.ExplosionDamage>();
-
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> ExplosionDamage => ExplosionDamageC.Value;
-
-		public bool TryGetExplosionDamage(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.ExplosionDamage component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionDamage()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.ExplosionDamage() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionDamage(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.ExplosionDamage() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.MustExplode MustExplodeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.MustExplode>();
-
-		public Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition MustExplode => MustExplodeC.Value;
-
-		public bool TryGetMustExplode(out Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.MustExplode component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMustExplode(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.MustExplode() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.CustomPhysics.GravityScale GravityScaleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.CustomPhysics.GravityScale>();
@@ -1307,25 +1185,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.AI.CurrentTarget() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Common.RigidbodyComponent RigidbodyC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Common.RigidbodyComponent>();
-
-		public UnityEngine.Rigidbody Rigidbody => RigidbodyC.Value;
-
-		public bool TryGetRigidbody(out UnityEngine.Rigidbody value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Common.RigidbodyComponent component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(UnityEngine.Rigidbody);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddRigidbody(UnityEngine.Rigidbody value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Common.RigidbodyComponent() {Value = value}); 
-		}
-
 		public Assets._Project.Develop.Runtime.Gameplay.Common.TransformComponent TransformC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Common.TransformComponent>();
 
 		public UnityEngine.Transform Transform => TransformC.Value;
@@ -1345,25 +1204,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Common.TransformComponent() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Common.CharacterControllerComponent CharacterControllerC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Common.CharacterControllerComponent>();
-
-		public UnityEngine.CharacterController CharacterController => CharacterControllerC.Value;
-
-		public bool TryGetCharacterController(out UnityEngine.CharacterController value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Common.CharacterControllerComponent component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(UnityEngine.CharacterController);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCharacterController(UnityEngine.CharacterController value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Common.CharacterControllerComponent() {Value = value}); 
-		}
-
 		public Assets._Project.Develop.Runtime.Gameplay.Common.AnimatorComponent AnimatorC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Common.AnimatorComponent>();
 
 		public UnityEngine.Animator Animator => AnimatorC.Value;
@@ -1381,44 +1221,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAnimator(UnityEngine.Animator value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Common.AnimatorComponent() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Common.ExplosionableComponent ExplosionableC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Common.ExplosionableComponent>();
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.IExplosionable Explosionable => ExplosionableC.Value;
-
-		public bool TryGetExplosionable(out Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.IExplosionable value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Common.ExplosionableComponent component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.IExplosionable);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionable(Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.IExplosionable value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Common.ExplosionableComponent() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Common.ExplosionableMonoComponent ExplosionableMonoC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Common.ExplosionableMonoComponent>();
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.ExplosionableMono ExplosionableMono => ExplosionableMonoC.Value;
-
-		public bool TryGetExplosionableMono(out Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.ExplosionableMono value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Common.ExplosionableMonoComponent component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.ExplosionableMono);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionableMono(Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature.ExplosionableMono value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Common.ExplosionableMonoComponent() {Value = value}); 
 		}
 
 	}

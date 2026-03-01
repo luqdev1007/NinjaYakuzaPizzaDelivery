@@ -30,7 +30,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CustomPhysics
 
         public void OnInit(Entity entity)
         {
-            _rigidbody = entity.Rigidbody;
+            // _rigidbody = entity.Rigidbody;
+
             _pushForce = entity.PushForce;
             _pushDirection = entity.PushDirection;
 

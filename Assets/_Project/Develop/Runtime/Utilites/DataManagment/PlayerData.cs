@@ -1,5 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Meta.Features.ShipUpgrades;
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+﻿using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using System.Collections.Generic;
 
 namespace Assets._Project.Develop.Runtime.Utilites.DataManagment
@@ -10,6 +9,5 @@ namespace Assets._Project.Develop.Runtime.Utilites.DataManagment
         public int Wins;
         public int Losses;
         public List<int> CompletedLevels;
-        public PlayerMainShipData MainShipData;
     }
 }

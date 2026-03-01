@@ -15,39 +15,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
         private readonly DIContainer _container;
 
         private readonly EntitiesFactory _entitiesFactory;
-        private readonly VehiclesFactory _vehiclesFactory;
         private readonly BrainsFactory _brainsFactory;
         private readonly EntitiesLifeContext _entitiesLifeContext;
 
-        public EnemiesFactory(DIContainer container, VehiclesFactory vehiclesFactory)
+        public EnemiesFactory(DIContainer container)
         {
             _container = container;
 
             _entitiesFactory = _container.Resolve<EntitiesFactory>();
             _brainsFactory = _container.Resolve<BrainsFactory>();
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
-            _vehiclesFactory = vehiclesFactory;
         }
 
         public Entity Create(Transform at, EntityConfig config)
         {
-            Entity entity;
+            Entity entity = null;
 
             switch (config)
             {
                 case SoldierConfig soldierConfig:
-                    entity = _entitiesFactory.CreateSoldier(at, soldierConfig);
-                    _brainsFactory.CreateEmptyBrain(entity);
-                    break;
-
-                case ArcherConfig archerConfig:
-                    entity = _entitiesFactory.CreateArcher(at, archerConfig);
-                    _brainsFactory.CreateEmptyBrain(entity);
-                    break;
-
-                case DriverConfig driverConfig:
-                    entity = _entitiesFactory.CreateDriver(at, driverConfig);
-                    _brainsFactory.CreateEmptyBrain(entity);
+                    // entity = _entitiesFactory.CreateSoldier(at, soldierConfig);
+                    // _brainsFactory.CreateEmptyBrain(entity);
                     break;
 
                 default:

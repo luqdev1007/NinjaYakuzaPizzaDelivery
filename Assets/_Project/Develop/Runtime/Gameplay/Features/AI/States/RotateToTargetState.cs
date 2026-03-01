@@ -22,14 +22,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
         {
             if (_currentTarget.Value != null && _currentTarget.Value.Transform != null)
             {
-                // 1. Получаем вектор направления
                 Vector3 direction = _currentTarget.Value.Transform.position - _transform.position;
 
                 // 2. ИГНОРИРУЕМ ВЕРТИКАЛЬ (Y)
                 // Это не дает объекту "клевать носом" или задирать его вверх
-                direction.y = 0;
+                // direction.y = 0;
 
-                // 3. Проверка на нулевой вектор (если цель прямо в нас)
                 if (direction.sqrMagnitude > 0.0001f)
                 {
                     _rotationDirection.Value = direction.normalized;

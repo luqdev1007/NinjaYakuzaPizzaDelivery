@@ -1,14 +1,10 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities.Mines;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
-using Assets._Project.Develop.Runtime.Gameplay.Features.ExplosionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
-using Assets._Project.Develop.Runtime.Gameplay.Features.Mines;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Timers;
 using Assets._Project.Develop.Runtime.Gameplay.States;
@@ -16,8 +12,6 @@ using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilites.AssetsManagment;
-using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
-using Assets._Project.Develop.Runtime.Utilites.RaycastManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using Assets._Project.Develop.Runtime.Utilites.Timer;
 using UnityEngine;
@@ -46,9 +40,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle<IInputService>(CreateDesktopInput);
 
             // factories
-            container.RegisterAsSingle(CreateExplosionFactory);
             container.RegisterAsSingle(CreateEnemiesFactory);
-            container.RegisterAsSingle(CreateVehiclesFactory);
             container.RegisterAsSingle(CreateProjectilesFactory);
             container.RegisterAsSingle(CreateStagesFactory);
             container.RegisterAsSingle(CreateGameplayStatesFactory);
@@ -67,20 +59,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateStageProviderService);
             container.RegisterAsSingle(CreateGameplayStatesContext);
             container.RegisterAsSingle(CreateGameplayTimersService);
-
-            // Upgrades
-            container.RegisterAsSingle(CreateMinePlacementService);
-
-        }
-
-        private static MinePlacementService CreateMinePlacementService(DIContainer container)
-        {
-            return new MinePlacementService(
-                container.Resolve<MainHeroesHolderService>(), 
-                container.Resolve<SurfaceRaycaster>(),
-                Camera.main,
-                container.Resolve<ConfigsProviderService>().GetConfig<WaterMineConfig>(),
-                container.Resolve<ResourcesAssetsLoader>());
         }
 
         private static GameplayTimersService CreateGameplayTimersService(DIContainer container)
@@ -118,19 +96,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new ProjectilesFactory(container);
         }
 
-        private static VehiclesFactory CreateVehiclesFactory(DIContainer container)
-        {
-            return new VehiclesFactory(container);
-        }
-
         private static EnemiesFactory CreateEnemiesFactory(DIContainer container)
         {
-            return new EnemiesFactory(container, container.Resolve<VehiclesFactory>());
+            return new EnemiesFactory(container);
         }
 
-        private static MainHeroesHolderService CreateMainHeroHolderService(DIContainer container)
+        private static MainHeroHolderService CreateMainHeroHolderService(DIContainer container)
         {
-            return new MainHeroesHolderService(container.Resolve<EntitiesLifeContext>());
+            return new MainHeroHolderService(container.Resolve<EntitiesLifeContext>());
         }
 
         private static MainHeroesFactory CreateMainHeroesFactory(DIContainer container)
@@ -184,11 +157,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             GameplayScreenPresenter presenter = container.Resolve<GameplayPresentersFactory>().CreateGameplayScreen(view);
 
             return presenter;
-        }
-
-        private static ExplosionsFactory CreateExplosionFactory(DIContainer container)
-        {
-            return new ExplosionsFactory(container);
         }
 
         private static DesktopInput CreateDesktopInput(DIContainer container)

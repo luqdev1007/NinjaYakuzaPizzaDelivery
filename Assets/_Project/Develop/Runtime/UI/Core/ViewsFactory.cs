@@ -14,6 +14,7 @@ namespace Assets._Project.Develop.Runtime.UI.Core
         {
             {ViewIDs.MainMenuScreenView, "UI/MainMenu/MainMenuScreenView" },
             {ViewIDs.GameplayScreenView, "UI/Gameplay/GameplayScreenView" },
+
             {ViewIDs.ConfirmPopup, "UI/ConfirmPopup" },
             {ViewIDs.LevelsMenuPopup, "UI/LevelsMenuPopup/LevelsMenuPopup" },
             {ViewIDs.LevelTile, "UI/LevelsMenuPopup/LevelTile" },

@@ -1,5 +1,4 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
-using Assets._Project.Develop.Runtime.Meta.Features.ShipUpgrades;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.DataManagment;
@@ -25,7 +24,6 @@ namespace Assets._Project.Develop.Runtime.Utilites.DataProviders
                 Wins = 0,
                 Losses = 0,
                 CompletedLevels = new(),
-                MainShipData = new PlayerMainShipData(10f) // config
             };
         }
 

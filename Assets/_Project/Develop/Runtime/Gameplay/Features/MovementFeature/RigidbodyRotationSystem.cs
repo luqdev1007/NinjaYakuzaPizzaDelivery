@@ -8,15 +8,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 {
     public class RigidbodyRotationSystem : IInitializableSystem, IUpdatableSystem
     {
+        private Rigidbody _rigidbody;
+
         private ReactiveVariable<Vector3> _direction;
         private ReactiveVariable<float> _rotationSpeed;
-        private Rigidbody _rigidbody;
         private ICompositeCondition _canRotate;
 
         public void OnInit(Entity entity)
         {
+            // _rigidbody = entity.Rigidbody;
+
             _direction = entity.RotationDirection;
-            _rigidbody = entity.Rigidbody;
             _rotationSpeed = entity.RotationSpeed;
             _canRotate = entity.CanRotate;
 

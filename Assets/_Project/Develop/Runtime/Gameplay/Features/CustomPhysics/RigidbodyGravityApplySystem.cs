@@ -7,13 +7,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CustomPhysics
 {
     public class RigidbodyGravityApplySystem : IInitializableSystem, IUpdatableSystem
     {
-        private ReactiveVariable<float> _gravityScale;
         private Rigidbody _rigidbody;
+        private ReactiveVariable<float> _gravityScale;
 
         public void OnInit(Entity entity)
         {
+            // _rigidbody = entity.Rigidbody;
             _gravityScale = entity.GravityScale;
-            _rigidbody = entity.Rigidbody;
         }
 
         public void OnUpdate(float deltaTime)
