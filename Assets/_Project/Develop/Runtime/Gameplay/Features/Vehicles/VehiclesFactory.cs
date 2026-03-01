@@ -1,0 +1,57 @@
+﻿using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities.MainHeroes;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
+using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using System;
+using UnityEngine;
+
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
+{
+    public class VehiclesFactory
+    {
+        private readonly DIContainer _container;
+
+        private readonly EntitiesFactory _entitiesFactory;
+        private readonly BrainsFactory _brainsFactory;
+        private readonly EntitiesLifeContext _entitiesLifeContext;
+
+        public VehiclesFactory(DIContainer container)
+        {
+            _container = container;
+
+            _entitiesFactory = _container.Resolve<EntitiesFactory>();
+            _brainsFactory = _container.Resolve<BrainsFactory>();
+            _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
+        }
+
+        public Entity Create(Transform at, Teams team, EntityConfig config)
+        {
+            Entity entity;
+
+            switch (config)
+            {
+                case MainShipConfig mainShipConfig:
+                    entity = _entitiesFactory.CreateMainShip(at, mainShipConfig);
+                    _brainsFactory.CreateEmptyBrain(entity);
+                    break;
+
+                case SmallShipConfig smallShipConfig:
+                    entity = _entitiesFactory.CreateSmallShip(at, smallShipConfig);
+                    _brainsFactory.CreateMoveToClosestTargetStateMachine(entity);
+                    break;
+
+                default:
+                    throw new ArgumentException($"Not support {config.GetType()} type config");
+            }
+
+            entity.AddTeam(new ReactiveVariable<Teams>(team));
+
+            _entitiesLifeContext.Add(entity);
+
+            return entity;
+        }
+    }
+}
