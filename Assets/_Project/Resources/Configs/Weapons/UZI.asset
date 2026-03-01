@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee53360959813e4e8827dd385eacf1f, type: 3}
+  m_Name: UZI
+  m_EditorClassIdentifier: 
+  <Damage>k__BackingField: 5
+  <ProjectileSpeed>k__BackingField: 10
+  <ShootsPerSecond>k__BackingField: 3
+  <ViewPrefab>k__BackingField: {fileID: 7468848039566345053, guid: ce1748671612d844e9506b53c8f7a2c3, type: 3}
+  <ProjectilePrefab>k__BackingField: {fileID: 4066471563324999807, guid: 4e731867fae97cd4ab06179accac2bb5, type: 3}
