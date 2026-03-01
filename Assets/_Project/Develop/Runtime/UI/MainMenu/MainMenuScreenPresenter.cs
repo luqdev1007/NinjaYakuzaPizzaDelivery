@@ -38,12 +38,17 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
         {
             CreateWallet();
 
+            _view.StartGameButton.onClick.AddListener(StartGame);
+
             foreach (IPresenter presenter in _childPresenters)
                 presenter.Initialize();
         }
 
         public void Dispose()
         {
+
+            _view.StartGameButton.onClick.RemoveListener(StartGame);
+
             foreach (var disposable in _disposables)
                 disposable.Dispose();
 
@@ -58,6 +63,11 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             WalletPresenter walletPresenter = _projectPresentersFactory.CreateWalletPresenter(_view.WalletView);
 
             _childPresenters.Add(walletPresenter);
+        }
+
+        private void StartGame()
+        {
+            _coroutinesPerformer.StartPerform(_sceneSwitcherService.ProcessingSwitchTo(Scenes.Gameplay, new GameplayInputArgs()));
         }
     }
 }

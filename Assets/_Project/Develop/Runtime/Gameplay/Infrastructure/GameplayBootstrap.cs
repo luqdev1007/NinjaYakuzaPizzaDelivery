@@ -71,12 +71,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         {
             Debug.Log("Старт геймплейной сцены");
 
-            _gameplayStatesContext.Run();
+            // _gameplayStatesContext.Run();
         }
 
         private void Update()
         {
-            _gameplayStatesContext?.Update(Time.deltaTime);
+            // _gameplayStatesContext?.Update(Time.deltaTime);
 
             _entitiesLifeContext?.Update(Time.deltaTime);
 

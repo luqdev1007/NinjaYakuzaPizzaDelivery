@@ -4,7 +4,7 @@ namespace Assets._Project.Develop.Runtime.Utilites.SceneManagement
 {
     public class GameplayInputArgs : IInputSceneArgs
     {
-        public GameplayInputArgs(LevelConfig levelConfig)
+        public GameplayInputArgs(LevelConfig levelConfig = null)
         {
             LevelConfig = levelConfig;
         }
