@@ -2,7 +2,6 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using System;
-using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 {
@@ -36,12 +35,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
                 return;
 
             _currentTime.Value -= deltaTime;
-            // Debug.Log($"Медленно помираю я " + _currentTime.Value);
 
             if (CooldownIsOver())
-            {
                 _inDeathProcess.Value = false;
-            }
         }
 
         private void OnIsDeadChanged(bool oldValue, bool isDead)

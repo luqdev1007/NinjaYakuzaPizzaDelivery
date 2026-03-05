@@ -9,10 +9,16 @@
         public const string LevelTile = nameof(LevelTile);
         public const string LevelsMenuPopup = nameof(LevelsMenuPopup);
 
+        public const string ChatView = nameof(ChatView);
+        public const string EndOfBattleView = nameof(EndOfBattleView);
+
         public const string MainMenuScreenView = nameof(MainMenuScreenView);
         public const string GameplayScreenView = nameof(GameplayScreenView);
 
-        public const string DefeatMenuPopupView = nameof(DefeatMenuPopupView);
-        public const string WinMenuPopupView = nameof(WinMenuPopupView);
+        public const string DefeatPopupView = nameof(DefeatPopupView);
+        public const string WinPopupView = nameof(WinPopupView);
+
+        public const string SimpleHealthBar = nameof(SimpleHealthBar);
+        public const string MainHeroHealthBar = nameof(MainHeroHealthBar);
     }
 }

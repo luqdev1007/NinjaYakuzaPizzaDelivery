@@ -2,7 +2,6 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 {
@@ -24,10 +23,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
                 return;
 
             if (_mustDie.Evaluate())
-            {
-                // Debug.Log("А СЕРДЦЕ УМИРАЮ!");
                 _isDead.Value = true;
-            }
         }
     }
 }

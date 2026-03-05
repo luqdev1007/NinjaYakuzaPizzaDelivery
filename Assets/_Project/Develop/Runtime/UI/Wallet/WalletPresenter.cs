@@ -1,4 +1,4 @@
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+﻿using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
 using System.Collections.Generic;
@@ -16,9 +16,9 @@ namespace Assets._Project.Develop.Runtime.UI.Wallet
         private readonly List<CurrencyPresenter> _currencyPresenters = new();
 
         public WalletPresenter(
-            WalletService walletService,
-            ProjectPresentersFactory presentersFactory,
-            ViewsFactory viewsFactory,
+            WalletService walletService, 
+            ProjectPresentersFactory presentersFactory, 
+            ViewsFactory viewsFactory, 
             IconTextListView view)
         {
             _walletService = walletService;

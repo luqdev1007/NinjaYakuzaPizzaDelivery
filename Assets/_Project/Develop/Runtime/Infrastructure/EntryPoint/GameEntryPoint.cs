@@ -55,7 +55,7 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             else
                 playerDataProvider.Reset();
 
-            yield return new WaitForSeconds(0.1f); // simulation of long inits
+            yield return new WaitForSeconds(1); // simulation of long inits
 
             Debug.Log("Servises init is finished");
 

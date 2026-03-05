@@ -1,45 +1,46 @@
 ﻿using Assets._Project.Develop.Runtime.UI.Core;
-using Assets._Project.Develop.Runtime.UI.Gameplay.Endgame;
+using Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups;
+using System;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay
 {
     public class GameplayPopupService : PopupService
     {
-        private readonly GameplayPresentersFactory _gameplayPresentersFactory;
         private readonly GameplayUIRoot _uiRoot;
+        private readonly GameplayPresentersFactory _gameplayPresentersFactory;
 
         public GameplayPopupService(
             ViewsFactory viewsFactory,
-            ProjectPresentersFactory presentersFactory,
+            ProjectPresentersFactory projectPresentersFactory,
             GameplayUIRoot uiRoot,
             GameplayPresentersFactory gameplayPresentersFactory)
-            : base(viewsFactory, presentersFactory)
+            : base(viewsFactory, projectPresentersFactory)
         {
-            _gameplayPresentersFactory = gameplayPresentersFactory;
             _uiRoot = uiRoot;
+            _gameplayPresentersFactory = gameplayPresentersFactory;
         }
 
         protected override Transform PopupLayer => _uiRoot.PopupsLayer;
 
-        public DefeatMenuPopupPresenter OpenDefeatMenuPopup()
+        public WinPopupPresenter OpenWinPopup()
         {
-            DefeatMenuPopupView view = ViewsFactory.Create<DefeatMenuPopupView>(ViewIDs.DefeatMenuPopupView, PopupLayer);
+            WinPopupView view = ViewsFactory.Create<WinPopupView>(ViewIDs.WinPopupView, PopupLayer);
 
-            DefeatMenuPopupPresenter popup = _gameplayPresentersFactory.CreateDefeatMenuPopupPresenter(view);
+            WinPopupPresenter popup = _gameplayPresentersFactory.CreateWinPopupPresenter(view);
 
             OnPopupCreated(popup, view);
 
             return popup;
         }
 
-        public WinMenuPopupPresenter OpenWinMenuPopup()
+        public DefeatPopupPresenter OpenDefeatPopup(Action closeCallback = null)
         {
-            WinMenuPopupView view = ViewsFactory.Create<WinMenuPopupView>(ViewIDs.WinMenuPopupView, PopupLayer);
+            DefeatPopupView view = ViewsFactory.Create<DefeatPopupView>(ViewIDs.DefeatPopupView, PopupLayer);
 
-            WinMenuPopupPresenter popup = _gameplayPresentersFactory.CreateWinMenuPopupPresenter(view);
+            DefeatPopupPresenter popup = _gameplayPresentersFactory.CreateDefeatPopupPresenter(view);
 
-            OnPopupCreated(popup, view);
+            OnPopupCreated(popup, view, closeCallback);
 
             return popup;
         }

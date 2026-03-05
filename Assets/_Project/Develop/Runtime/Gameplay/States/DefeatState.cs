@@ -9,9 +9,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly GameplayPopupService _gameplayPopupService;
 
         public DefeatState(
-            IInputService inputService,
-            GameplayScreenPresenter gameplayScreenPresenter,
-            GameplayPopupService gameplayPopupService) : base(inputService, gameplayScreenPresenter)
+            IInputService inputService, 
+            GameplayPopupService gameplayPopupService) : base(inputService)
         {
             _gameplayPopupService = gameplayPopupService;
         }
@@ -20,12 +19,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         {
             base.Enter();
 
-            _gameplayPopupService.OpenDefeatMenuPopup();
+            _gameplayPopupService.OpenDefeatPopup();
         }
 
         public void Update(float deltaTime)
         {
-           
         }
     }
 }

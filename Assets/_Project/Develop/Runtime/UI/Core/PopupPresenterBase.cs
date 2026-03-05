@@ -65,7 +65,7 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             PopupView.CloseRequest += OnCloseRequest;
         }
 
-        private void OnCloseRequest()
+        protected void OnCloseRequest()
         {
             CloseRequest?.Invoke(this);
         }

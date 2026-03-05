@@ -1,5 +1,6 @@
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities.MainHeroes;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Utilites.AssetsManagment;
 using System;
@@ -18,9 +19,11 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
             { typeof(StartWalletConfig), "Configs/Meta/Wallet/StartWalletConfig" },
             { typeof(CurrencyIconsConfig), "Configs/Meta/Wallet/CurrencyIconsConfig" },
 
+            { typeof(GameRewardsConfig), "Configs/Meta/Stats/GameRewardsConfig" },
+
             { typeof(LevelsListConfig), "Configs/Gameplay/Levels/LevelsListConfig" },
 
-            { typeof(SoldierConfig), "Configs/Gameplay/Entities/Enemies/SoldierConfig" },
+            { typeof(HeroConfig), "Configs/Entities/Characters/HeroConfig" }
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)

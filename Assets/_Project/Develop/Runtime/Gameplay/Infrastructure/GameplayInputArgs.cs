@@ -1,14 +1,17 @@
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+﻿using System;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Utilites.SceneManagement
 {
     public class GameplayInputArgs : IInputSceneArgs
     {
-        public GameplayInputArgs(LevelConfig levelConfig = null)
+        public GameplayInputArgs(int levelNumber, Vector3 levelSpawnPointPosition)
         {
-            LevelConfig = levelConfig;
+            LevelNumber = levelNumber;
+            LevelSpawnPointPosition = levelSpawnPointPosition;
         }
 
-        public LevelConfig LevelConfig { get; private set; }
+        public int LevelNumber { get; private set; }
+        public Vector3 LevelSpawnPointPosition { get; private set; }
     }
 }

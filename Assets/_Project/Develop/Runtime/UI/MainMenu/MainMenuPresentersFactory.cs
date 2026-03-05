@@ -1,4 +1,6 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Meta.Features.Stats;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 
@@ -18,9 +20,9 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             return new MainMenuScreenPresenter(
                 view,
                 _container.Resolve<MainMenuPopupService>(),
-                _container.Resolve<SceneSwitcherService>(),
-                _container.Resolve<ICoroutinesPerformer>(),
-                _container.Resolve<ProjectPresentersFactory>()
+                _container.Resolve<WalletService>(),
+                _container.Resolve<GameStatsService>(),
+                _container.Resolve<ResetWinLoseStatsService>()
                 );
         } 
     }

@@ -1,4 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,11 +8,9 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 {
     public class GameplayScreenView : MonoBehaviour, IView
     {
-        [field: SerializeField] public Button BackToMenuButton { get; private set; }
+        public event Action OpenChatButtonClicked;
 
-        public void Init()
-        {
-            Debug.Log("Gameplay screen view Inited");
-        }
+        [field: SerializeField] public IconTextView StageNumberView { get; private set; }
+        [field: SerializeField] public EntitiesHealthDisplay EntitiesHealthDisplay { get; private set; }
     }
 }

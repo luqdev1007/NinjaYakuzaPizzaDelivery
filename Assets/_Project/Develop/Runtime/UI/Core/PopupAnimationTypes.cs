@@ -3,6 +3,7 @@
     public enum PopupAnimationTypes
     {
         None = 0,
-        Expand = 1
+        Expand = 1,
+        Fade = 2
     }
 }

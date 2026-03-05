@@ -1,2 +1,2 @@
-# NinjaYakuzaPizzaDelivery
-2d platformer on unity
+# Berserk-Survivor
+3D Unity Game inspired by "Berserk" manga in style of "Vampire Survivors" game

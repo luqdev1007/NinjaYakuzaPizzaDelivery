@@ -117,7 +117,7 @@ GameObject:
   - component: {fileID: 4840803980854558042}
   - component: {fileID: 5676913650706266774}
   - component: {fileID: 7927494456178832771}
-  - component: {fileID: 5053156377489335032}
+  - component: {fileID: -3910670045655738561}
   m_Layer: 5
   m_Name: GameplayUIRoot
   m_TagString: Untagged
@@ -212,7 +212,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &5053156377489335032
+--- !u!114 &-3910670045655738561
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -221,7 +221,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6898949439731264832}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afb0fd3f4b90b0d4fb9629d2e99f4de6, type: 3}
+  m_Script: {fileID: 11500000, guid: c9965a95559ae9f4a88c7f66bce2cf44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   <HUDLayer>k__BackingField: {fileID: 1952467619323650237}

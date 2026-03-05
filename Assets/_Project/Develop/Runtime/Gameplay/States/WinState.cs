@@ -1,18 +1,34 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
+using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilites.DataProviders;
+using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using Assets._Project.Develop.Runtime.Utilites.StateMachineCore;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.States
 {
     public class WinState : EndGameState, IUpdatableState
     {
+        private readonly LevelsProgressionService _levelsProgressionService;
+        private readonly GameplayInputArgs _gameplayInputArgs;
+        private readonly PlayerDataProvider _playerDataProvider;
+        private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly GameplayPopupService _gameplayPopupService;
 
         public WinState(
             IInputService inputService,
-            GameplayScreenPresenter gameplayScreenPresenter,
-            GameplayPopupService gameplayPopupService) : base(inputService, gameplayScreenPresenter)
+            LevelsProgressionService levelsProgressionService,
+            GameplayInputArgs gameplayInputArgs,
+            PlayerDataProvider playerDataProvider,
+            ICoroutinesPerformer coroutinesPerformer,
+            GameplayPopupService gameplayPopupService) : base(inputService)
         {
+            _levelsProgressionService = levelsProgressionService;
+            _gameplayInputArgs = gameplayInputArgs;
+            _playerDataProvider = playerDataProvider;
+            _coroutinesPerformer = coroutinesPerformer;
             _gameplayPopupService = gameplayPopupService;
         }
 
@@ -20,12 +36,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         {
             base.Enter();
 
-            _gameplayPopupService.OpenWinMenuPopup();
+            Debug.Log("VICTORY!");
+
+            _levelsProgressionService.AddLevelToCompleted(_gameplayInputArgs.LevelNumber);
+
+            _coroutinesPerformer.StartPerform(_playerDataProvider.SaveAsync());
+
+            _gameplayPopupService.OpenWinPopup();
         }
 
         public void Update(float deltaTime)
         {
-            
         }
     }
 }

@@ -1,20 +1,25 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
-using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.Timers;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
+using Assets._Project.Develop.Runtime.Meta.Features.Stats;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilites.AssetsManagment;
+using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilites.DataProviders;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
-using Assets._Project.Develop.Runtime.Utilites.Timer;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 {
@@ -22,48 +27,40 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
     {
         private static GameplayInputArgs _inputArgs;
 
-        public static void Process(DIContainer container, GameplayInputArgs args)
+        public static void Process(DIContainer container, GameplayInputArgs inputArgs)
         {
-            _inputArgs = args;
+            Debug.Log("Process registrations on gameplay scene");
 
-            // entities
-            container.RegisterAsSingle(CreateMonoEntitiesFactory).NonLazy();
+            _inputArgs = inputArgs;
+
+            container.RegisterAsSingle(CreateGameplayUIRoot).NonLazy();
+            container.RegisterAsSingle(CreateGameplayScreenPresenter).NonLazy();
+            container.RegisterAsSingle(CreateGameplayPopupService);
+            container.RegisterAsSingle(CreateGameplayPresentersFactory);
+
             container.RegisterAsSingle(CreateEntitiesFactory);
             container.RegisterAsSingle(CreateEntitiesLifeContext);
+            container.RegisterAsSingle(CreateMonoEntitiesFactory).NonLazy();
+
+            container.RegisterAsSingle(CreateMainHeroHolderService).NonLazy();
+
             container.RegisterAsSingle(CreateCollidersRegistryService);
 
-            // main heroes
-            container.RegisterAsSingle(CreateMainHeroHolderService).NonLazy();
-            container.RegisterAsSingle(CreateMainHeroesFactory);
+            container.RegisterAsSingle(CreateBrainsFactory);
 
-            // input
+            container.RegisterAsSingle(CreateAIBrainContext);
+
             container.RegisterAsSingle<IInputService>(CreateDesktopInput);
 
-            // factories
+            container.RegisterAsSingle(CreateMainHeroFactory);
             container.RegisterAsSingle(CreateEnemiesFactory);
-            container.RegisterAsSingle(CreateProjectilesFactory);
             container.RegisterAsSingle(CreateStagesFactory);
-            container.RegisterAsSingle(CreateGameplayStatesFactory);
 
-            // UI
-            container.RegisterAsSingle(CreateGameplayScreenPresenter).NonLazy();
-            container.RegisterAsSingle(CreateGameplayUIRoot).NonLazy();
-            container.RegisterAsSingle(CreateGameplayPresentersFactory);
-            container.RegisterAsSingle(CreateGameplayPopupService);
-
-            // AI
-            container.RegisterAsSingle(CreateBrainsFactory);
-            container.RegisterAsSingle(CreateAIBrainsContext);
-
-            // Stage
             container.RegisterAsSingle(CreateStageProviderService);
-            container.RegisterAsSingle(CreateGameplayStatesContext);
-            container.RegisterAsSingle(CreateGameplayTimersService);
-        }
+            container.RegisterAsSingle(CreatePreperationTriggerService);
 
-        private static GameplayTimersService CreateGameplayTimersService(DIContainer container)
-        {
-            return new GameplayTimersService(container.Resolve<TimerServiceFactory>());
+            container.RegisterAsSingle(CreateGameplayStatesFactory);
+            container.RegisterAsSingle(CreateGameplayStatesContext);
         }
 
         private static GameplayStatesContext CreateGameplayStatesContext(DIContainer container)
@@ -75,13 +72,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         private static GameplayStatesFactory CreateGameplayStatesFactory(DIContainer container)
         {
-            return new GameplayStatesFactory(container, container.Resolve<GameplayTimersService>());
+            return new GameplayStatesFactory(container, _inputArgs);
+        }
+
+        private static MainHeroHolderService CreateMainHeroHolderService(DIContainer container)
+        {
+            return new MainHeroHolderService(container.Resolve<EntitiesLifeContext>());
+        }
+
+        private static PreperationTriggerService CreatePreperationTriggerService(DIContainer container)
+        {
+            return new PreperationTriggerService(
+                container.Resolve<EntitiesFactory>(),
+                container.Resolve<EntitiesLifeContext>());
         }
 
         private static StageProviderService CreateStageProviderService(DIContainer container)
         {
             return new StageProviderService(
-                _inputArgs.LevelConfig,
+                container.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>().GetBy(_inputArgs.LevelNumber),
                 container.Resolve<StagesFactory>()
                 );
         }
@@ -91,9 +100,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new StagesFactory(container);
         }
 
-        private static ProjectilesFactory CreateProjectilesFactory(DIContainer container)
+        private static MainHeroFactory CreateMainHeroFactory(DIContainer container)
         {
-            return new ProjectilesFactory(container);
+            return new MainHeroFactory(container);
         }
 
         private static EnemiesFactory CreateEnemiesFactory(DIContainer container)
@@ -101,17 +110,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new EnemiesFactory(container);
         }
 
-        private static MainHeroHolderService CreateMainHeroHolderService(DIContainer container)
+        private static DesktopInput CreateDesktopInput(DIContainer container)
         {
-            return new MainHeroHolderService(container.Resolve<EntitiesLifeContext>());
+            return new DesktopInput();
         }
 
-        private static MainHeroesFactory CreateMainHeroesFactory(DIContainer container)
-        {
-            return new MainHeroesFactory(container);
-        }
-
-        private static AIBrainsContext CreateAIBrainsContext(DIContainer container)
+        private static AIBrainsContext CreateAIBrainContext(DIContainer container)
         {
             return new AIBrainsContext();
         }
@@ -119,6 +123,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private static BrainsFactory CreateBrainsFactory(DIContainer container)
         {
             return new BrainsFactory(container);
+        }
+
+        private static CollidersRegistryService CreateCollidersRegistryService(DIContainer container)
+        {
+            return new CollidersRegistryService();
+        }
+
+        private static MonoEntitiesFactory CreateMonoEntitiesFactory(DIContainer container)
+        {
+            return new MonoEntitiesFactory(
+                container.Resolve<ResourcesAssetsLoader>(),
+                container.Resolve<EntitiesLifeContext>(),
+                container.Resolve<CollidersRegistryService>());
+        }
+
+        private static EntitiesLifeContext CreateEntitiesLifeContext(DIContainer container)
+        {
+            return new EntitiesLifeContext();
+        }
+
+        private static EntitiesFactory CreateEntitiesFactory(DIContainer container)
+        {
+            return new EntitiesFactory(container);
         }
 
         private static GameplayPopupService CreateGameplayPopupService(DIContainer container)
@@ -129,21 +156,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 container.Resolve<GameplayUIRoot>(),
                 container.Resolve<GameplayPresentersFactory>()
                 );
-        }
-
-        private static GameplayUIRoot CreateGameplayUIRoot(DIContainer container)
-        {
-            ResourcesAssetsLoader resourcesAssetsLoader = container.Resolve<ResourcesAssetsLoader>();
-
-            GameplayUIRoot mainMenuUIRoot = resourcesAssetsLoader
-                .Load<GameplayUIRoot>("UI/Gameplay/GameplayUIRoot");
-
-            return Object.Instantiate(mainMenuUIRoot);
-        }
-
-        private static GameplayPresentersFactory CreateGameplayPresentersFactory(DIContainer container)
-        {
-            return new GameplayPresentersFactory(container, _inputArgs);
         }
 
         private static GameplayScreenPresenter CreateGameplayScreenPresenter(DIContainer container)
@@ -159,32 +171,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return presenter;
         }
 
-        private static DesktopInput CreateDesktopInput(DIContainer container)
+        private static GameplayPresentersFactory CreateGameplayPresentersFactory(DIContainer container)
         {
-            return new DesktopInput();
+            return new GameplayPresentersFactory(container, _inputArgs);
         }
 
-        private static CollidersRegistryService CreateCollidersRegistryService(DIContainer container)
+        private static GameplayUIRoot CreateGameplayUIRoot(DIContainer container)
         {
-            return new CollidersRegistryService();
-        }
+            ResourcesAssetsLoader resourcesAssetsLoader = container.Resolve<ResourcesAssetsLoader>();
 
-        private static MonoEntitiesFactory CreateMonoEntitiesFactory(DIContainer c)
-        {
-            return new MonoEntitiesFactory(
-                c.Resolve<ResourcesAssetsLoader>(),
-                c.Resolve<EntitiesLifeContext>(),
-                c.Resolve<CollidersRegistryService>());
-        }
+            GameplayUIRoot gameplayUIRoot = resourcesAssetsLoader
+                .Load<GameplayUIRoot>("UI/Gameplay/GameplayUIRoot");
 
-        private static EntitiesLifeContext CreateEntitiesLifeContext(DIContainer c)
-        {
-            return new EntitiesLifeContext();
-        }
-
-        private static EntitiesFactory CreateEntitiesFactory(DIContainer c)
-        {
-            return new EntitiesFactory(c);
+            return Object.Instantiate(gameplayUIRoot);
         }
     }
 }

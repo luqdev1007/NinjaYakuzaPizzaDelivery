@@ -1,7 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using Assets._Project.Develop.Runtime.Utilites.StateMachineCore;
-using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
 {
@@ -12,8 +11,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
         private ReactiveVariable<Entity> _currentTarget;
 
         public FindTargetState(
-            ITargetSelector targetSelector,
-            EntitiesLifeContext entitiesLifeContext,
+            ITargetSelector targetSelector, 
+            EntitiesLifeContext entitiesLifeContext, 
             Entity entity)
         {
             _targetSelector = targetSelector;

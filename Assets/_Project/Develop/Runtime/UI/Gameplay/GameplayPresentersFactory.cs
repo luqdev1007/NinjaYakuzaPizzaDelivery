@@ -1,8 +1,12 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
-using Assets._Project.Develop.Runtime.UI.Gameplay.Endgame;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
+using Assets._Project.Develop.Runtime.UI.CommonViews;
+using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
+using Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups;
+using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.Utilites.DataProviders;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay
@@ -18,35 +22,54 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             _inputArgs = inputArgs;
         }
 
-        public GameplayScreenPresenter CreateGameplayScreen(GameplayScreenView view)
+        public EntitiesHealthDisplayPresenter CreateEntitiesHealthDisplayPresenter(EntitiesHealthDisplay view)
         {
-            return new GameplayScreenPresenter(
+            return new EntitiesHealthDisplayPresenter(
+                _container.Resolve<EntitiesLifeContext>(),
                 view,
+                _container.Resolve<ViewsFactory>(),
+                this
+                );
+        }
+
+        public EntityHealthPresenter CreateEntityHealthPresenter(Entity entity, BarWithText view)
+        {
+            return new EntityHealthPresenter(view, entity);
+        }
+
+        public WinPopupPresenter CreateWinPopupPresenter(WinPopupView view)
+        {
+            return new WinPopupPresenter(
                 _container.Resolve<ICoroutinesPerformer>(),
+                view,
                 _container.Resolve<SceneSwitcherService>()
                 );
         }
 
-        public DefeatMenuPopupPresenter CreateDefeatMenuPopupPresenter(DefeatMenuPopupView view)
+        public DefeatPopupPresenter CreateDefeatPopupPresenter(DefeatPopupView view)
         {
-            return new DefeatMenuPopupPresenter(
-                _container.Resolve<ICoroutinesPerformer>(), 
-                view, 
-                _inputArgs, 
-                _container.Resolve<PlayerDataProvider>(),
-                _container.Resolve<WalletService>(),
-                _container.Resolve<SceneSwitcherService>());
-        }
-
-        public WinMenuPopupPresenter CreateWinMenuPopupPresenter(WinMenuPopupView view)
-        {
-            return new WinMenuPopupPresenter(
+            return new DefeatPopupPresenter(
                 _container.Resolve<ICoroutinesPerformer>(),
                 view,
-                _inputArgs,
-                _container.Resolve<PlayerDataProvider>(),
-                _container.Resolve<WalletService>(),
-                _container.Resolve<SceneSwitcherService>());
+                _container.Resolve<SceneSwitcherService>(),
+                _inputArgs
+                );
+        }
+
+        public GameplayScreenPresenter CreateGameplayScreen(GameplayScreenView view)
+        {
+            return new GameplayScreenPresenter(
+                view, 
+                _container.Resolve<GameplayPresentersFactory>()
+                );
+        }
+
+        public StagePresenter CreateStagePresenter(IconTextView view)
+        {
+            return new StagePresenter(
+                view,
+                _container.Resolve<StageProviderService>()
+                );
         }
     }
 }

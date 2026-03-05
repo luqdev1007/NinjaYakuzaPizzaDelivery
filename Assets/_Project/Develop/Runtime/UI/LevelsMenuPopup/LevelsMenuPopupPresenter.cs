@@ -48,17 +48,14 @@ namespace Assets._Project.Develop.Runtime.UI.LevelsMenuPopup
 
                 _view.LevelTilesListView.Add(levelTileView);
 
-                /*
-                GameplayInputArgs inputArgs = new GameplayInputArgs(levelsListConfig.Levels[i].LevelNumber);
+                GameplayInputArgs inputArgs = new GameplayInputArgs(levelsListConfig.Levels[i].LevelNumber, levelsListConfig.Levels[i].ContactTriggerSpawnPointPosition);
 
                 LevelTilePresenter levelTilePresenter = _presentersFactory
                     .CreateLevelTilePresenter(levelTileView, inputArgs, levelsListConfig.Levels[i]);
 
-
                 levelTilePresenter.Initialize();
 
                 _levelTilePresenters.Add(levelTilePresenter);
-                */
             }
         }
 

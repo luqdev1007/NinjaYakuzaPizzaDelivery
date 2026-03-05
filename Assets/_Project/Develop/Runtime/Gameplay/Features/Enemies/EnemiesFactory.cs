@@ -1,6 +1,5 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities.MainHeroes;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
@@ -27,22 +26,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
         }
 
-        public Entity Create(Transform at, EntityConfig config)
+        public Entity Create(Vector3 at, EntityConfig config)
         {
-            Entity entity = null;
+            Entity entity;
 
             switch (config)
             {
-                case SoldierConfig soldierConfig:
-                    // entity = _entitiesFactory.CreateSoldier(at, soldierConfig);
-                    // _brainsFactory.CreateEmptyBrain(entity);
+                case GhostConfig ghostConfig:
+                    entity = _entitiesFactory.CreateGhost(at, ghostConfig);
+                    _brainsFactory.CreateGhostBrain(entity);
                     break;
 
                 default:
                     throw new ArgumentException($"Not support {config.GetType()} type config");
             }
 
-            entity.AddTeam(new ReactiveVariable<Teams>(Teams.Enemies));
+            entity.AddTeam(new ReactiveVariable<Teams>(Teams.Enemies)); 
 
             _entitiesLifeContext.Add(entity);
 

@@ -9,6 +9,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
     {
         private Buffer<Collider> _contacts;
         private LayerMask _mask;
+
         private CapsuleCollider _body;
 
         public void OnInit(Entity entity)
@@ -26,8 +27,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
                 _body.bounds.max,
                 _body.radius,
                 _contacts.Items,
-                _mask); //, 
-                        //QueryTriggerInteraction.Ignore);
+                _mask, 
+                QueryTriggerInteraction.Ignore);
 
             RemoveSelfFromContacts();
         }

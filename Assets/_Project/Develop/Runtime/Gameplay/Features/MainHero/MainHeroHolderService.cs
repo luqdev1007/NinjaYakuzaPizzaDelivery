@@ -3,15 +3,16 @@ using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 {
     public class MainHeroHolderService : IInitializable, IDisposable
     {
         private readonly EntitiesLifeContext _entitiesLifeContext;
-
-        private ReactiveEvent<Entity> _heroRegistred = new();
+        private ReactiveEvent<Entity> _heroRegistred = new();   
 
         private Entity _mainHero;
 
@@ -26,7 +27,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         public void Initialize()
         {
             _entitiesLifeContext.Added += OnEntityAdded;
-            Debug.Log("main heroes holder service init");
         }
 
         public void Dispose()
@@ -36,11 +36,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 
         private void OnEntityAdded(Entity entity)
         {
-            if (entity.HasComponent<MainHeroTag>())
+            if (entity.HasComponent<IsMainHero>())
             {
-                _mainHero = entity;
-                _heroRegistred?.Invoke(entity);
                 _entitiesLifeContext.Added -= OnEntityAdded;
+                _mainHero = entity;
+                _heroRegistred?.Invoke(_mainHero);
             }
         }
     }

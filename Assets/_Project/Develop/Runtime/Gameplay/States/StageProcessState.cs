@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
+﻿using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Utilites.StateMachineCore;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.States
@@ -7,8 +7,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
     {
         private readonly StageProviderService _stageProviderService;
 
-        public StageProcessState(
-            StageProviderService stageProviderService)
+        public StageProcessState(StageProviderService stageProviderService)
         {
             _stageProviderService = stageProviderService;
         }

@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
 {
+
     public class RandomMovementState : State, IUpdatableState
     {
         private ReactiveVariable<Vector3> _movementDirection;

@@ -23,7 +23,7 @@ namespace Assets._Project.Develop.Runtime.Utilites.DataProviders
                 WalletData = InitWalletData(),
                 Wins = 0,
                 Losses = 0,
-                CompletedLevels = new(),
+                CompletedLevels = new()
             };
         }
 

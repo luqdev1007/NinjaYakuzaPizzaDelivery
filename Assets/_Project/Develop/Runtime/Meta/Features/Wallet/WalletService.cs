@@ -1,4 +1,4 @@
-using Assets._Project.Develop.Runtime.Utilites.DataManagment;
+﻿using Assets._Project.Develop.Runtime.Utilites.DataManagment;
 using Assets._Project.Develop.Runtime.Utilites.DataProviders;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using System;
@@ -12,7 +12,7 @@ namespace Assets._Project.Develop.Runtime.Meta.Features.Wallet
     {
         private readonly Dictionary<CurrencyTypes, ReactiveVariable<int>> _currencies;
 
-        public WalletService(Dictionary<CurrencyTypes,
+        public WalletService(Dictionary<CurrencyTypes, 
             ReactiveVariable<int>> currencies,
             PlayerDataProvider playerDataProvider)
         {
@@ -56,7 +56,7 @@ namespace Assets._Project.Develop.Runtime.Meta.Features.Wallet
         }
 
         public void ReadFrom(PlayerData data)
-        { 
+        {
             foreach (KeyValuePair<CurrencyTypes, int> currency in data.WalletData)
             {
                 if (_currencies.ContainsKey(currency.Key))

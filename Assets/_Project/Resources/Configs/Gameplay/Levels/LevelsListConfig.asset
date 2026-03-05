@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b8809ad7847c964e9406f7077815b00, type: 3}
+  m_Script: {fileID: 11500000, guid: 07dd40487f6c26a4481651115c2eabbf, type: 3}
   m_Name: LevelsListConfig
   m_EditorClassIdentifier: 
   _levels:
-  - {fileID: 11400000, guid: a6ca2c006c82a374a9bdd17f959ee8ea, type: 2}
-  - {fileID: 11400000, guid: 4292b1f886ee46b41bdd97a32325fa0e, type: 2}
-  - {fileID: 11400000, guid: 8ae290ea56361b54daa3e64e385fc180, type: 2}
+  - {fileID: 11400000, guid: 96f0363f4f5f18b479c230c388ccb8c8, type: 2}
+  - {fileID: 11400000, guid: 64ada57846212754f806575411f1de1c, type: 2}
+  - {fileID: 11400000, guid: 50d2ea3ef5e16cd4e83e1563f02e9551, type: 2}

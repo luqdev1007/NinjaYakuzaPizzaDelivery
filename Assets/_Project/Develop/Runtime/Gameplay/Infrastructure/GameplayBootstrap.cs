@@ -1,14 +1,15 @@
-﻿using Assets._Project.Develop.Infrastructure.DI;
-using Assets._Project.Develop.Infrastructure;
+﻿using Assets._Project.Develop.Infrastructure;
+using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.States;
+using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using System;
 using System.Collections;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
-using Assets._Project.Develop.Runtime.Gameplay.States;
-using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
-using Assets._Project.Develop.Runtime.UI.Gameplay;
+
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 {
@@ -18,19 +19,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         private GameplayInputArgs _inputArgs;
 
-        // ctx
-        private EntitiesLifeContext _entitiesLifeContext;
-        private AIBrainsContext _brainsContext;
         private GameplayStatesContext _gameplayStatesContext;
 
-        // factories
-        private EntitiesFactory _entitiesFactory;
+        private GameplayScreenPresenter _screenPresenter;
 
-        // UI
-        private GameplayScreenPresenter _gameplayScreenPresenter;
+        private EntitiesLifeContext _entitiesLifeContext;
 
-        // Input
-        private IInputService _input;
+        private AIBrainsContext _brainsContext;
 
         public override void ProcessRegistrations(DIContainer container, IInputSceneArgs sceneArgs = null)
         {
@@ -46,52 +41,40 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         public override IEnumerator Initialize()
         {
-            Debug.Log("Инициализация геймплейной сцены");
+            Debug.Log("Gameplay scene init");
 
-            // factories
-            _entitiesFactory = _container.Resolve<EntitiesFactory>();
+            _screenPresenter = _container.Resolve<GameplayScreenPresenter>();
 
-            // ctx
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
+
             _brainsContext = _container.Resolve<AIBrainsContext>();
+
             _gameplayStatesContext = _container.Resolve<GameplayStatesContext>();
 
-            // UI
-            _gameplayScreenPresenter = _container.Resolve<GameplayScreenPresenter>();
-
-            // Input
-            _input = _container.Resolve<IInputService>();
-
-            CreateMainHero(); // init
+            _container.Resolve<MainHeroFactory>().Create(Vector3.zero);
 
             yield break;
         }
 
         public override void Run()
         {
-            Debug.Log("Старт геймплейной сцены");
+            Debug.Log($"Start gameplay scene");
 
-            // _gameplayStatesContext.Run();
+            _gameplayStatesContext.Run();
         }
 
         private void Update()
         {
-            // _gameplayStatesContext?.Update(Time.deltaTime);
+            _brainsContext?.Update(Time.deltaTime);
 
             _entitiesLifeContext?.Update(Time.deltaTime);
 
-            _brainsContext?.Update(Time.deltaTime);
+            _gameplayStatesContext?.Update(Time.deltaTime);
         }
 
-        private void CreateMainHero()
+        private void LateUpdate()
         {
-            // example
-            /*
-            MainShipConfig config = _container.Resolve<ConfigsProviderService>()
-                .GetConfig<MainShipConfig>(); // saved data provide
-
-            _mainShip = _vehiclesFactory.Create(null, Teams.Allies, config);
-            */
+            _screenPresenter?.LateUpdate();
         }
     }
 }

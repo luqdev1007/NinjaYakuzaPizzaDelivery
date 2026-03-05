@@ -1,61 +1,63 @@
 ﻿using Assets._Project.Develop.Runtime.UI.Core;
-using System.Collections.Generic;
+using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
+using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
 using System;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
+using System.Collections.Generic;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay
 {
     public class GameplayScreenPresenter : IPresenter
     {
         private readonly GameplayScreenView _view;
+        private readonly GameplayPresentersFactory _gameplayPresentersFactory;
 
-        // services 
-        private readonly ICoroutinesPerformer _coroutinesPerformer;
-        private readonly SceneSwitcherService _sceneSwitcherService;
-
-        private List<IDisposable> _disposables = new();
+        private EntitiesHealthDisplayPresenter _entitiesHealthDisplayPresenter;
 
         private readonly List<IPresenter> _childPresenters = new();
 
         public GameplayScreenPresenter(
             GameplayScreenView view,
-            ICoroutinesPerformer coroutinesPerformer,
-            SceneSwitcherService sceneSwitcherService)
+            GameplayPresentersFactory gmeplayPresentersFactory)
         {
             _view = view;
-
-            // services 
-            _coroutinesPerformer = coroutinesPerformer;
-            _sceneSwitcherService = sceneSwitcherService;
+            _gameplayPresentersFactory = gmeplayPresentersFactory;
         }
 
         public void Initialize()
         {
-            _view.Init();
+            CreateStageNumber();
+            CreateEntitiesHealthDisplay();
 
-            _view.BackToMenuButton.onClick.AddListener(BackToMenu);
-            
             foreach (IPresenter presenter in _childPresenters)
                 presenter.Initialize();
         }
 
         public void Dispose()
         {
-            _view.BackToMenuButton.onClick.RemoveListener(BackToMenu);
-
-            foreach (var disposable in _disposables)
-                disposable.Dispose();
-
             foreach (IPresenter presenter in _childPresenters)
                 presenter.Dispose();
 
-            _disposables.Clear();
+            _childPresenters.Clear();
         }
 
-        private void BackToMenu()
+        public void LateUpdate()
         {
-            _coroutinesPerformer.StartPerform(_sceneSwitcherService.ProcessingSwitchTo(Scenes.MainMenu));
+            _entitiesHealthDisplayPresenter.LateUpdate();
+        }
+
+        private void CreateEntitiesHealthDisplay()
+        {
+            _entitiesHealthDisplayPresenter = _gameplayPresentersFactory
+                .CreateEntitiesHealthDisplayPresenter(_view.EntitiesHealthDisplay);
+
+            _childPresenters.Add(_entitiesHealthDisplayPresenter);
+        }
+
+        private void CreateStageNumber()
+        {
+            StagePresenter stagePresenter = _gameplayPresentersFactory.CreateStagePresenter(_view.StageNumberView);
+
+            _childPresenters.Add(stagePresenter);
         }
     }
 }

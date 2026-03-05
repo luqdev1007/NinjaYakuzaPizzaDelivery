@@ -6,7 +6,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
     {
         public AIParallelState(params IUpdatableState[] states) : base(states)
         {
-
+            
         }
 
         public void Update(float deltaTime)

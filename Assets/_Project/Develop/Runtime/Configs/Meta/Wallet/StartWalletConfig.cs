@@ -1,4 +1,4 @@
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+﻿using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Meta.Wallet
     {
         [SerializeField] private List<CurrencyConfig> _values;
 
-        public int GetValueFor(CurrencyTypes currencyType)
+        public int GetValueFor(CurrencyTypes currencyType) 
             => _values.First(config => config.Type == currencyType).Value;
 
         [Serializable]
@@ -21,9 +21,4 @@ namespace Assets._Project.Develop.Runtime.Configs.Meta.Wallet
             [field: SerializeField] public int Value { get; private set; }
         }
     }
-}
-
-
-namespace Assets._Project.Develop.Runtime.Configs.Meta.Wallet
-{
 }

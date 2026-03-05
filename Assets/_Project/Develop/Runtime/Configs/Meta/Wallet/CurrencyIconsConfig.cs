@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
 namespace Assets._Project.Develop.Runtime.Configs.Meta.Wallet
 {
     [CreateAssetMenu(menuName = "Configs/Wallet/New Currency Icons Config", fileName = "CurrencyIconsConfig", order = 54)]

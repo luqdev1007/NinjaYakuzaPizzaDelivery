@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
+using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
@@ -42,15 +43,20 @@ namespace Assets._Project.Develop.Runtime.UI
                 _container.Resolve<ICoroutinesPerformer>(),
                 inputArgs,
                 view,
-                config);
+                config,
+               _container.Resolve<LevelsProgressionService>());
         }
 
-        public ConfirmPopupPresenter CreateConfirmPopupPresenter(
-            ConfirmPopupView view,
-            Action onConfirmButtonClicked, 
-            string header)
+        public CurrencyPresenter CreateCurrencyPresenter(
+            IconTextView view, 
+            IReadOnlyVariable<int> currency,
+            CurrencyTypes currencyType)
         {
-            return new ConfirmPopupPresenter(view, _container.Resolve<ICoroutinesPerformer>(), onConfirmButtonClicked, header);
+            return new CurrencyPresenter(
+                currency, 
+                currencyType, 
+                _container.Resolve<ConfigsProviderService>().GetConfig<CurrencyIconsConfig>(),
+                view);
         }
 
         public WalletPresenter CreateWalletPresenter(IconTextListView view)
@@ -63,16 +69,9 @@ namespace Assets._Project.Develop.Runtime.UI
                 );
         }
 
-        public CurrencyPresenter CreateCurrencyPresenter(
-            IconTextView view,
-            IReadOnlyVariable<int> currency,
-            CurrencyTypes currencyType)
+        public ConfirmPopupPresenter CreateConfirmPopupPresenter(ConfirmPopupView view, Action onConfirmButtonClicked, string header)
         {
-            return new CurrencyPresenter(
-                currency,
-                currencyType,
-                _container.Resolve<ConfigsProviderService>().GetConfig<CurrencyIconsConfig>(),
-                view);
+            return new ConfirmPopupPresenter(view, _container.Resolve<ICoroutinesPerformer>(), onConfirmButtonClicked, header);
         }
     }
 }

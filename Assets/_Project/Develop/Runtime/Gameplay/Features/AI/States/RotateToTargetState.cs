@@ -7,7 +7,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
 {
     public class RotateToTargetState : State, IUpdatableState
     {
-        private ReactiveVariable<Vector3> _rotationDirection;
+        private ReactiveVariable<Vector3> _rotationDirection; 
         private ReactiveVariable<Entity> _currentTarget;
         private Transform _transform;
 
@@ -20,18 +20,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
 
         public void Update(float deltaTime)
         {
-            if (_currentTarget.Value != null && _currentTarget.Value.Transform != null)
+            if (_currentTarget.Value != null)
             {
-                Vector3 direction = _currentTarget.Value.Transform.position - _transform.position;
-
-                // 2. ИГНОРИРУЕМ ВЕРТИКАЛЬ (Y)
-                // Это не дает объекту "клевать носом" или задирать его вверх
-                // direction.y = 0;
-
-                if (direction.sqrMagnitude > 0.0001f)
-                {
-                    _rotationDirection.Value = direction.normalized;
-                }
+                _rotationDirection.Value = (_currentTarget.Value.Transform.position - _transform.position).normalized;
             }
         }
     }

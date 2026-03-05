@@ -6,11 +6,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
     {
         bool IsEnabled { get; set; }
 
-        Vector2 MoveDirection { get; }
-        Vector2 RotateDirection { get; }
-
+        Vector3 MoveDirection { get; }
+        Vector3 RotateDirection { get; }
         bool IsAttackKeyPressed { get; }
-        bool IsAttackKeyReleased { get; }
-        bool IsAttackKeyHold { get; }
     }
 }

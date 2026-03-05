@@ -1,7 +1,10 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
+using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
+using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
@@ -19,49 +22,50 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
 
         public Entity SelectTargetFrom(IEnumerable<Entity> targets)
         {
-            if (targets == null) 
-                return null;
-
-            Entity closestTarget = null;
-            float minDistance = float.MaxValue;
-
-            foreach (Entity target in targets)
+            IEnumerable<Entity> selectedTargets = targets.Where(target =>
             {
-                if (target == null || target.Transform == null || target == _source)
-                    continue;
-
-                if (target.HasComponent<TakeDamageRequest>() == false)
-                    continue;
-
-                if (EntitiesHelper.IsSameTeam(_source, target))
-                    continue;
+                bool result = target.HasComponent<TakeDamageRequest>();
 
                 if (target.TryGetCanApplyDamage(out ICompositeCondition canApplyDamage))
                 {
-                    if (canApplyDamage.Evaluate() == false)
-                        continue;
+                    result = result && canApplyDamage.Evaluate();
                 }
 
-                Vector3 diff = target.Transform.position - _sourceTransform.position;
-                float curSqrDistance = diff.sqrMagnitude;
-
-                if (curSqrDistance < minDistance)
+                /*
+                if (_source.TryGetTeam(out ReactiveVariable<Teams> sourceTeam)
+                && target.TryGetTeam(out ReactiveVariable<Teams> targetTeam))
                 {
-                    minDistance = curSqrDistance;
+                    result = result && (sourceTeam.Value != targetTeam.Value);
+                }
+                */
+
+                result = result && EntitiesHelper.IsSameTeam(_source, target) == false;
+
+                result = result && (target != _source);
+
+                return result;
+            });
+
+            if (selectedTargets.Any() == false)
+                return null;
+
+            Entity closestTarget = selectedTargets.First();
+            float minDistance = GetDistanceTo(closestTarget);
+
+            foreach (Entity target in selectedTargets)
+            {
+                float distance = GetDistanceTo(target);
+
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
                     closestTarget = target;
                 }
             }
 
-            if (closestTarget == null)
-            {
-                // Debug.Log("[TargetSelector] Подходящих целей не найдено.");
-            }
-            else
-            {
-                // Debug.Log($"[TargetSelector] Найдена цель: {closestTarget.Transform.gameObject.name}");
-            }
-
             return closestTarget;
         }
+
+        private float GetDistanceTo(Entity target) => (_sourceTransform.position - target.Transform.position).magnitude;
     }
 }

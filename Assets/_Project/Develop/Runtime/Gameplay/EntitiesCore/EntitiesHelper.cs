@@ -1,5 +1,10 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 {
@@ -9,9 +14,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         {
             if (damageable.TryGetTakeDamageRequest(out ReactiveEvent<float> takeDamageRequest) == false)
                 return false;
-     
-            if (IsSameTeam(source, damageable)) 
-                return false;
+
+            if (source.TryGetTeam(out ReactiveVariable<Teams> sourceTeam)
+                && damageable.TryGetTeam(out ReactiveVariable<Teams> damageableTeam))
+            {
+                if (sourceTeam.Value == damageableTeam.Value)
+                    return false;
+            }
 
             takeDamageRequest.Invoke(damage);
 

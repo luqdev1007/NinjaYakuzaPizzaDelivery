@@ -1,5 +1,4 @@
 ﻿using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Utilites.StateMachineCore
 {
@@ -11,12 +10,7 @@ namespace Assets._Project.Develop.Runtime.Utilites.StateMachineCore
         public IReadOnlyEvent Entered => _entered;
         public IReadOnlyEvent Exited => _exited;
 
-        public virtual void Enter()
-        {
-            _entered.Invoke();
-            // Debug.Log($"Entered state: {GetType()}");
-        }
-
+        public virtual void Enter() => _entered.Invoke();
         public virtual void Exit() => _exited.Invoke();   
     }
 }

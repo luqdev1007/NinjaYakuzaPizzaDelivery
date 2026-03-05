@@ -6,6 +6,12 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 {
+
+    public class HealthBarPoint : IEntityComponent
+    {
+        public Transform Value;
+    }
+        
     public class CurrentHealth : IEntityComponent
     {
         public ReactiveVariable<float> Value;
@@ -14,11 +20,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
     public class MaxHealth : IEntityComponent
     {
         public ReactiveVariable<float> Value;
-    }
-
-    public class IsReborn : IEntityComponent
-    {
-        public ReactiveVariable<bool> Value;
     }
 
     public class MustDie : IEntityComponent

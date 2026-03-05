@@ -55,7 +55,6 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             ViewsFactory.Release(_presenterToInfo[popup].View);
         }
 
-
         public LevelsMenuPopupPresenter OpenLevelsMenuPopup()
         {
             LevelsMenuPopupView view = ViewsFactory.Create<LevelsMenuPopupView>(ViewIDs.LevelsMenuPopup, PopupLayer);

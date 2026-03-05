@@ -1,4 +1,6 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
+using Assets._Project.Develop.Runtime.Meta.Features.Stats;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
@@ -14,11 +16,10 @@ using Assets._Project.Develop.Runtime.Utilites.LoadingScreen;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using Assets._Project.Develop.Runtime.Utilites.Timer;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
-using Assets._Project.Develop.Runtime.Utilites.RaycastManagment;
 
 namespace Assets._Project.Develop.Infrastructure.EntryPoint
 {
@@ -38,36 +39,46 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
 
             container.RegisterAsSingle<ILoadingScreen>(CreateStandartLoadingScreen);
 
+            container.RegisterAsSingle(CreateWalletService).NonLazy();
+
+
             container.RegisterAsSingle(CreatePlayerDataProvider);
 
             container.RegisterAsSingle<ISaveLoadService>(CreateSaveLoadService);
+
+            container.RegisterAsSingle(CreateGameStatsService).NonLazy();
+
+            container.RegisterAsSingle(CreateResetDataService);
+
+            container.RegisterAsSingle(CreateProjectPresentersFactory);
 
             container.RegisterAsSingle(CreateViewsFactory);
 
             container.RegisterAsSingle(CreateTimerServiceFactory);
 
-            container.RegisterAsSingle(CreateProjectPresentersFactory);
-
-            container.RegisterAsSingle(CreateWalletService).NonLazy();
-
-            container.RegisterAsSingle(CreateSurfaceRaycaster);
-        }
-
-        private static SurfaceRaycaster CreateSurfaceRaycaster(DIContainer container)
-        {
-            return new SurfaceRaycaster();
-        }
-
-        private static ProjectPresentersFactory CreateProjectPresentersFactory(DIContainer container)
-        {
-            return new ProjectPresentersFactory(container);
+            container.RegisterAsSingle(CreateLevelsProgressionService).NonLazy();
         }
 
         private static TimerServiceFactory CreateTimerServiceFactory(DIContainer container)
             => new TimerServiceFactory(container);
 
+        private static LevelsProgressionService CreateLevelsProgressionService(DIContainer container)
+            => new LevelsProgressionService(container.Resolve<PlayerDataProvider>());
+
         private static ViewsFactory CreateViewsFactory(DIContainer container) 
             => new ViewsFactory(container.Resolve<ResourcesAssetsLoader>());
+
+        private static ProjectPresentersFactory CreateProjectPresentersFactory(DIContainer container) 
+            => new ProjectPresentersFactory(container);
+
+        private static GameStatsService CreateGameStatsService(DIContainer container) 
+            => new GameStatsService(container.Resolve<PlayerDataProvider>());
+
+        private static ResetWinLoseStatsService CreateResetDataService(DIContainer container)
+            => new ResetWinLoseStatsService(
+                container.Resolve<WalletService>(), 
+                container.Resolve<GameStatsService>(), 
+                container.Resolve<ConfigsProviderService>());
 
         private static PlayerDataProvider CreatePlayerDataProvider(DIContainer container) 
             => new PlayerDataProvider(container.Resolve<ISaveLoadService>(), container.Resolve<ConfigsProviderService>());
@@ -82,6 +93,18 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             IDataRepository dataRepository = new LocalFileDataRepository(saveFolderPath, "json");
 
             return new SaveLoadService(dataSerializer, dataKeysStorage, dataRepository);
+        }
+
+        private static WalletService CreateWalletService(DIContainer container)
+        {
+            Dictionary<CurrencyTypes, ReactiveVariable<int>> currencies = new();
+            
+            foreach (CurrencyTypes currencyType in Enum.GetValues(typeof(CurrencyTypes)))
+            {
+                currencies[currencyType] = new ReactiveVariable<int>(0);
+            }
+
+            return new WalletService(currencies, container.Resolve<PlayerDataProvider>());
         }
 
         private static SceneSwitcherService CreateSceneSwitcherService(DIContainer container) 
@@ -119,16 +142,6 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
                 .Load<StandartLoadingScreen>("Utilities/StandartLoadingScreen");
 
             return Object.Instantiate(standartLoadingScreen);
-        }
-
-        private static WalletService CreateWalletService(DIContainer container)
-        {
-            Dictionary<CurrencyTypes, ReactiveVariable<int>> currencies = new();
-
-            foreach (CurrencyTypes currencyType in Enum.GetValues(typeof(CurrencyTypes)))
-                currencies[currencyType] = new ReactiveVariable<int>();
-
-            return new WalletService(currencies, container.Resolve<PlayerDataProvider>());
         }
     }
 }
