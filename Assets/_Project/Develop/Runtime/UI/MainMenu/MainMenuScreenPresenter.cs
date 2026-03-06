@@ -12,7 +12,7 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
         private readonly MainMenuPopupService _popupService;
         private readonly WalletService _wallet;
         private readonly GameStatsService _statsService;
-        private readonly ResetWinLoseStatsService _resetDataService;
+        private readonly ResetStatsService _resetDataService;
 
         private List<IDisposable> _disposables = new();
 
@@ -21,7 +21,7 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             MainMenuPopupService popupService,
             WalletService wallet,
             GameStatsService statsService,
-            ResetWinLoseStatsService resetDataService)
+            ResetStatsService resetDataService)
         {
             _view = view;
             _popupService = popupService;

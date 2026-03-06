@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Utilites.DataManagment;
 using Assets._Project.Develop.Runtime.Utilites.DataProviders;
+using System;
 using System.Collections.Generic;
 
 namespace Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression
@@ -41,5 +42,10 @@ namespace Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression
         public bool CanPlay(int levelNumber) => levelNumber == FirstLevel || IsPreviousLevelCompleted(levelNumber);
 
         private bool IsPreviousLevelCompleted(int levelNumber) => IsLevelCompleted(levelNumber - 1);
+
+        public void ResetProgress()
+        {
+            _completedLevels.Clear();
+        }
     }
 }
