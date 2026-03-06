@@ -42,6 +42,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory.Create(entity, position, config.PrefabPath);
 
             entity
+                .AddMoveSpeedMin(new ReactiveVariable<float>(config.MoveSpeedMin))
+                .AddAcceleration(new ReactiveVariable<float>(config.Acceleration))
+                .AddDeceleration(new ReactiveVariable<float>(config.Deceleration))
+
                 .AddMoveDirection()
                 .AddMoveSpeed(new ReactiveVariable<float>(config.MoveSpeed))
                 .AddIsMoving()

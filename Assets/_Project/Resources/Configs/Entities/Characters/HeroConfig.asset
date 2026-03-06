@@ -13,8 +13,13 @@ MonoBehaviour:
   m_Name: HeroConfig
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/Characters/Hero
-  <MoveSpeed>k__BackingField: 4
-  <JumpForce>k__BackingField: 12
+  <MoveSpeed>k__BackingField: 10
+  <MoveSpeedMin>k__BackingField: 5
+  <Acceleration>k__BackingField: 6
+  <Deceleration>k__BackingField: 8
+  <JumpForce>k__BackingField: 10
+  <JumpForceMax>k__BackingField: 20
+  <JumpChargeTime>k__BackingField: 0.5
   <MaxJumps>k__BackingField: 1
   <GroundMask>k__BackingField:
     serializedVersion: 2
@@ -25,4 +30,4 @@ MonoBehaviour:
   <InstantAttackDamage>k__BackingField: 50
   <MaxHealth>k__BackingField: 100
   <DeathProcessTime>k__BackingField: 2
-  <SpawnProcessTime>k__BackingField: 1
+  <SpawnProcessTime>k__BackingField: 0.5

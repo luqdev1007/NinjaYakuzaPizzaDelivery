@@ -9,6 +9,9 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 
         [Header("Movement Settings")]
         [field: SerializeField, Min(0)] public float MoveSpeed { get; private set; } = 10;
+        [field: SerializeField, Min(0)] public float MoveSpeedMin { get; private set; } = 3f;
+        [field: SerializeField, Min(0)] public float Acceleration { get; private set; } = 20f;
+        [field: SerializeField, Min(0)] public float Deceleration { get; private set; } = 15f;
 
         [Header("Jump Settings")]
         [field: SerializeField, Min(0)] public float JumpForce { get; private set; } = 12f;

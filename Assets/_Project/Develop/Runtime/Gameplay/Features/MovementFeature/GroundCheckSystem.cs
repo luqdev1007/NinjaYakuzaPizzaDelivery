@@ -29,7 +29,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
                 origin, size, 0f, Vector2.down, castDistance, _groundMask);
 
             _isGrounded.Value = hit.collider != null;
-            Debug.Log("OnGround: " + _isGrounded.Value);
+            // Debug.Log("OnGround: " + _isGrounded.Value);
         }
     }
 }

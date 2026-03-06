@@ -66,10 +66,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private void Update()
         {
             _brainsContext?.Update(Time.deltaTime);
-
             _entitiesLifeContext?.Update(Time.deltaTime);
-
             _gameplayStatesContext?.Update(Time.deltaTime);
+
+            if (Input.GetKeyDown(KeyCode.Equals)) // + 
+                Time.timeScale = Mathf.Min(1f, Mathf.Round((Time.timeScale + 0.1f) * 10f) / 10f);
+
+            if (Input.GetKeyDown(KeyCode.Minus)) // -
+                Time.timeScale = Mathf.Max(0f, Mathf.Round((Time.timeScale - 0.1f) * 10f) / 10f);
         }
 
         private void LateUpdate()

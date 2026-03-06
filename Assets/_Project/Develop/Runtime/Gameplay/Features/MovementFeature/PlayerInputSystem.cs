@@ -22,5 +22,6 @@ public class PlayerInputSystem : IInitializableSystem, IUpdatableSystem
     public void OnUpdate(float deltaTime)
     {
         _moveDirection.Value = _inputService.MoveDirection;
+        Debug.Log($"MoveDirection: {_moveDirection.Value}");
     }
 }
