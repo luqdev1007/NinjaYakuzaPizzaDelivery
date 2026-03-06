@@ -30,29 +30,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
 
         public StateMachineBrain CreateMainHeroBrain(Entity entity, ITargetSelector targetSelector)
         {
-            AIStateMachine combatState = CreateAutoAttackStateMachine(entity);
+            FindTargetState findTargetState = new FindTargetState(
+                targetSelector, _entitiesLifeContext, entity);
 
-            PlayerInputMovementState movementState = new PlayerInputMovementState(entity, _inputService);
+            AIStateMachine combatState = CreateAutoAttackStateMachine(entity);
 
             ReactiveVariable<Entity> currentTarget = entity.CurrentTarget;
 
-            ICompositeCondition fromMovementToCombatStateCondition = new CompositeCondition()
+            // боевой стейт активен только когда есть цель и игрок не двигается
+            ICompositeCondition toCombatCondition = new CompositeCondition()
                 .Add(new FuncCondition(() => currentTarget.Value != null))
-                .Add(new FuncCondition(() => _inputService.MoveDirection == Vector3.zero));
+                .Add(new FuncCondition(() => _inputService.MoveDirection == Vector2.zero));
 
-            ICompositeCondition fromCombatToMovementStateCondition = new CompositeCondition(LogicOperations.Or)
+            ICompositeCondition fromCombatCondition = new CompositeCondition(LogicOperations.Or)
                 .Add(new FuncCondition(() => currentTarget.Value == null))
-                .Add(new FuncCondition(() => _inputService.MoveDirection != Vector3.zero));
+                .Add(new FuncCondition(() => _inputService.MoveDirection != Vector2.zero));
+
+            EmptyState idleState = new EmptyState();
 
             AIStateMachine behaviour = new AIStateMachine();
-
-            behaviour.AddState(movementState);
+            behaviour.AddState(idleState);
             behaviour.AddState(combatState);
+            behaviour.AddTransition(idleState, combatState, toCombatCondition);
+            behaviour.AddTransition(combatState, idleState, fromCombatCondition);
 
-            behaviour.AddTransition(movementState, combatState, fromMovementToCombatStateCondition);
-            behaviour.AddTransition(combatState, movementState, fromCombatToMovementStateCondition);
-
-            FindTargetState findTargetState = new FindTargetState(targetSelector, _entitiesLifeContext, entity);
             AIParallelState parallelState = new AIParallelState(findTargetState, behaviour);
 
             AIStateMachine rootStateMachine = new AIStateMachine();
@@ -102,42 +103,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
 
             return stateMachine; 
         }
-    
+
         private AIStateMachine CreateAutoAttackStateMachine(Entity entity)
         {
-            RotateToTargetState rotateToTargetState = new RotateToTargetState(entity); 
-
             AttackTriggerState attackTriggerState = new AttackTriggerState(entity);
 
             ICondition canAttack = entity.CanStartAttack;
-            Transform transform = entity.Transform;
-            ReactiveVariable<Entity> currentTarget = entity.CurrentTarget;
-
-            ICompositeCondition fromRotateToAttackCondition = new CompositeCondition()
-                .Add(canAttack)
-                .Add(new FuncCondition(() =>
-                {
-                    Entity target = currentTarget.Value;
-
-                    if (target == null)
-                        return false;
-
-                    float angleToTarget = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(target.Transform.position - transform.position));
-
-                    return angleToTarget < 3f;
-                }));
-
             ReactiveVariable<bool> inAttackProcess = entity.InAttackProcess;
 
-            ICondition fromAttackToRotateStateCondition = new FuncCondition(() => inAttackProcess.Value == false);
+            // атакуем сразу если можем, возвращаемся ждать после атаки
+            ICondition toAttackCondition = new FuncCondition(() => canAttack.Evaluate());
+            ICondition fromAttackCondition = new FuncCondition(() => inAttackProcess.Value == false);
+
+            // пустой стейт ожидания
+            EmptyState waitState = new EmptyState();
 
             AIStateMachine stateMachine = new AIStateMachine();
 
-            stateMachine.AddState(rotateToTargetState);
+            stateMachine.AddState(waitState);
             stateMachine.AddState(attackTriggerState);
 
-            stateMachine.AddTransition(rotateToTargetState, attackTriggerState, fromRotateToAttackCondition);
-            stateMachine.AddTransition(attackTriggerState, rotateToTargetState, fromAttackToRotateStateCondition);
+            stateMachine.AddTransition(waitState, attackTriggerState, toAttackCondition);
+            stateMachine.AddTransition(attackTriggerState, waitState, fromAttackCondition);
 
             return stateMachine;
         }

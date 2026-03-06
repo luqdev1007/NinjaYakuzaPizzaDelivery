@@ -9,7 +9,13 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 
         [Header("Movement Settings")]
         [field: SerializeField, Min(0)] public float MoveSpeed { get; private set; } = 10;
-        [field: SerializeField, Min(0)] public float RotationSpeed { get; private set; } = 900;
+
+        [Header("Jump Settings")]
+        [field: SerializeField, Min(0)] public float JumpForce { get; private set; } = 12f;
+        [field: SerializeField, Min(1)] public int MaxJumps { get; private set; } = 1;
+
+        [Header("Physics")]
+        [field: SerializeField] public LayerMask GroundMask { get; private set; }
 
         [Header("Attack Settings")]
         [field: SerializeField, Min(0)] public float AttackProcessTime { get; private set; } = 1.5f;
@@ -21,37 +27,5 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField, Min(0)] public float MaxHealth { get; private set; } = 100;
         [field: SerializeField, Min(0)] public float DeathProcessTime { get; private set; } = 2;
         [field: SerializeField, Min(0)] public float SpawnProcessTime { get; private set; } = 2;
-
-
-        [SerializeField, HideInInspector] private float _lastAttackProcessTime;
-        [SerializeField, HideInInspector] private float _lastAttackDelayTime;
-
-        private void OnValidate()
-        {
-            if (_lastAttackProcessTime <= 0)
-            {
-                _lastAttackProcessTime = AttackProcessTime;
-                _lastAttackDelayTime = AttackDelayTime;
-                return;
-            }
-
-            if (!Mathf.Approximately(AttackProcessTime, _lastAttackProcessTime))
-            {
-                if (_lastAttackProcessTime > 0)
-                {
-                    float ratio = _lastAttackDelayTime / _lastAttackProcessTime;
-                    AttackDelayTime = AttackProcessTime * ratio;
-                }
-
-                _lastAttackProcessTime = AttackProcessTime;
-                _lastAttackDelayTime = AttackDelayTime;
-            }
-
-            else if (!Mathf.Approximately(AttackDelayTime, _lastAttackDelayTime))
-            {
-                _lastAttackDelayTime = AttackDelayTime;
-                _lastAttackProcessTime = AttackProcessTime;
-            }
-        }
     }
 }

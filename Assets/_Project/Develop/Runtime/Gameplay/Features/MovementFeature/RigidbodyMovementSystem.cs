@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 {
+
     public class RigidbodyMovementSystem : IInitializableSystem, IUpdatableSystem
     {
         private ReactiveVariable<Vector2> _moveDirection;
@@ -28,15 +29,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         {
             if (_canMove.Evaluate() == false)
             {
-                _rigidbody.linearVelocity = Vector3.zero;
+                _rigidbody.linearVelocity = new Vector2(0, _rigidbody.linearVelocity.y);
                 return;
             }
 
-            Vector3 velocity = _moveDirection.Value.normalized * _moveSpeed.Value;
+            // сохраняем Y velocity (гравитация + прыжок), меняем только X
+            float targetX = _moveDirection.Value.normalized.x * _moveSpeed.Value;
+            _rigidbody.linearVelocity = new Vector2(targetX, _rigidbody.linearVelocity.y);
 
-            _isMoving.Value = _rigidbody.linearVelocity.magnitude > 0;
-
-            _rigidbody.linearVelocity = velocity;
+            _isMoving.Value = Mathf.Abs(_rigidbody.linearVelocity.x) > 0.01f;
         }
     }
 }

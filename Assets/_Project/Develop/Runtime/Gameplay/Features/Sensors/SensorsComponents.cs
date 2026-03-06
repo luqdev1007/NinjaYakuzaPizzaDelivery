@@ -10,6 +10,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
         public Collider2D Value;
     }
 
+    public class GroundMask : IEntityComponent
+    {
+        public LayerMask Value;
+    }
+
     public class ContactsDetectingMask : IEntityComponent
     {
         public LayerMask Value;

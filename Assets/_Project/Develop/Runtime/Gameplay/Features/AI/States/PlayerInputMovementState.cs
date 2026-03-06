@@ -11,20 +11,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
         private IInputService _inputService;
 
         private ReactiveVariable<Vector2> _movementDirection;
-        private ReactiveVariable<Vector3> _rotationDirection;
 
         public PlayerInputMovementState(Entity entity, IInputService inputService)
         {
             _inputService = inputService;
 
             _movementDirection = entity.MoveDirection;
-            _rotationDirection = entity.RotationDirection;
         }
 
         public void Update(float deltaTime)
         {
             _movementDirection.Value = _inputService.MoveDirection;
-            _rotationDirection.Value = _inputService.MoveDirection;
         }
 
         public override void Exit()

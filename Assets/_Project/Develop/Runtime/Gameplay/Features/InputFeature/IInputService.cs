@@ -5,9 +5,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
     public interface IInputService
     {
         bool IsEnabled { get; set; }
-
-        Vector3 MoveDirection { get; }
-        Vector3 RotateDirection { get; }
+        Vector2 MoveDirection { get; } 
+        bool IsJumpKeyPressed { get; }
         bool IsAttackKeyPressed { get; }
     }
 }

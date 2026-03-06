@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/Characters/Hero
   <MoveSpeed>k__BackingField: 4
-  <RotationSpeed>k__BackingField: 900
+  <JumpForce>k__BackingField: 12
+  <MaxJumps>k__BackingField: 1
+  <GroundMask>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 256
   <AttackProcessTime>k__BackingField: 0.1
   <AttackDelayTime>k__BackingField: 0.060000002
   <AttackCooldown>k__BackingField: 1
@@ -22,5 +26,3 @@ MonoBehaviour:
   <MaxHealth>k__BackingField: 100
   <DeathProcessTime>k__BackingField: 2
   <SpawnProcessTime>k__BackingField: 1
-  _lastAttackProcessTime: 0.1
-  _lastAttackDelayTime: 0.060000002
