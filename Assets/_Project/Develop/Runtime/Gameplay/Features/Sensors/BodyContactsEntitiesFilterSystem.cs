@@ -7,7 +7,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
 {
     public class BodyContactsEntitiesFilterSystem : IInitializableSystem, IUpdatableSystem
     {
-        private Buffer<Collider> _contacts;
+        private Buffer<Collider2D> _contacts;
         private Buffer<Entity> _contactsEntities;
 
         private readonly CollidersRegistryService _colllidersRegistryService;
@@ -29,7 +29,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
 
             for (int i = 0; i < _contacts.Count; i++)
             {
-                Collider collider = _contacts.Items[i];
+                Collider2D collider = _contacts.Items[i];
 
                 Entity contactEntity = _colllidersRegistryService.GetBy(collider);
 

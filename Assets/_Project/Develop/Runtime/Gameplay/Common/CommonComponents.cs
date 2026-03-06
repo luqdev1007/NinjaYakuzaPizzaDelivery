@@ -5,16 +5,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Common
 {
     public class RigidbodyComponent : IEntityComponent
     {
-        public Rigidbody Value;
+        public Rigidbody2D Value;
     }
 
     public class TransformComponent : IEntityComponent
     {
         public Transform Value;
-    }
-
-    public class CharacterControllerComponent : IEntityComponent
-    {
-        public CharacterController Value;
     }
 }

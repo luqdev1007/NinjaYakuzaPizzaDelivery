@@ -8,7 +8,6 @@ using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.DataProviders;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
-using Unity.VisualScripting;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.States
 {
@@ -25,7 +24,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         public PreperationState CreatePreperationState()
         {
-            return new PreperationState(_container.Resolve<PreperationTriggerService>(), _inputArgs);
+            return new PreperationState(
+                _inputArgs,
+                _container.Resolve<StartGameTriggerService>());
+        }
+
+        public LaunchState CreateLaunchState()
+        {
+            return new LaunchState();
         }
 
         public StageProcessState CreateStageProcessState()
@@ -53,28 +59,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         public GameplayStateMachine CreateGameplayStateMachine(GameplayInputArgs inputArgs)
         {
-            PreperationTriggerService preperationTriggerService = _container.Resolve<PreperationTriggerService>();
-            StageProviderService stageProviderService = _container.Resolve<StageProviderService>();
-            MainHeroHolderService mainHeroHolderService = _container.Resolve<MainHeroHolderService>();
+            FinalPointTriggerService finalPointTrigger =
+                _container.Resolve<FinalPointTriggerService>();
+            MainHeroHolderService mainHeroHolderService =
+                _container.Resolve<MainHeroHolderService>();
 
             GameplayStateMachine coreLoopState = CreateCoreLoopState();
-
             DefeatState defeatState = CreateDefeatState();
             WinState winState = CreateWinState(inputArgs);
 
-            ICompositeCondition coreLoopToWinStateCondition = new CompositeCondition()
-                .Add(new FuncCondition(() => preperationTriggerService.HasMainHeroContact.Value == true))
-                .Add(new FuncCondition(() => stageProviderService.CurrentStageResult.Value == StageResults.Completed))
-                .Add(new FuncCondition(() => stageProviderService.HasNextStage() == false));
+            ICondition toWin = new FuncCondition(() =>
+                finalPointTrigger.HasMainHeroContact.Value == true);
 
-            ICompositeCondition coreLoopToDefeatStateCondition = new CompositeCondition()
-                .Add(new FuncCondition(() =>
-                {
-                    if (mainHeroHolderService.MainHero != null)
-                        return mainHeroHolderService.MainHero.IsDead.Value;
-
-                    return false;
-                }));
+            ICondition toDefeat = new FuncCondition(() =>
+            {
+                if (mainHeroHolderService.MainHero != null)
+                    return mainHeroHolderService.MainHero.IsDead.Value;
+                return false;
+            });
 
             GameplayStateMachine gameplayCycle = new GameplayStateMachine();
 
@@ -82,36 +84,38 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             gameplayCycle.AddState(winState);
             gameplayCycle.AddState(defeatState);
 
-            gameplayCycle.AddTransition(coreLoopState, winState, coreLoopToWinStateCondition);
-            gameplayCycle.AddTransition(coreLoopState, defeatState, coreLoopToDefeatStateCondition);
+            gameplayCycle.AddTransition(coreLoopState, winState, toWin);
+            gameplayCycle.AddTransition(coreLoopState, defeatState, toDefeat);
 
             return gameplayCycle;
         }
 
         public GameplayStateMachine CreateCoreLoopState()
         {
-            PreperationTriggerService preperationTriggerService = _container.Resolve<PreperationTriggerService>();
-            StageProviderService stageProviderService = _container.Resolve<StageProviderService>();
+            StartGameTriggerService startTrigger =
+                _container.Resolve<StartGameTriggerService>();
 
             PreperationState preperationState = CreatePreperationState();
+            LaunchState launchState = CreateLaunchState();
             StageProcessState stageProcessState = CreateStageProcessState();
 
-            ICompositeCondition preperationToStageProcessCondition = new CompositeCondition()
-                .Add(new FuncCondition(() => preperationTriggerService.HasMainHeroContact.Value == true))
-                .Add(new FuncCondition(() => stageProviderService.HasNextStage()));
+            FuncCondition prepToLaunch =
+                new FuncCondition(() => startTrigger.IsStartRequested);
 
-            FuncCondition stageProcessToPreperationCondition = 
-                new FuncCondition(() => stageProviderService.CurrentStageResult.Value == StageResults.Completed);
+            FuncCondition launchToProcess =
+                new FuncCondition(() => launchState.IsFinished);
 
             GameplayStateMachine coreLoopState = new GameplayStateMachine();
 
             coreLoopState.AddState(preperationState);
+            coreLoopState.AddState(launchState);
             coreLoopState.AddState(stageProcessState);
 
-            coreLoopState.AddTransition(preperationState, stageProcessState, preperationToStageProcessCondition);
-            coreLoopState.AddTransition(stageProcessState, preperationState, stageProcessToPreperationCondition);
+            coreLoopState.AddTransition(preperationState, launchState, prepToLaunch);
+            coreLoopState.AddTransition(launchState, stageProcessState, launchToProcess);
 
-            return coreLoopState; 
+            return coreLoopState;
         }
+
     }
 }

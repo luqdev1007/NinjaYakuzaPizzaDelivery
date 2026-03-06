@@ -117,7 +117,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             entity
                 .AddSystem(new SpawnProcessTimerSystem())
                 .AddSystem(new RigidbodyMovementSystem())
-                .AddSystem(new RigidbodyRotationSystem())
+                .AddSystem(new FlipDirectionSystem())
                 .AddSystem(new AttackCancelSystem())
                 .AddSystem(new StartAttackSystem())
                 .AddSystem(new AttackProcessTimerSystem())
@@ -157,7 +157,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddTakeDamageEvent()
 
                 .AddContactsDetectingMask(LayersAPI.LayerMaskCharacters)
-                .AddContactCollidersBuffer(new Buffer<Collider>(64))
+                .AddContactCollidersBuffer(new Buffer<Collider2D>(64))
                 .AddContactEntitiesBuffer(new Buffer<Entity>(64))
                 .AddBodyContactDamage(new ReactiveVariable<float>(config.BodyContactDamage))
 
@@ -195,7 +195,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             entity
                 .AddSystem(new RigidbodyMovementSystem())
-                .AddSystem(new RigidbodyRotationSystem())
+                .AddSystem(new FlipDirectionSystem())
                 .AddSystem(new ApplyDamageSystem())
                 .AddSystem(new DeathSystem())
                 .AddSystem(new DeathProcessTimerSystem())
@@ -219,14 +219,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory.Create(entity, position, "Entities/FireballProjectile");
 
             entity
-                .AddMoveDirection(new ReactiveVariable<Vector3>(direction))
+                .AddMoveDirection(new ReactiveVariable<Vector2>(direction))
                 .AddMoveSpeed(new ReactiveVariable<float>(25))
                 .AddIsMoving()
                 .AddRotationSpeed(new ReactiveVariable<float>(9999))
                 .AddRotationDirection(new ReactiveVariable<Vector3>(direction))
                 .AddIsDead()
                 .AddContactsDetectingMask(LayersAPI.LayerMaskCharacters | LayersAPI.LayerMaskEnviroment)
-                .AddContactCollidersBuffer(new Buffer<Collider>(64))
+                .AddContactCollidersBuffer(new Buffer<Collider2D>(64))
                 .AddContactEntitiesBuffer(new Buffer<Entity>(64))
                 .AddBodyContactDamage(new ReactiveVariable<float>(damage))
                 .AddDeathMask(LayersAPI.LayerMaskEnviroment)
@@ -254,7 +254,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMustSelfRelease(mustSelfRelease);
 
             entity.AddSystem(new RigidbodyMovementSystem())
-                  .AddSystem(new RigidbodyRotationSystem())
+                  .AddSystem(new FlipDirectionSystem())
                   .AddSystem(new DeathSystem())
                   .AddSystem(new DisableCollidersOnDeathSystem())
                   .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
@@ -277,7 +277,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             entity
                 .AddContactsDetectingMask(LayersAPI.LayerMaskCharacters)
-                .AddContactCollidersBuffer(new Buffer<Collider>(64))
+                .AddContactCollidersBuffer(new Buffer<Collider2D>(64))
                 .AddContactEntitiesBuffer(new Buffer<Entity>(64));
 
             entity

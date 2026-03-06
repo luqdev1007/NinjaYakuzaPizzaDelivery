@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Utilites.DataProviders;
 using Assets._Project.Develop.Runtime.Utilites.DataManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using System.Collections.Generic;
 
 namespace Assets._Project.Develop.Runtime.Meta.Features.Stats
 {
@@ -8,6 +9,7 @@ namespace Assets._Project.Develop.Runtime.Meta.Features.Stats
     {
         private readonly PlayerDataProvider _playerDataProvider;
 
+        public List<int> CompletedLevels { get; private set; } = new();
         public ReactiveVariable<int> Wins { get; private set; } = new();
         public ReactiveVariable<int> Losses { get; private set; } = new();
 
@@ -31,6 +33,7 @@ namespace Assets._Project.Develop.Runtime.Meta.Features.Stats
 
         public void ReadFrom(PlayerData data)
         {
+            CompletedLevels = data.CompletedLevels;
             Wins.Value = data.Wins;
             Losses.Value = data.Losses;
         }
@@ -39,10 +42,12 @@ namespace Assets._Project.Develop.Runtime.Meta.Features.Stats
         {
             data.Wins = Wins.Value;
             data.Losses = Losses.Value;
+            data.CompletedLevels = CompletedLevels;
         }
 
         public void ResetStats()
         {
+            CompletedLevels.Clear();
             Wins.Value = 0;
             Losses.Value = 0;
         }

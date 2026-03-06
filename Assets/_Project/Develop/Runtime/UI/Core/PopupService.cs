@@ -23,6 +23,7 @@ namespace Assets._Project.Develop.Runtime.UI.Core
         }
 
         protected abstract Transform PopupLayer { get; }
+        protected abstract Transform VFXOverPopupsLayer { get; }
 
         public void ClosePopup(PopupPresenterBase popup)
         {
@@ -68,7 +69,7 @@ namespace Assets._Project.Develop.Runtime.UI.Core
 
         public ConfirmPopupPresenter OpenConfirmPopup(Action onConfirmButtonClicked, string header, Action closeCallback = null)
         {
-            ConfirmPopupView view = ViewsFactory.Create<ConfirmPopupView>(ViewIDs.ConfirmPopup, PopupLayer);
+            ConfirmPopupView view = ViewsFactory.Create<ConfirmPopupView>(ViewIDs.ConfirmPopupView, VFXOverPopupsLayer);
 
             ConfirmPopupPresenter popup = _presentersFactory.CreateConfirmPopupPresenter(view, onConfirmButtonClicked, header);
 

@@ -22,6 +22,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         }
 
         protected override Transform PopupLayer => _uiRoot.PopupsLayer;
+        protected override Transform VFXOverPopupsLayer => _uiRoot.VFXOverPopupsLayer;
 
         public WinPopupPresenter OpenWinPopup()
         {

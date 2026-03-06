@@ -10,7 +10,6 @@ namespace Assets._Project.Develop.Runtime.UI.Core.ConfirmPopup
         [SerializeField] private TMP_Text _headerText;
 
         [field: SerializeField] public Button ConfirmButton { get; private set; }
-        [field: SerializeField] public Button DeclineButton { get; private set; }
 
         public void SetHeaderText(string value) => _headerText.text = value;
 

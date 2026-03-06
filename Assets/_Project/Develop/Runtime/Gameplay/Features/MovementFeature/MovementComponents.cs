@@ -7,7 +7,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 {
     public class MoveDirection : IEntityComponent
     {
-        public ReactiveVariable<Vector3> Value;
+        public ReactiveVariable<Vector2> Value; // движение в 2D — X и Y
     }
 
     public class MoveSpeed : IEntityComponent

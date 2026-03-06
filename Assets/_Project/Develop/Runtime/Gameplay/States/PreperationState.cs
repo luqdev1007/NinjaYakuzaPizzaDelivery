@@ -7,33 +7,35 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 {
     public class PreperationState : State, IUpdatableState
     {
-        private PreperationTriggerService _preperationTriggerService;
         private readonly GameplayInputArgs _inputArgs;
+        private readonly StartGameTriggerService _startTrigger;
 
-        public PreperationState(PreperationTriggerService preperationTriggerService, GameplayInputArgs inputArgs)
+        public PreperationState(
+            GameplayInputArgs inputArgs,
+            StartGameTriggerService startTrigger)
         {
-            _preperationTriggerService = preperationTriggerService;
             _inputArgs = inputArgs;
+            _startTrigger = startTrigger;
         }
 
         public override void Enter()
         {
             base.Enter();
-
-            Vector3 nextStageTriggerPosition = _inputArgs.LevelSpawnPointPosition;
-            _preperationTriggerService.Create(nextStageTriggerPosition);
+            _startTrigger.Reset();
+            Debug.Log("Prep state — ожидание нажатия Начать");
         }
 
         public void Update(float deltaTime)
         {
-            _preperationTriggerService.Update(deltaTime);
+            // пока тест — пробел запускает старт
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Space))
+                _startTrigger.RequestStart();
         }
 
         public override void Exit()
         {
             base.Exit();
-
-            _preperationTriggerService.Cleanup();
+            Debug.Log("Prep exit");
         }
     }
 }

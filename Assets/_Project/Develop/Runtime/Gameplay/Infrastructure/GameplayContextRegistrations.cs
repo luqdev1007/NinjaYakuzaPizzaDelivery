@@ -8,15 +8,11 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
-using Assets._Project.Develop.Runtime.Meta.Features.Stats;
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilites.AssetsManagment;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.Utilites.DataProviders;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -57,10 +53,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateStagesFactory);
 
             container.RegisterAsSingle(CreateStageProviderService);
-            container.RegisterAsSingle(CreatePreperationTriggerService);
+            container.RegisterAsSingle(CreateFinalPointTriggerService);
 
             container.RegisterAsSingle(CreateGameplayStatesFactory);
             container.RegisterAsSingle(CreateGameplayStatesContext);
+
+            container.RegisterAsSingle(CreateStartGameTriggerService);
+        }
+
+        private static StartGameTriggerService CreateStartGameTriggerService(DIContainer container)
+        {
+            return new StartGameTriggerService();
         }
 
         private static GameplayStatesContext CreateGameplayStatesContext(DIContainer container)
@@ -80,9 +83,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new MainHeroHolderService(container.Resolve<EntitiesLifeContext>());
         }
 
-        private static PreperationTriggerService CreatePreperationTriggerService(DIContainer container)
+        private static FinalPointTriggerService CreateFinalPointTriggerService(DIContainer container)
         {
-            return new PreperationTriggerService(
+            return new FinalPointTriggerService(
                 container.Resolve<EntitiesFactory>(),
                 container.Resolve<EntitiesLifeContext>());
         }
@@ -97,7 +100,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         private static StagesFactory CreateStagesFactory(DIContainer container)
         {
-            return new StagesFactory(container);
+            return new StagesFactory(container, _inputArgs);
         }
 
         private static MainHeroFactory CreateMainHeroFactory(DIContainer container)

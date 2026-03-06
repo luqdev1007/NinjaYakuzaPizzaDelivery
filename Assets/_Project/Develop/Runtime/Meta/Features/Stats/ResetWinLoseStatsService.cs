@@ -1,6 +1,8 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilites.DataProviders;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Meta.Features.Stats
@@ -32,6 +34,7 @@ namespace Assets._Project.Develop.Runtime.Meta.Features.Stats
             {
                 Debug.Log("stats reseted");
                 _gameStatsService.ResetStats();
+                
                 _walletService.Spend(ResetCurrency, ResetCost);
 
                 return true;

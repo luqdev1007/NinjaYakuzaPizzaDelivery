@@ -4,8 +4,6 @@
     {
         public const string CurrencyView = nameof(CurrencyView);
 
-        public const string ConfirmPopup = nameof(ConfirmPopup);
-
         public const string LevelTile = nameof(LevelTile);
         public const string LevelsMenuPopup = nameof(LevelsMenuPopup);
 
@@ -17,6 +15,8 @@
 
         public const string DefeatPopupView = nameof(DefeatPopupView);
         public const string WinPopupView = nameof(WinPopupView);
+
+        public const string ConfirmPopupView = nameof(ConfirmPopupView);
 
         public const string SimpleHealthBar = nameof(SimpleHealthBar);
         public const string MainHeroHealthBar = nameof(MainHeroHealthBar);

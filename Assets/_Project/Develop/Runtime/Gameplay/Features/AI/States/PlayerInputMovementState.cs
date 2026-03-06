@@ -2,11 +2,6 @@
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using Assets._Project.Develop.Runtime.Utilites.StateMachineCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
@@ -15,7 +10,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
     {
         private IInputService _inputService;
 
-        private ReactiveVariable<Vector3> _movementDirection;
+        private ReactiveVariable<Vector2> _movementDirection;
         private ReactiveVariable<Vector3> _rotationDirection;
 
         public PlayerInputMovementState(Entity entity, IInputService inputService)

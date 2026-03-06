@@ -9,7 +9,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 {
     public class DisableCollidersOnDeathSystem : IInitializableSystem, IDisposableSystem
     {
-        private List<Collider> _colliders;
+        private List<Collider2D> _colliders;
         private ReactiveVariable<bool> _isDead;
 
         private IDisposable _isDeadChangedDisposable;
@@ -30,7 +30,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
         private void OnIsDeadChanged(bool arg1, bool isDead)
         {
             if (isDead)
-                foreach (Collider collider in _colliders)
+                foreach (Collider2D collider in _colliders)
                     collider.enabled = false;
         }
     }

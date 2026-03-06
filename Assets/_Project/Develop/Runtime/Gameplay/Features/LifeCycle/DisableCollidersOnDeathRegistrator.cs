@@ -7,7 +7,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 {
     public class DisableCollidersOnDeathRegistrator : MonoEntityRegistrator
     {
-        [SerializeField] private List<Collider> _colliders;
+        [SerializeField] private List<Collider2D> _colliders;
 
         public override void Register(Entity entity)
         {

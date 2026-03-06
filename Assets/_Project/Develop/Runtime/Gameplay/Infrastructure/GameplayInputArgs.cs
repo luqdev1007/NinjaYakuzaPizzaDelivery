@@ -8,10 +8,10 @@ namespace Assets._Project.Develop.Runtime.Utilites.SceneManagement
         public GameplayInputArgs(int levelNumber, Vector3 levelSpawnPointPosition)
         {
             LevelNumber = levelNumber;
-            LevelSpawnPointPosition = levelSpawnPointPosition;
+            FinalPointSpawnPosition = levelSpawnPointPosition;
         }
 
         public int LevelNumber { get; private set; }
-        public Vector3 LevelSpawnPointPosition { get; private set; }
+        public Vector3 FinalPointSpawnPosition { get; private set; }
     }
 }

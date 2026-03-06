@@ -7,7 +7,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
 {
     public class BodyCollider : IEntityComponent
     {
-        public CapsuleCollider Value;
+        public Collider2D Value;
     }
 
     public class ContactsDetectingMask : IEntityComponent
@@ -17,7 +17,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
 
     public class ContactCollidersBuffer : IEntityComponent
     {
-        public Buffer<Collider> Value;
+        public Buffer<Collider2D> Value;
     }
 
     public class ContactEntitiesBuffer : IEntityComponent

@@ -8,7 +8,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
 {
     public class DeathMaskTouchDetectorSystem : IInitializableSystem, IUpdatableSystem
     {
-        private Buffer<Collider> _contacts;
+        private Buffer<Collider2D> _contacts;
         private ReactiveVariable<bool> _isTouchDeathMask;
         private LayerMask _deathMask;
 
@@ -33,7 +33,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
             _isTouchDeathMask.Value = false;
         }
 
-        private bool MatchWithDeathLayer(Collider collider)
+        private bool MatchWithDeathLayer(Collider2D collider)
         {
             return ((1 << collider.gameObject.layer) & _deathMask) != 0;
         }

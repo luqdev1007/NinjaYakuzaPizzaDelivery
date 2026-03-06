@@ -30,7 +30,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
                 foreach (EntityView entityView in views)
                     entityView.Link(entity);
 
-            foreach (Collider collider in GetComponentsInChildren<Collider>())
+            foreach (Collider2D collider in GetComponentsInChildren<Collider2D>())
                 _collidersRegistryService.Register(collider, entity);
         }
 
@@ -42,7 +42,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
                 foreach (EntityView entityView in views)
                     entityView.Cleanup(entity);
 
-            foreach (Collider collider in GetComponentsInChildren<Collider>())
+            foreach (Collider2D collider in GetComponentsInChildren<Collider2D>())
                 _collidersRegistryService.Unregister(collider);
 
             _linkedEntity = null;

@@ -7,10 +7,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
 {
     public class BodyContactDetectingSystem : IInitializableSystem, IUpdatableSystem
     {
-        private Buffer<Collider> _contacts;
+        private Buffer<Collider2D> _contacts;
         private LayerMask _mask;
 
-        private CapsuleCollider _body;
+        private Collider2D _body;
 
         public void OnInit(Entity entity)
         {
@@ -22,13 +22,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
 
         public void OnUpdate(float deltaTime)
         {
-            _contacts.Count = Physics.OverlapCapsuleNonAlloc(
-                _body.bounds.min,
-                _body.bounds.max,
-                _body.radius,
-                _contacts.Items,
-                _mask, 
-                QueryTriggerInteraction.Ignore);
+            _contacts.Count = Physics2D.OverlapCollider(
+                _body,
+                new ContactFilter2D { layerMask = _mask, useLayerMask = true, useTriggers = false },
+                _contacts.Items);
 
             RemoveSelfFromContacts();
         }

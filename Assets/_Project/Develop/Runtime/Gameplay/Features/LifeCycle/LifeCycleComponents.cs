@@ -54,6 +54,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 
     public class DisableCollidersOnDeath : IEntityComponent
     {
-        public List<Collider> Value;
+        public List<Collider2D> Value;
     }
 }

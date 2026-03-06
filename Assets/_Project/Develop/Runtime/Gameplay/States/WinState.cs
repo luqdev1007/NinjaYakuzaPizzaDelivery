@@ -9,6 +9,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.States
 {
+
     public class WinState : EndGameState, IUpdatableState
     {
         private readonly LevelsProgressionService _levelsProgressionService;

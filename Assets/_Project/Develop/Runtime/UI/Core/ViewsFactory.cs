@@ -15,10 +15,10 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             {ViewIDs.CurrencyView, "UI/Wallet/CurrencyView" },
             {ViewIDs.MainMenuScreenView, "UI/MainMenu/MainMenuScreenView" },
             {ViewIDs.GameplayScreenView, "UI/Gameplay/GameplayScreenView" },
-            {ViewIDs.ConfirmPopup, "UI/ConfirmPopup" },
+
+            {ViewIDs.ConfirmPopupView, "UI/Common/ConfirmPopupView" },
             {ViewIDs.LevelsMenuPopup, "UI/LevelsMenuPopup/LevelsMenuPopup" },
             {ViewIDs.LevelTile, "UI/LevelsMenuPopup/LevelTile" },
-            {ViewIDs.ChatView, "UI/Chat/ChatView" },
             {ViewIDs.EndOfBattleView, "UI/Gameplay/EndOfBattleView" },
 
             {ViewIDs.WinPopupView, "UI/Gameplay/ResultPopups/WinPopupView" },
