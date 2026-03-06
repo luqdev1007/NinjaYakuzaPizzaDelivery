@@ -29,11 +29,11 @@ MonoBehaviour:
   <MaxJumps>k__BackingField: 1
   <GroundMask>k__BackingField:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 768
   <AttackProcessTime>k__BackingField: 0.4
   <AttackDelayTime>k__BackingField: 0.1
   <AttackCooldown>k__BackingField: 0.1
   <InstantAttackDamage>k__BackingField: 50
   <MaxHealth>k__BackingField: 100
   <DeathProcessTime>k__BackingField: 2
-  <SpawnProcessTime>k__BackingField: 0.5
+  <SpawnProcessTime>k__BackingField: 1
