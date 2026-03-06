@@ -15,13 +15,19 @@ namespace Assets._Project.Develop.Runtime.UI.Core.ConfirmPopup
 
         protected override void ModifyShowAnimation(Sequence animation)
         {
+            ConfirmButton.transform.localScale = Vector3.zero;
+
             base.ModifyShowAnimation(animation);
 
             animation
                 .Append(_headerText.transform
                     .DOScale(1, 0.2f)
                     .From(0)
-                    .SetEase(Ease.OutSine));
+                    .SetEase(Ease.OutSine))
+                .Append(ConfirmButton.transform
+                    .DOScale(1, 0.2f)
+                    .From(0)
+                    .SetEase(Ease.OutBack));
         }
     }
 }

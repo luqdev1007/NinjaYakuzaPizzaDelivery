@@ -38,7 +38,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         public StageProcessState CreateStageProcessState()
         {
-            return new StageProcessState(_container.Resolve<StageProviderService>());
+            return new StageProcessState(_container.Resolve<StageProviderService>(), _container.Resolve<LevelProgressService>());
         }
 
         public WinState CreateWinState(GameplayInputArgs inputArgs)

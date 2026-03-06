@@ -22,6 +22,13 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             _inputArgs = inputArgs;
         }
 
+        public LevelProgressPresenter CreateLevelProgressPresenter(BarWithText view)
+        {
+            return new LevelProgressPresenter(
+                view,
+                _container.Resolve<LevelProgressService>());
+        }
+
         public EntitiesHealthDisplayPresenter CreateEntitiesHealthDisplayPresenter(EntitiesHealthDisplay view)
         {
             return new EntitiesHealthDisplayPresenter(

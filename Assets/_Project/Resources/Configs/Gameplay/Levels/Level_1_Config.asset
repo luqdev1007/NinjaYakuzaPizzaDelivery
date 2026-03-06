@@ -17,4 +17,4 @@ MonoBehaviour:
   <LevelName>k__BackingField: Tutorial
   <LevelNumber>k__BackingField: 1
   <LevelIcon>k__BackingField: {fileID: 21300000, guid: d2b25fbb97c8641cdbe1c030a8b8966f, type: 3}
-  <ContactTriggerSpawnPointPosition>k__BackingField: {x: 5, y: -2, z: 0}
+  <FinalPointPosition>k__BackingField: {x: 5, y: -2, z: 0}

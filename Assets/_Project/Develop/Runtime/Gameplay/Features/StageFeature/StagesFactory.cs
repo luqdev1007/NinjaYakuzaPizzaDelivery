@@ -1,42 +1,43 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
-using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using System;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
+public class StagesFactory
 {
-    public class StagesFactory
+    private readonly DIContainer _container;
+    private readonly LevelConfig _levelConfig; // добавь поле
+
+    public StagesFactory(DIContainer container, LevelConfig levelConfig)
     {
-        private readonly DIContainer _container;
-        private readonly GameplayInputArgs _gameplayInputArgs;
+        _container = container;
+        _levelConfig = levelConfig;
+    }
 
-        public StagesFactory(DIContainer container, GameplayInputArgs gameplayInputArgs)
+    public IStage Create(StageConfig stageConfig)
+    {
+        switch (stageConfig)
         {
-            _container = container;
-            _gameplayInputArgs = gameplayInputArgs;
-        }
+            case ClearAllEnemiesStageConfig clearAllEnemiesStageConfig:
+                return new ClearAllEnemiesStage(
+                    clearAllEnemiesStageConfig,
+                    _container.Resolve<EnemiesFactory>(),
+                    _container.Resolve<EntitiesLifeContext>());
 
-        public IStage Create(StageConfig stageConfig)
-        {
-            switch (stageConfig)
-            {
-                case ClearAllEnemiesStageConfig clearAllEnemiesStageConfig:
-                    return new ClearAllEnemiesStage(
-                        clearAllEnemiesStageConfig,
-                        _container.Resolve<EnemiesFactory>(),
-                        _container.Resolve<EntitiesLifeContext>());
+            case FinalPointReachedStageConfig:
+                return new FinalPointReachedStage(
+                    _container.Resolve<FinalPointTriggerService>(),
+                    _container.Resolve<LevelProgressService>(),
+                    _container.Resolve<MainHeroHolderService>(),
+                    _levelConfig.FinalPointPosition); // берём отсюда
 
-                case FinalPointReachedStageConfig:
-                    return new FinalPointReachedStage(
-                        _container.Resolve<FinalPointTriggerService>(),
-                        _gameplayInputArgs);
-
-                default:
-                    throw new ArgumentException(
-                        $"Not supported {stageConfig.GetType()} type config");
-            }
+            default:
+                throw new ArgumentException(
+                    $"Not supported {stageConfig.GetType()} type config");
         }
     }
 }

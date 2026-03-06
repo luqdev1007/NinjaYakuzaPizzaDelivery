@@ -59,6 +59,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateGameplayStatesContext);
 
             container.RegisterAsSingle(CreateStartGameTriggerService);
+
+            container.RegisterAsSingle(CreateLevelProgressService);
+        }
+
+        private static LevelProgressService CreateLevelProgressService(DIContainer container)
+        {
+            return new LevelProgressService(
+                container.Resolve<MainHeroHolderService>(), 
+                container.Resolve<FinalPointTriggerService>());
         }
 
         private static StartGameTriggerService CreateStartGameTriggerService(DIContainer container)
@@ -100,7 +109,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         private static StagesFactory CreateStagesFactory(DIContainer container)
         {
-            return new StagesFactory(container, _inputArgs);
+            return new StagesFactory(
+                container,
+                container.Resolve<ConfigsProviderService>()
+                    .GetConfig<LevelsListConfig>()
+                    .GetBy(_inputArgs.LevelNumber));
         }
 
         private static MainHeroFactory CreateMainHeroFactory(DIContainer container)

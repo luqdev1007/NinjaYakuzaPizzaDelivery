@@ -25,7 +25,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
         public void Initialize()
         {
-            CreateStageNumber();
+            CreateLevelProgress(); 
             CreateEntitiesHealthDisplay();
 
             foreach (IPresenter presenter in _childPresenters)
@@ -45,6 +45,14 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             _entitiesHealthDisplayPresenter.LateUpdate();
         }
 
+        private void CreateLevelProgress()
+        {
+            LevelProgressPresenter presenter = _gameplayPresentersFactory
+                .CreateLevelProgressPresenter(_view.LevelProgressView);
+
+            _childPresenters.Add(presenter);
+        }
+
         private void CreateEntitiesHealthDisplay()
         {
             _entitiesHealthDisplayPresenter = _gameplayPresentersFactory
@@ -52,12 +60,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
             _childPresenters.Add(_entitiesHealthDisplayPresenter);
         }
-
-        private void CreateStageNumber()
-        {
-            StagePresenter stagePresenter = _gameplayPresentersFactory.CreateStagePresenter(_view.StageNumberView);
-
-            _childPresenters.Add(stagePresenter);
-        }
     }
+    
 }

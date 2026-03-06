@@ -1,26 +1,35 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
+﻿using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using UnityEngine;
 
 public class FinalPointReachedStage : IStage
 {
     private readonly FinalPointTriggerService _finalPointTrigger;
-    private readonly GameplayInputArgs _inputArgs;
+    private readonly LevelProgressService _levelProgressService;
+    private readonly MainHeroHolderService _heroHolder;
+    private readonly Vector3 _finalPointPosition;
     private readonly ReactiveEvent _completed = new();
     private bool _inProcess;
 
     public IReadOnlyEvent Completed => _completed;
 
-    public FinalPointReachedStage(FinalPointTriggerService finalPointTrigger, GameplayInputArgs inputArgs)
+    public FinalPointReachedStage(
+        FinalPointTriggerService finalPointTrigger,
+        LevelProgressService levelProgressService,
+        MainHeroHolderService heroHolder,
+        Vector3 finalPointPosition)
     {
         _finalPointTrigger = finalPointTrigger;
-        _inputArgs = inputArgs;
+        _levelProgressService = levelProgressService;
+        _heroHolder = heroHolder;
+        _finalPointPosition = finalPointPosition;
     }
 
     public void Start()
     {
-        _finalPointTrigger.Create(_inputArgs.FinalPointSpawnPosition);
+        _finalPointTrigger.Create(_finalPointPosition);
+        _levelProgressService.Initialize(_heroHolder.MainHero.Transform.position);
         _inProcess = true;
     }
 
@@ -28,15 +37,14 @@ public class FinalPointReachedStage : IStage
     {
         if (_inProcess == false)
             return;
-
         _finalPointTrigger.Update(deltaTime);
-
         if (_finalPointTrigger.HasMainHeroContact.Value)
             ProcessEnd();
     }
 
     public void Cleanup()
     {
+        _levelProgressService.Reset();
         _finalPointTrigger.Cleanup();
         _inProcess = false;
     }

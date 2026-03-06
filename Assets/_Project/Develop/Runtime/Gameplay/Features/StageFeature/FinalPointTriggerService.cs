@@ -27,11 +27,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
 
         public IReadOnlyVariable<bool> HasMainHeroContact => _hasMainHeroContact;
 
+        public Vector3 FinalPointPosition { get; private set; }
+
         public void Create(Vector3 at)
         {
             if (_nextStageTrigger != null)
                 throw new InvalidOperationException("Trigger is already created");
 
+            FinalPointPosition = at;
             _nextStageTrigger = _entitiesFactory.CreateContactTrigger(at);
             _nextStageTriggerContacts = _nextStageTrigger.ContactEntitiesBuffer;
         }

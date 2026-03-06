@@ -19,13 +19,14 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             {ViewIDs.ConfirmPopupView, "UI/Common/ConfirmPopupView" },
             {ViewIDs.LevelsMenuPopup, "UI/LevelsMenuPopup/LevelsMenuPopup" },
             {ViewIDs.LevelTile, "UI/LevelsMenuPopup/LevelTile" },
-            {ViewIDs.EndOfBattleView, "UI/Gameplay/EndOfBattleView" },
 
             {ViewIDs.WinPopupView, "UI/Gameplay/ResultPopups/WinPopupView" },
             {ViewIDs.DefeatPopupView, "UI/Gameplay/ResultPopups/DefeatPopupView" },
 
             {ViewIDs.SimpleHealthBar, "UI/Gameplay/HealthBars/SimpleHealthBar" },
             {ViewIDs.MainHeroHealthBar, "UI/Gameplay/HealthBars/MainHeroHealthBar" },
+
+            {ViewIDs.LevelProgressView, "UI/Gameplay/LevelProgress/LevelProgressView" },
         };
 
         public ViewsFactory(ResourcesAssetsLoader resourcesAssetsLoader)

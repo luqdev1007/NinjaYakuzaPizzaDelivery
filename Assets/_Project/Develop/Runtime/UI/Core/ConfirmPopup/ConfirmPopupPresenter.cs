@@ -36,6 +36,11 @@ namespace Assets._Project.Develop.Runtime.UI.Core.ConfirmPopup
             _view.ConfirmButton.onClick.RemoveListener(OnConfirmButtonClicked);
         }
 
+        protected override void OnPostShow()
+        {
+            base.OnPostShow();
+        }
+
         private void OnConfirmButtonClicked()
         {
             Debug.Log("Confirm button clicked");
