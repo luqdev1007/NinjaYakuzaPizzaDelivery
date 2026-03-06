@@ -8,6 +8,7 @@ public class PlayerInputSystem : IInitializableSystem, IUpdatableSystem
 {
     private readonly IInputService _inputService;
     private ReactiveVariable<Vector2> _moveDirection;
+    private ReactiveEvent _startAttackRequest;
 
     public PlayerInputSystem(IInputService inputService)
     {
@@ -17,11 +18,14 @@ public class PlayerInputSystem : IInitializableSystem, IUpdatableSystem
     public void OnInit(Entity entity)
     {
         _moveDirection = entity.MoveDirection;
+        _startAttackRequest = entity.StartAttackRequest;
     }
 
     public void OnUpdate(float deltaTime)
     {
         _moveDirection.Value = _inputService.MoveDirection;
-        Debug.Log($"MoveDirection: {_moveDirection.Value}");
+
+        if (_inputService.IsAttackKeyPressed)
+            _startAttackRequest.Invoke();
     }
 }
