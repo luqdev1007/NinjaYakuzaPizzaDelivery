@@ -1,6 +1,7 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
-using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ public class JumpSystem : IInitializableSystem, IUpdatableSystem
 {
     private readonly IInputService _inputService;
 
+    private ICompositeCondition _canJump;
     private ReactiveVariable<bool> _isGrounded;
     private ReactiveVariable<int> _jumpsAvailable;
     private ReactiveVariable<int> _maxJumps;
@@ -19,8 +21,6 @@ public class JumpSystem : IInitializableSystem, IUpdatableSystem
     private float _chargeTimer;
     private bool _isCharging;
 
-    private ReactiveVariable<float> _minFallVelocity;
-
     public JumpSystem(IInputService inputService)
     {
         _inputService = inputService;
@@ -28,6 +28,7 @@ public class JumpSystem : IInitializableSystem, IUpdatableSystem
 
     public void OnInit(Entity entity)
     {
+        _canJump = entity.CanJump;
         _isGrounded = entity.IsGrounded;
         _jumpsAvailable = entity.JumpsAvailable;
         _maxJumps = entity.MaxJumps;
@@ -35,8 +36,6 @@ public class JumpSystem : IInitializableSystem, IUpdatableSystem
         _jumpForceMax = entity.JumpForceMax;
         _jumpChargeTime = entity.JumpChargeTime;
         _rigidbody = entity.Rigidbody;
-
-        _minFallVelocity = entity.MinFallVelocityForAction;
     }
 
     public void OnUpdate(float deltaTime)
@@ -44,9 +43,7 @@ public class JumpSystem : IInitializableSystem, IUpdatableSystem
         if (_isGrounded.Value)
             _jumpsAvailable.Value = _maxJumps.Value;
 
-        if (_inputService.IsJumpKeyPressed
-            && _jumpsAvailable.Value > 0
-            && _rigidbody.linearVelocity.y >= _minFallVelocity.Value)
+        if (_inputService.IsJumpKeyPressed && _canJump.Evaluate() && !_isCharging)
         {
             _isCharging = true;
             _chargeTimer = 0f;

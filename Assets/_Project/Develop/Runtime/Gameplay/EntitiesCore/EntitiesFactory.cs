@@ -80,6 +80,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddInSpawnProcess()
                 ;
 
+            ICompositeCondition canJump = new CompositeCondition()
+            .Add(new FuncCondition(() => entity.IsDead.Value == false))
+            .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+            .Add(new FuncCondition(() => entity.JumpsAvailable.Value > 0))
+            .Add(new FuncCondition(() => entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value));
+
+            ICompositeCondition canDash = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() =>
+                    entity.IsGrounded.Value ||
+                    entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value)); // ?
+
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
@@ -98,6 +112,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             entity
                 .AddCanMove(canMove)
+                 .AddCanJump(canJump)
+                 .AddCanDash(canDash)
                 .AddMustDie(mustDie)
                 .AddMustSelfRelease(mustSelfRelease)
                 .AddCanApplyDamage(canApplyDamage);
@@ -120,6 +136,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 .AddSystem(new DashSystem(inputService, _container.Resolve<ICoroutinesPerformer>()))
                 ;
+
+            // test
+            Camera.main.transform.parent = entity.Transform;
+            Vector3 camPos = Camera.main.transform.localPosition;
+            position.z = -10;
+            Camera.main.transform.localPosition = camPos;
 
             return entity;
         }

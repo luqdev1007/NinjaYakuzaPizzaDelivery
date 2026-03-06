@@ -1,9 +1,10 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using System.Collections;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
@@ -13,7 +14,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         private readonly IInputService _inputService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
 
-        private ReactiveVariable<bool> _isGrounded;
+        private ICompositeCondition _canDash;
         private ReactiveVariable<bool> _isDashing;
         private ReactiveVariable<float> _dashForceMin;
         private ReactiveVariable<float> _dashForceMax;
@@ -27,8 +28,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         private float _cooldownTimer;
         private bool _isCharging;
 
-        private ReactiveVariable<float> _minFallVelocity;
-
         public DashSystem(IInputService inputService, ICoroutinesPerformer coroutinesPerformer)
         {
             _inputService = inputService;
@@ -37,7 +36,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
         public void OnInit(Entity entity)
         {
-            _isGrounded = entity.IsGrounded;
+            _canDash = entity.CanDash;
             _isDashing = entity.IsDashing;
             _dashForceMin = entity.DashForceMin;
             _dashForceMax = entity.DashForceMax;
@@ -46,8 +45,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             _dashDuration = entity.DashDuration;
             _rigidbody = entity.Rigidbody;
             _transform = entity.Transform;
-
-            _minFallVelocity = entity.MinFallVelocityForAction;
         }
 
         public void OnUpdate(float deltaTime)
@@ -58,11 +55,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
                 return;
             }
 
-            bool canDash = (_isGrounded.Value
-                || _rigidbody.linearVelocity.y >= _minFallVelocity.Value)
-                && !_isDashing.Value;
-
-            if (_inputService.IsDashKeyPressed && canDash && !_isCharging)
+            if (_inputService.IsDashKeyPressed && _canDash.Evaluate() && !_isCharging)
             {
                 _isCharging = true;
                 _chargeTimer = 0f;
@@ -77,7 +70,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
             if (_isCharging && _inputService.IsDashKeyReleased)
             {
-                if (canDash)
+                if (_canDash.Evaluate())
                     ExecuteDash();
                 else
                     _isCharging = false;
@@ -111,14 +104,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             float duration = _dashDuration.Value;
             float gravityScale = _rigidbody.gravityScale;
 
-            // отключаем гравитацию на время дэша — летим горизонтально
             _rigidbody.gravityScale = 0f;
 
             while (elapsed < duration)
             {
-                // скорость плавно затухает от force до 0 через AnimationCurve-подобный Lerp
                 float t = elapsed / duration;
-                float currentSpeed = Mathf.Lerp(force, 0f, t * t); // квадратичное затухание
+                float currentSpeed = Mathf.Lerp(force, 0f, t * t);
 
                 _rigidbody.linearVelocity = new Vector2(
                     direction * currentSpeed,

@@ -5,6 +5,16 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 {
+    public class CanJump : IEntityComponent
+    {
+        public ICompositeCondition Value;
+    }
+
+    public class CanDash : IEntityComponent
+    {
+        public ICompositeCondition Value;
+    }
+
     public class MinFallVelocityForAction : IEntityComponent
     {
         public ReactiveVariable<float> Value;
