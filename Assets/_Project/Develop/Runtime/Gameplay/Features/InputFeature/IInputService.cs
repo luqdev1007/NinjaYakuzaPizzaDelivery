@@ -4,6 +4,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
 {
     public interface IInputService
     {
+        bool IsDashKeyPressed { get; }
+        bool IsDashKeyHeld { get; }
+        bool IsDashKeyReleased { get; }
+
         bool IsJumpKeyHeld { get; }   // Space зажат
         bool IsJumpKeyReleased { get; } // Space отпущен
 

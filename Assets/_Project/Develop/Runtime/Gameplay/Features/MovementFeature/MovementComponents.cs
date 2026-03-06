@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 {
+    public class MinFallVelocityForAction : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
     public class Acceleration : IEntityComponent
     {
         public ReactiveVariable<float> Value;

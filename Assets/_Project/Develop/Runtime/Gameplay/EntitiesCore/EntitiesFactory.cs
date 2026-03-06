@@ -13,6 +13,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Utilites;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
+using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using UnityEngine;
 
@@ -42,6 +43,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory.Create(entity, position, config.PrefabPath);
 
             entity
+                // dash
+                .AddDashForceMin(new ReactiveVariable<float>(config.DashForceMin))
+                .AddDashForceMax(new ReactiveVariable<float>(config.DashForceMax))
+                .AddDashChargeTime(new ReactiveVariable<float>(config.DashChargeTime))
+                .AddDashCooldown(new ReactiveVariable<float>(config.DashCooldown))
+                .AddIsDashing()
+                .AddDashDuration(new ReactiveVariable<float>(config.DashDuration))
+
+                .AddMinFallVelocityForAction(new ReactiveVariable<float>(config.MinFallVelocityForAction))
+
                 .AddMoveSpeedMin(new ReactiveVariable<float>(config.MoveSpeedMin))
                 .AddAcceleration(new ReactiveVariable<float>(config.Acceleration))
                 .AddDeceleration(new ReactiveVariable<float>(config.Deceleration))
@@ -82,7 +93,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             ICompositeCondition canApplyDamage = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false)); // неуязвимость во время дэша
 
             entity
                 .AddCanMove(canMove)
@@ -105,6 +117,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new DisableCollidersOnDeathSystem())
                 .AddSystem(new DeathProcessTimerSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
+
+                .AddSystem(new DashSystem(inputService, _container.Resolve<ICoroutinesPerformer>()))
                 ;
 
             return entity;

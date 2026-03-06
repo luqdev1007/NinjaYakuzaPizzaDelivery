@@ -6,6 +6,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
     {
         private const string HorizontalAxisName = "Horizontal";
 
+        public bool IsDashKeyPressed => IsEnabled && Input.GetKeyDown(KeyCode.LeftShift);
+        public bool IsDashKeyHeld => IsEnabled && Input.GetKey(KeyCode.LeftShift);
+        public bool IsDashKeyReleased => IsEnabled && Input.GetKeyUp(KeyCode.LeftShift);
+
         public bool IsEnabled { get; set; } = true;
 
         public bool IsJumpKeyHeld =>

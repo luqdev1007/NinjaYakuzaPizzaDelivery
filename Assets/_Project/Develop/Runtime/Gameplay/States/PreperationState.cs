@@ -28,7 +28,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         public void Update(float deltaTime)
         {
             // пока тест — пробел запускает старт
-            if (UnityEngine.Input.GetKeyDown(KeyCode.Space))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.B))
                 _startTrigger.RequestStart();
         }
 

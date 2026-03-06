@@ -7,6 +7,15 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     {
         [field: SerializeField] public string PrefabPath { get; private set; } = "Entities/Hero";
 
+        [field: SerializeField] public float MinFallVelocityForAction { get; private set; } = -2f;
+
+        [Header("Dash Settings")]
+        [field: SerializeField, Min(0)] public float DashDuration { get; private set; } = 0.3f;
+        [field: SerializeField, Min(0)] public float DashForceMin { get; private set; } = 8f;
+        [field: SerializeField, Min(0)] public float DashForceMax { get; private set; } = 20f;
+        [field: SerializeField, Min(0)] public float DashChargeTime { get; private set; } = 0.4f;
+        [field: SerializeField, Min(0)] public float DashCooldown { get; private set; } = 0.5f;
+
         [Header("Movement Settings")]
         [field: SerializeField, Min(0)] public float MoveSpeed { get; private set; } = 10;
         [field: SerializeField, Min(0)] public float MoveSpeedMin { get; private set; } = 3f;

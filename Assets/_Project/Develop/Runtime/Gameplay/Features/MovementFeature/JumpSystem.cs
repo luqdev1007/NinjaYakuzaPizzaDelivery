@@ -19,6 +19,8 @@ public class JumpSystem : IInitializableSystem, IUpdatableSystem
     private float _chargeTimer;
     private bool _isCharging;
 
+    private ReactiveVariable<float> _minFallVelocity;
+
     public JumpSystem(IInputService inputService)
     {
         _inputService = inputService;
@@ -33,6 +35,8 @@ public class JumpSystem : IInitializableSystem, IUpdatableSystem
         _jumpForceMax = entity.JumpForceMax;
         _jumpChargeTime = entity.JumpChargeTime;
         _rigidbody = entity.Rigidbody;
+
+        _minFallVelocity = entity.MinFallVelocityForAction;
     }
 
     public void OnUpdate(float deltaTime)
@@ -42,7 +46,7 @@ public class JumpSystem : IInitializableSystem, IUpdatableSystem
 
         if (_inputService.IsJumpKeyPressed
             && _jumpsAvailable.Value > 0
-            && _rigidbody.linearVelocity.y >= 0)
+            && _rigidbody.linearVelocity.y >= _minFallVelocity.Value)
         {
             _isCharging = true;
             _chargeTimer = 0f;
