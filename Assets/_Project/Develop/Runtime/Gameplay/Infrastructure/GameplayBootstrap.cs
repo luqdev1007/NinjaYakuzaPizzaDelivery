@@ -25,6 +25,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         private EntitiesLifeContext _entitiesLifeContext;
 
+        private CameraFollowService _cameraFollowService;
+
         private AIBrainsContext _brainsContext;
 
         public override void ProcessRegistrations(DIContainer container, IInputSceneArgs sceneArgs = null)
@@ -51,7 +53,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             _gameplayStatesContext = _container.Resolve<GameplayStatesContext>();
 
-            _container.Resolve<MainHeroFactory>().Create(Vector3.zero);
+            _cameraFollowService = _container.Resolve<CameraFollowService>();
+
+            Entity hero = _container.Resolve<MainHeroFactory>().Create(Vector3.zero);
+            _cameraFollowService.SetTarget(hero.Transform);
 
             yield break;
         }
@@ -65,6 +70,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         private void Update()
         {
+            _cameraFollowService?.Update(Time.deltaTime);
+
             _brainsContext?.Update(Time.deltaTime);
             _entitiesLifeContext?.Update(Time.deltaTime);
             _gameplayStatesContext?.Update(Time.deltaTime);

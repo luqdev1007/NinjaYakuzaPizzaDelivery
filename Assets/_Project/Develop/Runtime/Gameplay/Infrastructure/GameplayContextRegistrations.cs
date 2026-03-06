@@ -61,6 +61,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateStartGameTriggerService);
 
             container.RegisterAsSingle(CreateLevelProgressService);
+
+            container.RegisterAsSingle(c => new CameraFollowService(Camera.main));
         }
 
         private static LevelProgressService CreateLevelProgressService(DIContainer container)

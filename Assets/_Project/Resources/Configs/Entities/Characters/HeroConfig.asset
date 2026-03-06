@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: HeroConfig
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/Characters/Hero
-  <MinFallVelocityForAction>k__BackingField: -2
-  <DashDuration>k__BackingField: 0.25
-  <DashForceMin>k__BackingField: 15
-  <DashForceMax>k__BackingField: 30
+  <MinFallVelocityForAction>k__BackingField: -5
+  <DashDuration>k__BackingField: 0.2
+  <DashForceMin>k__BackingField: 30
+  <DashForceMax>k__BackingField: 50
   <DashChargeTime>k__BackingField: 0.2
   <DashCooldown>k__BackingField: 1
   <MoveSpeed>k__BackingField: 10

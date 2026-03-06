@@ -172,12 +172,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new AttackCooldownTimerSystem())
                 ;
 
-            // test
-            Camera.main.transform.parent = entity.Transform;
-            Vector3 camPos = Camera.main.transform.localPosition;
-            position.z = -10;
-            Camera.main.transform.localPosition = camPos;
-
             return entity;
         }
 
