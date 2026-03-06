@@ -7,6 +7,5 @@ namespace Assets._Project.Develop.Runtime.Configs.Meta.Stats
     {
         [field: SerializeField] public int RewardForWin { get; private set; } = 10;
         [field: SerializeField] public int PenaltyForLose { get; private set; } = 5;
-        [field: SerializeField] public int ResetCost { get; private set; } = 20;
     }
 }

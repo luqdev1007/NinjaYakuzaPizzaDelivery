@@ -1,6 +1,9 @@
-﻿using Assets._Project.Develop.Runtime.Meta.Features.Stats;
+﻿using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
+using Assets._Project.Develop.Runtime.Meta.Features.Stats;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilites.DataProviders;
 using System;
 using System.Collections.Generic;
 
@@ -12,7 +15,8 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
         private readonly MainMenuPopupService _popupService;
         private readonly WalletService _wallet;
         private readonly GameStatsService _statsService;
-        private readonly ResetStatsService _resetDataService;
+        private readonly ConfigsProviderService _configsProviderService;
+        private readonly PlayerDataProvider _playerDataProvider;
 
         private List<IDisposable> _disposables = new();
 
@@ -21,13 +25,15 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             MainMenuPopupService popupService,
             WalletService wallet,
             GameStatsService statsService,
-            ResetStatsService resetDataService)
+            ConfigsProviderService configsProviderService,
+            PlayerDataProvider playerDataProvider)
         {
             _view = view;
             _popupService = popupService;
             _wallet = wallet;
             _statsService = statsService;
-            _resetDataService = resetDataService;
+            _configsProviderService = configsProviderService;
+            _playerDataProvider = playerDataProvider;
         }
 
         public void Initialize()
@@ -42,8 +48,6 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
 
             _view.StartGameButtonClicked += OnStartGameButtonClicked;
             _view.ResetStatsButtonClicked += OnResetStatsButtonClicked;
-
-            CheckResetPossibility();
         }
 
         public void Dispose()
@@ -74,31 +78,19 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
 
         private void OnResetStatsButtonClicked()
         {
-            _popupService.OpenConfirmPopup(ResetStats, $"Вы уверены, что хотите сбросить всю статистику?\n" +
-                $"Это будет стоить Вам {_resetDataService.ResetCost} {_resetDataService.ResetCurrency}");
+            int baseGold = _configsProviderService.GetConfig<StartWalletConfig>().GetValueFor(CurrencyTypes.Gold);
+
+            _popupService.OpenConfirmPopup(ResetStats, $"Вы потеряете все золото и начнете с нуля с {baseGold} золота в кармане");
         }
 
         private void ResetStats()
         {
-            _resetDataService.TryResetData();
+            _playerDataProvider.Reset();
         }
 
         private void OnGoldChanged(int arg1, int newValue)
         {
-            CheckResetPossibility();
             _view.SetGoldText(newValue.ToString());
-        }
-
-        private void CheckResetPossibility()
-        {
-            if (_resetDataService.CanReset)
-            {
-                _view.EnableResetButton();
-            }
-            else
-            {
-                _view.DisableResetButton();
-            }
         }
     }
 }

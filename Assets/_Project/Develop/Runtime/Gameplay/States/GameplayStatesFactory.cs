@@ -3,8 +3,10 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
+using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.DataProviders;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
@@ -29,9 +31,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<StartGameTriggerService>());
         }
 
-        public LaunchState CreateLaunchState()
+        public LaunchState CreateLaunchState(float timer)
         {
-            return new LaunchState();
+            return new LaunchState(timer);
         }
 
         public StageProcessState CreateStageProcessState()
@@ -47,7 +49,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 inputArgs,
                 _container.Resolve<PlayerDataProvider>(),
                 _container.Resolve<ICoroutinesPerformer>(),
-                _container.Resolve<GameplayPopupService>());     
+                _container.Resolve<GameplayPopupService>(),
+                _container.Resolve<WalletService>(),
+                _container.Resolve<ConfigsProviderService>()
+                );     
         }
 
         public DefeatState CreateDefeatState()
@@ -96,7 +101,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<StartGameTriggerService>();
 
             PreperationState preperationState = CreatePreperationState();
-            LaunchState launchState = CreateLaunchState();
+            LaunchState launchState = CreateLaunchState(timer: 2);
             StageProcessState stageProcessState = CreateStageProcessState();
 
             FuncCondition prepToLaunch =

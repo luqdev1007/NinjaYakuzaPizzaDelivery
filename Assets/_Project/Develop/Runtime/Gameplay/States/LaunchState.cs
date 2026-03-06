@@ -5,9 +5,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 {
     public class LaunchState : State, IUpdatableState
     {
-        private const float Duration = 3f;
-
         private float _elapsed;
+
+        public LaunchState(float duration)
+        {
+            Duration = duration;
+        }
+
+        public float Duration { get; private set; }
 
         public bool IsFinished { get; private set; }
 

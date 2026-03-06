@@ -25,16 +25,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
         public void Update(float deltaTime)
         {
-            for (int i = 0; i < _entities.Count; i++)
-                _entities[i].OnUpdate(deltaTime);
+            for (int i = _entities.Count - 1; i >= 0; i--)
+            {
+                if (_entities[i] == null)
+                {
+                    _entities.RemoveAt(i);
+                    continue;
+                }
+                try
+                {
+                    _entities[i].OnUpdate(deltaTime);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Entity [{i}] crashed: {e.StackTrace}");
+                    _entities.RemoveAt(i);
+                }
+            }
 
             foreach (Entity entity in _releaseRequests)
             {
                 _entities.Remove(entity);
-                entity.Dispose();
+                entity?.Dispose();
                 Released?.Invoke(entity);
             }
-
             _releaseRequests.Clear();
         }
 

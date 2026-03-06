@@ -42,10 +42,5 @@ namespace Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression
         public bool CanPlay(int levelNumber) => levelNumber == FirstLevel || IsPreviousLevelCompleted(levelNumber);
 
         private bool IsPreviousLevelCompleted(int levelNumber) => IsLevelCompleted(levelNumber - 1);
-
-        public void ResetProgress()
-        {
-            _completedLevels.Clear();
-        }
     }
 }

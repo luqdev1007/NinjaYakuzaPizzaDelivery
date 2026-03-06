@@ -7,7 +7,6 @@ public class MainMenuScreenView : MonoBehaviour, IView
 {
     public event Action StartGameButtonClicked;
     public event Action ResetStatsButtonClicked;
-    public event Action OpenChatButtonClicked;
 
     [SerializeField] private IconTextView _goldView;
     [SerializeField] private IconTextView _diamondView;

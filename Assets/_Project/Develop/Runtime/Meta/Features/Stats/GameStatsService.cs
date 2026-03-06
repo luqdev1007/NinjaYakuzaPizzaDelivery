@@ -45,7 +45,7 @@ namespace Assets._Project.Develop.Runtime.Meta.Features.Stats
             data.CompletedLevels = CompletedLevels;
         }
 
-        public void ResetStats()
+        public void Reset()
         {
             CompletedLevels.Clear();
             Wins.Value = 0;

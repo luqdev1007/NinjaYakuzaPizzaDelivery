@@ -48,8 +48,6 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
 
             container.RegisterAsSingle(CreateGameStatsService).NonLazy();
 
-            container.RegisterAsSingle(CreateResetDataService);
-
             container.RegisterAsSingle(CreateProjectPresentersFactory);
 
             container.RegisterAsSingle(CreateViewsFactory);
@@ -73,14 +71,6 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
 
         private static GameStatsService CreateGameStatsService(DIContainer container) 
             => new GameStatsService(container.Resolve<PlayerDataProvider>());
-
-        private static ResetStatsService CreateResetDataService(DIContainer container)
-            => new ResetStatsService(
-                container.Resolve<WalletService>(), 
-                container.Resolve<GameStatsService>(), 
-                container.Resolve<ConfigsProviderService>(),
-                container.Resolve<LevelsProgressionService>(),
-                container.Resolve<PlayerDataProvider>());
 
         private static PlayerDataProvider CreatePlayerDataProvider(DIContainer container) 
             => new PlayerDataProvider(container.Resolve<ISaveLoadService>(), container.Resolve<ConfigsProviderService>());
