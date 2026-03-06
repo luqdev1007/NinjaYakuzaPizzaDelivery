@@ -47,6 +47,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddIsMoving()
                 .AddIsGrounded()
                 .AddJumpForce(new ReactiveVariable<float>(config.JumpForce))
+                .AddJumpForceMax(new ReactiveVariable<float>(config.JumpForceMax))
+                .AddJumpChargeTime(new ReactiveVariable<float>(config.JumpChargeTime))
                 .AddJumpsAvailable(new ReactiveVariable<int>(config.MaxJumps))
                 .AddMaxJumps(new ReactiveVariable<int>(config.MaxJumps))
                 .AddGroundMask(config.GroundMask)
@@ -84,11 +86,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMustSelfRelease(mustSelfRelease)
                 .AddCanApplyDamage(canApplyDamage);
 
-            JumpSystem jumpSystem = new JumpSystem();
+            IInputService inputService = _container.Resolve<IInputService>();
+            JumpSystem jumpSystem = new JumpSystem(inputService);
 
             entity
                 .AddSystem(new SpawnProcessTimerSystem())
-                .AddSystem(new PlayerInputSystem(_container.Resolve<IInputService>(), jumpSystem))
+                .AddSystem(new PlayerInputSystem(inputService))
                 .AddSystem(jumpSystem)
                 .AddSystem(new GroundCheckSystem())
                 .AddSystem(new RigidbodyMovementSystem())

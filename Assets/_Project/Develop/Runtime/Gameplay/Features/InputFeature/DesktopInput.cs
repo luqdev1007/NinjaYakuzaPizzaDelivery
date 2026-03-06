@@ -8,6 +8,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
 
         public bool IsEnabled { get; set; } = true;
 
+        public bool IsJumpKeyHeld =>
+    IsEnabled && Input.GetKey(KeyCode.Space);
+
+        public bool IsJumpKeyReleased =>
+            IsEnabled && Input.GetKeyUp(KeyCode.Space);
+
         public Vector2 MoveDirection
         {
             get

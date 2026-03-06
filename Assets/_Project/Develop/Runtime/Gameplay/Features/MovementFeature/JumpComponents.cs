@@ -3,6 +3,16 @@ using Assets._Project.Develop.Runtime.Utilites.Reactive;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 {
+    public class JumpForceMax : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+    public class JumpChargeTime : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
     // Запрос прыжка от Input
     public class JumpRequest : IEntityComponent
     {
