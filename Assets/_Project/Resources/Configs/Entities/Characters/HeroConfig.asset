@@ -35,7 +35,7 @@ MonoBehaviour:
   <MaxJumps>k__BackingField: 2
   <GroundMask>k__BackingField:
     serializedVersion: 2
-    m_Bits: 1792
+    m_Bits: 3840
   <AttackProcessTime>k__BackingField: 0.4
   <AttackDelayTime>k__BackingField: 0.1
   <AttackCooldown>k__BackingField: 0.1
@@ -54,7 +54,7 @@ MonoBehaviour:
   <WallHangSlideSpeed>k__BackingField: 1
   <WallJumpForce>k__BackingField: {x: 8, y: 12}
   <SlideDuration>k__BackingField: 0.4
-  <SlideSpeed>k__BackingField: 15
+  <SlideSpeed>k__BackingField: 50
   <SlopeBoostMultiplier>k__BackingField: 2
   <SlopeJumpForce>k__BackingField: {x: 10, y: 6}
   <SlopeMask>k__BackingField:

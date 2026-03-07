@@ -280,6 +280,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 .AddSystem(new WallHangSystem(inputService))
                 .AddSystem(new SlideSystem(inputService, config.EnemyMask))
+                .AddSystem(new SlopeSystem(inputService))
                 ;
 
             return entity;
