@@ -56,7 +56,7 @@ MonoBehaviour:
   <SlideDuration>k__BackingField: 0.4
   <SlideSpeed>k__BackingField: 50
   <SlopeBoostMultiplier>k__BackingField: 2
-  <SlopeJumpForce>k__BackingField: {x: 10, y: 6}
+  <SlopeJumpForce>k__BackingField: {x: 100, y: 8}
   <SlopeMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 2304

@@ -11,6 +11,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         private readonly IInputService _inputService;
 
         private ReactiveVariable<bool> _isGrounded;
+        private ReactiveVariable<bool> _isSliding;
         private ReactiveVariable<float> _slopeBoostMultiplier;
         private ReactiveVariable<Vector2> _slopeJumpForce;
         private LayerMask _slopeMask;
@@ -33,6 +34,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         public void OnInit(Entity entity)
         {
             _isGrounded = entity.IsGrounded;
+            _isSliding = entity.IsSliding;
             _slopeBoostMultiplier = entity.SlopeBoostMultiplier;
             _slopeJumpForce = entity.SlopeJumpForce;
             _slopeMask = entity.SlopeMask;
@@ -48,6 +50,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
             // склон закончился — автопрыжок
             if (_wasOnSlope && !activeSlope && _accumulatedSpeed > MinSpeedForJump)
             {
+                _isSliding.Value = false;
                 PerformSlopeJump();
                 _wasOnSlope = false;
                 return;
@@ -55,10 +58,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 
             if (!activeSlope)
             {
+                if (_wasOnSlope)
+                    _isSliding.Value = false;
                 _wasOnSlope = false;
                 _accumulatedSpeed = 0f;
                 return;
             }
+
+            // на склоне — включаем анимацию слайда
+            if (!_isSliding.Value)
+                _isSliding.Value = true;
 
             // накапливаем скорость
             _accumulatedSpeed = Mathf.Min(
@@ -76,6 +85,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
             // ручной прыжок со склона — усиленный
             if (_inputService.IsJumpKeyPressed)
             {
+                _isSliding.Value = false;
                 PerformSlopeJump();
                 _wasOnSlope = false;
             }
@@ -84,8 +94,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         private void PerformSlopeJump()
         {
             float speedRatio = _accumulatedSpeed / MaxAccumulatedSpeed;
-            float jumpX = _lastSlopeDirection.x * _slopeJumpForce.Value.x * (1f + speedRatio);
-            float jumpY = _slopeJumpForce.Value.y * (1f + speedRatio * 0.5f);
+            float jumpX = _lastSlopeDirection.x * _slopeJumpForce.Value.x * (1f + speedRatio * 3f);
+            float jumpY = _slopeJumpForce.Value.y * (1f + speedRatio);
             _rigidbody.linearVelocity = Vector2.zero;
             _rigidbody.AddForce(new Vector2(jumpX, jumpY), ForceMode2D.Impulse);
             _accumulatedSpeed = 0f;
