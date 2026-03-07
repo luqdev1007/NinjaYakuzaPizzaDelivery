@@ -10,6 +10,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField] public float MinFallVelocityForAction { get; private set; } = -2f;
 
         [Header("Grapple Settings")]
+        [field: SerializeField] public float GrappleMinDistance { get; private set; } = 2f;
         [field: SerializeField] public string GrappleProjectilePrefabPath { get; private set; } = "Entities/GrappleHook";
         [field: SerializeField] public float GrappleSpeed { get; private set; } = 15f;
         [field: SerializeField] public float GrappleProjectileSpeed { get; private set; } = 20f;

@@ -104,6 +104,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // grap
                 .AddIsGrappling()
+                .AddGrappleMinDistance(new ReactiveVariable<float>(config.GrappleMinDistance))
                 .AddGrappleSpeed(new ReactiveVariable<float>(config.GrappleSpeed))
                 .AddGrappleProjectileSpeed(new ReactiveVariable<float>(config.GrappleProjectileSpeed))
                 .AddGrappleArriveDistance(new ReactiveVariable<float>(config.GrappleArriveDistance))

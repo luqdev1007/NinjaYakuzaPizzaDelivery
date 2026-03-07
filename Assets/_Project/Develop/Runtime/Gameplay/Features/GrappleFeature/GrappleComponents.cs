@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 {
+    public class GrappleMinDistance : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
     public class GrappleArrivalBounce : IEntityComponent
     {
         public ReactiveVariable<float> Value;

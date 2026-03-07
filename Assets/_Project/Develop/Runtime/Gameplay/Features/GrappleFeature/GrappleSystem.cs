@@ -5,7 +5,6 @@ using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
@@ -19,22 +18,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         private ICompositeCondition _canGrapple;
         private ReactiveVariable<bool> _isGrappling;
+        private ReactiveVariable<bool> _isThrowingHook;
         private ReactiveVariable<float> _grappleSpeed;
         private ReactiveVariable<float> _projectileSpeed;
         private ReactiveVariable<float> _arriveDistance;
+        private ReactiveVariable<float> _minDistance;
+        private ReactiveVariable<float> _maxDistance;
+        private ReactiveVariable<float> _grappleArrivalBounce;
         private ReactiveVariable<Vector3> _anchorPoint;
         private Rigidbody2D _rigidbody;
         private Transform _transform;
 
-        private ReactiveVariable<float> _maxDistance;
         private GameObject _hookInstance;
-        private Coroutine _grappleCoroutine;
         private float _defaultGravityScale;
-        private ReactiveVariable<float> _grappleArrivalBounce;
-
         private GrappleRopeView _ropeView;
-
-        private ReactiveVariable<bool> _isThrowingHook;
 
         public GrappleSystem(
             IInputService inputService,
@@ -50,23 +47,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         public void OnInit(Entity entity)
         {
-            _maxDistance = entity.GrappleMaxDistance;
-
-            _grappleArrivalBounce = entity.GrappleArrivalBounce;
-
             _canGrapple = entity.CanGrapple;
             _isGrappling = entity.IsGrappling;
+            _isThrowingHook = entity.IsThrowingHook;
             _grappleSpeed = entity.GrappleSpeed;
             _projectileSpeed = entity.GrappleProjectileSpeed;
             _arriveDistance = entity.GrappleArriveDistance;
+            _minDistance = entity.GrappleMinDistance;
+            _maxDistance = entity.GrappleMaxDistance;
+            _grappleArrivalBounce = entity.GrappleArrivalBounce;
             _anchorPoint = entity.GrappleAnchorPoint;
             _rigidbody = entity.Rigidbody;
             _transform = entity.Transform;
-
-            _isThrowingHook = entity.IsThrowingHook;
-
             _ropeView = entity.Transform.GetComponentInChildren<GrappleRopeView>();
-
             _defaultGravityScale = _rigidbody.gravityScale;
         }
 
@@ -85,6 +78,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
             mouseWorld.z = _transform.position.z;
             Vector3 direction = (mouseWorld - _transform.position).normalized;
 
+            RaycastHit2D hit = Physics2D.Raycast(
+                _transform.position,
+                direction,
+                _maxDistance.Value,
+                _grappleMask);
+
+            if (hit.collider != null && hit.distance < _minDistance.Value)
+                return;
+
             GameObject prefab = Resources.Load<GameObject>(_projectilePrefabPath);
 
             if (prefab == null)
@@ -97,8 +99,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
             _isThrowingHook.Value = true;
             _ropeView?.SetHookTransform(_hookInstance.transform);
 
-            _grappleCoroutine = _coroutinesPerformer.StartPerform(
-                HookFlyCoroutine(direction));
+            _coroutinesPerformer.StartPerform(HookFlyCoroutine(direction));
         }
 
         private IEnumerator HookFlyCoroutine(Vector3 direction)
@@ -154,9 +155,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
                     returnTarget,
                     _projectileSpeed.Value * 2f * Time.deltaTime);
 
-                float distance = Vector3.Distance(hook.position, returnTarget);
-
-                if (distance <= 0.1f)
+                if (Vector3.Distance(hook.position, returnTarget) <= 0.1f)
                 {
                     StopGrapple();
                     yield break;
@@ -206,12 +205,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
         private void StopGrapple()
         {
             _isThrowingHook.Value = false;
-
-            _ropeView.ClearHookTransform();
-
             _isGrappling.Value = false;
             _rigidbody.gravityScale = _defaultGravityScale;
             _rigidbody.linearVelocity = Vector2.zero;
+            _ropeView?.ClearHookTransform();
 
             if (_hookInstance != null)
             {
