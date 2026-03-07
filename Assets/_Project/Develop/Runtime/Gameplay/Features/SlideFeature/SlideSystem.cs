@@ -60,10 +60,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 
             if (_collider is CapsuleCollider2D capsule)
             {
+                _defaultColliderSize = capsule.size;        // ← не было!
+                _defaultColliderOffset = capsule.offset;    // ← не было!
                 _slideColliderSize = new Vector2(capsule.size.x, capsule.size.y * 0.5f);
                 _slideColliderOffset = new Vector2(0f, -(capsule.size.y * 0.25f));
-                _slideColliderSize = new Vector2(capsule.size.x, capsule.size.y * 0.5f);
-                _slideColliderOffset = new Vector2(capsule.offset.x, capsule.offset.y - capsule.size.y * 0.25f);
             }
         }
 

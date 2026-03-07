@@ -11,17 +11,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         private readonly IInputService _inputService;
 
         private ReactiveVariable<bool> _isGrounded;
-        private ReactiveVariable<bool> _isSliding;
         private ReactiveVariable<float> _slopeBoostMultiplier;
         private ReactiveVariable<Vector2> _slopeJumpForce;
         private LayerMask _slopeMask;
         private Rigidbody2D _rigidbody;
         private Transform _transform;
 
-        private bool _isOnSlope;
         private float _accumulatedSpeed;
+        private bool _wasOnSlope;
+        private Vector2 _lastSlopeDirection;
+
         private const float MaxAccumulatedSpeed = 20f;
         private const float AccumulationRate = 8f;
+        private const float MinSpeedForJump = 1f;
 
         public SlopeSystem(IInputService inputService)
         {
@@ -31,7 +33,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         public void OnInit(Entity entity)
         {
             _isGrounded = entity.IsGrounded;
-            _isSliding = entity.IsSliding;
             _slopeBoostMultiplier = entity.SlopeBoostMultiplier;
             _slopeJumpForce = entity.SlopeJumpForce;
             _slopeMask = entity.SlopeMask;
@@ -41,35 +42,53 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 
         public void OnUpdate(float deltaTime)
         {
-            _isOnSlope = CheckSlope(out float slopeAngle, out Vector2 slopeDirection);
+            bool isOnSlope = CheckSlope(out float slopeAngle, out Vector2 slopeDirection);
+            bool activeSlope = isOnSlope && _isGrounded.Value && slopeDirection.y < 0f;
 
-            if (!_isOnSlope || !_isGrounded.Value)
+            // склон закончился — автопрыжок
+            if (_wasOnSlope && !activeSlope && _accumulatedSpeed > MinSpeedForJump)
             {
-                if (_accumulatedSpeed > 0f)
-                    _accumulatedSpeed = 0f;
+                PerformSlopeJump();
+                _wasOnSlope = false;
                 return;
             }
 
-            // автоматически разгоняем по склону
+            if (!activeSlope)
+            {
+                _wasOnSlope = false;
+                _accumulatedSpeed = 0f;
+                return;
+            }
+
+            // накапливаем скорость
             _accumulatedSpeed = Mathf.Min(
                 _accumulatedSpeed + AccumulationRate * deltaTime,
                 MaxAccumulatedSpeed);
+
+            _lastSlopeDirection = slopeDirection;
+            _wasOnSlope = true;
 
             float boost = _accumulatedSpeed * _slopeBoostMultiplier.Value;
             _rigidbody.linearVelocity = new Vector2(
                 slopeDirection.x * boost,
                 _rigidbody.linearVelocity.y);
 
-            // прыжок со склона — сила зависит от накопленной скорости
+            // ручной прыжок со склона — усиленный
             if (_inputService.IsJumpKeyPressed)
             {
-                float speedRatio = _accumulatedSpeed / MaxAccumulatedSpeed;
-                float jumpX = slopeDirection.x * _slopeJumpForce.Value.x * (1f + speedRatio);
-                float jumpY = _slopeJumpForce.Value.y * (1f + speedRatio * 0.5f);
-                _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, 0f);
-                _rigidbody.AddForce(new Vector2(jumpX, jumpY), ForceMode2D.Impulse);
-                _accumulatedSpeed = 0f;
+                PerformSlopeJump();
+                _wasOnSlope = false;
             }
+        }
+
+        private void PerformSlopeJump()
+        {
+            float speedRatio = _accumulatedSpeed / MaxAccumulatedSpeed;
+            float jumpX = _lastSlopeDirection.x * _slopeJumpForce.Value.x * (1f + speedRatio);
+            float jumpY = _slopeJumpForce.Value.y * (1f + speedRatio * 0.5f);
+            _rigidbody.linearVelocity = Vector2.zero;
+            _rigidbody.AddForce(new Vector2(jumpX, jumpY), ForceMode2D.Impulse);
+            _accumulatedSpeed = 0f;
         }
 
         private bool CheckSlope(out float angle, out Vector2 slopeDirection)
@@ -91,12 +110,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
             if (angle < 10f)
                 return false;
 
-            // направление вдоль склона (вниз по наклону)
-            slopeDirection = new Vector2(hit.normal.y, -hit.normal.x);
-
-            // совпадаем с направлением взгляда героя
-            if (_transform.localScale.x < 0)
-                slopeDirection = -slopeDirection;
+            Vector2 down = new Vector2(hit.normal.y, -hit.normal.x);
+            Vector2 up = new Vector2(-hit.normal.y, hit.normal.x);
+            slopeDirection = down.y < 0 ? down : up;
 
             return true;
         }
