@@ -7,14 +7,14 @@ using UnityEngine;
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 {
     [RequireComponent(typeof(Animator))]
-    public class DashView : EntityView
+    public class GlideView : EntityView
     {
-        private readonly int IsDashingKey = Animator.StringToHash("IsDashing");
+        private readonly int IsGlidingKey = Animator.StringToHash("IsGliding");
 
         [SerializeField] private Animator _animator;
 
-        private IReadOnlyVariable<bool> _isDashing;
-        private IDisposable _isDashingDisposable;
+        private IReadOnlyVariable<bool> _isGliding;
+        private IDisposable _isGlidingDisposable;
 
         private void OnValidate()
         {
@@ -23,22 +23,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _isDashing = entity.IsDashing;
-            _isDashingDisposable = _isDashing.Subscribe(OnIsDashingChanged);
-            UpdateIsDashing(_isDashing.Value);
+            _isGliding = entity.IsGliding;
+            _isGlidingDisposable = _isGliding.Subscribe(OnIsGlidingChanged);
+            UpdateIsGliding(_isGliding.Value);
         }
 
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
-            _isDashingDisposable?.Dispose();
+            _isGlidingDisposable?.Dispose();
         }
 
-        private void UpdateIsDashing(bool value) =>
-            _animator.SetBool(IsDashingKey, value);
+        private void UpdateIsGliding(bool value) =>
+            _animator.SetBool(IsGlidingKey, value);
 
-        private void OnIsDashingChanged(bool oldValue, bool value) =>
-            UpdateIsDashing(value);
+        private void OnIsGlidingChanged(bool oldValue, bool value) =>
+            UpdateIsGliding(value);
     }
-
 }

@@ -9,6 +9,11 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 
         [field: SerializeField] public float MinFallVelocityForAction { get; private set; } = -2f;
 
+        [Header("Glide Settings")]
+        [field: SerializeField] public float GlideMaxFallSpeed { get; private set; } = -2f;
+        [field: SerializeField] public float GlideSpeedDamping { get; private set; } = 5f;
+        [field: SerializeField] public float GlideBounceForce { get; private set; } = 4f;
+
         [Header("Dash Settings")]
         [field: SerializeField, Min(0)] public float DashDuration { get; private set; } = 0.3f;
         [field: SerializeField, Min(0)] public float DashForceMin { get; private set; } = 8f;

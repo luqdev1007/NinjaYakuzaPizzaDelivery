@@ -94,6 +94,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddAttackCooldownCurrentTime()
                 .AddInAttackCooldown()
                 .AddAttackRange(new ReactiveVariable<float>(config.AttackRange))
+
+                // glide
+                .AddIsGliding()
+                .AddGlideMaxFallSpeed(new ReactiveVariable<float>(config.GlideMaxFallSpeed))
+                .AddGlideSpeedDamping(new ReactiveVariable<float>(config.GlideSpeedDamping))
+                .AddGlideBounceForce(new ReactiveVariable<float>(config.GlideBounceForce))
                 ;
 
             ICompositeCondition canJump = new CompositeCondition()
@@ -136,6 +142,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition mustCancelAttack = new CompositeCondition(LogicOperations.Or)
                 .Add(new FuncCondition(() => entity.IsDead.Value == true));
 
+            ICompositeCondition canGlide = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.IsGliding.Value == false));
+
             entity
                 .AddCanMove(canMove)
                 .AddCanJump(canJump)
@@ -144,6 +156,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMustCancelAttack(mustCancelAttack)
                 .AddMustDie(mustDie)
                 .AddMustSelfRelease(mustSelfRelease)
+                .AddCanGlide(canGlide)
                 .AddCanApplyDamage(canApplyDamage);
 
             IInputService inputService = _container.Resolve<IInputService>();
@@ -173,6 +186,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new AttackCooldownTimerSystem())
                 .AddSystem(new MeleeAttackHitSystem(config.EnemyMask, config.HitBounceForce))
 
+                .AddSystem(new GlideSystem(inputService))
                 ;
 
             return entity;
