@@ -17,19 +17,6 @@ MonoBehaviour:
   <GrappleConfig>k__BackingField: {fileID: 11400000, guid: 6443bd3d003d36342a2d702adbc37789, type: 2}
   <ShurikenConfig>k__BackingField: {fileID: 11400000, guid: b348a5f78cee93b4cbdd19f8eead08a4, type: 2}
   <SleepDartConfig>k__BackingField: {fileID: 11400000, guid: 68f6272de285fbb45a2662be663f5263, type: 2}
-  <GrappleCharges>k__BackingField: 3
-  <ShurikenCharges>k__BackingField: 5
-  <SleepDartCharges>k__BackingField: 3
-  <GrappleMinDistance>k__BackingField: 2
-  <GrappleProjectilePrefabPath>k__BackingField: Entities/GrappleHook
-  <GrappleSpeed>k__BackingField: 20
-  <GrappleProjectileSpeed>k__BackingField: 40
-  <GrappleArriveDistance>k__BackingField: 2
-  <GrappleMask>k__BackingField:
-    serializedVersion: 2
-    m_Bits: 768
-  <GrappleMaxDistance>k__BackingField: 12
-  <GrappleArrivalBounce>k__BackingField: 15
   <GlideMaxFallSpeed>k__BackingField: -3
   <GlideSpeedDamping>k__BackingField: 5
   <GlideBounceForce>k__BackingField: 6.5
@@ -45,7 +32,7 @@ MonoBehaviour:
   <JumpForce>k__BackingField: 15
   <JumpForceMax>k__BackingField: 25
   <JumpChargeTime>k__BackingField: 0.3
-  <MaxJumps>k__BackingField: 1
+  <MaxJumps>k__BackingField: 2
   <GroundMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 768

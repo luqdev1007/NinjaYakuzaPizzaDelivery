@@ -61,10 +61,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         {
             HandleScrollInput();
 
-            if (_inputService.IsGrappleKeyPressed && _canThrow.Evaluate() && _activeProjectile == null)
+            bool isGrappleHookActive = _activeProjectile is GrappleHookProjectile;
+
+            if (_inputService.IsGrappleKeyPressed && _canThrow.Evaluate() && !isGrappleHookActive)
                 TryLaunch();
 
-            if (_inputService.IsGrappleKeyReleased && _activeProjectile is GrappleHookProjectile)
+            if (_inputService.IsGrappleKeyReleased && isGrappleHookActive)
                 CancelActive();
         }
 

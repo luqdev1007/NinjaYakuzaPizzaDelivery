@@ -116,7 +116,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.JumpsAvailable.Value > 0))
-                .Add(new FuncCondition(() => entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value));
+                // .Add(new FuncCondition(() => entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value));
+                ;
 
             ICompositeCondition canDash = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
