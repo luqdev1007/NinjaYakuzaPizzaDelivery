@@ -143,6 +143,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 ;
 
             ICompositeCondition canDash = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
@@ -155,6 +157,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
             ICompositeCondition mustDie = new CompositeCondition()
@@ -176,14 +180,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.InAttackProcess.Value == false))
                 .Add(new FuncCondition(() => entity.InAttackCooldown.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false));
 
             ICompositeCondition mustCancelAttack = new CompositeCondition(LogicOperations.Or)
                 .Add(new FuncCondition(() => entity.IsDead.Value == true))
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == true))
-                .Add(new FuncCondition(() => entity.IsWallHanging.Value == true));
+                .Add(new FuncCondition(() => entity.IsWallHanging.Value == true))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == true));
 
             ICompositeCondition canGlide = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsThrowing.Value == false))
@@ -261,7 +269,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new DisableCollidersOnDeathSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
                 .AddSystem(new RigidbodyMovementSystem())
-                .AddSystem(new FlipDirectionSystem())
                 .AddSystem(new JumpSystem(inputService))
                 .AddSystem(new DashSystem(inputService, _container.Resolve<ICoroutinesPerformer>()))
                 .AddSystem(new GlideSystem(inputService))
@@ -279,8 +286,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new MeleeAttackHitSystem(config.EnemyMask, config.HitBounceForce))
 
                 .AddSystem(new WallHangSystem(inputService))
-                .AddSystem(new SlideSystem(inputService, config.EnemyMask))
-                .AddSystem(new SlopeSystem(inputService))
+
+                .AddSystem(new SlideSystem(inputService, config.EnemyMask, _container.Resolve<ICoroutinesPerformer>()))
+                .AddSystem(new SlopeSystem(inputService, _container.Resolve<ICoroutinesPerformer>()))
+
+                .AddSystem(new FlipDirectionSystem())
                 ;
 
             return entity;

@@ -9,17 +9,19 @@ public class FlipDirectionSystem : IInitializableSystem, IUpdatableSystem
     private ReactiveVariable<Vector2> _direction;
     private Transform _transform;
     private IReadOnlyVariable<bool> _isWallHanging;
+    private IReadOnlyVariable<bool> _isSliding;
 
     public void OnInit(Entity entity)
     {
         _isWallHanging = entity.IsWallHanging;
         _direction = entity.MoveDirection;
         _transform = entity.Transform;
+        _isSliding = entity.IsSliding;
     }
 
     public void OnUpdate(float deltaTime)
     {
-        if (_isWallHanging.Value)
+        if (_isWallHanging.Value || _isSliding.Value)
             return;
 
         if (_direction.Value.x == 0)

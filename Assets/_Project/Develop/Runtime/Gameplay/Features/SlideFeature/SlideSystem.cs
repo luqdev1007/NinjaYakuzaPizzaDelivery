@@ -3,6 +3,8 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
@@ -11,6 +13,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
     {
         private readonly IInputService _inputService;
         private readonly LayerMask _enemyMask;
+        private readonly ICoroutinesPerformer _coroutinesPerformer;
 
         private ICompositeCondition _canSlide;
         private ICompositeCondition _canPlunge;
@@ -27,17 +30,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         private Transform _transform;
         private Collider2D _collider;
 
-        private float _slideTimer;
         private float _defaultGravityScale;
         private Vector2 _defaultColliderSize;
         private Vector2 _defaultColliderOffset;
         private Vector2 _slideColliderSize;
         private Vector2 _slideColliderOffset;
 
-        public SlideSystem(IInputService inputService, LayerMask enemyMask)
+        public SlideSystem(IInputService inputService, LayerMask enemyMask, ICoroutinesPerformer coroutinesPerformer)
         {
             _inputService = inputService;
             _enemyMask = enemyMask;
+            _coroutinesPerformer = coroutinesPerformer;
         }
 
         public void OnInit(Entity entity)
@@ -60,8 +63,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 
             if (_collider is CapsuleCollider2D capsule)
             {
-                _defaultColliderSize = capsule.size;        // ← не было!
-                _defaultColliderOffset = capsule.offset;    // ← не было!
+                _defaultColliderSize = capsule.size;
+                _defaultColliderOffset = capsule.offset;
                 _slideColliderSize = new Vector2(capsule.size.x, capsule.size.y * 0.5f);
                 _slideColliderOffset = new Vector2(0f, -(capsule.size.y * 0.25f));
             }
@@ -76,42 +79,40 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
             }
 
             if (_isSliding.Value)
-            {
-                UpdateSlide(deltaTime);
                 return;
-            }
 
             if (_inputService.IsSlideKeyPressed && _canSlide.Evaluate() && _isGrounded.Value)
-                StartSlide();
+                _coroutinesPerformer.StartPerform(SlideCoroutine());
             else if (_inputService.IsSlideKeyPressed && _canPlunge.Evaluate() && !_isGrounded.Value)
                 StartPlunge();
         }
 
         // ─── SLIDE ───────────────────────────────────────────
 
-        private void StartSlide()
+        private IEnumerator SlideCoroutine()
         {
             _isSliding.Value = true;
-            _slideTimer = 0f;
             SetSlideCollider(true);
 
             float direction = _transform.localScale.x > 0 ? 1f : -1f;
-            _rigidbody.linearVelocity = new Vector2(direction * _slideSpeed.Value, _rigidbody.linearVelocity.y);
-        }
+            float elapsed = 0f;
+            float duration = _slideDuration.Value;
 
-        private void UpdateSlide(float deltaTime)
-        {
-            _slideTimer += deltaTime;
+            while (elapsed < duration)
+            {
+                float t = elapsed / duration;
+                float currentSpeed = Mathf.Lerp(_slideSpeed.Value, 0f, t * t);
+                _rigidbody.linearVelocity = new Vector2(
+                    direction * currentSpeed,
+                    _rigidbody.linearVelocity.y);
 
-            if (_slideTimer >= _slideDuration.Value)
-                StopSlide();
-        }
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
 
-        private void StopSlide()
-        {
-            _isSliding.Value = false;
-            _slideTimer = 0f;
+            _rigidbody.linearVelocity = new Vector2(0f, _rigidbody.linearVelocity.y);
             SetSlideCollider(false);
+            _isSliding.Value = false;
         }
 
         private void SetSlideCollider(bool sliding)

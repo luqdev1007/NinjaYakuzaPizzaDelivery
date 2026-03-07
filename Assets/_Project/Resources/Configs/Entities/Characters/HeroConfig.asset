@@ -47,16 +47,16 @@ MonoBehaviour:
     m_Bits: 512
   <MaxHealth>k__BackingField: 100
   <DeathProcessTime>k__BackingField: 2
-  <SpawnProcessTime>k__BackingField: 0.75
+  <SpawnProcessTime>k__BackingField: 0.5
   <WallHangLayer>k__BackingField:
     serializedVersion: 2
     m_Bits: 1280
   <WallHangSlideSpeed>k__BackingField: 1
   <WallJumpForce>k__BackingField: {x: 8, y: 12}
-  <SlideDuration>k__BackingField: 0.4
-  <SlideSpeed>k__BackingField: 50
+  <SlideDuration>k__BackingField: 0.3
+  <SlideSpeed>k__BackingField: 25
   <SlopeBoostMultiplier>k__BackingField: 2
-  <SlopeJumpForce>k__BackingField: {x: 100, y: 8}
+  <SlopeJumpForce>k__BackingField: {x: 8, y: 6}
   <SlopeMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 2304
