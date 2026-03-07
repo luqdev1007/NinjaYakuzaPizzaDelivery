@@ -219,6 +219,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                     inputService,
                     _container.Resolve<ICoroutinesPerformer>(),
                     config.GrappleMask,
+                    config.EnemyMask,
                     config.GrappleProjectilePrefabPath))
 
                 // attack

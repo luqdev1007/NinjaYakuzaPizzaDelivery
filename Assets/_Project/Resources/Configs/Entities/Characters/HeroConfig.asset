@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/Characters/Hero
   <MinFallVelocityForAction>k__BackingField: -3
+  <GrappleMinDistance>k__BackingField: 2
   <GrappleProjectilePrefabPath>k__BackingField: Entities/GrappleHook
   <GrappleSpeed>k__BackingField: 20
   <GrappleProjectileSpeed>k__BackingField: 40
-  <GrappleArriveDistance>k__BackingField: 1
+  <GrappleArriveDistance>k__BackingField: 2
   <GrappleMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 768

@@ -26,8 +26,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
         private ReactiveVariable<float> _maxDistance;
         private ReactiveVariable<float> _grappleArrivalBounce;
         private ReactiveVariable<Vector3> _anchorPoint;
+        private ReactiveEvent _startAttackRequest;
+
         private Rigidbody2D _rigidbody;
         private Transform _transform;
+        private LayerMask _enemyMask;
 
         private GameObject _hookInstance;
         private float _defaultGravityScale;
@@ -37,16 +40,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
             IInputService inputService,
             ICoroutinesPerformer coroutinesPerformer,
             LayerMask grappleMask,
+            LayerMask enemyMask,
             string projectilePrefabPath)
         {
             _inputService = inputService;
             _coroutinesPerformer = coroutinesPerformer;
             _grappleMask = grappleMask;
+            _enemyMask = enemyMask;
             _projectilePrefabPath = projectilePrefabPath;
         }
 
         public void OnInit(Entity entity)
         {
+            _startAttackRequest = entity.StartAttackRequest;
+
             _canGrapple = entity.CanGrapple;
             _isGrappling = entity.IsGrappling;
             _isThrowingHook = entity.IsThrowingHook;
@@ -129,13 +136,74 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
                 if (hit != null)
                 {
-                    _anchorPoint.Value = hook.position;
-                    _coroutinesPerformer.StartPerform(PullCoroutine());
+                    bool hitEnemy = (_enemyMask.value & (1 << hit.gameObject.layer)) != 0;
+
+                    if (hitEnemy)
+                    {
+                        Debug.Log($"Крюк попал во врага: {hit.gameObject.name}");
+                        _anchorPoint.Value = hook.position;
+                        _coroutinesPerformer.StartPerform(PullToEnemyCoroutine(hit));
+                    }
+                    else
+                    {
+                        _anchorPoint.Value = hook.position;
+                        _coroutinesPerformer.StartPerform(PullCoroutine());
+                    }
+
                     yield break;
                 }
 
                 yield return null;
             }
+        }
+
+        private IEnumerator PullToEnemyCoroutine(Collider2D enemy)
+        {
+            _isGrappling.Value = true;
+            _rigidbody.gravityScale = 0f;
+            _rigidbody.linearVelocity = Vector2.zero;
+
+            while (true)
+            {
+                if (_inputService.IsGrappleKeyReleased)
+                {
+                    StopGrapple();
+                    yield break;
+                }
+
+                // враг мог умереть пока летели
+                if (enemy == null || !enemy.gameObject.activeSelf)
+                {
+                    StopGrapple();
+                    yield break;
+                }
+
+                // обновляем точку якоря если враг движется
+                _anchorPoint.Value = enemy.transform.position;
+
+                Vector3 toEnemy = _anchorPoint.Value - _transform.position;
+                float distance = toEnemy.magnitude;
+
+                if (distance <= _arriveDistance.Value)
+                {
+                    ArriveAtEnemy(enemy);
+                    yield break;
+                }
+
+                _rigidbody.linearVelocity = toEnemy.normalized * _grappleSpeed.Value;
+
+                yield return null;
+            }
+        }
+
+        private void ArriveAtEnemy(Collider2D enemy)
+        {
+            Debug.Log($"Герой долетел до врага: {enemy.gameObject.name} — автоатака!");
+            StopGrapple(); // сначала сбрасываем IsGrappling
+            _rigidbody.linearVelocity = new Vector2(
+                _rigidbody.linearVelocity.x,
+                _grappleArrivalBounce.Value);
+            _startAttackRequest.Invoke(); // потом запрашиваем атаку
         }
 
         private IEnumerator ReturnHookCoroutine(Vector3 returnTarget)
