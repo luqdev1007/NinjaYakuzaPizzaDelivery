@@ -13,6 +13,8 @@ namespace Assets._Project.Develop.Runtime.Utilites
 		public static readonly int LayerCharacters = LayerMask.NameToLayer("Characters");
 		public static readonly int LayerGround = LayerMask.NameToLayer("Ground");
 		public static readonly int LayerEnemies = LayerMask.NameToLayer("Enemies");
+		public static readonly int LayerWallHangable = LayerMask.NameToLayer("WallHangable");
+		public static readonly int LayerSlope = LayerMask.NameToLayer("Slope");
 
 		public static readonly int LayerMaskDefault = 1 << LayerDefault;
 		public static readonly int LayerMaskTransparentFX = 1 << LayerTransparentFX;
@@ -23,6 +25,8 @@ namespace Assets._Project.Develop.Runtime.Utilites
 		public static readonly int LayerMaskCharacters = 1 << LayerCharacters;
 		public static readonly int LayerMaskGround = 1 << LayerGround;
 		public static readonly int LayerMaskEnemies = 1 << LayerEnemies;
+		public static readonly int LayerMaskWallHangable = 1 << LayerWallHangable;
+		public static readonly int LayerMaskSlope = 1 << LayerSlope;
 
 	}
 }

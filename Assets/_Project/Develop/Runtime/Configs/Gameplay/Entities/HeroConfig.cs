@@ -55,5 +55,23 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField, Min(0)] public float MaxHealth { get; private set; } = 100;
         [field: SerializeField, Min(0)] public float DeathProcessTime { get; private set; } = 2;
         [field: SerializeField, Min(0)] public float SpawnProcessTime { get; private set; } = 2;
+
+        [Header("Wall Hang Settings")]
+        [field: SerializeField] public LayerMask WallHangLayer { get; private set; }
+        [field: SerializeField] public float WallHangSlideSpeed { get; private set; } = 1f;
+        [field: SerializeField] public Vector2 WallJumpForce { get; private set; } = new Vector2(8f, 12f);
+
+        [Header("Slide Settings")]
+        [field: SerializeField] public float SlideDuration { get; private set; } = 0.4f;
+        [field: SerializeField] public float SlideSpeed { get; private set; } = 15f;
+        [field: SerializeField] public float SlopeBoostMultiplier { get; private set; } = 2f;
+        [field: SerializeField] public Vector2 SlopeJumpForce { get; private set; } = new Vector2(10f, 6f);
+        [field: SerializeField] public LayerMask SlopeMask { get; private set; }
+
+        [Header("Plunge Settings")]
+        [field: SerializeField] public float PlungeSpeed { get; private set; } = 25f;
+        [field: SerializeField] public float PlungeAOERadius { get; private set; } = 3f;
+        [field: SerializeField] public float PlungeAOEDamage { get; private set; } = 50f;
+        [field: SerializeField] public float PlungeKnockbackForce { get; private set; } = 10f;
     }
 }
