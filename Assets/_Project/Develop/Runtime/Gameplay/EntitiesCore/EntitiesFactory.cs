@@ -93,6 +93,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddAttackCooldownInitialTime(new ReactiveVariable<float>(config.AttackCooldown))
                 .AddAttackCooldownCurrentTime()
                 .AddInAttackCooldown()
+                .AddAttackRange(new ReactiveVariable<float>(config.AttackRange))
                 ;
 
             ICompositeCondition canJump = new CompositeCondition()
@@ -170,6 +171,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new AttackDelayEndTriggerSystem())
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem())
+                .AddSystem(new MeleeAttackHitSystem(config.EnemyMask, config.HitBounceForce))
+
                 ;
 
             return entity;
@@ -302,7 +305,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                   .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
                   .AddSystem(new DealDamageOnContactSystem())
                   .AddSystem(new DeathMaskTouchDetectorSystem())
+
                   .AddSystem(new AnotherTeamTouchDetectorSystem());
+
 
             _entitiesLifeContext.Add(entity);
 

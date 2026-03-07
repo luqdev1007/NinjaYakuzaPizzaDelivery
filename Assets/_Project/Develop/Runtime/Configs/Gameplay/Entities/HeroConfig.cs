@@ -36,6 +36,9 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField, Min(0)] public float AttackDelayTime { get; private set; } = 0.75f;
         [field: SerializeField, Min(0)] public float AttackCooldown { get; private set; } = 1f;
         [field: SerializeField, Min(0)] public float InstantAttackDamage { get; private set; } = 50;
+        [field: SerializeField] public float AttackRange { get; private set; } = 1.5f;
+        [field: SerializeField] public float HitBounceForce { get; private set; } = 8f;
+        [field: SerializeField] public LayerMask EnemyMask { get; private set; }
 
         [Header("Life Cycle Settings")]
         [field: SerializeField, Min(0)] public float MaxHealth { get; private set; } = 100;

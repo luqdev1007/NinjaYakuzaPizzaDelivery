@@ -34,6 +34,11 @@ MonoBehaviour:
   <AttackDelayTime>k__BackingField: 0.1
   <AttackCooldown>k__BackingField: 0.1
   <InstantAttackDamage>k__BackingField: 50
+  <AttackRange>k__BackingField: 1.5
+  <HitBounceForce>k__BackingField: 15
+  <EnemyMask>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 512
   <MaxHealth>k__BackingField: 100
   <DeathProcessTime>k__BackingField: 2
   <SpawnProcessTime>k__BackingField: 1
