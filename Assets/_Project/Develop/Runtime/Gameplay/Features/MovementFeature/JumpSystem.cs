@@ -19,7 +19,10 @@ public class JumpSystem : IInitializableSystem, IUpdatableSystem
     private Rigidbody2D _rigidbody;
 
     private float _chargeTimer;
+    private float _jumpBufferTimer;
     private bool _isCharging;
+
+    private const float JumpBufferTime = 0.15f;
 
     public JumpSystem(IInputService inputService)
     {
@@ -43,10 +46,16 @@ public class JumpSystem : IInitializableSystem, IUpdatableSystem
         if (_isGrounded.Value)
             _jumpsAvailable.Value = _maxJumps.Value;
 
-        if (_inputService.IsJumpKeyPressed && _canJump.Evaluate() && !_isCharging)
+        if (_inputService.IsJumpKeyPressed)
+            _jumpBufferTimer = JumpBufferTime;
+        else
+            _jumpBufferTimer -= deltaTime;
+
+        if (_jumpBufferTimer > 0f && _canJump.Evaluate() && !_isCharging)
         {
             _isCharging = true;
             _chargeTimer = 0f;
+            _jumpBufferTimer = 0f;
         }
 
         if (_isCharging && _inputService.IsJumpKeyHeld)
@@ -57,9 +66,7 @@ public class JumpSystem : IInitializableSystem, IUpdatableSystem
         }
 
         if (_isCharging && _inputService.IsJumpKeyReleased)
-        {
             ExecuteJump();
-        }
     }
 
     private void ExecuteJump()

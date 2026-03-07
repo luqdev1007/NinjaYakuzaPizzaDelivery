@@ -26,7 +26,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
         private float _chargeTimer;
         private float _cooldownTimer;
+        private float _dashBufferTimer;
         private bool _isCharging;
+
+        private const float DashBufferTime = 0.1f;
 
         public DashSystem(IInputService inputService, ICoroutinesPerformer coroutinesPerformer)
         {
@@ -50,15 +53,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         public void OnUpdate(float deltaTime)
         {
             if (_cooldownTimer > 0f)
-            {
                 _cooldownTimer -= deltaTime;
-                return;
-            }
 
-            if (_inputService.IsDashKeyPressed && _canDash.Evaluate() && !_isCharging)
+            if (_inputService.IsDashKeyPressed)
+                _dashBufferTimer = DashBufferTime;
+            else
+                _dashBufferTimer -= deltaTime;
+
+            if (_dashBufferTimer > 0f && _canDash.Evaluate() && !_isCharging)
             {
                 _isCharging = true;
                 _chargeTimer = 0f;
+                _dashBufferTimer = 0f;
             }
 
             if (_isCharging && _inputService.IsDashKeyHeld)
