@@ -22,4 +22,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
     {
         public ReactiveVariable<int> Value;
     }
+
+    public class IsThrowing : IEntityComponent
+    {
+        public ReactiveVariable<bool> Value;
+    }
 }

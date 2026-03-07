@@ -6,7 +6,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     [CreateAssetMenu(fileName = "HeroConfig", menuName = "Configs/Gameplay/Entities/New Hero Config")]
     public class HeroConfig : EntityConfig
     {
-        [field: SerializeField] public string PrefabPath { get; private set; } = "Entities/Hero";
+        [field: SerializeField] public string PrefabPath { get; private set; } = "Entities/Characters/Hero";
 
         [field: SerializeField] public float MinFallVelocityForAction { get; private set; } = -2f;
 
@@ -14,18 +14,6 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField] public GrappleHookConfig GrappleConfig { get; private set; }
         [field: SerializeField] public ShurikenConfig ShurikenConfig { get; private set; }
         [field: SerializeField] public SleepDartConfig SleepDartConfig { get; private set; }
-
-
-        [Header("Grapple Settings")]
-        [field: SerializeField] public float GrappleMinDistance { get; private set; } = 2f;
-        [field: SerializeField] public string GrappleProjectilePrefabPath { get; private set; } = "Entities/GrappleHook";
-        [field: SerializeField] public float GrappleSpeed { get; private set; } = 15f;
-        [field: SerializeField] public float GrappleProjectileSpeed { get; private set; } = 20f;
-        [field: SerializeField] public float GrappleArriveDistance { get; private set; } = 0.5f;
-        [field: SerializeField] public LayerMask GrappleMask { get; private set; }
-        [field: SerializeField] public float GrappleMaxDistance { get; private set; } = 10f;
-        [field: SerializeField] public float GrappleArrivalBounce { get; private set; } = 6f;
-
 
         [Header("Glide Settings")]
         [field: SerializeField] public float GlideMaxFallSpeed { get; private set; } = -2f;

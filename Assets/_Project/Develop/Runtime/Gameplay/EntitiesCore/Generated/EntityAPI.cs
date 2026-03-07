@@ -98,6 +98,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.SleepDartCharges() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.IsThrowing IsThrowingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.IsThrowing>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsThrowing => IsThrowingC.Value;
+
+		public bool TryGetIsThrowing(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.IsThrowing component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsThrowing()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.IsThrowing() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsThrowing(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.IsThrowing() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team TeamC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team>();
 
 		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Teams> Team => TeamC.Value;
@@ -1401,30 +1425,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGrappleMaxDistance(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleMaxDistance() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.IsThrowingHook IsThrowingHookC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.IsThrowingHook>();
-
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsThrowingHook => IsThrowingHookC.Value;
-
-		public bool TryGetIsThrowingHook(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.IsThrowingHook component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsThrowingHook()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.IsThrowingHook() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsThrowingHook(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.IsThrowingHook() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.CanGrapple CanGrappleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.CanGrapple>();

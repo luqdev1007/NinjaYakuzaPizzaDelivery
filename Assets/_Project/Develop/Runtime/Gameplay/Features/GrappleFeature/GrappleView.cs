@@ -13,7 +13,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         [SerializeField] private Animator _animator;
 
-        private IReadOnlyVariable<bool> _isThrowingHook;
+        private ReactiveVariable<bool> _isThrowing;
         private IDisposable _isThrowingHookDisposable;
 
         private void OnValidate()
@@ -23,9 +23,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _isThrowingHook = entity.IsThrowingHook;
-            _isThrowingHookDisposable = _isThrowingHook.Subscribe(OnIsThrowingHookChanged);
-            _animator.SetBool(IsThrowingHookKey, _isThrowingHook.Value);
+            _isThrowing = entity.IsThrowing;
+            _isThrowingHookDisposable = _isThrowing.Subscribe(OnIsThrowingChanged);
+            _animator.SetBool(IsThrowingHookKey, _isThrowing.Value);
         }
 
         public override void Cleanup(Entity entity)
@@ -34,7 +34,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
             _isThrowingHookDisposable?.Dispose();
         }
 
-        private void OnIsThrowingHookChanged(bool oldValue, bool value) =>
+        private void OnIsThrowingChanged(bool oldValue, bool value) =>
             _animator.SetBool(IsThrowingHookKey, value);
     }
 }

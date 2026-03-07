@@ -3,9 +3,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
-using Assets._Project.Develop.Runtime.Gameplay.Features.Attack.Shoot;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
-using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
@@ -45,6 +43,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory.Create(entity, position, config.PrefabPath);
 
             entity
+                .AddIsThrowing()
                 // dash
                 .AddDashForceMin(new ReactiveVariable<float>(config.DashForceMin))
                 .AddDashForceMax(new ReactiveVariable<float>(config.DashForceMax))
@@ -105,18 +104,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // throwable
                 .AddIsGrappling()
-                .AddIsThrowingHook()
                 .AddCurrentThrowableIndex(new ReactiveVariable<int>(0))
                 .AddGrappleCharges(new ReactiveVariable<int>(config.GrappleConfig.MaxCharges))
                 .AddShurikenCharges(new ReactiveVariable<int>(config.ShurikenConfig.MaxCharges))
                 .AddSleepDartCharges(new ReactiveVariable<int>(config.SleepDartConfig.MaxCharges))
-                .AddGrappleMinDistance(new ReactiveVariable<float>(config.GrappleMinDistance))
-                .AddGrappleSpeed(new ReactiveVariable<float>(config.GrappleSpeed))
-                .AddGrappleProjectileSpeed(new ReactiveVariable<float>(config.GrappleProjectileSpeed))
-                .AddGrappleArriveDistance(new ReactiveVariable<float>(config.GrappleArriveDistance))
-                .AddGrappleAnchorPoint(new ReactiveVariable<Vector3>())
-                .AddGrappleMaxDistance(new ReactiveVariable<float>(config.GrappleMaxDistance))
-                .AddGrappleArrivalBounce(new ReactiveVariable<float>(config.GrappleArrivalBounce))
                 ;
 
             ICompositeCondition canJump = new CompositeCondition()
@@ -170,14 +161,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canGlide = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-                .Add(new FuncCondition(() => entity.IsThrowingHook.Value == false))
+                .Add(new FuncCondition(() => entity.IsThrowing.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false));
 
             ICompositeCondition canGrapple = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.IsThrowingHook.Value == false))
+                .Add(new FuncCondition(() => entity.IsThrowing.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))

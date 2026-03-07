@@ -19,7 +19,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         private ICompositeCondition _canThrow;
         private ReactiveVariable<int> _currentIndex;
-        private ReactiveVariable<bool> _isThrowingHook;
+        private ReactiveVariable<bool> _isThrowing;
         private ReactiveEvent _startAttackRequest;
         private Transform _transform;
         private Rigidbody2D _rigidbody;
@@ -43,7 +43,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         {
             _canThrow = entity.CanGrapple;
             _currentIndex = entity.CurrentThrowableIndex;
-            _isThrowingHook = entity.IsThrowingHook;
+            _isThrowing = entity.IsThrowing;
             _startAttackRequest = entity.StartAttackRequest;
             _transform = entity.Transform;
             _rigidbody = entity.Rigidbody;
@@ -99,16 +99,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             mouseWorld.z = _transform.position.z;
             Vector3 direction = (mouseWorld - _transform.position).normalized;
 
-            RaycastHit2D hit = Physics2D.Raycast(
-                _transform.position,
-                direction,
-                config.MaxDistance,
-                config.HitMask);
+            if (config is GrappleHookConfig)
+            {
+                RaycastHit2D hit = Physics2D.Raycast(
+                    _transform.position,
+                    direction,
+                    config.MaxDistance,
+                    config.HitMask);
 
-            if (hit.collider != null && hit.distance < config.MinDistance)
-                return;
+                if (hit.collider != null && hit.distance < config.MinDistance)
+                    return;
+            }
 
             _charges[index].Value--;
+            _isThrowing.Value = true;
             _activeProjectile = _behaviourFactory.Create(config, _rigidbody, _transform);
 
             if (_activeProjectile is GrappleHookProjectile grapple)
@@ -117,26 +121,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                 grapple.OnGrappleStarted += OnGrappleStarted;
                 grapple.OnGrappleEnded += OnGrappleEnded;
                 grapple.OnEnemyArrived += OnEnemyArrived;
-                _isThrowingHook.Value = true;
             }
 
             _activeProjectile.OnCompleted += OnProjectileCompleted;
+
             _activeProjectile.Launch(_transform.position, direction);
 
             if (_activeProjectile is GrappleHookProjectile grapplerAfterLaunch)
                 _ropeView?.SetHookTransform(grapplerAfterLaunch.Instance.transform);
+            else
+                _isThrowing.Value = false;
         }
 
         private void CancelActive()
         {
             _activeProjectile?.Cancel();
             _activeProjectile = null;
-            _isThrowingHook.Value = false;
+            _isThrowing.Value = false;
         }
 
         private void OnProjectileCompleted()
         {
             _activeProjectile = null;
+            _isThrowing.Value = false;
         }
 
         private void OnGrappleStarted() { }
@@ -144,7 +151,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         private void OnGrappleEnded()
         {
             _activeProjectile = null;
-            _isThrowingHook.Value = false;
+            _isThrowing.Value = false;
         }
 
         private void OnEnemyArrived()

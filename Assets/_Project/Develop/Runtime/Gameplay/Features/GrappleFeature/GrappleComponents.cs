@@ -20,11 +20,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
         public ReactiveVariable<float> Value;
     }
 
-    public class IsThrowingHook : IEntityComponent
-    {
-        public ReactiveVariable<bool> Value;
-    }
-
     public class CanGrapple : IEntityComponent
     {
         public ICompositeCondition Value;
