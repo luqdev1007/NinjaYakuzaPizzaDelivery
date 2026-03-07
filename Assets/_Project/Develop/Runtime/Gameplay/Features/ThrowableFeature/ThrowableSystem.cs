@@ -21,7 +21,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         private ReactiveVariable<int> _currentIndex;
         private ReactiveVariable<bool> _isThrowingHook;
         private ReactiveEvent _startAttackRequest;
-
         private Transform _transform;
         private Rigidbody2D _rigidbody;
         private Dictionary<int, ReactiveVariable<int>> _charges;
@@ -42,11 +41,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         public void OnInit(Entity entity)
         {
-            _startAttackRequest = entity.StartAttackRequest;
-
             _canThrow = entity.CanGrapple;
             _currentIndex = entity.CurrentThrowableIndex;
             _isThrowingHook = entity.IsThrowingHook;
+            _startAttackRequest = entity.StartAttackRequest;
             _transform = entity.Transform;
             _rigidbody = entity.Rigidbody;
             _ropeView = entity.Transform.GetComponentInChildren<GrappleRopeView>();
@@ -63,10 +61,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         {
             HandleScrollInput();
 
-            if (_inputService.IsGrappleKeyPressed && _canThrow.Evaluate())
+            if (_inputService.IsGrappleKeyPressed && _canThrow.Evaluate() && _activeProjectile == null)
                 TryLaunch();
 
-            if (_inputService.IsGrappleKeyReleased && _activeProjectile != null)
+            if (_inputService.IsGrappleKeyReleased && _activeProjectile is GrappleHookProjectile)
                 CancelActive();
         }
 
@@ -78,6 +76,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                 _currentIndex.Value = (_currentIndex.Value + 1) % _configs.Length;
             else if (scroll < 0f)
                 _currentIndex.Value = (_currentIndex.Value - 1 + _configs.Length) % _configs.Length;
+
+            if (scroll != 0f)
+            {
+                int index = _currentIndex.Value;
+                Debug.Log($"Прожектайл: {_configs[index].name} | Зарядов: {_charges[index].Value}");
+            }
         }
 
         private void TryLaunch()
@@ -105,7 +109,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                 return;
 
             _charges[index].Value--;
-
             _activeProjectile = _behaviourFactory.Create(config, _rigidbody, _transform);
 
             if (_activeProjectile is GrappleHookProjectile grapple)
@@ -114,9 +117,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                 grapple.OnGrappleStarted += OnGrappleStarted;
                 grapple.OnGrappleEnded += OnGrappleEnded;
                 grapple.OnEnemyArrived += OnEnemyArrived;
+                _isThrowingHook.Value = true;
             }
 
-            _isThrowingHook.Value = true;
+            _activeProjectile.OnCompleted += OnProjectileCompleted;
             _activeProjectile.Launch(_transform.position, direction);
 
             if (_activeProjectile is GrappleHookProjectile grapplerAfterLaunch)
@@ -130,6 +134,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             _isThrowingHook.Value = false;
         }
 
+        private void OnProjectileCompleted()
+        {
+            _activeProjectile = null;
+        }
+
         private void OnGrappleStarted() { }
 
         private void OnGrappleEnded()
@@ -140,7 +149,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         private void OnEnemyArrived()
         {
-            Debug.Log("Автоатака при прилёте к врагу");
             _startAttackRequest.Invoke();
         }
     }

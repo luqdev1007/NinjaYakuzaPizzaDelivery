@@ -21,7 +21,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 768
   <GrappleSpeed>k__BackingField: 20
-  <ArriveDistance>k__BackingField: 2
+  <ArriveDistance>k__BackingField: 1
   <ArrivalBounce>k__BackingField: 8
   <EnemyMask>k__BackingField:
     serializedVersion: 2

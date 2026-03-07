@@ -40,6 +40,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         protected override void OnHit(Collider2D hit)
         {
             bool hitEnemy = (_enemyMask.value & (1 << hit.gameObject.layer)) != 0;
+            FlipTowards(hit.transform.position);
 
             if (hitEnemy)
                 CoroutinesPerformer.StartPerform(PullToEnemyCoroutine(hit));
@@ -113,6 +114,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             }
         }
 
+        private void FlipTowards(Vector3 target)
+        {
+            Vector3 scale = _heroTransform.localScale;
+            float dirX = target.x - _heroTransform.position.x;
+            scale.x = dirX > 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+            _heroTransform.localScale = scale;
+        }
+
         private IEnumerator ReturnCoroutine(Vector3 returnTarget)
         {
             while (Instance != null)
@@ -120,6 +129,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                 if (_isCancelled != null && _isCancelled())
                 {
                     Destroy();
+                    OnGrappleEnded?.Invoke();
                     yield break;
                 }
 
@@ -131,6 +141,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                 if (Vector3.Distance(Instance.transform.position, returnTarget) <= 0.1f)
                 {
                     Destroy();
+                    OnGrappleEnded?.Invoke();
                     yield break;
                 }
 

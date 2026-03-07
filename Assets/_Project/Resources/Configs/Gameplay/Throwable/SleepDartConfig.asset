@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: SleepDartConfig
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/SleepDart
-  <ProjectileSpeed>k__BackingField: 15
-  <MaxDistance>k__BackingField: 10
-  <MinDistance>k__BackingField: 2
-  <MaxCharges>k__BackingField: 3
+  <ProjectileSpeed>k__BackingField: 25
+  <MaxDistance>k__BackingField: 50
+  <MinDistance>k__BackingField: 0.5
+  <MaxCharges>k__BackingField: 100
   <HitMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 512

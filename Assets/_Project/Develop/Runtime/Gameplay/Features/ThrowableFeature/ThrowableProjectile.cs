@@ -1,4 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using System;
 using System.Collections;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -7,6 +8,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 {
     public abstract class ThrowableProjectile
     {
+        public event Action OnCompleted;
+
         protected readonly ICoroutinesPerformer CoroutinesPerformer;
         protected readonly ThrowableConfig Config;
 
@@ -17,6 +20,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             Config = config;
             CoroutinesPerformer = coroutinesPerformer;
         }
+
 
         public void Launch(Vector3 from, Vector3 direction)
         {
@@ -39,6 +43,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         protected virtual void Destroy()
         {
+            OnCompleted?.Invoke();
+            OnCompleted = null; // очищаем всех подписчиков
+
             if (Instance != null)
             {
                 Object.Destroy(Instance);

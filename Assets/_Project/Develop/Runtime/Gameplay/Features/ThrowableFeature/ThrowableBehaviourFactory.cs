@@ -20,10 +20,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                     grappleConfig, _coroutinesPerformer, rigidbody, transform),
                 ShurikenConfig shurikenConfig => new ShurikenProjectile(
                     shurikenConfig, _coroutinesPerformer),
-                    /*
                 SleepDartConfig dartConfig => new SleepDartProjectile(
                     dartConfig, _coroutinesPerformer),
-                    */
 
                 _ => null
             };

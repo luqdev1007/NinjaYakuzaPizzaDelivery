@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 {
-    public class ShurikenProjectile : ThrowableProjectile
+    public class SleepDartProjectile : ThrowableProjectile
     {
-        private readonly ShurikenConfig _config;
+        private readonly SleepDartConfig _config;
 
-        public ShurikenProjectile(
-            ShurikenConfig config,
+        public SleepDartProjectile(
+            SleepDartConfig config,
             ICoroutinesPerformer coroutinesPerformer) : base(config, coroutinesPerformer)
         {
             _config = config;
@@ -16,7 +16,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         protected override void OnHit(Collider2D hit)
         {
-            Debug.Log($"Сюрикен попал в {hit.gameObject.name}, урон: {_config.Damage}");
+            Debug.Log($"Дротик попал в {hit.gameObject.name}, усыпляет на {_config.SleepDuration}с");
             Destroy();
         }
 
