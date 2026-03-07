@@ -15,6 +15,9 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField] public float GrappleProjectileSpeed { get; private set; } = 20f;
         [field: SerializeField] public float GrappleArriveDistance { get; private set; } = 0.5f;
         [field: SerializeField] public LayerMask GrappleMask { get; private set; }
+        [field: SerializeField] public float GrappleMaxDistance { get; private set; } = 10f;
+        [field: SerializeField] public float GrappleArrivalBounce { get; private set; } = 6f;
+
 
         [Header("Glide Settings")]
         [field: SerializeField] public float GlideMaxFallSpeed { get; private set; } = -2f;

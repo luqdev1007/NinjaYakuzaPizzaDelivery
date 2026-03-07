@@ -109,6 +109,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddGrappleArriveDistance(new ReactiveVariable<float>(config.GrappleArriveDistance))
                 .AddGrappleAnchorPoint(new ReactiveVariable<Vector3>())
                 .AddIsThrowingHook()
+                .AddGrappleMaxDistance(new ReactiveVariable<float>(config.GrappleMaxDistance))
+                .AddGrappleArrivalBounce(new ReactiveVariable<float>(config.GrappleArrivalBounce))
                 ;
 
             ICompositeCondition canJump = new CompositeCondition()

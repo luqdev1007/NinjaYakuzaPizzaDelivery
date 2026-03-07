@@ -26,9 +26,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
         private Rigidbody2D _rigidbody;
         private Transform _transform;
 
+        private ReactiveVariable<float> _maxDistance;
         private GameObject _hookInstance;
         private Coroutine _grappleCoroutine;
         private float _defaultGravityScale;
+        private ReactiveVariable<float> _grappleArrivalBounce;
 
         private GrappleRopeView _ropeView;
 
@@ -48,6 +50,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         public void OnInit(Entity entity)
         {
+            _maxDistance = entity.GrappleMaxDistance;
+
+            _grappleArrivalBounce = entity.GrappleArrivalBounce;
+
             _canGrapple = entity.CanGrapple;
             _isGrappling = entity.IsGrappling;
             _grappleSpeed = entity.GrappleSpeed;
@@ -98,6 +104,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
         private IEnumerator HookFlyCoroutine(Vector3 direction)
         {
             Transform hook = _hookInstance.transform;
+            Vector3 startPosition = hook.position;
 
             while (true)
             {
@@ -109,12 +116,49 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
                 hook.position += direction * _projectileSpeed.Value * Time.deltaTime;
 
+                float travelledDistance = Vector3.Distance(startPosition, hook.position);
+
+                if (travelledDistance >= _maxDistance.Value)
+                {
+                    _coroutinesPerformer.StartPerform(ReturnHookCoroutine(startPosition));
+                    yield break;
+                }
+
                 Collider2D hit = Physics2D.OverlapPoint(hook.position, _grappleMask);
 
                 if (hit != null)
                 {
                     _anchorPoint.Value = hook.position;
                     _coroutinesPerformer.StartPerform(PullCoroutine());
+                    yield break;
+                }
+
+                yield return null;
+            }
+        }
+
+        private IEnumerator ReturnHookCoroutine(Vector3 returnTarget)
+        {
+            Transform hook = _hookInstance.transform;
+
+            while (true)
+            {
+                if (_inputService.IsGrappleKeyReleased)
+                {
+                    StopGrapple();
+                    yield break;
+                }
+
+                hook.position = Vector3.MoveTowards(
+                    hook.position,
+                    returnTarget,
+                    _projectileSpeed.Value * 2f * Time.deltaTime);
+
+                float distance = Vector3.Distance(hook.position, returnTarget);
+
+                if (distance <= 0.1f)
+                {
+                    StopGrapple();
                     yield break;
                 }
 
@@ -141,7 +185,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
                 if (distance <= _arriveDistance.Value)
                 {
-                    StopGrapple();
+                    ArriveAtAnchor();
                     yield break;
                 }
 
@@ -149,6 +193,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
                 yield return null;
             }
+        }
+
+        private void ArriveAtAnchor()
+        {
+            StopGrapple();
+            _rigidbody.linearVelocity = new Vector2(
+                _rigidbody.linearVelocity.x,
+                _grappleArrivalBounce.Value);
         }
 
         private void StopGrapple()
