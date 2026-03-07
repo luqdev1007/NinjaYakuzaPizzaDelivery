@@ -75,10 +75,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
 
         private void UpdateWallHang(float deltaTime)
         {
-            // сползание вниз
+            // проверяем что стена всё ещё рядом
+            float direction = _wallDirection.Value;
+            Vector2 checkOrigin = (Vector2)_transform.position + Vector2.right * direction * 0.3f;
+            Collider2D wallCheck = Physics2D.OverlapCircle(checkOrigin, 0.15f, _wallHangLayer);
+            if (wallCheck == null)
+            {
+                StopWallHang();
+                return;
+            }
+
+            // остальной код без изменений
             _rigidbody.linearVelocity = new Vector2(0f, -_wallHangSlideSpeed.Value);
 
-            // wall jump
             if (_inputService.IsJumpKeyPressed)
             {
                 float bounceX = -_wallDirection.Value * _wallJumpForce.Value.x;
@@ -88,7 +97,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
                 return;
             }
 
-            // отпустили атаку или коснулись земли
             if (!_inputService.IsAttackKeyHeld)
                 StopWallHang();
         }

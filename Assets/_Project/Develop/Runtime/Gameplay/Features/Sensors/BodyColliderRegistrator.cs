@@ -6,7 +6,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
 {
     public class BodyColliderRegistrator : MonoEntityRegistrator
     {
-        [SerializeField] private BoxCollider2D _body;
+        [SerializeField] private Collider2D _body;
 
         public override void Register(Entity entity)
         {

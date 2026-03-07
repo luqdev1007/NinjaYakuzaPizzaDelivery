@@ -59,7 +59,7 @@ MonoBehaviour:
   <SlopeJumpForce>k__BackingField: {x: 10, y: 6}
   <SlopeMask>k__BackingField:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 2304
   <PlungeSpeed>k__BackingField: 25
   <PlungeAOERadius>k__BackingField: 3
   <PlungeAOEDamage>k__BackingField: 50

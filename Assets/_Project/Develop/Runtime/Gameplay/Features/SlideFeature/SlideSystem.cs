@@ -72,7 +72,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
                 _defaultColliderSize = capsule.size;
                 _defaultColliderOffset = capsule.offset;
                 _slideColliderSize = new Vector2(capsule.size.x, capsule.size.y * 0.5f);
-                _slideColliderOffset = new Vector2(capsule.offset.x, capsule.offset.y - capsule.size.y * 0.25f);
+                _slideColliderOffset = new Vector2(capsule.offset.x, 0f); // попробуй 0
             }
         }
 
@@ -142,6 +142,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         private void EndSlopeSlide()
         {
             StopSlide();
+            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, 0f); // ← сброс
             float direction = _transform.localScale.x > 0 ? 1f : -1f;
             _rigidbody.AddForce(new Vector2(
                 direction * _slopeJumpForce.Value.x,
@@ -161,7 +162,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
             RaycastHit2D hit = Physics2D.Raycast(
                 _transform.position,
                 Vector2.down,
-                1.5f,
+                2f, // ← увеличили
                 _slopeMask);
 
             if (hit.collider == null)
@@ -215,14 +216,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 
             foreach (Collider2D hit in hits)
             {
-                // урон
-                if (hit.TryGetComponent(out Entity enemy))
-                    enemy.TakeDamageRequest.Invoke(_plungeAOEDamage.Value);
+                if (hit == null || !hit.gameObject.activeSelf)
+                    continue;
 
-                // кнокбэк от точки падения
-                Vector2 knockbackDir = ((Vector2)hit.transform.position - (Vector2)_transform.position).normalized;
-                if (hit.TryGetComponent(out Rigidbody2D rb))
+                // кнокбэк
+                Rigidbody2D rb = hit.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    Vector2 knockbackDir = ((Vector2)hit.transform.position - (Vector2)_transform.position).normalized;
                     rb.AddForce(knockbackDir * _plungeKnockbackForce.Value, ForceMode2D.Impulse);
+                }
             }
 
             StopPlunge();
