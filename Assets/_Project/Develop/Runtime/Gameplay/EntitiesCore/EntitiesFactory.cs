@@ -12,6 +12,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature;
 using Assets._Project.Develop.Runtime.Utilites;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
@@ -102,39 +103,43 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddGlideSpeedDamping(new ReactiveVariable<float>(config.GlideSpeedDamping))
                 .AddGlideBounceForce(new ReactiveVariable<float>(config.GlideBounceForce))
 
-                // grap
+                // throwable
                 .AddIsGrappling()
+                .AddIsThrowingHook()
+                .AddCurrentThrowableIndex(new ReactiveVariable<int>(0))
+                .AddGrappleCharges(new ReactiveVariable<int>(config.GrappleConfig.MaxCharges))
+                .AddShurikenCharges(new ReactiveVariable<int>(config.ShurikenConfig.MaxCharges))
+                .AddSleepDartCharges(new ReactiveVariable<int>(config.SleepDartConfig.MaxCharges))
                 .AddGrappleMinDistance(new ReactiveVariable<float>(config.GrappleMinDistance))
                 .AddGrappleSpeed(new ReactiveVariable<float>(config.GrappleSpeed))
                 .AddGrappleProjectileSpeed(new ReactiveVariable<float>(config.GrappleProjectileSpeed))
                 .AddGrappleArriveDistance(new ReactiveVariable<float>(config.GrappleArriveDistance))
                 .AddGrappleAnchorPoint(new ReactiveVariable<Vector3>())
-                .AddIsThrowingHook()
                 .AddGrappleMaxDistance(new ReactiveVariable<float>(config.GrappleMaxDistance))
                 .AddGrappleArrivalBounce(new ReactiveVariable<float>(config.GrappleArrivalBounce))
                 ;
 
             ICompositeCondition canJump = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.IsDead.Value == false))
-            .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-            .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-            .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-            .Add(new FuncCondition(() => entity.JumpsAvailable.Value > 0))
-            .Add(new FuncCondition(() => entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value));
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.JumpsAvailable.Value > 0))
+                .Add(new FuncCondition(() => entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value));
 
             ICompositeCondition canDash = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.IsDead.Value == false))
-            .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-            .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-            .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-            .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-            .Add(new FuncCondition(() =>
-                entity.IsGrounded.Value ||
-                entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value)); // ?
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() =>
+                    entity.IsGrounded.Value ||
+                    entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value));
 
             ICompositeCondition canMove = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
             ICompositeCondition mustDie = new CompositeCondition()
@@ -147,7 +152,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canApplyDamage = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-                .Add(new FuncCondition(() => entity.IsDashing.Value == false)); // неуязвимость во время дэша
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false));
 
             ICompositeCondition canStartAttack = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
@@ -165,17 +170,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canGlide = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsThrowingHook.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-                .Add(new FuncCondition(() => entity.IsThrowingHook.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false));
 
             ICompositeCondition canGrapple = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsThrowingHook.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false));
 
             entity
@@ -191,38 +196,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddCanApplyDamage(canApplyDamage);
 
             IInputService inputService = _container.Resolve<IInputService>();
-            JumpSystem jumpSystem = new JumpSystem(inputService);
+
+            var throwableBehaviourFactory = new ThrowableBehaviourFactory(
+                _container.Resolve<ICoroutinesPerformer>());
 
             entity
                 .AddSystem(new SpawnProcessTimerSystem())
-
                 .AddSystem(new PlayerInputSystem(inputService))
-
                 .AddSystem(new GroundCheckSystem())
-
                 .AddSystem(new ApplyDamageSystem())
-
                 .AddSystem(new DeathSystem())
                 .AddSystem(new DeathProcessTimerSystem())
                 .AddSystem(new DisableCollidersOnDeathSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
-
                 .AddSystem(new RigidbodyMovementSystem())
                 .AddSystem(new FlipDirectionSystem())
-                .AddSystem(jumpSystem)
-
+                .AddSystem(new JumpSystem(inputService))
                 .AddSystem(new DashSystem(inputService, _container.Resolve<ICoroutinesPerformer>()))
-
                 .AddSystem(new GlideSystem(inputService))
-
-                .AddSystem(new GrappleSystem(
+                .AddSystem(new ThrowableSystem(
                     inputService,
                     _container.Resolve<ICoroutinesPerformer>(),
-                    config.GrappleMask,
-                    config.EnemyMask,
-                    config.GrappleProjectilePrefabPath))
-
-                // attack
+                    new ThrowableConfig[] { config.GrappleConfig, config.ShurikenConfig, config.SleepDartConfig },
+                    throwableBehaviourFactory))
                 .AddSystem(new AttackCancelSystem())
                 .AddSystem(new StartAttackSystem())
                 .AddSystem(new AttackProcessTimerSystem())

@@ -9,7 +9,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
     {
         protected readonly ICoroutinesPerformer CoroutinesPerformer;
         protected readonly ThrowableConfig Config;
-        protected GameObject Instance;
+
+        public GameObject Instance { get; protected set; }
 
         protected ThrowableProjectile(ThrowableConfig config, ICoroutinesPerformer coroutinesPerformer)
         {

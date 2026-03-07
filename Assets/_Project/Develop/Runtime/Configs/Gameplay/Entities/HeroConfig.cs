@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 {
@@ -8,6 +9,12 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField] public string PrefabPath { get; private set; } = "Entities/Hero";
 
         [field: SerializeField] public float MinFallVelocityForAction { get; private set; } = -2f;
+
+        [Header("Throwables")]
+        [field: SerializeField] public GrappleHookConfig GrappleConfig { get; private set; }
+        [field: SerializeField] public ShurikenConfig ShurikenConfig { get; private set; }
+        [field: SerializeField] public SleepDartConfig SleepDartConfig { get; private set; }
+
 
         [Header("Grapple Settings")]
         [field: SerializeField] public float GrappleMinDistance { get; private set; } = 2f;
