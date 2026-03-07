@@ -5,6 +5,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack.Shoot;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
+using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
@@ -100,23 +101,34 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddGlideMaxFallSpeed(new ReactiveVariable<float>(config.GlideMaxFallSpeed))
                 .AddGlideSpeedDamping(new ReactiveVariable<float>(config.GlideSpeedDamping))
                 .AddGlideBounceForce(new ReactiveVariable<float>(config.GlideBounceForce))
+
+                // grap
+                .AddIsGrappling()
+                .AddGrappleSpeed(new ReactiveVariable<float>(config.GrappleSpeed))
+                .AddGrappleProjectileSpeed(new ReactiveVariable<float>(config.GrappleProjectileSpeed))
+                .AddGrappleArriveDistance(new ReactiveVariable<float>(config.GrappleArriveDistance))
+                .AddGrappleAnchorPoint(new ReactiveVariable<Vector3>())
+                .AddIsThrowingHook()
                 ;
 
             ICompositeCondition canJump = new CompositeCondition()
             .Add(new FuncCondition(() => entity.IsDead.Value == false))
+            .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
             .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
             .Add(new FuncCondition(() => entity.JumpsAvailable.Value > 0))
             .Add(new FuncCondition(() => entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value));
 
             ICompositeCondition canDash = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-                .Add(new FuncCondition(() =>
-                    entity.IsGrounded.Value ||
-                    entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value)); // ?
+            .Add(new FuncCondition(() => entity.IsDead.Value == false))
+            .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+            .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+            .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+            .Add(new FuncCondition(() =>
+                entity.IsGrounded.Value ||
+                entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value)); // ?
 
             ICompositeCondition canMove = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
@@ -134,6 +146,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             ICompositeCondition canStartAttack = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.InAttackProcess.Value == false))
                 .Add(new FuncCondition(() => entity.InAttackCooldown.Value == false))
@@ -144,9 +157,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             ICompositeCondition canGlide = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false));
+
+            ICompositeCondition canGrapple = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false));
 
             entity
                 .AddCanMove(canMove)
@@ -157,6 +177,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMustDie(mustDie)
                 .AddMustSelfRelease(mustSelfRelease)
                 .AddCanGlide(canGlide)
+                .AddCanGrapple(canGrapple)
                 .AddCanApplyDamage(canApplyDamage);
 
             IInputService inputService = _container.Resolve<IInputService>();
@@ -187,6 +208,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new MeleeAttackHitSystem(config.EnemyMask, config.HitBounceForce))
 
                 .AddSystem(new GlideSystem(inputService))
+
+                .AddSystem(new GrappleSystem(
+                    inputService,
+                    _container.Resolve<ICoroutinesPerformer>(),
+                    config.GrappleMask,
+                    config.GrappleProjectilePrefabPath))
                 ;
 
             return entity;

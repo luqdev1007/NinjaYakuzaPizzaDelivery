@@ -14,6 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/Characters/Hero
   <MinFallVelocityForAction>k__BackingField: -3
+  <GrappleProjectilePrefabPath>k__BackingField: Entities/GrappleHook
+  <GrappleSpeed>k__BackingField: 15
+  <GrappleProjectileSpeed>k__BackingField: 20
+  <GrappleArriveDistance>k__BackingField: 0.5
+  <GrappleMask>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 768
   <GlideMaxFallSpeed>k__BackingField: -3
   <GlideSpeedDamping>k__BackingField: 5
   <GlideBounceForce>k__BackingField: 6.5

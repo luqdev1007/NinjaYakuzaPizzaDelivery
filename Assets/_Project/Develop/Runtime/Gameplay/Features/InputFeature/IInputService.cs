@@ -4,6 +4,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
 {
     public interface IInputService
     {
+        bool IsGrappleKeyPressed { get; }
+        bool IsGrappleKeyReleased { get; }
+
         bool IsDashKeyPressed { get; }
         bool IsDashKeyHeld { get; }
         bool IsDashKeyReleased { get; }
