@@ -12,10 +12,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
         [SerializeField] private LineRenderer _lineRenderer;
         [SerializeField] private Transform _ropeOrigin;
 
-        private IReadOnlyVariable<bool> _isThrowingHook;
-        private IReadOnlyVariable<Vector3> _anchorPoint;
-        private IDisposable _isThrowingHookDisposable;
-
+        private IReadOnlyVariable<bool> _isThrowing;
+        private IDisposable _isThrowingDisposable;
         private Transform _hookTransform;
 
         private void OnValidate()
@@ -25,10 +23,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _isThrowingHook = entity.IsThrowingHook;
-            _anchorPoint = entity.GrappleAnchorPoint;
-            _isThrowingHookDisposable = _isThrowingHook.Subscribe(OnIsThrowingHookChanged);
-
+            _isThrowing = entity.IsThrowing;
+            _isThrowingDisposable = _isThrowing.Subscribe(OnIsThrowingChanged);
             _lineRenderer.positionCount = 2;
             _lineRenderer.enabled = false;
         }
@@ -36,7 +32,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
-            _isThrowingHookDisposable?.Dispose();
+            _isThrowingDisposable?.Dispose();
         }
 
         public void SetHookTransform(Transform hookTransform)
@@ -51,18 +47,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         private void LateUpdate()
         {
-            if (!_lineRenderer.enabled)
+            if (!_lineRenderer.enabled || _hookTransform == null)
                 return;
 
-            Vector3 endPoint = _hookTransform != null
-                ? _hookTransform.position
-                : _anchorPoint.Value;
-
             _lineRenderer.SetPosition(0, _ropeOrigin.position);
-            _lineRenderer.SetPosition(1, endPoint);
+            _lineRenderer.SetPosition(1, _hookTransform.position);
         }
 
-        private void OnIsThrowingHookChanged(bool oldValue, bool value)
+        private void OnIsThrowingChanged(bool oldValue, bool value)
         {
             _lineRenderer.enabled = value;
         }

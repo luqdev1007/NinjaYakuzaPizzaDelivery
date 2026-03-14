@@ -2,6 +2,126 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 {
 	public partial class Entity
 	{
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.CurrentThrowableIndex CurrentThrowableIndexC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.CurrentThrowableIndex>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> CurrentThrowableIndex => CurrentThrowableIndexC.Value;
+
+		public bool TryGetCurrentThrowableIndex(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.CurrentThrowableIndex component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCurrentThrowableIndex()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.CurrentThrowableIndex() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCurrentThrowableIndex(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.CurrentThrowableIndex() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.GrappleCharges GrappleChargesC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.GrappleCharges>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> GrappleCharges => GrappleChargesC.Value;
+
+		public bool TryGetGrappleCharges(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.GrappleCharges component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGrappleCharges()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.GrappleCharges() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGrappleCharges(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.GrappleCharges() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ShurikenCharges ShurikenChargesC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ShurikenCharges>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> ShurikenCharges => ShurikenChargesC.Value;
+
+		public bool TryGetShurikenCharges(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ShurikenCharges component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddShurikenCharges()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ShurikenCharges() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddShurikenCharges(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ShurikenCharges() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.SleepDartCharges SleepDartChargesC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.SleepDartCharges>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> SleepDartCharges => SleepDartChargesC.Value;
+
+		public bool TryGetSleepDartCharges(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.SleepDartCharges component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSleepDartCharges()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.SleepDartCharges() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSleepDartCharges(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.SleepDartCharges() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.IsThrowing IsThrowingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.IsThrowing>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsThrowing => IsThrowingC.Value;
+
+		public bool TryGetIsThrowing(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.IsThrowing component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsThrowing()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.IsThrowing() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsThrowing(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.IsThrowing() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team TeamC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team>();
 
 		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Teams> Team => TeamC.Value;
@@ -96,6 +216,303 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddInSpawnProcess(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature.InSpawnProcess() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.CanSlide CanSlideC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.CanSlide>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition CanSlide => CanSlideC.Value;
+
+		public bool TryGetCanSlide(out Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.CanSlide component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanSlide(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.CanSlide() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.CanPlunge CanPlungeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.CanPlunge>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition CanPlunge => CanPlungeC.Value;
+
+		public bool TryGetCanPlunge(out Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.CanPlunge component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanPlunge(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.CanPlunge() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.IsSliding IsSlidingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.IsSliding>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsSliding => IsSlidingC.Value;
+
+		public bool TryGetIsSliding(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.IsSliding component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsSliding()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.IsSliding() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsSliding(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.IsSliding() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.IsPlunging IsPlungingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.IsPlunging>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsPlunging => IsPlungingC.Value;
+
+		public bool TryGetIsPlunging(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.IsPlunging component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsPlunging()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.IsPlunging() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsPlunging(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.IsPlunging() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideDuration SlideDurationC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideDuration>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlideDuration => SlideDurationC.Value;
+
+		public bool TryGetSlideDuration(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideDuration component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideDuration()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideDuration() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideDuration(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideDuration() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideSpeed SlideSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideSpeed>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlideSpeed => SlideSpeedC.Value;
+
+		public bool TryGetSlideSpeed(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideSpeed component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideSpeed()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideSpeed() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideSpeed(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideSpeed() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlopeBoostMultiplier SlopeBoostMultiplierC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlopeBoostMultiplier>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlopeBoostMultiplier => SlopeBoostMultiplierC.Value;
+
+		public bool TryGetSlopeBoostMultiplier(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlopeBoostMultiplier component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeBoostMultiplier()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlopeBoostMultiplier() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeBoostMultiplier(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlopeBoostMultiplier() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlopeJumpForce SlopeJumpForceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlopeJumpForce>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> SlopeJumpForce => SlopeJumpForceC.Value;
+
+		public bool TryGetSlopeJumpForce(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlopeJumpForce component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeJumpForce()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlopeJumpForce() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeJumpForce(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlopeJumpForce() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeSpeed PlungeSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeSpeed>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> PlungeSpeed => PlungeSpeedC.Value;
+
+		public bool TryGetPlungeSpeed(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeSpeed component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeSpeed()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeSpeed() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeSpeed(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeSpeed() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeAOERadius PlungeAOERadiusC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeAOERadius>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> PlungeAOERadius => PlungeAOERadiusC.Value;
+
+		public bool TryGetPlungeAOERadius(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeAOERadius component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeAOERadius()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeAOERadius() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeAOERadius(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeAOERadius() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeAOEDamage PlungeAOEDamageC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeAOEDamage>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> PlungeAOEDamage => PlungeAOEDamageC.Value;
+
+		public bool TryGetPlungeAOEDamage(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeAOEDamage component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeAOEDamage()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeAOEDamage() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeAOEDamage(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeAOEDamage() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeKnockbackForce PlungeKnockbackForceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeKnockbackForce>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> PlungeKnockbackForce => PlungeKnockbackForceC.Value;
+
+		public bool TryGetPlungeKnockbackForce(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeKnockbackForce component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeKnockbackForce()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeKnockbackForce() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeKnockbackForce(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.PlungeKnockbackForce() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlopeMask SlopeMaskC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlopeMask>();
+
+		public UnityEngine.LayerMask SlopeMask => SlopeMaskC.Value;
+
+		public bool TryGetSlopeMask(out UnityEngine.LayerMask value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlopeMask component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(UnityEngine.LayerMask);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeMask(UnityEngine.LayerMask value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlopeMask() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.Sensors.BodyCollider BodyColliderC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Sensors.BodyCollider>();
@@ -1235,6 +1652,164 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.DisableCollidersOnDeath() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang CanWallHangC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition CanWallHang => CanWallHangC.Value;
+
+		public bool TryGetCanWallHang(out Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanWallHang(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.IsWallHanging IsWallHangingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.IsWallHanging>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsWallHanging => IsWallHangingC.Value;
+
+		public bool TryGetIsWallHanging(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.IsWallHanging component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsWallHanging()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.IsWallHanging() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsWallHanging(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.IsWallHanging() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangSlideSpeed WallHangSlideSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangSlideSpeed>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> WallHangSlideSpeed => WallHangSlideSpeedC.Value;
+
+		public bool TryGetWallHangSlideSpeed(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangSlideSpeed component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallHangSlideSpeed()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangSlideSpeed() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallHangSlideSpeed(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangSlideSpeed() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangLayer WallHangLayerC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangLayer>();
+
+		public UnityEngine.LayerMask WallHangLayer => WallHangLayerC.Value;
+
+		public bool TryGetWallHangLayer(out UnityEngine.LayerMask value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangLayer component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(UnityEngine.LayerMask);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallHangLayer(UnityEngine.LayerMask value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangLayer() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallJumpForce WallJumpForceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallJumpForce>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> WallJumpForce => WallJumpForceC.Value;
+
+		public bool TryGetWallJumpForce(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallJumpForce component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallJumpForce()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallJumpForce() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallJumpForce(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallJumpForce() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallDirection WallDirectionC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallDirection>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> WallDirection => WallDirectionC.Value;
+
+		public bool TryGetWallDirection(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallDirection component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallDirection()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallDirection() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallDirection(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallDirection() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleMinDistance GrappleMinDistanceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleMinDistance>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> GrappleMinDistance => GrappleMinDistanceC.Value;
+
+		public bool TryGetGrappleMinDistance(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleMinDistance component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGrappleMinDistance()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleMinDistance() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGrappleMinDistance(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleMinDistance() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleArrivalBounce GrappleArrivalBounceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleArrivalBounce>();
 
 		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> GrappleArrivalBounce => GrappleArrivalBounceC.Value;
@@ -1281,30 +1856,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGrappleMaxDistance(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleMaxDistance() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.IsThrowingHook IsThrowingHookC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.IsThrowingHook>();
-
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsThrowingHook => IsThrowingHookC.Value;
-
-		public bool TryGetIsThrowingHook(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.IsThrowingHook component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsThrowingHook()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.IsThrowingHook() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsThrowingHook(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.IsThrowingHook() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.CanGrapple CanGrappleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.CanGrapple>();

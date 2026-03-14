@@ -4,13 +4,15 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
-using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.HangWall;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature;
 using Assets._Project.Develop.Runtime.Utilites;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
@@ -43,6 +45,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory.Create(entity, position, config.PrefabPath);
 
             entity
+                .AddIsThrowing()
                 // dash
                 .AddDashForceMin(new ReactiveVariable<float>(config.DashForceMin))
                 .AddDashForceMax(new ReactiveVariable<float>(config.DashForceMax))
@@ -101,36 +104,61 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddGlideSpeedDamping(new ReactiveVariable<float>(config.GlideSpeedDamping))
                 .AddGlideBounceForce(new ReactiveVariable<float>(config.GlideBounceForce))
 
-                // grap
+                // throwable
                 .AddIsGrappling()
-                .AddGrappleSpeed(new ReactiveVariable<float>(config.GrappleSpeed))
-                .AddGrappleProjectileSpeed(new ReactiveVariable<float>(config.GrappleProjectileSpeed))
-                .AddGrappleArriveDistance(new ReactiveVariable<float>(config.GrappleArriveDistance))
-                .AddGrappleAnchorPoint(new ReactiveVariable<Vector3>())
-                .AddIsThrowingHook()
-                .AddGrappleMaxDistance(new ReactiveVariable<float>(config.GrappleMaxDistance))
-                .AddGrappleArrivalBounce(new ReactiveVariable<float>(config.GrappleArrivalBounce))
+                .AddCurrentThrowableIndex(new ReactiveVariable<int>(0))
+                .AddGrappleCharges(new ReactiveVariable<int>(config.GrappleConfig.MaxCharges))
+                .AddShurikenCharges(new ReactiveVariable<int>(config.ShurikenConfig.MaxCharges))
+                .AddSleepDartCharges(new ReactiveVariable<int>(config.SleepDartConfig.MaxCharges))
+
+                // wall hang
+                .AddIsWallHanging()
+                .AddWallHangLayer(config.WallHangLayer)
+                .AddWallHangSlideSpeed(new ReactiveVariable<float>(config.WallHangSlideSpeed))
+                .AddWallJumpForce(new ReactiveVariable<Vector2>(config.WallJumpForce))
+                .AddWallDirection()
+
+                // slide / plunge
+                .AddIsSliding()
+                .AddIsPlunging()
+                .AddSlideDuration(new ReactiveVariable<float>(config.SlideDuration))
+                .AddSlideSpeed(new ReactiveVariable<float>(config.SlideSpeed))
+                .AddSlopeBoostMultiplier(new ReactiveVariable<float>(config.SlopeBoostMultiplier))
+                .AddSlopeJumpForce(new ReactiveVariable<Vector2>(config.SlopeJumpForce))
+                .AddPlungeSpeed(new ReactiveVariable<float>(config.PlungeSpeed))
+                .AddPlungeAOERadius(new ReactiveVariable<float>(config.PlungeAOERadius))
+                .AddPlungeAOEDamage(new ReactiveVariable<float>(config.PlungeAOEDamage))
+                .AddPlungeKnockbackForce(new ReactiveVariable<float>(config.PlungeKnockbackForce))
+                .AddSlopeMask(config.SlopeMask)
+
                 ;
 
             ICompositeCondition canJump = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.IsDead.Value == false))
-            .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-            .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-            .Add(new FuncCondition(() => entity.JumpsAvailable.Value > 0))
-            .Add(new FuncCondition(() => entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value));
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.JumpsAvailable.Value > 0))
+                // .Add(new FuncCondition(() => entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value));
+                ;
 
             ICompositeCondition canDash = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.IsDead.Value == false))
-            .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-            .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-            .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-            .Add(new FuncCondition(() =>
-                entity.IsGrounded.Value ||
-                entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value)); // ?
+                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() =>
+                    entity.IsGrounded.Value ||
+                    entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value));
 
             ICompositeCondition canMove = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
             ICompositeCondition mustDie = new CompositeCondition()
@@ -143,7 +171,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canApplyDamage = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-                .Add(new FuncCondition(() => entity.IsDashing.Value == false)); // неуязвимость во время дэша
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false));
 
             ICompositeCondition canStartAttack = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
@@ -151,23 +179,61 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.InAttackProcess.Value == false))
                 .Add(new FuncCondition(() => entity.InAttackCooldown.Value == false))
+                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false));
 
             ICompositeCondition mustCancelAttack = new CompositeCondition(LogicOperations.Or)
-                .Add(new FuncCondition(() => entity.IsDead.Value == true));
+                .Add(new FuncCondition(() => entity.IsDead.Value == true))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == true))
+                .Add(new FuncCondition(() => entity.IsWallHanging.Value == true))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == true));
 
             ICompositeCondition canGlide = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsThrowing.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false));
 
             ICompositeCondition canGrapple = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsThrowing.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false));
+
+
+            ICompositeCondition canWallHang = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.InAttackProcess.Value == true));
+
+            ICompositeCondition canSlide = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
+
+            ICompositeCondition canPlunge = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
+                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
             entity
                 .AddCanMove(canMove)
@@ -179,27 +245,38 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMustSelfRelease(mustSelfRelease)
                 .AddCanGlide(canGlide)
                 .AddCanGrapple(canGrapple)
-                .AddCanApplyDamage(canApplyDamage);
+                .AddCanApplyDamage(canApplyDamage)
+
+                .AddCanWallHang(canWallHang)
+                .AddCanSlide(canSlide)
+                .AddCanPlunge(canPlunge)
+                ;
 
             IInputService inputService = _container.Resolve<IInputService>();
-            JumpSystem jumpSystem = new JumpSystem(inputService);
+
+            var throwableBehaviourFactory = new ThrowableBehaviourFactory(
+                _container.Resolve<ICoroutinesPerformer>());
 
             entity
                 .AddSystem(new SpawnProcessTimerSystem())
                 .AddSystem(new PlayerInputSystem(inputService))
-                .AddSystem(jumpSystem)
-                .AddSystem(new GroundCheckSystem())
-                .AddSystem(new RigidbodyMovementSystem())
-                .AddSystem(new FlipDirectionSystem())
+
+                .AddSystem(new GroundCheckSystem(coyoteTime: 0.1f))
+
                 .AddSystem(new ApplyDamageSystem())
                 .AddSystem(new DeathSystem())
-                .AddSystem(new DisableCollidersOnDeathSystem())
                 .AddSystem(new DeathProcessTimerSystem())
+                .AddSystem(new DisableCollidersOnDeathSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
-
+                .AddSystem(new RigidbodyMovementSystem())
+                .AddSystem(new JumpSystem(inputService))
                 .AddSystem(new DashSystem(inputService, _container.Resolve<ICoroutinesPerformer>()))
-
-                // attack
+                .AddSystem(new GlideSystem(inputService))
+                .AddSystem(new ThrowableSystem(
+                    inputService,
+                    _container.Resolve<ICoroutinesPerformer>(),
+                    new ThrowableConfig[] { config.GrappleConfig, config.ShurikenConfig, config.SleepDartConfig },
+                    throwableBehaviourFactory))
                 .AddSystem(new AttackCancelSystem())
                 .AddSystem(new StartAttackSystem())
                 .AddSystem(new AttackProcessTimerSystem())
@@ -208,13 +285,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new AttackCooldownTimerSystem())
                 .AddSystem(new MeleeAttackHitSystem(config.EnemyMask, config.HitBounceForce))
 
-                .AddSystem(new GlideSystem(inputService))
+                .AddSystem(new WallHangSystem(inputService))
 
-                .AddSystem(new GrappleSystem(
-                    inputService,
-                    _container.Resolve<ICoroutinesPerformer>(),
-                    config.GrappleMask,
-                    config.GrappleProjectilePrefabPath))
+                .AddSystem(new SlideSystem(inputService, config.EnemyMask, _container.Resolve<ICoroutinesPerformer>()))
+                .AddSystem(new SlopeSystem(inputService, _container.Resolve<ICoroutinesPerformer>()))
+
+                .AddSystem(new FlipDirectionSystem())
                 ;
 
             return entity;
