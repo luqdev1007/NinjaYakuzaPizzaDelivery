@@ -15,7 +15,7 @@ public class RigidbodyMovementSystem : IInitializableSystem, IUpdatableSystem
     private ReactiveVariable<bool> _isMoving;
     private ICompositeCondition _canMove;
 
-    private float _currentSpeedX; // текущая скорость с учётом разгона
+    private float _currentSpeedX; 
 
     public void OnInit(Entity entity)
     {
@@ -33,12 +33,12 @@ public class RigidbodyMovementSystem : IInitializableSystem, IUpdatableSystem
     {
         if (_canMove.Evaluate() == false)
         {
-            // торможение при запрете движения
             _currentSpeedX = Mathf.MoveTowards(
                 _currentSpeedX, 0f, _deceleration.Value * deltaTime);
             _rigidbody.linearVelocity = new Vector2(
                 _currentSpeedX, _rigidbody.linearVelocity.y);
             _isMoving.Value = Mathf.Abs(_currentSpeedX) > 0.01f;
+
             return;
         }
 
@@ -46,12 +46,10 @@ public class RigidbodyMovementSystem : IInitializableSystem, IUpdatableSystem
 
         if (Mathf.Abs(inputX) > 0.01f)
         {
-            // разгон в направлении инпута
             float targetSpeed = inputX > 0
                 ? _moveSpeed.Value
                 : -_moveSpeed.Value;
 
-            // если меняем направление — сначала тормозим быстрее
             bool changingDirection = (_currentSpeedX > 0 && inputX < 0)
                 || (_currentSpeedX < 0 && inputX > 0);
 
@@ -62,13 +60,11 @@ public class RigidbodyMovementSystem : IInitializableSystem, IUpdatableSystem
             _currentSpeedX = Mathf.MoveTowards(
                 _currentSpeedX, targetSpeed, rate * deltaTime);
 
-            // минимальная скорость — чтобы не ползти в начале
             if (Mathf.Abs(_currentSpeedX) < _moveSpeedMin.Value)
                 _currentSpeedX = _moveSpeedMin.Value * Mathf.Sign(inputX);
         }
         else
         {
-            // инерция при отпускании
             _currentSpeedX = Mathf.MoveTowards(
                 _currentSpeedX, 0f, _deceleration.Value * deltaTime);
         }

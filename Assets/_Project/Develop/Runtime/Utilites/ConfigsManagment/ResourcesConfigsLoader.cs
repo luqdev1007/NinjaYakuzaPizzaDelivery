@@ -1,4 +1,4 @@
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities.MainHero;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
@@ -16,6 +16,9 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
 
         private readonly Dictionary<Type, string> _configsResourcesPath = new()
         {
+            // entities configs
+            { typeof(MainHeroConfig), "Configs/Entities/MainHero/MainHeroConfig" },
+
             { typeof(StartWalletConfig), "Configs/Meta/Wallet/StartWalletConfig" },
             { typeof(CurrencyIconsConfig), "Configs/Meta/Wallet/CurrencyIconsConfig" },
 
@@ -23,7 +26,6 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
 
             { typeof(LevelsListConfig), "Configs/Gameplay/Levels/LevelsListConfig" },
 
-            { typeof(HeroConfig), "Configs/Entities/Characters/HeroConfig" }
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)

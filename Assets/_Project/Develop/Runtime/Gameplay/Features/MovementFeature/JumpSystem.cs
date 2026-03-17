@@ -8,7 +8,6 @@ using UnityEngine;
 public class JumpSystem : IInitializableSystem, IUpdatableSystem
 {
     private readonly IInputService _inputService;
-
     private ICompositeCondition _canJump;
     private ReactiveVariable<bool> _isGrounded;
     private ReactiveVariable<int> _jumpsAvailable;
@@ -17,11 +16,9 @@ public class JumpSystem : IInitializableSystem, IUpdatableSystem
     private ReactiveVariable<float> _jumpForceMax;
     private ReactiveVariable<float> _jumpChargeTime;
     private Rigidbody2D _rigidbody;
-
     private float _chargeTimer;
     private float _jumpBufferTimer;
     private bool _isCharging;
-
     private const float JumpBufferTime = 0.15f;
 
     public JumpSystem(IInputService inputService)
@@ -45,6 +42,12 @@ public class JumpSystem : IInitializableSystem, IUpdatableSystem
     {
         if (_isGrounded.Value)
             _jumpsAvailable.Value = _maxJumps.Value;
+
+        if (_isCharging && !_canJump.Evaluate())
+        {
+            _isCharging = false;
+            _chargeTimer = 0f;
+        }
 
         if (_inputService.IsJumpKeyPressed)
             _jumpBufferTimer = JumpBufferTime;
@@ -84,7 +87,6 @@ public class JumpSystem : IInitializableSystem, IUpdatableSystem
             _rigidbody.linearVelocity.x, 0);
 
         _rigidbody.AddForce(Vector2.up * force, ForceMode2D.Impulse);
-
         _jumpsAvailable.Value--;
         _isCharging = false;
         _chargeTimer = 0f;

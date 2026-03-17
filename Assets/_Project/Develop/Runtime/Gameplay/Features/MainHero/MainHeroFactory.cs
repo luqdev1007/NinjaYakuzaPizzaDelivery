@@ -1,5 +1,5 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI.States;
@@ -31,7 +31,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 
         public Entity Create(Vector3 at)
         {
-            HeroConfig config = _configsProviderService.GetConfig<HeroConfig>();
+            MainHeroConfig config = _configsProviderService.GetConfig<MainHeroConfig>();
 
             Entity entity = _entitiesFactory.CreateHero(at, config);
 
