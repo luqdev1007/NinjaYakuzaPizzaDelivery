@@ -31,7 +31,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 
         public Entity Create(Vector3 at)
         {
-            HeroConfig config = _configsProviderService.GetConfig<HeroConfig>();
+            MaiHeroConfig config = _configsProviderService.GetConfig<MaiHeroConfig>();
 
             Entity entity = _entitiesFactory.CreateHero(at, config);
 

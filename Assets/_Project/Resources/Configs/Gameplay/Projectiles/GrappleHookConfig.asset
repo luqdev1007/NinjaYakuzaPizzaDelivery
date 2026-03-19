@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b64d5fa401ccac4280035036a6a0c14, type: 3}
   m_Name: GrappleHookConfig
   m_EditorClassIdentifier: 
-  <PrefabPath>k__BackingField: Entities/GrappleHook
+  <PrefabPath>k__BackingField: Entities/Projectiles/GrappleHook
   <ProjectileSpeed>k__BackingField: 30
   <MaxDistance>k__BackingField: 12
   <MinDistance>k__BackingField: 2

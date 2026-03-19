@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
 {
     public class CameraFollowService
     {

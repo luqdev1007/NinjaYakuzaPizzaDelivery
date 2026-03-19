@@ -23,7 +23,7 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
 
             { typeof(LevelsListConfig), "Configs/Gameplay/Levels/LevelsListConfig" },
 
-            { typeof(HeroConfig), "Configs/Entities/Characters/HeroConfig" }
+            { typeof(MaiHeroConfig), "Configs/Entities/MainHero/MainHeroConfig" }
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)

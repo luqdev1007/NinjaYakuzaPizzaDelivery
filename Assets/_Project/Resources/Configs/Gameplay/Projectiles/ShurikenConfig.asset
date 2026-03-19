@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2ed33ee53c28bc45be83577c0f84c0b, type: 3}
   m_Name: ShurikenConfig
   m_EditorClassIdentifier: 
-  <PrefabPath>k__BackingField: Entities/Shuriken
+  <PrefabPath>k__BackingField: Entities/Projectiles/Shuriken
   <ProjectileSpeed>k__BackingField: 25
   <MaxDistance>k__BackingField: 50
   <MinDistance>k__BackingField: 0.5

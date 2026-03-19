@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.States;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
@@ -26,7 +27,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private EntitiesLifeContext _entitiesLifeContext;
 
         private CameraFollowService _cameraFollowService;
-
+        private Entity _mainHero;
         private AIBrainsContext _brainsContext;
 
         public override void ProcessRegistrations(DIContainer container, IInputSceneArgs sceneArgs = null)
@@ -55,8 +56,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             _cameraFollowService = _container.Resolve<CameraFollowService>();
 
-            Entity hero = _container.Resolve<MainHeroFactory>().Create(Vector3.zero);
-            _cameraFollowService.SetTarget(hero.Transform);
+            _mainHero = _container.Resolve<MainHeroFactory>().Create(Vector3.zero);
+            _cameraFollowService.SetTarget(_mainHero.Transform);
 
             yield break;
         }
@@ -81,6 +82,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             if (Input.GetKeyDown(KeyCode.Minus)) // -
                 Time.timeScale = Mathf.Max(0f, Mathf.Round((Time.timeScale - 0.1f) * 10f) / 10f);
+
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                _mainHero.CurrentHealth.Value -= 1;
+                Debug.Log($"{_mainHero.Transform.gameObject.name} takes 1 dmg: {_mainHero.CurrentHealth.Value}/{_mainHero.MaxHealth.Value} hp");
+            }
         }
 
         private void LateUpdate()

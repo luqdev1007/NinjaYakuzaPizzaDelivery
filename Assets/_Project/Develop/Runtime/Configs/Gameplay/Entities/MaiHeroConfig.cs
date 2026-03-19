@@ -3,10 +3,10 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 {
-    [CreateAssetMenu(fileName = "HeroConfig", menuName = "Configs/Gameplay/Entities/New Hero Config")]
-    public class HeroConfig : EntityConfig
+    [CreateAssetMenu(fileName = "MainHeroConfig", menuName = "Configs/Gameplay/Main Hero/New Main Hero Config")]
+    public class MaiHeroConfig : EntityConfig
     {
-        [field: SerializeField] public string PrefabPath { get; private set; } = "Entities/Characters/Hero";
+        [field: SerializeField] public string PrefabPath { get; private set; } = "Entities/MainHero/MainHero";
 
         [field: SerializeField] public float MinFallVelocityForAction { get; private set; } = -2f;
 

@@ -36,7 +36,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _collidersRegistryService = container.Resolve<CollidersRegistryService>();
         }
 
-        public Entity CreateHero(Vector3 position, HeroConfig config)
+        public Entity CreateHero(Vector3 position, MaiHeroConfig config)
         {
             Entity entity = CreateEmpty();
 

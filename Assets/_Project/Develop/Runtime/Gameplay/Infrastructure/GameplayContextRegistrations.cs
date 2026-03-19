@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
@@ -62,7 +63,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             container.RegisterAsSingle(CreateLevelProgressService);
 
-            container.RegisterAsSingle(c => new CameraFollowService(Camera.main));
+            container.RegisterAsSingle(CreateCameraFollowService);
+        }
+
+        private static CameraFollowService CreateCameraFollowService(DIContainer container)
+        {
+            return new CameraFollowService(Camera.main);
         }
 
         private static LevelProgressService CreateLevelProgressService(DIContainer container)
