@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ea55c19b01a54a848aae2bcf831dfbb8, type: 3}
-  m_Name: Level_1_Config
+  m_Name: Level_2_Config
   m_EditorClassIdentifier: 
   _stageConfigs:
   - {fileID: 11400000, guid: ad2ebdc480afcce4ab663bc95bc4f0f9, type: 2}
-  <LevelName>k__BackingField: Level 1
-  <LevelNumber>k__BackingField: 1
+  <LevelName>k__BackingField: Level 2
+  <LevelNumber>k__BackingField: 2
   <LevelIcon>k__BackingField: {fileID: 21300000, guid: d2b25fbb97c8641cdbe1c030a8b8966f, type: 3}
   <FinalPointPosition>k__BackingField: {x: 5, y: -2, z: 0}
