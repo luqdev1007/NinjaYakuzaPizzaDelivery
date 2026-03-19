@@ -32,10 +32,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
 
             switch (config)
             {
+                /*
                 case GhostConfig ghostConfig:
                     entity = _entitiesFactory.CreateGhost(at, ghostConfig);
                     _brainsFactory.CreateGhostBrain(entity);
                     break;
+                */
 
                 default:
                     throw new ArgumentException($"Not support {config.GetType()} type config");

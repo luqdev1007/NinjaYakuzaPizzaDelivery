@@ -41,7 +41,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack.Shoot
 
         private void OnAttackDelayEnd()
         {
-            _entitiesFactory.CreateFireballProjectile(_shootPoint.position, _shootPoint.forward, _damage.Value, _entity);
+            // _entitiesFactory.CreateFireballProjectile(_shootPoint.position, _shootPoint.forward, _damage.Value, _entity);
         }
     }
 }
