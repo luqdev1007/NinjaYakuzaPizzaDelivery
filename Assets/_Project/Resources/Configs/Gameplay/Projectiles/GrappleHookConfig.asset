@@ -9,20 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b64d5fa401ccac4280035036a6a0c14, type: 3}
+  m_Script: {fileID: 11500000, guid: a0155d1b34f979745965cc9752c09370, type: 3}
   m_Name: GrappleHookConfig
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/Projectiles/GrappleHook
-  <ProjectileSpeed>k__BackingField: 30
-  <MaxDistance>k__BackingField: 12
+  <ProjectileSpeed>k__BackingField: 15
+  <MaxDistance>k__BackingField: 10
   <MinDistance>k__BackingField: 2
-  <MaxCharges>k__BackingField: 100
+  <MaxCharges>k__BackingField: 3
   <HitMask>k__BackingField:
     serializedVersion: 2
-    m_Bits: 768
-  <GrappleSpeed>k__BackingField: 20
-  <ArriveDistance>k__BackingField: 1
-  <ArrivalBounce>k__BackingField: 8
+    m_Bits: 1280
+  <GrappleSpeed>k__BackingField: 15
+  <ArriveDistance>k__BackingField: 0.5
+  <ArrivalBounce>k__BackingField: 6
   <EnemyMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 512

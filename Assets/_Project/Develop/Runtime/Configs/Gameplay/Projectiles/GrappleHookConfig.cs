@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
+namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles
 {
-    [CreateAssetMenu(fileName = "GrappleHookConfig", menuName = "Configs/Throwable/GrappleHook")]
+    [CreateAssetMenu(fileName = "GrappleHookConfig", menuName = "Configs/Gameplay/Projectiles/GrappleHook")]
     public class GrappleHookConfig : ThrowableConfig
     {
         [field: SerializeField] public float GrappleSpeed { get; private set; } = 15f;

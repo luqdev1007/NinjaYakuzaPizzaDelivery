@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
+namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles
 {
     public abstract class ThrowableConfig : ScriptableObject
     {

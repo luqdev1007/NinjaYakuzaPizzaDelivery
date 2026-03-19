@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature;
+﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
