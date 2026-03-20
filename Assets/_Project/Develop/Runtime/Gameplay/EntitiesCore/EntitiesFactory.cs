@@ -8,6 +8,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.HangWall;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
@@ -286,7 +287,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 .AddSystem(new WallHangSystem(inputService))
 
-                .AddSystem(new SlideSystem(inputService, config.EnemyMask, _container.Resolve<ICoroutinesPerformer>()))
+                .AddSystem(new SlideSystem(inputService, _container.Resolve<ICoroutinesPerformer>()))
+                .AddSystem(new PlungeSystem(inputService, config.EnemyMask))
                 .AddSystem(new SlopeSystem(inputService, _container.Resolve<ICoroutinesPerformer>()))
 
                 .AddSystem(new FlipDirectionSystem())
