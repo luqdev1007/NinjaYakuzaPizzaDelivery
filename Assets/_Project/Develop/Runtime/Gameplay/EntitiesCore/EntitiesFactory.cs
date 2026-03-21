@@ -304,7 +304,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new GroundCheckSystem(coyoteTime: 0.1f))
 
                 // — движение —
-                .AddSystem(new RigidbodyMovementSystem())
+                .AddSystem(new RigidbodyMovementSystem(inputService))
                 .AddSystem(new JumpSystem(inputService))
                 .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.EnemyMask))
                 .AddSystem(new GlideSystem(inputService))
@@ -322,7 +322,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // — атака —
                 .AddSystem(new AttackCancelSystem())
-                .AddSystem(new StartAttackSystem())
+                .AddSystem(new StartAttackSystem(inputService))
                 .AddSystem(new AttackProcessTimerSystem())
                 .AddSystem(new AttackDelayEndTriggerSystem())
                 .AddSystem(new EndAttackSystem())
