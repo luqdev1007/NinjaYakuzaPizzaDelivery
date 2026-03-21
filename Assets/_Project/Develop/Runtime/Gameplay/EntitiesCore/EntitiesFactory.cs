@@ -76,6 +76,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddJumpChargeTime(new ReactiveVariable<float>(config.JumpChargeTime))
                 .AddJumpsAvailable(new ReactiveVariable<int>(config.MaxJumps))
                 .AddMaxJumps(new ReactiveVariable<int>(config.MaxJumps))
+                .AddJumpEvent()
+                .AddDoubleJumpEvent()
 
                 // — рывок —
                 .AddIsDashing()

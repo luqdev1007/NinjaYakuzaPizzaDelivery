@@ -1417,6 +1417,54 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.MaxJumps() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.JumpEvent JumpEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.JumpEvent>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent JumpEvent => JumpEventC.Value;
+
+		public bool TryGetJumpEvent(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.JumpEvent component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddJumpEvent()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.JumpEvent() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddJumpEvent(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.JumpEvent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.DoubleJumpEvent DoubleJumpEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.DoubleJumpEvent>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent DoubleJumpEvent => DoubleJumpEventC.Value;
+
+		public bool TryGetDoubleJumpEvent(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.DoubleJumpEvent component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDoubleJumpEvent()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.DoubleJumpEvent() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDoubleJumpEvent(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.DoubleJumpEvent() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang CanWallHangC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang>();
 
 		public Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition CanWallHang => CanWallHangC.Value;

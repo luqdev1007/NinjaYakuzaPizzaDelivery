@@ -18,6 +18,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
         private ReactiveVariable<float> _jumpForce;
         private ReactiveVariable<float> _jumpForceMax;
         private ReactiveVariable<float> _jumpChargeTime;
+        private ReactiveEvent _jumpEvent;
+        private ReactiveEvent _doubleJumpEvent;
         private Rigidbody2D _rigidbody;
 
         private float _chargeTimer;
@@ -40,6 +42,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
             _jumpForce = entity.JumpForce;
             _jumpForceMax = entity.JumpForceMax;
             _jumpChargeTime = entity.JumpChargeTime;
+            _jumpEvent = entity.JumpEvent;
+            _doubleJumpEvent = entity.DoubleJumpEvent;
             _rigidbody = entity.Rigidbody;
         }
 
@@ -82,14 +86,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
                 _jumpForceMax.Value,
                 chargeRatio);
 
-            _rigidbody.linearVelocity = new Vector2(
-                _rigidbody.linearVelocity.x, 0);
-
+            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, 0f);
             _rigidbody.AddForce(Vector2.up * force, ForceMode2D.Impulse);
+
+            bool isDoubleJump = !_isGrounded.Value && _jumpsAvailable.Value < _maxJumps.Value;
 
             _jumpsAvailable.Value--;
             _isCharging = false;
             _chargeTimer = 0f;
+
+            if (isDoubleJump)
+                _doubleJumpEvent.Invoke();
+            else
+                _jumpEvent.Invoke();
         }
     }
 }

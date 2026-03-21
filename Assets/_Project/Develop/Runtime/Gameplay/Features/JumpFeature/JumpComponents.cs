@@ -42,4 +42,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
     {
         public ReactiveVariable<int> Value;
     }
+
+    public class JumpEvent : IEntityComponent
+    {
+        public ReactiveEvent Value = new();
+    }
+
+    public class DoubleJumpEvent : IEntityComponent
+    {
+        public ReactiveEvent Value = new();
+    }
 }

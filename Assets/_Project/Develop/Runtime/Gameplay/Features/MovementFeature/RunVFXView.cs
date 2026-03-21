@@ -16,10 +16,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         [SerializeField] private float _brakeSpeedThreshold = 4f;
         [SerializeField] private float _brakeDirectionThreshold = 0.5f;
 
-        [Header("Dust - Land")]
-        [SerializeField] private ParticleSystem _landDustPS;
-        [SerializeField] private float _landVelocityThreshold = -5f;
-
         [Header("Dust - Start")]
         [SerializeField] private ParticleSystem _startDustPS;
         [SerializeField] private float _startSpeedThreshold = 1f;
@@ -48,13 +44,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
                 return;
 
             float velocityX = _rigidbody.linearVelocity.x;
-            float velocityY = _rigidbody.linearVelocity.y;
             bool grounded = _isGrounded.Value;
             bool moving = _isMoving.Value;
 
             UpdateRunDust(grounded, moving);
             UpdateBrakeDust(grounded, velocityX);
-            UpdateLandDust(grounded, velocityY);
             UpdateStartDust(grounded, moving);
 
             _previousVelocityX = velocityX;
@@ -91,18 +85,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
             if (changingDirection || hardStop)
                 _brakeDustPS.Play();
-        }
-
-        private void UpdateLandDust(bool grounded, float velocityY)
-        {
-            if (_landDustPS == null)
-                return;
-
-            bool justLanded = grounded && !_wasGrounded &&
-                velocityY < _landVelocityThreshold;
-
-            if (justLanded)
-                _landDustPS.Play();
         }
 
         private void UpdateStartDust(bool grounded, bool moving)
