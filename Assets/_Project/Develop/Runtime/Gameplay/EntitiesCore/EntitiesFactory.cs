@@ -8,6 +8,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.HangWall;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature;
@@ -85,6 +86,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddDashDuration(new ReactiveVariable<float>(config.DashDuration))
                 .AddAirDashMultiplier(new ReactiveVariable<float>(config.AirDashMultiplier))
                 .AddAirDashVerticalBoost(new ReactiveVariable<float>(config.AirDashVerticalBoost))
+                .AddDashDamage(new ReactiveVariable<float>(config.DashDamage))
+                .AddDashHitboxSize(new ReactiveVariable<Vector2>(config.DashHitboxSize))
 
                 // — планирование —
                 .AddIsGliding()
@@ -303,7 +306,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // — движение —
                 .AddSystem(new RigidbodyMovementSystem())
                 .AddSystem(new JumpSystem(inputService))
-                .AddSystem(new DashSystem(inputService, coroutinesPerformer))
+                .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.EnemyMask))
                 .AddSystem(new GlideSystem(inputService))
                 .AddSystem(new WallHangSystem(inputService))
                 .AddSystem(new SlideSystem(inputService, coroutinesPerformer))

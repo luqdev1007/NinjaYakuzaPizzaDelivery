@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 {
@@ -12,5 +13,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 
     public class AirDashMultiplier : IEntityComponent { public ReactiveVariable<float> Value; }
     public class AirDashVerticalBoost : IEntityComponent { public ReactiveVariable<float> Value; }
+    public class DashDamage : IEntityComponent { public ReactiveVariable<float> Value; }
+    public class DashHitboxSize : IEntityComponent { public ReactiveVariable<Vector2> Value; }
 }
 

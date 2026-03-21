@@ -4,7 +4,7 @@ using UnityEngine;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using System;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
 {
     [RequireComponent(typeof(Animator))]
     public class JumpView : EntityView
