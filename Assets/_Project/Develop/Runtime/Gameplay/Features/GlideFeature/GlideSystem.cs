@@ -5,7 +5,7 @@ using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
 {
     public class GlideSystem : IInitializableSystem, IUpdatableSystem
     {
@@ -19,10 +19,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         private ReactiveVariable<float> _glideSpeedDamping;
         private ReactiveVariable<float> _glideBounceForce;
         private Rigidbody2D _rigidbody;
-        private float _defaultGravityScale;
 
-        private float _glideBufferTimer;
-        private const float GlideBufferTime = 0.2f;
+        private float _defaultGravityScale;
+        private bool _glideUsed;
+        private float _glideTimer;
 
         public GlideSystem(IInputService inputService)
         {
@@ -44,34 +44,40 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
         public void OnUpdate(float deltaTime)
         {
-            if (_isGrounded.Value && _isGliding.Value)
-                StopGlide(applyBounce: false);
+            if (_isGrounded.Value)
+            {
+                _glideUsed = false;
+
+                if (_isGliding.Value)
+                    StopGlide(applyBounce: false);
+
+                return;
+            }
+
+            if (_isGliding.Value)
+            {
+                ApplyGlideDamping(deltaTime);
+
+                if (_inputService.IsJumpKeyPressed)
+                    StopGlide(applyBounce: true);
+
+                return;
+            }
 
             bool isFalling = _rigidbody.linearVelocity.y < _minFallVelocity.Value;
 
-            if (_inputService.IsJumpKeyPressed)
-                _glideBufferTimer = GlideBufferTime;
-            else
-                _glideBufferTimer -= deltaTime;
-
-            if (_glideBufferTimer > 0f && isFalling && _canGlide.Evaluate())
-            {
+            if (_inputService.IsJumpKeyPressed && isFalling && !_glideUsed && _canGlide.Evaluate())
                 StartGlide();
-                _glideBufferTimer = 0f;
-            }
-
-            if (_isGliding.Value && _inputService.IsJumpKeyReleased)
-                StopGlide(applyBounce: true);
-
-            if (_isGliding.Value)
-                ApplyGlideDamping(deltaTime);
         }
 
         private void StartGlide()
         {
             _isGliding.Value = true;
+            _glideUsed = true;
+            _glideTimer = 0f;
             _rigidbody.gravityScale = 0f;
         }
+
 
         private void StopGlide(bool applyBounce)
         {
@@ -88,18 +94,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
         private void ApplyGlideDamping(float deltaTime)
         {
+            _glideTimer += deltaTime;
+
+            float snapDuration = 0.15f;
+            float snapSpeed = 40f;
+            float normalSpeed = _glideSpeedDamping.Value;
+
+            float dampingSpeed = _glideTimer < snapDuration
+                ? Mathf.Lerp(snapSpeed, normalSpeed, _glideTimer / snapDuration)
+                : normalSpeed;
+
             float targetY = _glideMaxFallSpeed.Value;
             float currentY = _rigidbody.linearVelocity.y;
+            float newY = Mathf.MoveTowards(currentY, targetY, dampingSpeed * deltaTime);
 
-            float newY = Mathf.MoveTowards(
-                currentY,
-                targetY,
-                _glideSpeedDamping.Value * deltaTime);
-
-            _rigidbody.linearVelocity = new Vector2(
-                _rigidbody.linearVelocity.x,
-                newY);
+            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, newY);
         }
     }
 }
-

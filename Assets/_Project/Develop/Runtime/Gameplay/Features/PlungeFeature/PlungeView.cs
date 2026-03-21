@@ -4,13 +4,15 @@ using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using System;
 using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
 {
     [RequireComponent(typeof(Animator))]
     public class PlungeView : EntityView
     {
         private readonly int IsPlungingKey = Animator.StringToHash("IsPlunging");
+
         [SerializeField] private Animator _animator;
+
         private IReadOnlyVariable<bool> _isPlunging;
         private IDisposable _isPlungingDisposable;
 
