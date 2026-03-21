@@ -61,6 +61,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             _heroRigidbody.gravityScale = 0f;
             _heroRigidbody.linearVelocity = Vector2.zero;
 
+            float elapsed = 0f;
+            const float accelerationTime = 0.3f;
+
             while (true)
             {
                 if (_isCancelled != null && _isCancelled())
@@ -77,7 +80,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                     yield break;
                 }
 
-                _heroRigidbody.linearVelocity = toAnchor.normalized * _config.GrappleSpeed;
+                elapsed += Time.deltaTime;
+                float speedMultiplier = elapsed < accelerationTime
+                    ? Mathf.Lerp(0.2f, 1f, elapsed / accelerationTime)
+                    : 1f;
+
+                float totalDistance = toAnchor.magnitude;
+                Vector2 axisRatio = new Vector2(
+                    Mathf.Abs(toAnchor.x) / totalDistance,
+                    Mathf.Abs(toAnchor.y) / totalDistance);
+
+                _heroRigidbody.linearVelocity = new Vector2(
+                    Mathf.Sign(toAnchor.x) * axisRatio.x * _config.GrappleSpeed * speedMultiplier,
+                    Mathf.Sign(toAnchor.y) * axisRatio.y * _config.GrappleSpeed * speedMultiplier);
+
                 yield return null;
             }
         }
@@ -150,13 +166,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
             _heroRigidbody.gravityScale = _defaultGravityScale;
 
-            if (preserveVelocity)
+            if (preserveVelocity || applyBounce)
             {
-                _heroRigidbody.linearVelocity = savedVelocity;
-            }
-            else if (applyBounce)
-            {
-                _heroRigidbody.linearVelocity = savedVelocity.normalized * _config.ArrivalBounce;
+                _heroRigidbody.linearVelocity = savedVelocity * _config.CancelInertiaMultiplier;
             }
             else
             {

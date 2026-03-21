@@ -20,9 +20,11 @@ MonoBehaviour:
   <HitMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 1792
-  <GrappleSpeed>k__BackingField: 15
+  <GrappleSpeed>k__BackingField: 20
   <ArriveDistance>k__BackingField: 0.5
   <ArrivalBounce>k__BackingField: 5
   <EnemyMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 512
+  <CancelInertiaMultiplier>k__BackingField: 1.25
+  <ArrivalMinXComponent>k__BackingField: 5

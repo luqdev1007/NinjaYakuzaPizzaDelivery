@@ -14,17 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/MainHero/MainHero
   <MinFallVelocityForAction>k__BackingField: -2
-  <GrappleConfig>k__BackingField: {fileID: 11400000, guid: 6443bd3d003d36342a2d702adbc37789, type: 2}
-  <ShurikenConfig>k__BackingField: {fileID: 11400000, guid: b348a5f78cee93b4cbdd19f8eead08a4, type: 2}
-  <SleepDartConfig>k__BackingField: {fileID: 11400000, guid: 68f6272de285fbb45a2662be663f5263, type: 2}
-  <GlideMaxFallSpeed>k__BackingField: -1.5
-  <GlideSpeedDamping>k__BackingField: 10
-  <GlideBounceForce>k__BackingField: 8
-  <DashDuration>k__BackingField: 0.2
-  <DashForceMin>k__BackingField: 30
-  <DashForceMax>k__BackingField: 45
-  <DashChargeTime>k__BackingField: 0.2
-  <DashCooldown>k__BackingField: 0.5
+  <GroundMask>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 2304
   <MoveSpeed>k__BackingField: 10
   <MoveSpeedMin>k__BackingField: 6
   <Acceleration>k__BackingField: 10
@@ -33,21 +25,17 @@ MonoBehaviour:
   <JumpForceMax>k__BackingField: 20
   <JumpChargeTime>k__BackingField: 0.2
   <MaxJumps>k__BackingField: 1
-  <GroundMask>k__BackingField:
-    serializedVersion: 2
-    m_Bits: 2304
-  <AttackProcessTime>k__BackingField: 0.3
-  <AttackDelayTime>k__BackingField: 0.15
-  <AttackCooldown>k__BackingField: 0.3
-  <InstantAttackDamage>k__BackingField: 10
-  <AttackRange>k__BackingField: 2
-  <HitBounceForce>k__BackingField: 6
-  <EnemyMask>k__BackingField:
-    serializedVersion: 2
-    m_Bits: 512
-  <MaxHealth>k__BackingField: 10
-  <DeathProcessTime>k__BackingField: 1
-  <SpawnProcessTime>k__BackingField: 0.5
+  <DashDuration>k__BackingField: 0.2
+  <DashForceMin>k__BackingField: 30
+  <DashForceMax>k__BackingField: 45
+  <DashChargeTime>k__BackingField: 0.2
+  <DashCooldown>k__BackingField: 0.5
+  <GlideMaxFallSpeed>k__BackingField: -1.5
+  <GlideSpeedDamping>k__BackingField: 10
+  <GlideBounceForce>k__BackingField: 8
+  <GlideMinFallVelocity>k__BackingField: -3
+  <GlideSnapSpeed>k__BackingField: 40
+  <GlideSnapDuration>k__BackingField: 0.15
   <WallHangLayer>k__BackingField:
     serializedVersion: 2
     m_Bits: 1024
@@ -55,12 +43,27 @@ MonoBehaviour:
   <WallJumpForce>k__BackingField: {x: 4, y: 6}
   <SlideDuration>k__BackingField: 0.2
   <SlideSpeed>k__BackingField: 30
+  <PlungeSpeed>k__BackingField: 25
+  <PlungeAOERadius>k__BackingField: 3
+  <PlungeAOEDamage>k__BackingField: 50
+  <PlungeKnockbackForce>k__BackingField: 10
   <SlopeBoostMultiplier>k__BackingField: 5
   <SlopeJumpForce>k__BackingField: {x: 8, y: 14}
   <SlopeMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 2048
-  <PlungeSpeed>k__BackingField: 25
-  <PlungeAOERadius>k__BackingField: 3
-  <PlungeAOEDamage>k__BackingField: 50
-  <PlungeKnockbackForce>k__BackingField: 10
+  <AttackProcessTime>k__BackingField: 0.3
+  <AttackDelayTime>k__BackingField: 0.15
+  <AttackCooldown>k__BackingField: 0.3
+  <InstantAttackDamage>k__BackingField: 10
+  <AttackRange>k__BackingField: 2
+  <HitBounceForce>k__BackingField: 8
+  <EnemyMask>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 512
+  <MaxHealth>k__BackingField: 10
+  <DeathProcessTime>k__BackingField: 1
+  <SpawnProcessTime>k__BackingField: 0.5
+  <GrappleConfig>k__BackingField: {fileID: 11400000, guid: 6443bd3d003d36342a2d702adbc37789, type: 2}
+  <ShurikenConfig>k__BackingField: {fileID: 11400000, guid: b348a5f78cee93b4cbdd19f8eead08a4, type: 2}
+  <SleepDartConfig>k__BackingField: {fileID: 11400000, guid: 68f6272de285fbb45a2662be663f5263, type: 2}

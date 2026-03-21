@@ -63,8 +63,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
             bool isOnSlope = CheckSlope(out float slopeAngle, out Vector2 slopeDirection);
             bool activeSlope = isOnSlope && _isGrounded.Value && slopeDirection.y < 0f;
 
-            Debug.Log($"isOnSlope={isOnSlope} | activeSlope={activeSlope} | isGrounded={_isGrounded.Value} | angle={slopeAngle:F1} | dir={slopeDirection}");
-
             if (_wasOnSlope && !activeSlope && _accumulatedSpeed > MinSpeedForJump && _timeOnSlope >= MinTimeOnSlopeForJump)
             {
                 ExitSlope();
