@@ -68,7 +68,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
                 return;
             }
 
-            bool isFalling = _rigidbody.linearVelocity.y < _minFallVelocity.Value * 1.1f;
+            bool isFalling = _rigidbody.linearVelocity.y < _minFallVelocity.Value * 2; // 2!
 
             if (_inputService.IsJumpKeyPressed && isFalling && !_glideUsed && _canGlide.Evaluate())
                 StartGlide();

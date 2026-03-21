@@ -13,8 +13,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         private readonly Transform _heroTransform;
         private readonly LayerMask _enemyMask;
 
-        private float _defaultGravityScale;
         private Func<bool> _isCancelled;
+        private readonly float _defaultGravityScale;
 
         public event Action OnGrappleStarted;
         public event Action OnGrappleEnded;
@@ -57,6 +57,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         private IEnumerator PullCoroutine(Vector3 anchor)
         {
             OnGrappleStarted?.Invoke();
+
             _heroRigidbody.gravityScale = 0f;
             _heroRigidbody.linearVelocity = Vector2.zero;
 
@@ -64,7 +65,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             {
                 if (_isCancelled != null && _isCancelled())
                 {
-                    EndGrapple(applyBounce: false);
+                    EndGrapple(preserveVelocity: true);
                     yield break;
                 }
 
@@ -72,7 +73,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
                 if (toAnchor.magnitude <= _config.ArriveDistance)
                 {
-                    EndGrapple(applyBounce: true);
+                    EndGrapple(preserveVelocity: false, applyBounce: true);
                     yield break;
                 }
 
@@ -84,6 +85,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         private IEnumerator PullToEnemyCoroutine(Collider2D enemy)
         {
             OnGrappleStarted?.Invoke();
+
             _heroRigidbody.gravityScale = 0f;
             _heroRigidbody.linearVelocity = Vector2.zero;
 
@@ -91,13 +93,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             {
                 if (_isCancelled != null && _isCancelled())
                 {
-                    EndGrapple(applyBounce: false);
+                    EndGrapple(preserveVelocity: true);
                     yield break;
                 }
 
                 if (enemy == null || !enemy.gameObject.activeSelf)
                 {
-                    EndGrapple(applyBounce: false);
+                    EndGrapple(preserveVelocity: true);
                     yield break;
                 }
 
@@ -105,7 +107,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
                 if (toEnemy.magnitude <= _config.ArriveDistance)
                 {
-                    EndGrapple(applyBounce: true);
+                    EndGrapple(preserveVelocity: false, applyBounce: true);
                     OnEnemyArrived?.Invoke();
                     yield break;
                 }
@@ -113,14 +115,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                 _heroRigidbody.linearVelocity = toEnemy.normalized * _config.GrappleSpeed;
                 yield return null;
             }
-        }
-
-        private void FlipTowards(Vector3 target)
-        {
-            Vector3 scale = _heroTransform.localScale;
-            float dirX = target.x - _heroTransform.position.x;
-            scale.x = dirX > 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
-            _heroTransform.localScale = scale;
         }
 
         private IEnumerator ReturnCoroutine(Vector3 returnTarget)
@@ -150,19 +144,35 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             }
         }
 
-        private void EndGrapple(bool applyBounce)
+        private void EndGrapple(bool preserveVelocity, bool applyBounce = false)
         {
+            Vector2 savedVelocity = _heroRigidbody.linearVelocity;
+
             _heroRigidbody.gravityScale = _defaultGravityScale;
 
-            if (applyBounce)
-                _heroRigidbody.linearVelocity = new Vector2(
-                    _heroRigidbody.linearVelocity.x,
-                    _config.ArrivalBounce);
+            if (preserveVelocity)
+            {
+                _heroRigidbody.linearVelocity = savedVelocity;
+            }
+            else if (applyBounce)
+            {
+                _heroRigidbody.linearVelocity = savedVelocity.normalized * _config.ArrivalBounce;
+            }
             else
+            {
                 _heroRigidbody.linearVelocity = Vector2.zero;
+            }
 
             OnGrappleEnded?.Invoke();
             Destroy();
+        }
+
+        private void FlipTowards(Vector3 target)
+        {
+            Vector3 scale = _heroTransform.localScale;
+            float dirX = target.x - _heroTransform.position.x;
+            scale.x = dirX > 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+            _heroTransform.localScale = scale;
         }
     }
 }
