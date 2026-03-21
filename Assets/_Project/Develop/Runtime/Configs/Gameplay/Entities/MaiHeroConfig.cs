@@ -31,6 +31,8 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField, Min(0)] public float DashForceMax { get; private set; } = 20f;
         [field: SerializeField, Min(0)] public float DashChargeTime { get; private set; } = 0.4f;
         [field: SerializeField, Min(0)] public float DashCooldown { get; private set; } = 0.5f;
+        [field: SerializeField, Min(1)] public float AirDashMultiplier { get; private set; } = 1.5f;
+        [field: SerializeField, Min(0)] public float AirDashVerticalBoost { get; private set; } = 3f;
 
         [Header("Glide")]
         [field: SerializeField] public float GlideMaxFallSpeed { get; private set; } = -2f;

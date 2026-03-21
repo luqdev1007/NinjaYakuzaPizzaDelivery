@@ -7,7 +7,7 @@ using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using System.Collections;
 using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 {
     public class DashSystem : IInitializableSystem, IUpdatableSystem
     {
@@ -16,11 +16,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
         private ICompositeCondition _canDash;
         private ReactiveVariable<bool> _isDashing;
+        private ReactiveVariable<bool> _isGrounded;
         private ReactiveVariable<float> _dashForceMin;
         private ReactiveVariable<float> _dashForceMax;
         private ReactiveVariable<float> _dashChargeTime;
         private ReactiveVariable<float> _dashCooldown;
         private ReactiveVariable<float> _dashDuration;
+        private ReactiveVariable<float> _airDashMultiplier;
+        private ReactiveVariable<float> _airDashVerticalBoost;
         private Rigidbody2D _rigidbody;
         private Transform _transform;
 
@@ -41,11 +44,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         {
             _canDash = entity.CanDash;
             _isDashing = entity.IsDashing;
+            _isGrounded = entity.IsGrounded;
             _dashForceMin = entity.DashForceMin;
             _dashForceMax = entity.DashForceMax;
             _dashChargeTime = entity.DashChargeTime;
             _dashCooldown = entity.DashCooldown;
             _dashDuration = entity.DashDuration;
+            _airDashMultiplier = entity.AirDashMultiplier;
+            _airDashVerticalBoost = entity.AirDashVerticalBoost;
             _rigidbody = entity.Rigidbody;
             _transform = entity.Transform;
         }
@@ -94,6 +100,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
                 _dashForceMax.Value,
                 chargeRatio);
 
+            bool inAir = !_isGrounded.Value;
+
+            if (inAir)
+                force *= _airDashMultiplier.Value;
+
             float direction = _transform.localScale.x > 0 ? 1f : -1f;
 
             _isDashing.Value = true;
@@ -101,10 +112,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             _isCharging = false;
             _chargeTimer = 0f;
 
-            _coroutinesPerformer.StartPerform(DashCoroutine(force, direction));
+            _coroutinesPerformer.StartPerform(DashCoroutine(force, direction, inAir));
         }
 
-        private IEnumerator DashCoroutine(float force, float direction)
+        private IEnumerator DashCoroutine(float force, float direction, bool inAir)
         {
             float elapsed = 0f;
             float duration = _dashDuration.Value;
@@ -112,14 +123,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
             _rigidbody.gravityScale = 0f;
 
+            if (inAir)
+                _rigidbody.linearVelocity = new Vector2(
+                    _rigidbody.linearVelocity.x,
+                    _airDashVerticalBoost.Value);
+
             while (elapsed < duration)
             {
                 float t = elapsed / duration;
                 float currentSpeed = Mathf.Lerp(force, 0f, t * t);
 
+                float verticalVelocity = inAir
+                    ? Mathf.Lerp(_airDashVerticalBoost.Value, 0f, t)
+                    : 0f;
+
                 _rigidbody.linearVelocity = new Vector2(
                     direction * currentSpeed,
-                    0f);
+                    verticalVelocity);
 
                 elapsed += Time.deltaTime;
                 yield return null;

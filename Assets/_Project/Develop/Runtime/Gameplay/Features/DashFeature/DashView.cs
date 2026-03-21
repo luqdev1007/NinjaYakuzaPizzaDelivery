@@ -4,7 +4,7 @@ using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using System;
 using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 {
     [RequireComponent(typeof(Animator))]
     public class DashView : EntityView

@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
+using Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.HangWall;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
@@ -82,6 +83,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddDashChargeTime(new ReactiveVariable<float>(config.DashChargeTime))
                 .AddDashCooldown(new ReactiveVariable<float>(config.DashCooldown))
                 .AddDashDuration(new ReactiveVariable<float>(config.DashDuration))
+                .AddAirDashMultiplier(new ReactiveVariable<float>(config.AirDashMultiplier))
+                .AddAirDashVerticalBoost(new ReactiveVariable<float>(config.AirDashVerticalBoost))
 
                 // — планирование —
                 .AddIsGliding()

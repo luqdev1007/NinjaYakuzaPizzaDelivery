@@ -18,8 +18,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2304
   <MoveSpeed>k__BackingField: 10
-  <MoveSpeedMin>k__BackingField: 6
-  <Acceleration>k__BackingField: 10
+  <MoveSpeedMin>k__BackingField: 2
+  <Acceleration>k__BackingField: 8
   <Deceleration>k__BackingField: 20
   <JumpForce>k__BackingField: 14
   <JumpForceMax>k__BackingField: 20
@@ -30,6 +30,8 @@ MonoBehaviour:
   <DashForceMax>k__BackingField: 45
   <DashChargeTime>k__BackingField: 0.2
   <DashCooldown>k__BackingField: 0.5
+  <AirDashMultiplier>k__BackingField: 1.5
+  <AirDashVerticalBoost>k__BackingField: 3
   <GlideMaxFallSpeed>k__BackingField: -1.5
   <GlideSpeedDamping>k__BackingField: 10
   <GlideBounceForce>k__BackingField: 8
