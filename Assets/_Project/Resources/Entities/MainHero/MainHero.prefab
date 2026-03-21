@@ -24976,6 +24976,56 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &5248142395289317712
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5408027250726950103}
+  - component: {fileID: 5633726330559190299}
+  m_Layer: 7
+  m_Name: DashVFX
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5408027250726950103
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5248142395289317712}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6678525575601525462}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5633726330559190299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5248142395289317712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3dba35b484781d6458130f964c20caa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _afterimagePrefab: {fileID: 2092742535912402765, guid: bfa1d847138cafb4dbc0719e21491257, type: 3}
+  _heroSpriteRenderer: {fileID: 4010868416834219212}
+  _spawnInterval: 0.04
+  _afterimageLifetime: 0.2
+  _afterimageColor: {r: 0.5, g: 0.7, b: 1, a: 0.8}
+  _poolSize: 8
 --- !u!1 &6525107998442434960
 GameObject:
   m_ObjectHideFlags: 0
@@ -30183,6 +30233,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5857535375371146468, guid: 45fdc72a38b91ae479fc901becb660f0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2465651715336827443}
+    - targetCorrespondingSourceObject: {fileID: 5857535375371146468, guid: 45fdc72a38b91ae479fc901becb660f0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5408027250726950103}
     - targetCorrespondingSourceObject: {fileID: 5373311607167498598, guid: 45fdc72a38b91ae479fc901becb660f0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5191637363851920567}

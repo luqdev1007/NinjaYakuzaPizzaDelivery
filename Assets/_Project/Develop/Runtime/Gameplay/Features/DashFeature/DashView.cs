@@ -40,5 +40,4 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
         private void OnIsDashingChanged(bool oldValue, bool value) =>
             UpdateIsDashing(value);
     }
-
 }
