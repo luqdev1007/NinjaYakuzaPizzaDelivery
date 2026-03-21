@@ -18,11 +18,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         private ReactiveVariable<float> _glideMaxFallSpeed;
         private ReactiveVariable<float> _glideSpeedDamping;
         private ReactiveVariable<float> _glideBounceForce;
+        private ReactiveVariable<float> _glideSnapSpeed;
+        private ReactiveVariable<float> _glideSnapDuration;
         private Rigidbody2D _rigidbody;
 
         private float _defaultGravityScale;
-        private bool _glideUsed;
         private float _glideTimer;
+        private bool _glideUsed;
 
         public GlideSystem(IInputService inputService)
         {
@@ -37,6 +39,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
             _glideMaxFallSpeed = entity.GlideMaxFallSpeed;
             _glideSpeedDamping = entity.GlideSpeedDamping;
             _glideBounceForce = entity.GlideBounceForce;
+            _glideSnapSpeed = entity.GlideSnapSpeed;
+            _glideSnapDuration = entity.GlideSnapDuration;
             _rigidbody = entity.Rigidbody;
             _canGlide = entity.CanGlide;
             _defaultGravityScale = _rigidbody.gravityScale;
@@ -64,7 +68,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
                 return;
             }
 
-            bool isFalling = _rigidbody.linearVelocity.y < _minFallVelocity.Value;
+            bool isFalling = _rigidbody.linearVelocity.y < _minFallVelocity.Value * 1.1f;
 
             if (_inputService.IsJumpKeyPressed && isFalling && !_glideUsed && _canGlide.Evaluate())
                 StartGlide();
@@ -77,7 +81,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
             _glideTimer = 0f;
             _rigidbody.gravityScale = 0f;
         }
-
 
         private void StopGlide(bool applyBounce)
         {
@@ -96,8 +99,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         {
             _glideTimer += deltaTime;
 
-            float snapDuration = 0.15f;
-            float snapSpeed = 40f;
+            float snapDuration = _glideSnapDuration.Value;
+            float snapSpeed = _glideSnapSpeed.Value;
             float normalSpeed = _glideSpeedDamping.Value;
 
             float dampingSpeed = _glideTimer < snapDuration

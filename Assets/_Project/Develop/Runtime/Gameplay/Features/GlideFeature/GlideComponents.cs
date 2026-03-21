@@ -28,4 +28,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
     {
         public ReactiveVariable<float> Value;
     }
+
+    public class GlideSnapSpeed : IEntityComponent 
+    { 
+        public ReactiveVariable<float> Value; 
+    }
+
+    public class GlideSnapDuration : IEntityComponent 
+    { 
+        public ReactiveVariable<float> Value; 
+    }
 }

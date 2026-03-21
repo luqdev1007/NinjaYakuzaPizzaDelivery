@@ -469,9 +469,9 @@ MonoBehaviour:
   _trails:
   - {fileID: 3596694923889521033}
   - {fileID: 8920222502494652849}
-  _speedOnThreshold: 8
-  _speedOffThreshold: 5
-  _offDelay: 0.3
+  _speedOnThreshold: 6
+  _speedOffThreshold: 4
+  _offDelay: 0.2
 --- !u!114 &6886238033137904204
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -485,7 +485,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 7142319570205284036}
-  _maxSpeedMultiplier: 2
+  _maxSpeedMultiplier: 1.4
 --- !u!114 &5573792834674994762
 MonoBehaviour:
   m_ObjectHideFlags: 0

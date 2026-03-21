@@ -88,6 +88,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddGlideMaxFallSpeed(new ReactiveVariable<float>(config.GlideMaxFallSpeed))
                 .AddGlideSpeedDamping(new ReactiveVariable<float>(config.GlideSpeedDamping))
                 .AddGlideBounceForce(new ReactiveVariable<float>(config.GlideBounceForce))
+                .AddGlideSnapSpeed(new ReactiveVariable<float>(config.GlideSnapSpeed))
+                .AddGlideSnapDuration(new ReactiveVariable<float>(config.GlideSnapDuration))
 
                 // — атака —
                 .AddStartAttackRequest()
