@@ -2,26 +2,24 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.Gameplay.Features.HangWall;
+using Assets._Project.Develop.Runtime.Utilites.Conditions;
 
 public class FlipDirectionSystem : IInitializableSystem, IUpdatableSystem
 {
     private ReactiveVariable<Vector2> _direction;
     private Transform _transform;
-    private IReadOnlyVariable<bool> _isWallHanging;
-    private IReadOnlyVariable<bool> _isSliding;
+    private ICompositeCondition _canFlipDirection;
 
     public void OnInit(Entity entity)
     {
-        _isWallHanging = entity.IsWallHanging;
         _direction = entity.MoveDirection;
         _transform = entity.Transform;
-        _isSliding = entity.IsSliding;
+        _canFlipDirection = entity.CanFlipDirection;
     }
 
     public void OnUpdate(float deltaTime)
     {
-        if (_isWallHanging.Value || _isSliding.Value)
+        if (_canFlipDirection.Evaluate() == false)
             return;
 
         if (_direction.Value.x == 0)

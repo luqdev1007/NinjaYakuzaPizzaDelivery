@@ -34,7 +34,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
             {
                 case GhostConfig ghostConfig:
                     entity = _entitiesFactory.CreateGhost(at, ghostConfig);
-                    _brainsFactory.CreateGhostBrain(entity);
+                    // _brainsFactory.CreateGhostBrain(entity);
                     break;
 
                 default:

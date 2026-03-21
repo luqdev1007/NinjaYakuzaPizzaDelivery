@@ -1128,6 +1128,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.MaxJumps() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.CanFlipDirection CanFlipDirectionC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.CanFlipDirection>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition CanFlipDirection => CanFlipDirectionC.Value;
+
+		public bool TryGetCanFlipDirection(out Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.CanFlipDirection component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanFlipDirection(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.CanFlipDirection() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.CanJump CanJumpC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.CanJump>();
 
 		public Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition CanJump => CanJumpC.Value;
@@ -1650,6 +1669,73 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDisableCollidersOnDeath(System.Collections.Generic.List<UnityEngine.Collider2D> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.DisableCollidersOnDeath() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjectsFeature.CanApplyPhysicsFroce CanApplyPhysicsFroceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjectsFeature.CanApplyPhysicsFroce>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition CanApplyPhysicsFroce => CanApplyPhysicsFroceC.Value;
+
+		public bool TryGetCanApplyPhysicsFroce(out Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjectsFeature.CanApplyPhysicsFroce component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanApplyPhysicsFroce(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjectsFeature.CanApplyPhysicsFroce() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjectsFeature.ApplyingForceCharges ApplyingForceChargesC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjectsFeature.ApplyingForceCharges>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> ApplyingForceCharges => ApplyingForceChargesC.Value;
+
+		public bool TryGetApplyingForceCharges(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjectsFeature.ApplyingForceCharges component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddApplyingForceCharges()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjectsFeature.ApplyingForceCharges() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddApplyingForceCharges(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjectsFeature.ApplyingForceCharges() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjectsFeature.ApplyingForcePower ApplyingForcePowerC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjectsFeature.ApplyingForcePower>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> ApplyingForcePower => ApplyingForcePowerC.Value;
+
+		public bool TryGetApplyingForcePower(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjectsFeature.ApplyingForcePower component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddApplyingForcePower()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjectsFeature.ApplyingForcePower() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddApplyingForcePower(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjectsFeature.ApplyingForcePower() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang CanWallHangC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang>();

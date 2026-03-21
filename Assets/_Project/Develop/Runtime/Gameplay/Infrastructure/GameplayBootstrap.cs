@@ -1,10 +1,13 @@
 ﻿using Assets._Project.Develop.Infrastructure;
 using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.States;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
+using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using System;
 using System.Collections;
@@ -15,6 +18,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 {
     public class GameplayBootstrap : SceneBootstrap
     {
+        [SerializeField] private Vector3 _spawnSpringPosition;
+
         private DIContainer _container;
 
         private GameplayInputArgs _inputArgs;
@@ -26,6 +31,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private EntitiesLifeContext _entitiesLifeContext;
 
         private CameraFollowService _cameraFollowService;
+
+        private Entity _hero;
 
         private AIBrainsContext _brainsContext;
 
@@ -55,10 +62,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             _cameraFollowService = _container.Resolve<CameraFollowService>();
 
-            Entity hero = _container.Resolve<MainHeroFactory>().Create(Vector3.zero);
-            _cameraFollowService.SetTarget(hero.Transform);
+            _hero = _container.Resolve<MainHeroFactory>().Create(Vector3.zero);
+            _cameraFollowService.SetTarget(_hero.Transform);
+
+            // create level objects (service)
+            CreateLevelObjects();
 
             yield break;
+        }
+
+        private void CreateLevelObjects()
+        {
+            Entity spring = _container.Resolve<EntitiesFactory>()
+                .CreateSpring(_spawnSpringPosition,
+                _container.Resolve<ConfigsProviderService>().GetConfig<SpringConfig>());
+        }
+
+        private void CreateGhost()
+        {
+            Entity ghost = _container.Resolve<EnemiesFactory>()
+                .Create(_hero.Transform.position + Vector3.up * 2,
+                _container.Resolve<ConfigsProviderService>().GetConfig<GhostConfig>());
         }
 
         public override void Run()
@@ -81,6 +105,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             if (Input.GetKeyDown(KeyCode.Minus)) // -
                 Time.timeScale = Mathf.Max(0f, Mathf.Round((Time.timeScale - 0.1f) * 10f) / 10f);
+
+            if (Input.GetKeyDown(KeyCode.G))
+                CreateGhost();
         }
 
         private void LateUpdate()

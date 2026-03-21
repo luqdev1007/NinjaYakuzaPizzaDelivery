@@ -4,7 +4,12 @@ using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
-{
+{ 
+    public class CanFlipDirection : IEntityComponent
+    {
+        public ICompositeCondition Value;
+    }
+
     public class CanJump : IEntityComponent
     {
         public ICompositeCondition Value;

@@ -1,4 +1,4 @@
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
@@ -23,7 +23,14 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
 
             { typeof(LevelsListConfig), "Configs/Gameplay/Levels/LevelsListConfig" },
 
-            { typeof(HeroConfig), "Configs/Entities/Characters/HeroConfig" }
+            { typeof(HeroConfig), "Configs/Entities/Characters/HeroConfig" },
+
+            { typeof(SpringConfig), "Configs/Entities/LevelObjects/SpringConfig" },
+
+            { typeof(GhostConfig), "Configs/Entities/Enemies/GhostConfig" }
+
+
+            // список конфигов для уровня с левел объектами
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)

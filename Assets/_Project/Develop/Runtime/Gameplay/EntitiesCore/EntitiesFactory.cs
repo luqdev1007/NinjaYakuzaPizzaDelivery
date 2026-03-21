@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.HangWall;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjectsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
@@ -70,8 +71,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddJumpsAvailable(new ReactiveVariable<int>(config.MaxJumps))
                 .AddMaxJumps(new ReactiveVariable<int>(config.MaxJumps))
                 .AddGroundMask(config.GroundMask)
+
                 .AddMaxHealth(new ReactiveVariable<float>(config.MaxHealth))
                 .AddCurrentHealth(new ReactiveVariable<float>(config.MaxHealth))
+
                 .AddIsDead()
                 .AddInDeathProcess()
                 .AddDeathProcessInitialTime(new ReactiveVariable<float>(config.DeathProcessTime))
@@ -130,8 +133,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddPlungeAOEDamage(new ReactiveVariable<float>(config.PlungeAOEDamage))
                 .AddPlungeKnockbackForce(new ReactiveVariable<float>(config.PlungeKnockbackForce))
                 .AddSlopeMask(config.SlopeMask)
-
                 ;
+
+            ICompositeCondition canFlipDirection = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
+                .Add(new FuncCondition(() => entity.IsSliding.Value == false));
 
             ICompositeCondition canJump = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
@@ -236,6 +242,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
             entity
+                .AddCanFlipDirection(canFlipDirection)
                 .AddCanMove(canMove)
                 .AddCanJump(canJump)
                 .AddCanDash(canDash)
@@ -306,14 +313,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMoveDirection()
                 .AddMoveSpeed(new ReactiveVariable<float>(config.MoveSpeed))
                 .AddIsMoving()
-                .AddRotationSpeed(new ReactiveVariable<float>(config.RotationSpeed))
-                .AddRotationDirection()
+
                 .AddMaxHealth(new ReactiveVariable<float>(config.MaxHealth))
                 .AddCurrentHealth(new ReactiveVariable<float>(config.MaxHealth))
+
                 .AddIsDead()
                 .AddInDeathProcess()
                 .AddDeathProcessInitialTime(new ReactiveVariable<float>(config.DeathProcessTime))
                 .AddDeathProcessCurrentTime()
+
                 .AddTakeDamageRequest()
                 .AddTakeDamageEvent()
 
@@ -322,22 +330,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddContactEntitiesBuffer(new Buffer<Entity>(64))
                 .AddBodyContactDamage(new ReactiveVariable<float>(config.BodyContactDamage))
 
-
                 .AddSpawnInitialTime(new ReactiveVariable<float>(config.SpawnProcessTime))
                 .AddSpawnCurrentTime()
                 .AddInSpawnProcess();
                 ;
 
             ICompositeCondition canMove = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
-
-            ICompositeCondition canRotate = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.InDeathProcess.Value == false))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
             ICompositeCondition mustDie = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
+
+            ICompositeCondition canFlipDirection = new CompositeCondition()
+                .Add(new FuncCondition(() => true)); // ?
 
             ICompositeCondition mustSelfRelease = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == true))
@@ -349,25 +356,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             entity
                 .AddCanMove(canMove)
-                .AddCanRotate(canRotate)
+                .AddCanFlipDirection(canFlipDirection)
                 .AddMustDie(mustDie)
                 .AddMustSelfRelease(mustSelfRelease)
                 .AddCanApplyDamage(canApplyDamage);
 
             entity
-                .AddSystem(new RigidbodyMovementSystem())
-                .AddSystem(new FlipDirectionSystem())
-                .AddSystem(new ApplyDamageSystem())
-                .AddSystem(new DeathSystem())
-                .AddSystem(new DeathProcessTimerSystem())
-                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
+                .AddSystem(new SpawnProcessTimerSystem())
 
-                .AddSystem(new DisableCollidersOnDeathSystem())
+                // .AddSystem(new TransformMovementSystem())
+                .AddSystem(new FlipDirectionSystem())
+
+                .AddSystem(new ApplyDamageSystem())
+
                 .AddSystem(new BodyContactDetectingSystem())
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
-                .AddSystem(new DealDamageOnContactSystem())
-                  
-                .AddSystem(new SpawnProcessTimerSystem())
+
+                .AddSystem(new DealDamageOnContactSystem())                
+
+                .AddSystem(new DisableCollidersOnDeathSystem())
+                .AddSystem(new DeathSystem())
+                .AddSystem(new DeathProcessTimerSystem())
+
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
                 ;
 
             return entity;
@@ -447,6 +458,43 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             entity
                   .AddSystem(new BodyContactDetectingSystem())
                   .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService));
+
+            _entitiesLifeContext.Add(entity);
+
+            return entity;
+        }
+
+        public Entity CreateSpring(Vector3 position, SpringConfig config)
+        {
+            Entity entity = CreateEmpty();
+
+            _monoEntitiesFactory.Create(entity, position, "Entities/LevelObjects/Spring");
+
+            // components
+            entity
+                .AddApplyingForceCharges(new ReactiveVariable<int>(config.ChargesCount))
+                .AddApplyingForcePower(new ReactiveVariable<float>(config.AppliyingForcePower))
+
+                .AddContactsDetectingMask(LayersAPI.LayerMaskCharacters)
+                .AddContactCollidersBuffer(new Buffer<Collider2D>(64))
+                .AddContactEntitiesBuffer(new Buffer<Entity>(64))
+                ;
+
+            // conditions
+            ICompositeCondition canApplyForce = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.ApplyingForceCharges.Value > 0));
+                ;
+
+            entity
+                .AddCanApplyPhysicsFroce(canApplyForce);
+
+
+            // systems
+            entity
+                  .AddSystem(new ApplyForceToContactEntitySystem(_collidersRegistryService))
+                  .AddSystem(new BodyContactDetectingSystem())
+                  .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
+                  ;
 
             _entitiesLifeContext.Add(entity);
 
