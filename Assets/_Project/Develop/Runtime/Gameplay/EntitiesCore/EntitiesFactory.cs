@@ -295,7 +295,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             IInputService inputService = _container.Resolve<IInputService>();
             ICoroutinesPerformer coroutinesPerformer = _container.Resolve<ICoroutinesPerformer>();
 
-            var throwableBehaviourFactory = new ThrowableBehaviourFactory(coroutinesPerformer);
+            ThrowableBehaviourFactory throwableBehaviourFactory = new ThrowableBehaviourFactory(coroutinesPerformer);
 
             entity
                 // — инициализация —
