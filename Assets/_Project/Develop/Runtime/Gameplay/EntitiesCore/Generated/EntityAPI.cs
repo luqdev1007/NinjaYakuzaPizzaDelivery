@@ -1973,6 +1973,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideSnapDuration() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideHorizontalDrag GlideHorizontalDragC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideHorizontalDrag>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> GlideHorizontalDrag => GlideHorizontalDragC.Value;
+
+		public bool TryGetGlideHorizontalDrag(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideHorizontalDrag component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideHorizontalDrag()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideHorizontalDrag() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideHorizontalDrag(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideHorizontalDrag() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.DashForceMin DashForceMinC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.DashForceMin>();
 
 		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> DashForceMin => DashForceMinC.Value;

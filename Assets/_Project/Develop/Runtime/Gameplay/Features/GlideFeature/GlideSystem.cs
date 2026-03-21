@@ -12,6 +12,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         private readonly IInputService _inputService;
 
         private ICompositeCondition _canGlide;
+        private ReactiveVariable<float> _glideHorizontalDrag;
         private ReactiveVariable<bool> _isGliding;
         private ReactiveVariable<bool> _isGrounded;
         private ReactiveVariable<float> _minFallVelocity;
@@ -46,6 +47,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
             _glideSnapDuration = entity.GlideSnapDuration;
             _rigidbody = entity.Rigidbody;
             _canGlide = entity.CanGlide;
+            _glideHorizontalDrag = entity.GlideHorizontalDrag;
             _defaultGravityScale = _rigidbody.gravityScale;
         }
 
@@ -123,7 +125,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
             float currentY = _rigidbody.linearVelocity.y;
             float newY = Mathf.MoveTowards(currentY, targetY, dampingSpeed * deltaTime);
 
-            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, newY);
+            float currentX = _rigidbody.linearVelocity.x;
+            float newX = Mathf.MoveTowards(currentX, 0f, _glideHorizontalDrag.Value * deltaTime);
+
+            _rigidbody.linearVelocity = new Vector2(newX, newY);
         }
     }
 }

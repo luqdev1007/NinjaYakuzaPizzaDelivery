@@ -38,4 +38,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
     { 
         public ReactiveVariable<float> Value; 
     }
+
+    public class GlideHorizontalDrag : IEntityComponent { public ReactiveVariable<float> Value; }
 }

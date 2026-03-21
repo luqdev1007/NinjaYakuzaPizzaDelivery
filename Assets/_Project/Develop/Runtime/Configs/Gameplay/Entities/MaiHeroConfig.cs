@@ -37,6 +37,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField] public Vector2 DashHitboxSize { get; private set; } = new Vector2(1f, 1f);
 
         [Header("Glide")]
+        [field: SerializeField] public float GlideHorizontalDrag { get; private set; } = 3f;
         [field: SerializeField] public float GlideMaxFallSpeed { get; private set; } = -2f;
         [field: SerializeField] public float GlideSpeedDamping { get; private set; } = 5f;
         [field: SerializeField] public float GlideBounceForce { get; private set; } = 4f;
