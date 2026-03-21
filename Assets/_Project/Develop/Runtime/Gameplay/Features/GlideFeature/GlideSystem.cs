@@ -26,6 +26,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         private float _glideTimer;
         private bool _glideUsed;
 
+        private float _glideActivationDelay;
+        private const float GlideActivationDelayTime = 0.08f;
+
         public GlideSystem(IInputService inputService)
         {
             _inputService = inputService;
@@ -51,6 +54,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
             if (_isGrounded.Value)
             {
                 _glideUsed = false;
+                _glideActivationDelay = 0f;
 
                 if (_isGliding.Value)
                     StopGlide(applyBounce: false);
@@ -71,7 +75,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
             bool isFalling = _rigidbody.linearVelocity.y < _minFallVelocity.Value;
 
             if (_inputService.IsJumpKeyPressed && isFalling && !_glideUsed && _canGlide.Evaluate())
-                StartGlide();
+                _glideActivationDelay = GlideActivationDelayTime;
+
+            if (_glideActivationDelay > 0f)
+            {
+                _glideActivationDelay -= deltaTime;
+
+                if (_glideActivationDelay <= 0f && isFalling && !_glideUsed && _canGlide.Evaluate())
+                    StartGlide();
+            }
         }
 
         private void StartGlide()
