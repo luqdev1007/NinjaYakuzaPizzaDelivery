@@ -33,3 +33,4 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
             _animator.SetBool(IsSlidingKey, value);
     }
 }
+

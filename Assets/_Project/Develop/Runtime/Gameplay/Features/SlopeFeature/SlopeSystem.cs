@@ -109,6 +109,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
             if (!_isSliding.Value)
                 _isSliding.Value = true;
 
+            Vector3 scale = _transform.localScale;
+            scale.x = direction.x > 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+            _transform.localScale = scale;
+
             if (_viewContainerTransform != null)
             {
                 float sign = direction.x > 0 ? 1f : -1f;
