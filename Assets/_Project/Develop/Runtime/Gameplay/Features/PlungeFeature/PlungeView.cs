@@ -35,3 +35,5 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
             _animator.SetBool(IsPlungingKey, value);
     }
 }
+
+
