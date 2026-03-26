@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono; 
 using System;
 using System.Collections;
 using UnityEngine;
@@ -57,12 +58,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         private IEnumerator PullCoroutine(Vector3 anchor)
         {
             OnGrappleStarted?.Invoke();
-
             _heroRigidbody.gravityScale = 0f;
             _heroRigidbody.linearVelocity = Vector2.zero;
-
-            float elapsed = 0f;
-            const float accelerationTime = 0.3f;
 
             while (true)
             {
@@ -73,35 +70,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                 }
 
                 Vector3 toAnchor = anchor - _heroTransform.position;
-
                 if (toAnchor.magnitude <= _config.ArriveDistance)
                 {
                     EndGrapple(preserveVelocity: false, applyBounce: true);
                     yield break;
                 }
 
-                elapsed += Time.deltaTime;
-                float speedMultiplier = elapsed < accelerationTime
-                    ? Mathf.Lerp(0.2f, 1f, elapsed / accelerationTime)
-                    : 1f;
-
-                float totalDistance = toAnchor.magnitude;
-                Vector2 axisRatio = new Vector2(
-                    Mathf.Abs(toAnchor.x) / totalDistance,
-                    Mathf.Abs(toAnchor.y) / totalDistance);
-
-                _heroRigidbody.linearVelocity = new Vector2(
-                    Mathf.Sign(toAnchor.x) * axisRatio.x * _config.GrappleSpeed * speedMultiplier,
-                    Mathf.Sign(toAnchor.y) * axisRatio.y * _config.GrappleSpeed * speedMultiplier);
-
+                _heroRigidbody.linearVelocity = toAnchor.normalized * _config.GrappleSpeed;
                 yield return null;
             }
         }
 
-        private IEnumerator PullToEnemyCoroutine(Collider2D enemy)
+        private IEnumerator PullToEnemyCoroutine(Collider2D enemyCollider)
         {
             OnGrappleStarted?.Invoke();
-
             _heroRigidbody.gravityScale = 0f;
             _heroRigidbody.linearVelocity = Vector2.zero;
 
@@ -113,16 +95,40 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                     yield break;
                 }
 
-                if (enemy == null || !enemy.gameObject.activeSelf)
+                if (enemyCollider == null || !enemyCollider.gameObject.activeSelf)
                 {
                     EndGrapple(preserveVelocity: true);
                     yield break;
                 }
 
-                Vector3 toEnemy = enemy.transform.position - _heroTransform.position;
+                Vector3 toEnemy = enemyCollider.transform.position - _heroTransform.position;
 
                 if (toEnemy.magnitude <= _config.ArriveDistance)
                 {
+                    // --- ЗОНА УНИЧТОЖЕНИЯ ВРАГА ---
+
+                    // 1. Попытка через Entity (на будущее)
+                    var monoEntity = enemyCollider.GetComponentInParent<MonoEntity>();
+                    if (monoEntity != null && monoEntity.LinkedEntity != null)
+                    {
+                        var enemyEntity = monoEntity.LinkedEntity;
+                        if (enemyEntity.CurrentHealth != null)
+                        {
+                            enemyEntity.CurrentHealth.Value = 0;
+                            Debug.Log("Enemy Entity killed!");
+                        }
+                    }
+                    else
+                    {
+                        // 2. Обычное уничтожение GameObject (пока враги не Entity)
+                        // Можно использовать Destroy(enemyCollider.gameObject), 
+                        // но SetActive(false) безопаснее, если у тебя есть пулинг.
+                        enemyCollider.gameObject.SetActive(false);
+                        Debug.Log("Enemy GameObject deactivated!");
+                    }
+
+                    // ------------------------------
+
                     EndGrapple(preserveVelocity: false, applyBounce: true);
                     OnEnemyArrived?.Invoke();
                     yield break;
@@ -163,7 +169,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         private void EndGrapple(bool preserveVelocity, bool applyBounce = false)
         {
             Vector2 savedVelocity = _heroRigidbody.linearVelocity;
-
             _heroRigidbody.gravityScale = _defaultGravityScale;
 
             if (preserveVelocity || applyBounce)
