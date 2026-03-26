@@ -70,8 +70,8 @@ MonoBehaviour:
     <DelayTime>k__BackingField: 0.25
     <Cooldown>k__BackingField: 0.55
     <InstantDamage>k__BackingField: 25
-    <Range>k__BackingField: 2
-    <HitBounceForce>k__BackingField: 8
+    <Range>k__BackingField: 3
+    <HitBounceForce>k__BackingField: 12
     <EnemyMask>k__BackingField:
       serializedVersion: 2
       m_Bits: 512

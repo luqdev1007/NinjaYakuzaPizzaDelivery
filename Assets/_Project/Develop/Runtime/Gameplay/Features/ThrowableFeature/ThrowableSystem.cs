@@ -159,6 +159,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         private void OnEnemyArrived()
         {
+            Debug.Log("Arrived to enemy on hook");
             _startAttackRequest.Invoke();
         }
     }

@@ -17,7 +17,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private readonly LayerMask _enemyMask;
         private readonly float _hitBounceForce;
 
-        public MeleeAttackHitSystem(LayerMask enemyMask, float hitBounceForce = 8f)
+        public MeleeAttackHitSystem(LayerMask enemyMask, float hitBounceForce)
         {
             _enemyMask = enemyMask;
             _hitBounceForce = hitBounceForce;
