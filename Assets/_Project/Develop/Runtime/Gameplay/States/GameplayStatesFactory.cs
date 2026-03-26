@@ -1,4 +1,5 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
@@ -27,8 +28,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         public PreperationState CreatePreperationState()
         {
             return new PreperationState(
-                _inputArgs,
-                _container.Resolve<StartGameTriggerService>());
+                _container.Resolve<StartGameTriggerService>(),
+                _container.Resolve<CameraService>(),
+                _container.Resolve<MainHeroFactory>()); // Добавлено
         }
 
         public LaunchState CreateLaunchState(float timer)
@@ -52,7 +54,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<GameplayPopupService>(),
                 _container.Resolve<WalletService>(),
                 _container.Resolve<ConfigsProviderService>()
-                );     
+                );
         }
 
         public DefeatState CreateDefeatState()
@@ -121,6 +123,5 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             return coreLoopState;
         }
-
     }
 }

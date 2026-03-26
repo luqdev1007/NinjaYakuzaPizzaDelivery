@@ -11,87 +11,65 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 {
     public class GameplayBootstrap : SceneBootstrap
     {
         private DIContainer _container;
-
         private GameplayInputArgs _inputArgs;
-
         private GameplayStatesContext _gameplayStatesContext;
-
         private GameplayScreenPresenter _screenPresenter;
-
         private EntitiesLifeContext _entitiesLifeContext;
-
-        private CameraFollowService _cameraFollowService;
+        private CameraService _cameraService;
         private Entity _mainHero;
         private AIBrainsContext _brainsContext;
 
         public override void ProcessRegistrations(DIContainer container, IInputSceneArgs sceneArgs = null)
         {
             _container = container;
-
             if (sceneArgs is not GameplayInputArgs gameplayInputArgs)
                 throw new ArgumentException($"{nameof(sceneArgs)} is not match with {typeof(GameplayInputArgs)} type");
 
             _inputArgs = gameplayInputArgs;
-
             GameplayContextRegistrations.Process(_container, _inputArgs);
         }
 
         public override IEnumerator Initialize()
         {
-            Debug.Log("Gameplay scene init");
-
             _screenPresenter = _container.Resolve<GameplayScreenPresenter>();
-
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
-
             _brainsContext = _container.Resolve<AIBrainsContext>();
-
             _gameplayStatesContext = _container.Resolve<GameplayStatesContext>();
+            _cameraService = _container.Resolve<CameraService>();
 
-            _cameraFollowService = _container.Resolve<CameraFollowService>();
-
-            _mainHero = _container.Resolve<MainHeroFactory>().Create(Vector3.zero);
-            _cameraFollowService.SetTarget(_mainHero.Transform);
+            // Опционально: Ищем коллайдер границ уровня по тегу
+            GameObject boundsObj = GameObject.FindWithTag("LevelBounds");
+            if (boundsObj != null && boundsObj.TryGetComponent<Collider2D>(out var col))
+                _cameraService.SetConstraints(col.bounds);
 
             yield break;
         }
 
-        public override void Run()
-        {
-            Debug.Log($"Start gameplay scene");
-
-            _gameplayStatesContext.Run();
-        }
+        public override void Run() => _gameplayStatesContext.Run();
 
         private void Update()
         {
-            _cameraFollowService?.Update(Time.deltaTime);
-
             _brainsContext?.Update(Time.deltaTime);
             _entitiesLifeContext?.Update(Time.deltaTime);
             _gameplayStatesContext?.Update(Time.deltaTime);
 
-            if (Input.GetKeyDown(KeyCode.Equals)) // + 
-                Time.timeScale = Mathf.Min(1f, Mathf.Round((Time.timeScale + 0.1f) * 10f) / 10f);
+            // Debug controls
+            if (Input.GetKeyDown(KeyCode.Equals)) 
+                Time.timeScale = Mathf.Min(1f, (float)Math.Round(Time.timeScale + 0.1f, 1));
 
-            if (Input.GetKeyDown(KeyCode.Minus)) // -
-                Time.timeScale = Mathf.Max(0f, Mathf.Round((Time.timeScale - 0.1f) * 10f) / 10f);
-
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                _mainHero.CurrentHealth.Value -= 1;
-                Debug.Log($"{_mainHero.Transform.gameObject.name} takes 1 dmg: {_mainHero.CurrentHealth.Value}/{_mainHero.MaxHealth.Value} hp");
-            }
+            if (Input.GetKeyDown(KeyCode.Minus)) 
+                Time.timeScale = Mathf.Max(0f, (float)Math.Round(Time.timeScale - 0.1f, 1));
         }
 
         private void LateUpdate()
         {
+            // Обновляем камеру после всех перемещений в LateUpdate
+            _cameraService?.Update(Time.deltaTime);
             _screenPresenter?.LateUpdate();
         }
     }

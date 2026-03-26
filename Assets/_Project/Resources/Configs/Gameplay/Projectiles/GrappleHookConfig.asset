@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: GrappleHookConfig
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/Projectiles/GrappleHook
-  <ProjectileSpeed>k__BackingField: 30
+  <ProjectileSpeed>k__BackingField: 25
   <MaxDistance>k__BackingField: 15
   <MinDistance>k__BackingField: 1
   <MaxCharges>k__BackingField: 100
   <HitMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 1792
-  <GrappleSpeed>k__BackingField: 20
+  <GrappleSpeed>k__BackingField: 25
   <ArriveDistance>k__BackingField: 0.5
   <ArrivalBounce>k__BackingField: 5
   <EnemyMask>k__BackingField:

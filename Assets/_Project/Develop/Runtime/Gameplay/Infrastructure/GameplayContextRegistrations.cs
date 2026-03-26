@@ -63,12 +63,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             container.RegisterAsSingle(CreateLevelProgressService);
 
-            container.RegisterAsSingle(CreateCameraFollowService);
+            container.RegisterAsSingle(CreateCameraService);
         }
 
-        private static CameraFollowService CreateCameraFollowService(DIContainer container)
+        private static CameraService CreateCameraService(DIContainer container)
         {
-            return new CameraFollowService(Camera.main);
+            return new CameraService(Camera.main);
         }
 
         private static LevelProgressService CreateLevelProgressService(DIContainer container)
