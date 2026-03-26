@@ -64,101 +64,101 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // — движение —
                 .AddMoveDirection()
-                .AddMoveSpeed(new ReactiveVariable<float>(config.MoveSpeed))
-                .AddMoveSpeedMin(new ReactiveVariable<float>(config.MoveSpeedMin))
-                .AddAcceleration(new ReactiveVariable<float>(config.Acceleration))
-                .AddDeceleration(new ReactiveVariable<float>(config.Deceleration))
+                .AddMoveSpeed(new ReactiveVariable<float>(config.Movement.MoveSpeed))
+                .AddMoveSpeedMin(new ReactiveVariable<float>(config.Movement.MoveSpeedMin))
+                .AddAcceleration(new ReactiveVariable<float>(config.Movement.Acceleration))
+                .AddDeceleration(new ReactiveVariable<float>(config.Movement.Deceleration))
                 .AddIsMoving()
 
                 // — прыжок —
-                .AddJumpForce(new ReactiveVariable<float>(config.JumpForce))
-                .AddJumpForceMax(new ReactiveVariable<float>(config.JumpForceMax))
-                .AddJumpChargeTime(new ReactiveVariable<float>(config.JumpChargeTime))
-                .AddJumpsAvailable(new ReactiveVariable<int>(config.MaxJumps))
-                .AddMaxJumps(new ReactiveVariable<int>(config.MaxJumps))
+                .AddJumpForce(new ReactiveVariable<float>(config.Jump.JumpForce))
+                .AddJumpForceMax(new ReactiveVariable<float>(config.Jump.JumpForceMax))
+                .AddJumpChargeTime(new ReactiveVariable<float>(config.Jump.JumpChargeTime))
+                .AddJumpsAvailable(new ReactiveVariable<int>(config.Jump.MaxJumps))
+                .AddMaxJumps(new ReactiveVariable<int>(config.Jump.MaxJumps))
                 .AddJumpEvent()
                 .AddDoubleJumpEvent()
 
                 // — рывок —
                 .AddIsDashing()
-                .AddDashForceMin(new ReactiveVariable<float>(config.DashForceMin))
-                .AddDashForceMax(new ReactiveVariable<float>(config.DashForceMax))
-                .AddDashChargeTime(new ReactiveVariable<float>(config.DashChargeTime))
-                .AddDashCooldown(new ReactiveVariable<float>(config.DashCooldown))
-                .AddDashDuration(new ReactiveVariable<float>(config.DashDuration))
-                .AddAirDashMultiplier(new ReactiveVariable<float>(config.AirDashMultiplier))
-                .AddAirDashVerticalBoost(new ReactiveVariable<float>(config.AirDashVerticalBoost))
-                .AddDashDamage(new ReactiveVariable<float>(config.DashDamage))
-                .AddDashHitboxSize(new ReactiveVariable<Vector2>(config.DashHitboxSize))
+                .AddDashForceMin(new ReactiveVariable<float>(config.Dash.ForceMin))
+                .AddDashForceMax(new ReactiveVariable<float>(config.Dash.ForceMax))
+                .AddDashChargeTime(new ReactiveVariable<float>(config.Dash.ChargeTime))
+                .AddDashCooldown(new ReactiveVariable<float>(config.Dash.Cooldown))
+                .AddDashDuration(new ReactiveVariable<float>(config.Dash.Duration))
+                .AddAirDashMultiplier(new ReactiveVariable<float>(config.Dash.AirMultiplier))
+                .AddAirDashVerticalBoost(new ReactiveVariable<float>(config.Dash.VerticalBoost))
+                .AddDashDamage(new ReactiveVariable<float>(config.Dash.Damage))
+                .AddDashHitboxSize(new ReactiveVariable<Vector2>(config.Dash.HitboxSize))
 
                 // — планирование —
                 .AddIsGliding()
-                .AddGlideHorizontalDrag(new ReactiveVariable<float>(config.GlideHorizontalDrag))
-                .AddGlideMaxFallSpeed(new ReactiveVariable<float>(config.GlideMaxFallSpeed))
-                .AddGlideSpeedDamping(new ReactiveVariable<float>(config.GlideSpeedDamping))
-                .AddGlideBounceForce(new ReactiveVariable<float>(config.GlideBounceForce))
-                .AddGlideSnapSpeed(new ReactiveVariable<float>(config.GlideSnapSpeed))
-                .AddGlideSnapDuration(new ReactiveVariable<float>(config.GlideSnapDuration))
+                .AddGlideHorizontalDrag(new ReactiveVariable<float>(config.Glide.HorizontalDrag))
+                .AddGlideMaxFallSpeed(new ReactiveVariable<float>(config.Glide.MaxFallSpeed))
+                .AddGlideSpeedDamping(new ReactiveVariable<float>(config.Glide.SpeedDamping))
+                .AddGlideBounceForce(new ReactiveVariable<float>(config.Glide.BounceForce))
+                .AddGlideSnapSpeed(new ReactiveVariable<float>(config.Glide.SnapSpeed))
+                .AddGlideSnapDuration(new ReactiveVariable<float>(config.Glide.SnapDuration))
 
                 // — атака —
                 .AddStartAttackRequest()
                 .AddStartAttackEvent()
                 .AddEndAttackEvent()
                 .AddInAttackProcess()
-                .AddAttackProcessInitialTime(new ReactiveVariable<float>(config.AttackProcessTime))
+                .AddAttackProcessInitialTime(new ReactiveVariable<float>(config.Attack.ProcessTime))
                 .AddAttackProcessCurrentTime()
-                .AddAttackDelayTime(new ReactiveVariable<float>(config.AttackDelayTime))
+                .AddAttackDelayTime(new ReactiveVariable<float>(config.Attack.DelayTime))
                 .AddAttackDelayEndEvent()
-                .AddInstantAttackDamage(new ReactiveVariable<float>(config.InstantAttackDamage))
+                .AddInstantAttackDamage(new ReactiveVariable<float>(config.Attack.InstantDamage))
                 .AddAttackCanceledEvent()
-                .AddAttackCooldownInitialTime(new ReactiveVariable<float>(config.AttackCooldown))
+                .AddAttackCooldownInitialTime(new ReactiveVariable<float>(config.Attack.Cooldown))
                 .AddAttackCooldownCurrentTime()
                 .AddInAttackCooldown()
-                .AddAttackRange(new ReactiveVariable<float>(config.AttackRange))
+                .AddAttackRange(new ReactiveVariable<float>(config.Attack.Range))
 
                 // — броски —
                 .AddIsThrowing()
                 .AddIsGrappling()
                 .AddCurrentThrowableIndex(new ReactiveVariable<int>(0))
-                .AddGrappleCharges(new ReactiveVariable<int>(config.GrappleConfig.MaxCharges))
-                .AddShurikenCharges(new ReactiveVariable<int>(config.ShurikenConfig.MaxCharges))
-                .AddSleepDartCharges(new ReactiveVariable<int>(config.SleepDartConfig.MaxCharges))
+                .AddGrappleCharges(new ReactiveVariable<int>(config.Throwables.GrappleConfig.MaxCharges))
+                .AddShurikenCharges(new ReactiveVariable<int>(config.Throwables.ShurikenConfig.MaxCharges))
+                .AddSleepDartCharges(new ReactiveVariable<int>(config.Throwables.SleepDartConfig.MaxCharges))
 
                 // — вис на стене —
                 .AddIsWallHanging()
-                .AddWallHangLayer(config.WallHangLayer)
-                .AddWallHangSlideSpeed(new ReactiveVariable<float>(config.WallHangSlideSpeed))
-                .AddWallJumpForce(new ReactiveVariable<Vector2>(config.WallJumpForce))
+                .AddWallHangLayer(config.WallHang.Layer)
+                .AddWallHangSlideSpeed(new ReactiveVariable<float>(config.WallHang.SlideSpeed))
+                .AddWallJumpForce(new ReactiveVariable<Vector2>(config.WallHang.JumpForce))
                 .AddWallDirection()
 
                 // — слайд —
                 .AddIsSliding()
-                .AddSlideDuration(new ReactiveVariable<float>(config.SlideDuration))
-                .AddSlideSpeed(new ReactiveVariable<float>(config.SlideSpeed))
+                .AddSlideDuration(new ReactiveVariable<float>(config.Slide.Duration))
+                .AddSlideSpeed(new ReactiveVariable<float>(config.Slide.Speed))
 
                 // — пике —
                 .AddIsPlunging()
-                .AddPlungeSpeed(new ReactiveVariable<float>(config.PlungeSpeed))
-                .AddPlungeAOERadius(new ReactiveVariable<float>(config.PlungeAOERadius))
-                .AddPlungeAOEDamage(new ReactiveVariable<float>(config.PlungeAOEDamage))
-                .AddPlungeKnockbackForce(new ReactiveVariable<float>(config.PlungeKnockbackForce))
+                .AddPlungeSpeed(new ReactiveVariable<float>(config.Plunge.Speed))
+                .AddPlungeAOERadius(new ReactiveVariable<float>(config.Plunge.AOERadius))
+                .AddPlungeAOEDamage(new ReactiveVariable<float>(config.Plunge.AOEDamage))
+                .AddPlungeKnockbackForce(new ReactiveVariable<float>(config.Plunge.KnockbackForce))
 
                 // — наклонные поверхности —
                 .AddIsOnSlope()
-                .AddSlopeBoostMultiplier(new ReactiveVariable<float>(config.SlopeBoostMultiplier))
-                .AddSlopeJumpForce(new ReactiveVariable<Vector2>(config.SlopeJumpForce))
-                .AddSlopeMask(config.SlopeMask)
+                .AddSlopeBoostMultiplier(new ReactiveVariable<float>(config.Slope.BoostMultiplier))
+                .AddSlopeJumpForce(new ReactiveVariable<Vector2>(config.Slope.JumpForce))
+                .AddSlopeMask(config.Slope.Mask)
 
                 // — жизненный цикл —
-                .AddMaxHealth(new ReactiveVariable<float>(config.MaxHealth))
-                .AddCurrentHealth(new ReactiveVariable<float>(config.MaxHealth))
+                .AddMaxHealth(new ReactiveVariable<float>(config.LifeCycle.MaxHealth))
+                .AddCurrentHealth(new ReactiveVariable<float>(config.LifeCycle.MaxHealth))
                 .AddIsDead()
                 .AddInDeathProcess()
-                .AddDeathProcessInitialTime(new ReactiveVariable<float>(config.DeathProcessTime))
+                .AddDeathProcessInitialTime(new ReactiveVariable<float>(config.LifeCycle.DeathProcessTime))
                 .AddDeathProcessCurrentTime()
                 .AddTakeDamageRequest()
                 .AddTakeDamageEvent()
-                .AddSpawnInitialTime(new ReactiveVariable<float>(config.SpawnProcessTime))
+                .AddSpawnInitialTime(new ReactiveVariable<float>(config.LifeCycle.SpawnProcessTime))
                 .AddSpawnCurrentTime()
                 .AddInSpawnProcess()
                 ;
@@ -309,18 +309,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // — движение —
                 .AddSystem(new RigidbodyMovementSystem(inputService))
                 .AddSystem(new JumpSystem(inputService))
-                .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.EnemyMask))
+                .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.Attack.EnemyMask))
                 .AddSystem(new GlideSystem(inputService))
                 .AddSystem(new WallHangSystem(inputService))
                 .AddSystem(new SlideSystem(inputService, coroutinesPerformer))
-                .AddSystem(new PlungeSystem(inputService, config.EnemyMask))
+                .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask))
                 .AddSystem(new SlopeSystem(inputService, coroutinesPerformer))
 
                 // — броски —
                 .AddSystem(new ThrowableSystem(
                     inputService,
                     coroutinesPerformer,
-                    new ThrowableConfig[] { config.GrappleConfig, config.ShurikenConfig, config.SleepDartConfig },
+                    new ThrowableConfig[] 
+                    { 
+                        config.Throwables.GrappleConfig, 
+                        config.Throwables.ShurikenConfig, 
+                        config.Throwables.SleepDartConfig 
+                    },
                     throwableBehaviourFactory))
 
                 // — атака —
@@ -330,7 +335,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new AttackDelayEndTriggerSystem())
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem())
-                .AddSystem(new MeleeAttackHitSystem(config.EnemyMask, config.HitBounceForce))
+                .AddSystem(new MeleeAttackHitSystem(config.Attack.EnemyMask, config.Attack.HitBounceForce))
 
                 // — урон / жизненный цикл —
                 .AddSystem(new ApplyDamageSystem())

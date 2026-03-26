@@ -1,4 +1,5 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
+﻿using System;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
@@ -6,80 +7,139 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     [CreateAssetMenu(fileName = "MainHeroConfig", menuName = "Configs/Gameplay/Main Hero/New Main Hero Config")]
     public class MaiHeroConfig : EntityConfig
     {
-        [Header("Common")]
+        [Header("Common & Physics")]
         [field: SerializeField] public string PrefabPath { get; private set; } = "Entities/MainHero/MainHero";
         [field: SerializeField] public float MinFallVelocityForAction { get; private set; } = -2f;
-
-        [Header("Physics")]
         [field: SerializeField] public LayerMask GroundMask { get; private set; }
 
-        [Header("Movement")]
+        [Space(10)]
+        [SerializeField] private MovementSettings _movement = new();
+        [SerializeField] private JumpSettings _jump = new();
+        [SerializeField] private DashSettings _dash = new();
+        [SerializeField] private GlideSettings _glide = new();
+        [SerializeField] private WallHangSettings _wallHang = new();
+        [SerializeField] private SlideSettings _slide = new();
+        [SerializeField] private PlungeSettings _plunge = new();
+        [SerializeField] private SlopeSettings _slope = new();
+        [SerializeField] private AttackSettings _attack = new();
+        [SerializeField] private LifeCycleSettings _lifeCycle = new();
+        [SerializeField] private ThrowableSettings _throwables = new();
+
+        // Геттеры для доступа из систем (теперь через точку: config.Movement.MoveSpeed)
+        public MovementSettings Movement => _movement;
+        public JumpSettings Jump => _jump;
+        public DashSettings Dash => _dash;
+        public GlideSettings Glide => _glide;
+        public WallHangSettings WallHang => _wallHang;
+        public SlideSettings Slide => _slide;
+        public PlungeSettings Plunge => _plunge;
+        public SlopeSettings Slope => _slope;
+        public AttackSettings Attack => _attack;
+        public LifeCycleSettings LifeCycle => _lifeCycle;
+        public ThrowableSettings Throwables => _throwables;
+    }
+
+    // --- ВСПОМОГАТЕЛЬНЫЕ КЛАССЫ (Разворачивающиеся секции) ---
+
+    [Serializable]
+    public class MovementSettings
+    {
         [field: SerializeField, Min(0)] public float MoveSpeed { get; private set; } = 10f;
         [field: SerializeField, Min(0)] public float MoveSpeedMin { get; private set; } = 3f;
         [field: SerializeField, Min(0)] public float Acceleration { get; private set; } = 20f;
         [field: SerializeField, Min(0)] public float Deceleration { get; private set; } = 15f;
+    }
 
-        [Header("Jump")]
+    [Serializable]
+    public class JumpSettings
+    {
         [field: SerializeField, Min(0)] public float JumpForce { get; private set; } = 12f;
         [field: SerializeField, Min(0)] public float JumpForceMax { get; private set; } = 20f;
         [field: SerializeField, Min(0)] public float JumpChargeTime { get; private set; } = 0.5f;
         [field: SerializeField, Min(1)] public int MaxJumps { get; private set; } = 1;
+    }
 
-        [Header("Dash")]
-        [field: SerializeField, Min(0)] public float DashDuration { get; private set; } = 0.3f;
-        [field: SerializeField, Min(0)] public float DashForceMin { get; private set; } = 8f;
-        [field: SerializeField, Min(0)] public float DashForceMax { get; private set; } = 20f;
-        [field: SerializeField, Min(0)] public float DashChargeTime { get; private set; } = 0.4f;
-        [field: SerializeField, Min(0)] public float DashCooldown { get; private set; } = 0.5f;
-        [field: SerializeField, Min(1)] public float AirDashMultiplier { get; private set; } = 1.5f;
-        [field: SerializeField, Min(0)] public float AirDashVerticalBoost { get; private set; } = 3f;
-        [field: SerializeField, Min(0)] public float DashDamage { get; private set; } = 25f;
-        [field: SerializeField] public Vector2 DashHitboxSize { get; private set; } = new Vector2(1f, 1f);
+    [Serializable]
+    public class DashSettings
+    {
+        [field: SerializeField] public float Duration { get; private set; } = 0.3f;
+        [field: SerializeField] public float ForceMin { get; private set; } = 8f;
+        [field: SerializeField] public float ForceMax { get; private set; } = 20f;
+        [field: SerializeField] public float ChargeTime { get; private set; } = 0.4f;
+        [field: SerializeField] public float Cooldown { get; private set; } = 0.5f;
+        [field: SerializeField] public float AirMultiplier { get; private set; } = 1.5f;
+        [field: SerializeField] public float VerticalBoost { get; private set; } = 3f;
+        [field: SerializeField] public float Damage { get; private set; } = 25f;
+        [field: SerializeField] public Vector2 HitboxSize { get; private set; } = new Vector2(1f, 1f);
+    }
 
-        [Header("Glide")]
-        [field: SerializeField] public float GlideHorizontalDrag { get; private set; } = 3f;
-        [field: SerializeField] public float GlideMaxFallSpeed { get; private set; } = -2f;
-        [field: SerializeField] public float GlideSpeedDamping { get; private set; } = 5f;
-        [field: SerializeField] public float GlideBounceForce { get; private set; } = 4f;
-        [field: SerializeField] public float GlideMinFallVelocity { get; private set; } = -3f;
-        [field: SerializeField] public float GlideSnapSpeed { get; private set; } = 40f;
-        [field: SerializeField] public float GlideSnapDuration { get; private set; } = 0.15f;
+    [Serializable]
+    public class GlideSettings
+    {
+        [field: SerializeField] public float HorizontalDrag { get; private set; } = 3f;
+        [field: SerializeField] public float MaxFallSpeed { get; private set; } = -2f;
+        [field: SerializeField] public float SpeedDamping { get; private set; } = 5f;
+        [field: SerializeField] public float BounceForce { get; private set; } = 4f;
+        [field: SerializeField] public float MinFallVelocity { get; private set; } = -3f;
+        [field: SerializeField] public float SnapSpeed { get; private set; } = 40f;
+        [field: SerializeField] public float SnapDuration { get; private set; } = 0.15f;
+    }
 
-        [Header("Wall Hang")]
-        [field: SerializeField] public LayerMask WallHangLayer { get; private set; }
-        [field: SerializeField] public float WallHangSlideSpeed { get; private set; } = 1f;
-        [field: SerializeField] public Vector2 WallJumpForce { get; private set; } = new Vector2(8f, 12f);
+    [Serializable]
+    public class WallHangSettings
+    {
+        [field: SerializeField] public LayerMask Layer { get; private set; }
+        [field: SerializeField] public float SlideSpeed { get; private set; } = 1f;
+        [field: SerializeField] public Vector2 JumpForce { get; private set; } = new Vector2(8f, 12f);
+    }
 
-        [Header("Slide")]
-        [field: SerializeField] public float SlideDuration { get; private set; } = 0.4f;
-        [field: SerializeField] public float SlideSpeed { get; private set; } = 15f;
+    [Serializable]
+    public class SlideSettings
+    {
+        [field: SerializeField] public float Duration { get; private set; } = 0.4f;
+        [field: SerializeField] public float Speed { get; private set; } = 15f;
+    }
 
-        [Header("Plunge")]
-        [field: SerializeField] public float PlungeSpeed { get; private set; } = 25f;
-        [field: SerializeField] public float PlungeAOERadius { get; private set; } = 3f;
-        [field: SerializeField] public float PlungeAOEDamage { get; private set; } = 50f;
-        [field: SerializeField] public float PlungeKnockbackForce { get; private set; } = 10f;
+    [Serializable]
+    public class PlungeSettings
+    {
+        [field: SerializeField] public float Speed { get; private set; } = 25f;
+        [field: SerializeField] public float AOERadius { get; private set; } = 3f;
+        [field: SerializeField] public float AOEDamage { get; private set; } = 50f;
+        [field: SerializeField] public float KnockbackForce { get; private set; } = 10f;
+    }
 
-        [Header("Slope")]
-        [field: SerializeField] public float SlopeBoostMultiplier { get; private set; } = 2f;
-        [field: SerializeField] public Vector2 SlopeJumpForce { get; private set; } = new Vector2(10f, 6f);
-        [field: SerializeField] public LayerMask SlopeMask { get; private set; }
+    [Serializable]
+    public class SlopeSettings
+    {
+        [field: SerializeField] public float BoostMultiplier { get; private set; } = 2f;
+        [field: SerializeField] public Vector2 JumpForce { get; private set; } = new Vector2(10f, 6f);
+        [field: SerializeField] public LayerMask Mask { get; private set; }
+    }
 
-        [Header("Attack")]
-        [field: SerializeField, Min(0)] public float AttackProcessTime { get; private set; } = 1.5f;
-        [field: SerializeField, Min(0)] public float AttackDelayTime { get; private set; } = 0.75f;
-        [field: SerializeField, Min(0)] public float AttackCooldown { get; private set; } = 1f;
-        [field: SerializeField, Min(0)] public float InstantAttackDamage { get; private set; } = 50f;
-        [field: SerializeField] public float AttackRange { get; private set; } = 1.5f;
+    [Serializable]
+    public class AttackSettings
+    {
+        [field: SerializeField] public float ProcessTime { get; private set; } = 1.5f;
+        [field: SerializeField] public float DelayTime { get; private set; } = 0.75f;
+        [field: SerializeField] public float Cooldown { get; private set; } = 1f;
+        [field: SerializeField] public float InstantDamage { get; private set; } = 50f;
+        [field: SerializeField] public float Range { get; private set; } = 1.5f;
         [field: SerializeField] public float HitBounceForce { get; private set; } = 8f;
         [field: SerializeField] public LayerMask EnemyMask { get; private set; }
+    }
 
-        [Header("Life Cycle")]
-        [field: SerializeField, Min(0)] public float MaxHealth { get; private set; } = 100f;
-        [field: SerializeField, Min(0)] public float DeathProcessTime { get; private set; } = 2f;
-        [field: SerializeField, Min(0)] public float SpawnProcessTime { get; private set; } = 2f;
+    [Serializable]
+    public class LifeCycleSettings
+    {
+        [field: SerializeField] public float MaxHealth { get; private set; } = 100f;
+        [field: SerializeField] public float DeathProcessTime { get; private set; } = 2f;
+        [field: SerializeField] public float SpawnProcessTime { get; private set; } = 2f;
+    }
 
-        [Header("Throwables")]
+    [Serializable]
+    public class ThrowableSettings
+    {
         [field: SerializeField] public GrappleHookConfig GrappleConfig { get; private set; }
         [field: SerializeField] public ShurikenConfig ShurikenConfig { get; private set; }
         [field: SerializeField] public SleepDartConfig SleepDartConfig { get; private set; }
