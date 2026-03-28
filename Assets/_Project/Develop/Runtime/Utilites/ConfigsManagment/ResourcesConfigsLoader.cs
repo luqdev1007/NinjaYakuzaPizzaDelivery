@@ -1,3 +1,4 @@
+using Assets._Project.Develop.Runtime.Configs.Dialog;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
@@ -23,7 +24,9 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
 
             { typeof(LevelsListConfig), "Configs/Gameplay/Levels/LevelsListConfig" },
 
-            { typeof(MaiHeroConfig), "Configs/Entities/MainHero/MainHeroConfig" }
+            { typeof(MaiHeroConfig), "Configs/Entities/MainHero/MainHeroConfig" },
+
+            { typeof(DialogConfig), "Configs/Dialogs/TutorialDialog" }
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)

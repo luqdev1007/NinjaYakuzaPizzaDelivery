@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4568a862ec510e64daab608ac6d6b98b, type: 3}
+  m_Name: TutorialDialog
+  m_EditorClassIdentifier: 
+  Replicas:
+  - CharacterId: pizza_master
+    RawText: 'Hey, NINJA, deliver that PIZZA in time! But be CAREFULLY for ghosts,
+      if you damage pizza you won''t get any tips! '
+    OverrideTime: 0
+    CustomTime: 0
+  - CharacterId: main_hero
+    RawText: Shush! I don't have time for this... Need to get my tips...
+    OverrideTime: 0
+    CustomTime: 0

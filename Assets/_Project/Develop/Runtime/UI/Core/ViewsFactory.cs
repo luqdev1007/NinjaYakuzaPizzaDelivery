@@ -27,6 +27,8 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             {ViewIDs.MainHeroHealthBar, "UI/Gameplay/HealthBars/MainHeroHealthBar" },
 
             {ViewIDs.LevelProgressView, "UI/Gameplay/LevelProgress/LevelProgressView" },
+
+            {ViewIDs.DialogDisplayView, "UI/Dialog/DialogDisplayView" },
         };
 
         public ViewsFactory(ResourcesAssetsLoader resourcesAssetsLoader)

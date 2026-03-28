@@ -19,5 +19,7 @@
         public const string MainHeroHealthBar = nameof(MainHeroHealthBar);
 
         public const string LevelProgressView = nameof(LevelProgressView);
+
+        public const string DialogDisplayView = nameof(DialogDisplayView);
     }
 }
