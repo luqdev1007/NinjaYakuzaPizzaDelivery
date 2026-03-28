@@ -13,8 +13,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
         private List<ParticleSystem> _leafParticles = new List<ParticleSystem>();
 
         // --- НАСТРОЙКИ ЗУМА ---
-        private const float MinSize = 8f;        // Чуть поближе в покое (было 10)
-        private const float MaxSize = 11.5f;     // Отдаляется поменьше (было 13)
+        private const float MinSize = 7f;        // Чуть поближе в покое (было 10)
+        private const float MaxSize = 12.5f;     // Отдаляется поменьше (было 13)
         private const float ZoomSmoothness = 1.5f; // Плавность (чем меньше, тем медленнее)
 
         // --- ПОРОГИ (DEADZONES) ---
