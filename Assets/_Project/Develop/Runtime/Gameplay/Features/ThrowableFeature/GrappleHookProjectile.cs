@@ -1,6 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono; 
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -15,11 +15,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         private readonly LayerMask _enemyMask;
 
         private Func<bool> _isCancelled;
-        private readonly float _defaultGravityScale;
 
         public event Action OnGrappleStarted;
         public event Action OnGrappleEnded;
-        public event Action OnEnemyArrived;
+        public event Action OnEnemyArrived; // Возвращаем событие
 
         public GrappleHookProjectile(
             GrappleHookConfig config,
@@ -31,23 +30,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             _heroRigidbody = heroRigidbody;
             _heroTransform = heroTransform;
             _enemyMask = config.EnemyMask;
-            _defaultGravityScale = heroRigidbody.gravityScale;
         }
 
-        public void SetCancelCondition(Func<bool> isCancelled)
-        {
-            _isCancelled = isCancelled;
-        }
+        public void SetCancelCondition(Func<bool> isCancelled) => _isCancelled = isCancelled;
 
         protected override void OnHit(Collider2D hit)
         {
             bool hitEnemy = (_enemyMask.value & (1 << hit.gameObject.layer)) != 0;
             FlipTowards(hit.transform.position);
 
-            if (hitEnemy)
-                CoroutinesPerformer.StartPerform(PullToEnemyCoroutine(hit));
-            else
-                CoroutinesPerformer.StartPerform(PullCoroutine(hit.ClosestPoint(_heroTransform.position)));
+            // Запускаем физическое притягивание
+            CoroutinesPerformer.StartPerform(PullPhysicsCoroutine(hit.ClosestPoint(_heroTransform.position), hit, hitEnemy));
         }
 
         protected override void OnMaxDistanceReached(Vector3 startPosition)
@@ -55,140 +48,123 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             CoroutinesPerformer.StartPerform(ReturnCoroutine(startPosition));
         }
 
-        private IEnumerator PullCoroutine(Vector3 anchor)
+        private IEnumerator PullPhysicsCoroutine(Vector2 anchor, Collider2D hitCollider, bool isEnemy)
         {
             OnGrappleStarted?.Invoke();
+
+            float originalGravity = _heroRigidbody.gravityScale;
+
+            // 1. ПОЛНЫЙ СБРОС СКОРОСТИ И ГРАВИТАЦИИ
             _heroRigidbody.gravityScale = 0f;
             _heroRigidbody.linearVelocity = Vector2.zero;
 
+            // 2. СТАРТОВЫЙ ИМПУЛЬС (ОТРЫВ ОТ ЗЕМЛИ)
+            // Подбрасываем персонажа чуть вверх, чтобы убрать трение о пол
+            Vector2 popUpDirection = Vector2.up;
+
+            // Если точка зацепа сильно выше нас, можно чуть сместить импульс в сторону цели
+            Vector2 toTargetInitial = anchor - (Vector2)_heroTransform.position;
+            if (toTargetInitial.y > 0.5f)
+            {
+                popUpDirection = (Vector2.up + toTargetInitial.normalized * 0.5f).normalized;
+            }
+
+            _heroRigidbody.AddForce(popUpDirection * _config.InitialPopUpForce, ForceMode2D.Impulse);
+
+            // Даем физике один кадр "продышаться" перед тем, как лочить скорость
+            yield return null;
+
             while (true)
             {
-                if (_isCancelled != null && _isCancelled())
+                if (_isCancelled != null && _isCancelled()) break;
+
+                if (isEnemy && hitCollider != null)
+                    anchor = hitCollider.transform.position;
+                else if (isEnemy && hitCollider == null)
+                    break;
+
+                Vector2 playerPos = _heroTransform.position;
+                Vector2 toTarget = anchor - playerPos;
+                float distance = toTarget.magnitude;
+
+                if (distance <= _config.ArriveDistance)
                 {
-                    EndGrapple(preserveVelocity: true);
-                    yield break;
+                    if (isEnemy) HandleEnemyCollision(hitCollider);
+                    break;
                 }
 
-                Vector3 toAnchor = anchor - _heroTransform.position;
-                if (toAnchor.magnitude <= _config.ArriveDistance)
-                {
-                    EndGrapple(preserveVelocity: false, applyBounce: true);
-                    yield break;
-                }
+                // 3. ПОЛЕТ ПО ПРЯМОЙ
+                // Перезаписываем скорость каждый кадр, игнорируя внешние силы
+                _heroRigidbody.linearVelocity = toTarget.normalized * _config.GrappleSpeed;
 
-                _heroRigidbody.linearVelocity = toAnchor.normalized * _config.GrappleSpeed;
                 yield return null;
             }
+
+            EndGrapple(originalGravity);
         }
 
-        private IEnumerator PullToEnemyCoroutine(Collider2D enemyCollider)
+        private void HandleEnemyCollision(Collider2D enemyCollider)
         {
-            OnGrappleStarted?.Invoke();
-            _heroRigidbody.gravityScale = 0f;
-            _heroRigidbody.linearVelocity = Vector2.zero;
+            if (enemyCollider == null) return;
 
-            while (true)
+            // Полная логика уничтожения как была
+            var monoEntity = enemyCollider.GetComponentInParent<MonoEntity>();
+            if (monoEntity != null && monoEntity.LinkedEntity != null)
             {
-                if (_isCancelled != null && _isCancelled())
+                var enemyEntity = monoEntity.LinkedEntity;
+                if (enemyEntity.CurrentHealth != null)
                 {
-                    EndGrapple(preserveVelocity: true);
-                    yield break;
+                    enemyEntity.CurrentHealth.Value = 0;
+                    Debug.Log("Enemy Entity killed by physical grapple!");
                 }
-
-                if (enemyCollider == null || !enemyCollider.gameObject.activeSelf)
-                {
-                    EndGrapple(preserveVelocity: true);
-                    yield break;
-                }
-
-                Vector3 toEnemy = enemyCollider.transform.position - _heroTransform.position;
-
-                if (toEnemy.magnitude <= _config.ArriveDistance)
-                {
-                    // --- ЗОНА УНИЧТОЖЕНИЯ ВРАГА ---
-
-                    // 1. Попытка через Entity (на будущее)
-                    var monoEntity = enemyCollider.GetComponentInParent<MonoEntity>();
-                    if (monoEntity != null && monoEntity.LinkedEntity != null)
-                    {
-                        var enemyEntity = monoEntity.LinkedEntity;
-                        if (enemyEntity.CurrentHealth != null)
-                        {
-                            enemyEntity.CurrentHealth.Value = 0;
-                            Debug.Log("Enemy Entity killed!");
-                        }
-                    }
-                    else
-                    {
-                        // 2. Обычное уничтожение GameObject (пока враги не Entity)
-                        // Можно использовать Destroy(enemyCollider.gameObject), 
-                        // но SetActive(false) безопаснее, если у тебя есть пулинг.
-                        enemyCollider.gameObject.SetActive(false);
-                        Debug.Log("Enemy GameObject deactivated!");
-                    }
-
-                    // ------------------------------
-
-                    EndGrapple(preserveVelocity: false, applyBounce: true);
-                    OnEnemyArrived?.Invoke();
-                    yield break;
-                }
-
-                _heroRigidbody.linearVelocity = toEnemy.normalized * _config.GrappleSpeed;
-                yield return null;
             }
+            else
+            {
+                enemyCollider.gameObject.SetActive(false);
+                Debug.Log("Enemy GameObject deactivated by physical grapple!");
+            }
+
+            OnEnemyArrived?.Invoke();
+        }
+
+        private void EndGrapple(float originalGravity)
+        {
+            _heroRigidbody.gravityScale = originalGravity;
+
+            // Сохраняем вектор прилета, но даем чуть больше свободы по вертикали в конце
+            Vector2 boost = _heroRigidbody.linearVelocity * _config.CancelInertiaMultiplier;
+
+            // Если мы летели вверх, добавим еще немного "бонуса" к прыжку в конце
+            if (boost.y > 0) boost.y *= 1.2f;
+
+            _heroRigidbody.linearVelocity = boost;
+
+            OnGrappleEnded?.Invoke();
+            Destroy();
         }
 
         private IEnumerator ReturnCoroutine(Vector3 returnTarget)
         {
             while (Instance != null)
             {
-                if (_isCancelled != null && _isCancelled())
-                {
-                    Destroy();
-                    OnGrappleEnded?.Invoke();
-                    yield break;
-                }
+                if (_isCancelled != null && _isCancelled()) break;
 
                 Instance.transform.position = Vector3.MoveTowards(
                     Instance.transform.position,
                     returnTarget,
                     Config.ProjectileSpeed * 2f * Time.deltaTime);
 
-                if (Vector3.Distance(Instance.transform.position, returnTarget) <= 0.1f)
-                {
-                    Destroy();
-                    OnGrappleEnded?.Invoke();
-                    yield break;
-                }
-
+                if (Vector3.Distance(Instance.transform.position, returnTarget) <= 0.1f) break;
                 yield return null;
             }
-        }
-
-        private void EndGrapple(bool preserveVelocity, bool applyBounce = false)
-        {
-            Vector2 savedVelocity = _heroRigidbody.linearVelocity;
-            _heroRigidbody.gravityScale = _defaultGravityScale;
-
-            if (preserveVelocity || applyBounce)
-            {
-                _heroRigidbody.linearVelocity = savedVelocity * _config.CancelInertiaMultiplier;
-            }
-            else
-            {
-                _heroRigidbody.linearVelocity = Vector2.zero;
-            }
-
-            OnGrappleEnded?.Invoke();
             Destroy();
+            OnGrappleEnded?.Invoke();
         }
 
         private void FlipTowards(Vector3 target)
         {
             Vector3 scale = _heroTransform.localScale;
-            float dirX = target.x - _heroTransform.position.x;
-            scale.x = dirX > 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+            scale.x = (target.x > _heroTransform.position.x) ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
             _heroTransform.localScale = scale;
         }
     }

@@ -314,7 +314,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new WallHangSystem(inputService))
                 .AddSystem(new SlideSystem(inputService, coroutinesPerformer))
                 .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask))
-                .AddSystem(new SlopeSystem(inputService, coroutinesPerformer))
+                .AddSystem(new SlopeSystem(inputService))
 
                 // — броски —
                 .AddSystem(new ThrowableSystem(

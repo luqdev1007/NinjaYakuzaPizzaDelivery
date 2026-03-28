@@ -11,5 +11,6 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles
         [field: SerializeField] public LayerMask EnemyMask { get; private set; }
         [field: SerializeField] public float CancelInertiaMultiplier { get; private set; } = 1.5f;
         [field: SerializeField] public float ArrivalMinXComponent { get; private set; } = 0.3f;
+        [field: SerializeField] public float InitialPopUpForce { get; private set; } = 4f;
     }
 }

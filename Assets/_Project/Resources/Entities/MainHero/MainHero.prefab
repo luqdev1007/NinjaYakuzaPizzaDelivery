@@ -44664,7 +44664,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6569084087452315261
 Transform:
   m_ObjectHideFlags: 0
@@ -54987,10 +54987,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _viewContainer: {fileID: 5149040113408065364}
   _frictionPS: {fileID: 2262465841929636248}
-  _slideStretchX: 1.3
-  _slideSquashY: 0.7
-  _lerpSpeed: 12
-  _slideTiltAngle: 10
+  _slideStretchX: 1.15
+  _slideSquashY: 0.85
+  _lerpSpeed: 6
+  _slideTiltAngle: 8
 --- !u!1 &8144316630453170469
 GameObject:
   m_ObjectHideFlags: 0
