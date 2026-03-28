@@ -1,7 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
-using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
-using System;
 using System.Collections.Generic;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay
@@ -25,7 +23,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
         public void Initialize()
         {
-            CreateLevelProgress(); 
             CreateEntitiesHealthDisplay();
 
             foreach (IPresenter presenter in _childPresenters)
@@ -43,14 +40,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         public void LateUpdate()
         {
             _entitiesHealthDisplayPresenter.LateUpdate();
-        }
-
-        private void CreateLevelProgress()
-        {
-            LevelProgressPresenter presenter = _gameplayPresentersFactory
-                .CreateLevelProgressPresenter(_view.LevelProgressView);
-
-            _childPresenters.Add(presenter);
         }
 
         private void CreateEntitiesHealthDisplay()

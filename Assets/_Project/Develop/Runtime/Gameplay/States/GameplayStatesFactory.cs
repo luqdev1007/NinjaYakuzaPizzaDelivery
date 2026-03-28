@@ -25,12 +25,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _inputArgs = inputArgs;
         }
 
+        // Внутри GameplayStatesFactory.cs в методе CreatePreperationState:
+
         public PreperationState CreatePreperationState()
         {
             return new PreperationState(
                 _container.Resolve<StartGameTriggerService>(),
                 _container.Resolve<CameraService>(),
-                _container.Resolve<MainHeroFactory>()); // Добавлено
+                _container.Resolve<MainHeroFactory>(),
+                _container.Resolve<FinalPointTriggerService>(),
+                _container.Resolve<StageProviderService>(), // Передаем провайдер
+                _container.Resolve<ICoroutinesPerformer>());
         }
 
         public LaunchState CreateLaunchState(float timer)
