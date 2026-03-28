@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
+using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.HangWall;
@@ -21,6 +22,7 @@ using Assets._Project.Develop.Runtime.Utilites;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using System;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
@@ -39,6 +41,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory = container.Resolve<MonoEntitiesFactory>();
             _collidersRegistryService = container.Resolve<CollidersRegistryService>();
         }
+
 
         // ─── HERO ────────────────────────────────────────────────────────────
 
@@ -175,6 +178,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsOnSlope.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
+            ICompositeCondition canFlip = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
+                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false));
+
             // — прыжок —
             ICompositeCondition canJump = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
@@ -278,6 +286,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             entity
                 .AddCanMove(canMove)
+                .AddCanFlip(canFlip)
                 .AddCanJump(canJump)
                 .AddCanDash(canDash)
                 .AddCanGlide(canGlide)
@@ -376,5 +385,69 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         // ─── HELPERS ─────────────────────────────────────────────────────────
 
         private Entity CreateEmpty() => new Entity();
+
+        public Entity CreateGhost(Vector3 at, GhostConfig ghostConfig)
+        {
+            Entity entity = CreateEmpty();
+            _monoEntitiesFactory.Create(entity, at, ghostConfig.PrefabPath);
+
+            entity
+                // — Движение —
+                .AddMoveDirection()
+                .AddRotationDirection()
+                .AddIsMoving() 
+                .AddMoveSpeed(new ReactiveVariable<float>(ghostConfig.MovementSpeed))
+
+                // — Боёвка —
+                .AddBodyContactDamage(new ReactiveVariable<float>(ghostConfig.ContactDamage))
+                .AddContactsDetectingMask(LayersAPI.LayerMaskCharacters)
+                .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
+                .AddContactEntitiesBuffer(new Buffer<Entity>(16))
+
+                // — Жизнь —
+                .AddMaxHealth(new ReactiveVariable<float>(ghostConfig.MaxHealth))
+                .AddCurrentHealth(new ReactiveVariable<float>(ghostConfig.MaxHealth))
+                .AddIsDead()
+                .AddInDeathProcess()
+                .AddDeathProcessInitialTime(new ReactiveVariable<float>(ghostConfig.DeathProcessTime))
+                .AddDeathProcessCurrentTime()
+                .AddTakeDamageRequest()
+                .AddTakeDamageEvent();
+
+            // conditions
+            ICompositeCondition canFlip = new CompositeCondition()
+                .Add(new FuncCondition(() => true));
+
+            ICompositeCondition mustDie = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
+
+            ICompositeCondition mustSelfRelease = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == true))
+                .Add(new FuncCondition(() => entity.InDeathProcess.Value == false));
+
+            ICompositeCondition canApplyDamage = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false));
+
+            entity
+                .AddCanFlip(canFlip)
+                .AddCanApplyDamage(canApplyDamage)
+                .AddMustDie(mustDie)
+                .AddMustSelfRelease(mustSelfRelease)
+                ;
+
+            entity
+                // Системы логики
+                .AddSystem(new BodyContactDetectingSystem())
+                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
+                .AddSystem(new DealDamageOnContactSystem())
+                .AddSystem(new TransformMovementSystem())
+
+                .AddSystem(new FlipDirectionSystem())
+                .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new DeathSystem())
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
+
+            return entity;
+        }
     }
 }

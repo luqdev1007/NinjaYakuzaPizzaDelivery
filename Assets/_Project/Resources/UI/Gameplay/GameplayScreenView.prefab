@@ -50,7 +50,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <EntitiesHealthDisplay>k__BackingField: {fileID: 175194284390868695}
-  <LevelProgressView>k__BackingField: {fileID: 0}
 --- !u!1 &1883571742710467595
 GameObject:
   m_ObjectHideFlags: 0
@@ -67,7 +66,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &9037823537756106737
 RectTransform:
   m_ObjectHideFlags: 0

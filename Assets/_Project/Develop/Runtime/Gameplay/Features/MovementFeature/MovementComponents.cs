@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 {
+    public class CanFlip : IEntityComponent
+    {
+        public ICompositeCondition Value;
+    }
+
     public class CanJump : IEntityComponent
     {
         public ICompositeCondition Value;

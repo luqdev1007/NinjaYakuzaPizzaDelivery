@@ -27,5 +27,5 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   <CancelInertiaMultiplier>k__BackingField: 0.5
-  <ArrivalMinXComponent>k__BackingField: 5
-  <InitialPopUpForce>k__BackingField: 4
+  <ArrivalMinXComponent>k__BackingField: 1
+  <InitialPopUpForce>k__BackingField: 12

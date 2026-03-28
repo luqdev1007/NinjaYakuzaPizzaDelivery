@@ -1,14 +1,19 @@
 ﻿using Assets._Project.Develop.Infrastructure;
 using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.States;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
+using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
@@ -47,7 +52,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             if (boundsObj != null && boundsObj.TryGetComponent<Collider2D>(out var col))
                 _cameraService.SetConstraints(col.bounds);
 
+            CreateEnemiesOnLevel();
+
             yield break;
+        }
+
+        private void CreateEnemiesOnLevel()
+        {
+            IReadOnlyList<Vector3> spawnPoints = _container.Resolve<ConfigsProviderService>()
+                .GetConfig<LevelsListConfig>()
+                .GetBy(_inputArgs.LevelNumber).EnemySpawns;
+
+            GhostConfig config = _container.Resolve<ConfigsProviderService>().GetConfig<GhostConfig>();
+
+            foreach (Vector3 spawnPoint in spawnPoints)
+                _container.Resolve<EnemiesFactory>().Create(spawnPoint, config);
         }
 
         public override void Run() => _gameplayStatesContext.Run();

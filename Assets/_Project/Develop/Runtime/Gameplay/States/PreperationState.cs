@@ -132,7 +132,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private void OnDialogEnded()
         {
             _dialogFinished = true;
-            _isIntroFinished = true; // Теперь разрешаем нажимать "B" для старта
+            _isIntroFinished = true; 
         }
 
         public void Update(float deltaTime)
@@ -146,7 +146,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             float y = Input.GetAxisRaw("Vertical");
             _panBehaviour.SetInput(new Vector2(x, y));
 
-            if (Input.GetKeyDown(KeyCode.B))
+            if (Input.GetKeyDown(KeyCode.F) && _dialogFinished)
                 _startTrigger.RequestStart();
         }
 

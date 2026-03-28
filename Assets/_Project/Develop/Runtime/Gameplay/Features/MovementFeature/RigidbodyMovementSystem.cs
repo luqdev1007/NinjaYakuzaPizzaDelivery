@@ -79,3 +79,4 @@ public class RigidbodyMovementSystem : IInitializableSystem, IUpdatableSystem
         _isMoving.Value = Mathf.Abs(_currentSpeedX) > 0.01f;
     }
 }
+

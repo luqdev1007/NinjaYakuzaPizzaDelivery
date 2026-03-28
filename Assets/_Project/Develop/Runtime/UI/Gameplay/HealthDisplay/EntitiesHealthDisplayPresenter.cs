@@ -84,8 +84,10 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay
 
         public void LateUpdate()
         {
+            /*
             foreach (KeyValuePair<Entity, EntityHealthBarInfo> info in _entityToHealthBarInfo)
                 _view.UpdatePositionFor(info.Value.HealthPresenter.Bar, info.Value.HealthBarPoint.position);
+            */
         }
 
         private void RemoveHealthBarFor(Entity entity)

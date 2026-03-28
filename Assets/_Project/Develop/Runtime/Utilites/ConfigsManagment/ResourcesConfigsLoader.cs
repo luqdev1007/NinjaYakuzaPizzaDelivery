@@ -25,6 +25,7 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
             { typeof(LevelsListConfig), "Configs/Gameplay/Levels/LevelsListConfig" },
 
             { typeof(MaiHeroConfig), "Configs/Entities/MainHero/MainHeroConfig" },
+            { typeof(GhostConfig), "Configs/Entities/GhostConfig" },
 
             { typeof(DialogConfig), "Configs/Dialogs/TutorialDialog" },
 

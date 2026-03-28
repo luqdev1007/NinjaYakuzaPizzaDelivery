@@ -16,8 +16,32 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Levels
         [field: SerializeField] public Sprite LevelIcon { get; private set; }
         [field: SerializeField] public Vector3 FinalPointPosition { get; private set; }
 
-        public IReadOnlyList<StageConfig> StageConfigs => _stageConfigs;
+        // Новый список для точек спавна
+        [SerializeField] private List<Vector3> _enemySpawns = new List<Vector3>();
+        public IReadOnlyList<Vector3> EnemySpawns => _enemySpawns;
 
+        public IReadOnlyList<StageConfig> StageConfigs => _stageConfigs;
         public DialogConfig PreparationDialog => _configPrepDialog;
+
+        // Метод для заполнения (вызывается из редактора)
+        public void FillSpawnersFromScene()
+        {
+            _enemySpawns.Clear();
+            // Находим все объекты
+            GameObject[] spawners = GameObject.FindGameObjectsWithTag("Spawner");
+
+            foreach (var spawner in spawners)
+            {
+                // Записываем ИМЕННО world position
+                _enemySpawns.Add(spawner.transform.position);
+            }
+
+            // Обязательно для ScriptableObject!
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(this);
+            UnityEditor.AssetDatabase.SaveAssets(); // Принудительное сохранение на диск
+#endif
+            Debug.Log($"[LevelConfig] Успешно сохранено {spawners.Length} точек.");
+        }
     }
 }

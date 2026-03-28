@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using System;
@@ -32,12 +33,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
 
             switch (config)
             {
-                /*
                 case GhostConfig ghostConfig:
                     entity = _entitiesFactory.CreateGhost(at, ghostConfig);
+
                     _brainsFactory.CreateGhostBrain(entity);
                     break;
-                */
 
                 default:
                     throw new ArgumentException($"Not support {config.GetType()} type config");
