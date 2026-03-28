@@ -14,7 +14,8 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
     {
         public event Action AppearanceFinished;
 
-        [SerializeField] private TMP_Text _contentProgressText;
+        [field: SerializeField] public TMP_Text СontentProgressText { get; private set; }
+
         [SerializeField] private Image _portraitImage;
         [SerializeField] private Image _backgroundImage;
         [SerializeField] private Animator _animator;
@@ -24,7 +25,7 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 
         public void OnAppearanceAnimationEnded() => AppearanceFinished?.Invoke();
 
-        public void SetText(string text) => _contentProgressText.text = text;
+        public void SetText(string text) => СontentProgressText.text = text;
         public void SetPortrait(Sprite portrait) => _portraitImage.sprite = portrait;
         public void SetBackground(Sprite bg) => _backgroundImage.sprite = bg;
     }

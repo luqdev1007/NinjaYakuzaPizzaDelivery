@@ -1,4 +1,5 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Configs.Dialog;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
@@ -6,12 +7,14 @@ using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Core.ConfirmPopup;
+using Assets._Project.Develop.Runtime.UI.Dialog;
 using Assets._Project.Develop.Runtime.UI.LevelsMenuPopup;
 using Assets._Project.Develop.Runtime.UI.Wallet;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
+using Assets._Project.Develop.Runtime.Utilites.Timer;
 using System;
 
 namespace Assets._Project.Develop.Runtime.UI
@@ -72,6 +75,17 @@ namespace Assets._Project.Develop.Runtime.UI
         public ConfirmPopupPresenter CreateConfirmPopupPresenter(ConfirmPopupView view, Action onConfirmButtonClicked, string header)
         {
             return new ConfirmPopupPresenter(view, _container.Resolve<ICoroutinesPerformer>(), onConfirmButtonClicked, header);
+        }
+
+        public DialogPresenter CreateDialogPresenter(DialogDisplayView view, DialogConfig config)
+        {
+            return new DialogPresenter(
+                view,
+                config,
+                _container.Resolve<TimerServiceFactory>(),
+                _container.Resolve<ICoroutinesPerformer>(),
+                _container.Resolve<ConfigsProviderService>().GetConfig<CharactersConfig>() // Если нужно брать спрайты персонажей
+            );
         }
     }
 }

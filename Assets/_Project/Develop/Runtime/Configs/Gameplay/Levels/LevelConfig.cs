@@ -1,4 +1,5 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
+﻿using Assets._Project.Develop.Runtime.Configs.Dialog;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Levels
     public class LevelConfig : ScriptableObject
     {
         [SerializeField] private List<StageConfig> _stageConfigs;
+        [SerializeField] private DialogConfig _configPrepDialog;
 
         [field: SerializeField] public string LevelName { get; private set; }
         [field: SerializeField] public int LevelNumber { get; private set; }
@@ -16,5 +18,6 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Levels
 
         public IReadOnlyList<StageConfig> StageConfigs => _stageConfigs;
 
+        public DialogConfig PreparationDialog => _configPrepDialog;
     }
 }

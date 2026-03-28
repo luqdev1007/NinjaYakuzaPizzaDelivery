@@ -1,10 +1,13 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+using Assets._Project.Develop.Runtime.UI;
+using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
@@ -25,7 +28,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _inputArgs = inputArgs;
         }
 
-        // Внутри GameplayStatesFactory.cs в методе CreatePreperationState:
 
         public PreperationState CreatePreperationState()
         {
@@ -35,7 +37,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<MainHeroFactory>(),
                 _container.Resolve<FinalPointTriggerService>(),
                 _container.Resolve<StageProviderService>(), // Передаем провайдер
-                _container.Resolve<ICoroutinesPerformer>());
+                _container.Resolve<ICoroutinesPerformer>(),
+                _container.Resolve<ProjectPresentersFactory>(),
+                _container.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>().GetBy(_inputArgs.LevelNumber),
+                _container.Resolve<ViewsFactory>(),
+                _container.Resolve<GameplayUIRoot>()
+                );
         }
 
         public LaunchState CreateLaunchState(float timer)

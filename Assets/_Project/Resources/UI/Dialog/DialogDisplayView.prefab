@@ -421,7 +421,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf1a4c7442926f048977179203cba5e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _contentProgressText: {fileID: 4827920466983079620}
+  "<\u0421ontentProgressText>k__BackingField": {fileID: 4827920466983079620}
   _portraitImage: {fileID: 129397779811518575}
   _backgroundImage: {fileID: 5225922843242146686}
   _animator: {fileID: 1626146559756171416}

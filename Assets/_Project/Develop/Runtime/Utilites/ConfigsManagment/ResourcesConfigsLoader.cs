@@ -26,7 +26,9 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
 
             { typeof(MaiHeroConfig), "Configs/Entities/MainHero/MainHeroConfig" },
 
-            { typeof(DialogConfig), "Configs/Dialogs/TutorialDialog" }
+            { typeof(DialogConfig), "Configs/Dialogs/TutorialDialog" },
+
+            { typeof(CharactersConfig), "Configs/Dialogs/CharactersConfig" }
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)
