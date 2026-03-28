@@ -20,8 +20,19 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         [SerializeField] private Image _backgroundImage;
         [SerializeField] private Animator _animator;
 
-        public void Show() => _animator.SetTrigger("Show"); 
-        public void Hide() => _animator.SetTrigger("Hide");
+        public void Show()
+        {
+            Debug.Log("Show");
+
+            _animator.SetTrigger("Show"); 
+        }
+
+        public void Hide()
+        {
+            Debug.Log("Hide");
+
+            _animator.SetTrigger("Hide");
+        }
 
         public void OnAppearanceAnimationEnded() => AppearanceFinished?.Invoke();
 
