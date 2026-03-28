@@ -155,7 +155,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             base.Exit();
 
             // Спавним героя
-            Entity hero = _mainHeroFactory.Create(Vector3.zero);
+            Entity hero = _mainHeroFactory.Create(_levelConfig.StartPlayerPosition);
 
             // ВАЖНО: Теперь активируем логику стейджа (подписки и т.д.)
             _stageProvider.StartCurrent();

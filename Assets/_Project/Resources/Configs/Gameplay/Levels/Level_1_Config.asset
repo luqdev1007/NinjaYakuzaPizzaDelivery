@@ -17,8 +17,9 @@ MonoBehaviour:
   _configPrepDialog: {fileID: 11400000, guid: 943bcf7fb606f51469786c299cc45e0c, type: 2}
   <LevelName>k__BackingField: 1
   <LevelNumber>k__BackingField: 1
-  <LevelIcon>k__BackingField: {fileID: 21300000, guid: c430351465fe1fc42a6bef5878a08253, type: 3}
+  <LevelIcon>k__BackingField: {fileID: 21300000, guid: ccda1e9d0a91445b08abb3958530382a, type: 3}
   <FinalPointPosition>k__BackingField: {x: 93.8, y: 4.5, z: 0}
+  <StartPlayerPosition>k__BackingField: {x: -48.269997, y: -5.9, z: 0}
   _enemySpawns:
   - {x: 27.450531, y: 2.2408419, z: 0}
   - {x: 22.3, y: 11.9, z: 0}

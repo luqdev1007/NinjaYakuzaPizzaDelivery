@@ -27,7 +27,7 @@ namespace Assets._Project.Develop.Runtime.UI.LevelsMenuPopup
 
         public void Init(string levelName, Sprite levelIcon)
         {
-            // _levelNameText.text = levelName;
+            _levelNameText.text = levelName;
             _background.sprite = levelIcon;
         }
 

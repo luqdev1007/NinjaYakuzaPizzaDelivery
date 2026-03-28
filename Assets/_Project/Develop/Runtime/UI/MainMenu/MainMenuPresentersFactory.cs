@@ -21,9 +21,9 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
                 view,
                 _container.Resolve<MainMenuPopupService>(),
                 _container.Resolve<WalletService>(),
-                _container.Resolve<GameStatsService>(),
                 _container.Resolve<ConfigsProviderService>(),
-                _container.Resolve<PlayerDataProvider>()
+                _container.Resolve<PlayerDataProvider>(),
+                _container.Resolve<ProjectPresentersFactory>()
                 );
         } 
     }
