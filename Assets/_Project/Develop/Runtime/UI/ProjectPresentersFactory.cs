@@ -82,7 +82,6 @@ namespace Assets._Project.Develop.Runtime.UI
             return new DialogPresenter(
                 view,
                 config,
-                _container.Resolve<TimerServiceFactory>(),
                 _container.Resolve<ICoroutinesPerformer>(),
                 _container.Resolve<ConfigsProviderService>().GetConfig<CharactersConfig>() // Если нужно брать спрайты персонажей
             );

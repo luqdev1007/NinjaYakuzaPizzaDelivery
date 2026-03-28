@@ -9,11 +9,8 @@ namespace Assets._Project.Develop.Runtime.Utilites.Timer
     public class TimerService : IDisposable
     {
         private float _cooldown;
-
         private ReactiveEvent _cooldownEnded;
-
         private ReactiveVariable<float> _currentTime;
-
         private ICoroutinesPerformer _coroutinesPerformer;
         private Coroutine _cooldownProcess;
 
@@ -21,7 +18,6 @@ namespace Assets._Project.Develop.Runtime.Utilites.Timer
         {
             _coroutinesPerformer = coroutinesPerformer;
             _cooldown = cooldown;
-
             _cooldownEnded = new ReactiveEvent();
             _currentTime = new ReactiveVariable<float>();
         }
@@ -30,21 +26,19 @@ namespace Assets._Project.Develop.Runtime.Utilites.Timer
         public IReadOnlyVariable<float> CurrentTime => _currentTime;
         public bool IsOver => _currentTime.Value <= 0;
 
-        public void Dispose()
-        {
-            Stop();
-        }
+        public void Dispose() => Stop();
 
         public void Stop()
         {
             if (_cooldownProcess != null)
                 _coroutinesPerformer.StopPerform(_cooldownProcess);
+
+            _cooldownProcess = null;
         }
 
         public void Restart()
         {
             Stop();
-
             _cooldownProcess = _coroutinesPerformer.StartPerform(CooldownProcess());
         }
 
@@ -52,10 +46,9 @@ namespace Assets._Project.Develop.Runtime.Utilites.Timer
         {
             _currentTime.Value = _cooldown;
 
-            while (IsOver == false)
+            while (!IsOver)
             {
                 _currentTime.Value -= Time.deltaTime;
-
                 yield return null;
             }
 

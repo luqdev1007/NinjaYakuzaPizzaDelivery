@@ -2,7 +2,6 @@
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.TextFeatures;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.Utilites.Timer;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -16,121 +15,70 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         private readonly DialogDisplayView _view;
         private readonly DialogConfig _config;
         private readonly CharactersConfig _charactersConfig;
-        private readonly TimerServiceFactory _timerFactory;
         private readonly ICoroutinesPerformer _coroutines;
 
-        private TimerService _autoNextTimer;
-        private int _currentReplicaIndex = -1;
+        private Coroutine _dialogSequence;
         private bool _isTyping;
-        private Coroutine _typingCoroutine;
-        private bool _isAppearanceDone;
-        private float _eHoldTime = 0f;
+        private bool _skipRequested;
 
         public DialogPresenter(
             DialogDisplayView view,
             DialogConfig config,
-            TimerServiceFactory timerFactory,
             ICoroutinesPerformer coroutines,
             CharactersConfig charactersConfig)
         {
             _view = view;
             _config = config;
-            _timerFactory = timerFactory;
             _coroutines = coroutines;
             _charactersConfig = charactersConfig;
         }
 
         public void Initialize()
         {
-            _isAppearanceDone = false;
-            _currentReplicaIndex = -1;
-            _isTyping = false;
-            _eHoldTime = 0f;
-
             _view.Show();
-            NextReplica();
+            // Запускаем одну главную корутину всего диалога
+            _dialogSequence = _coroutines.StartPerform(DialogRoutine());
         }
 
         public void Update(float deltaTime)
         {
-            if (!_isAppearanceDone) return;
-
-            HandleInput(deltaTime);
-        }
-
-        private void HandleInput(float deltaTime)
-        {
-            // Удержание E для пропуска всего диалога
-            if (Input.GetKey(KeyCode.E))
-            {
-                _eHoldTime += deltaTime;
-                if (_eHoldTime >= 3f)
-                {
-                    SkipFullDialog();
-                    return;
-                }
-            }
-            else if (Input.GetKeyUp(KeyCode.E))
-            {
-                _eHoldTime = 0f;
-            }
-
-            // Нажатие E для пропуска текста или перехода
+            // Слушаем нажатие E для скипа
             if (Input.GetKeyDown(KeyCode.E))
             {
-                if (_isTyping)
-                    FinishTypingImmediately();
-                else
-                    NextReplica();
+                _skipRequested = true;
             }
         }
 
-        private void NextReplica()
+        private IEnumerator DialogRoutine()
         {
-            StopCurrentTimer();
-
-            _currentReplicaIndex++;
-
-            if (_currentReplicaIndex >= _config.Replicas.Count)
+            for (int i = 0; i < _config.Replicas.Count; i++)
             {
-                FinishDialog();
-                return;
+                var replica = _config.Replicas[i];
+                _skipRequested = false;
+
+                // 1. Настройка визуала
+                var character = _charactersConfig.GetCharacter(replica.CharacterId);
+                _view.SetPortrait(character.Portrait);
+                _view.SetBackground(character.Background);
+
+                // 2. Печать текста
+                string processedText = TextHighlightUtility.ProcessText(replica.RawText);
+                yield return _coroutines.StartPerform(TypewriterEffect(processedText));
+
+                // 3. Ожидание нажатия E для перехода к следующей реплике
+                Debug.Log($"[Dialog] Replica {i} finished typing. Waiting for 'E'...");
+
+                // Ждем, пока игрок нажмет E (флаг поднимется в Update)
+                yield return new WaitUntil(() => _skipRequested);
+
+                // Сбрасываем флаг для следующей итерации
+                _skipRequested = false;
+
+                // Небольшая задержка, чтобы одно нажатие не проскочило две реплики
+                yield return new WaitForSeconds(0.1f);
             }
 
-            var replica = _config.Replicas[_currentReplicaIndex];
-
-            // Настройка визуала персонажа
-            var character = _charactersConfig.GetCharacter(replica.CharacterId);
-            _view.SetPortrait(character.Portrait);
-            _view.SetBackground(character.Background);
-
-            // Подготовка текста
-            string processedText = TextHighlightUtility.ProcessText(replica.RawText);
-
-            if (_typingCoroutine != null)
-                _coroutines.StopPerform(_typingCoroutine);
-
-            _typingCoroutine = _coroutines.StartPerform(TypewriterEffect(processedText));
-
-            // Настройка таймера авто-перехода
-            float readTime = replica.OverrideTime
-                ? replica.CustomTime
-                : processedText.Length * 0.05f + 2f; // Базовое время на чтение
-
-            _autoNextTimer = _timerFactory.Create(readTime);
-            _autoNextTimer.CooldownEnded.Subscribe(NextReplica);
-            _autoNextTimer.Restart();
-        }
-
-        private void StopCurrentTimer()
-        {
-            if (_autoNextTimer != null)
-            {
-                _autoNextTimer.Stop();
-                // Если твой TimerService требует очистки подписок:
-                // _autoNextTimer.CooldownEnded.Unsubscribe(NextReplica);
-                _autoNextTimer = null;
-            }
+            FinishDialog();
         }
 
         private IEnumerator TypewriterEffect(string fullText)
@@ -138,53 +86,51 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             _isTyping = true;
             _view.SetText(fullText);
 
-            var textComponent = _view.СontentProgressText;
-            textComponent.maxVisibleCharacters = 0;
+            var text = _view.СontentProgressText;
 
-            // Ждем кадра, чтобы TMP расчитал количество символов
+            // --- ВАЖНО: Принудительное обновление меша ---
+            text.maxVisibleCharacters = 0;
+            text.ForceMeshUpdate(); // Заставляем TMP рассчитать текст прямо сейчас
+
+            // Даем один кадр на всякий случай
             yield return null;
 
-            int totalVisibleCharacters = textComponent.textInfo.characterCount;
+            int totalChars = text.textInfo.characterCount;
+
+            // Если после ForceMeshUpdate все еще 0, берем длину строки напрямую
+            if (totalChars == 0 && fullText.Length > 0)
+                totalChars = fullText.Length;
+
+            Debug.Log($"[Typewriter] Typing started. Total chars: {totalChars}");
+
             int counter = 0;
-
-            while (counter <= totalVisibleCharacters)
+            while (counter <= totalChars)
             {
-                textComponent.maxVisibleCharacters = counter;
+                if (_skipRequested)
+                {
+                    text.maxVisibleCharacters = totalChars;
+                    // Не сбрасываем _skipRequested здесь, чтобы основная корутина увидела нажатие
+                    break;
+                }
+
+                text.maxVisibleCharacters = counter;
                 counter++;
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.03f);
             }
 
             _isTyping = false;
         }
-
-        private void FinishTypingImmediately()
-        {
-            if (_typingCoroutine != null)
-            {
-                _coroutines.StopPerform(_typingCoroutine);
-                _typingCoroutine = null;
-            }
-
-            _view.СontentProgressText.maxVisibleCharacters = 9999;
-            _isTyping = false;
-        }
-
-        private void SkipFullDialog() => FinishDialog();
 
         private void FinishDialog()
         {
-            StopCurrentTimer();
             _view.Hide();
             DialogEnded?.Invoke();
         }
 
         public void Dispose()
         {
-            StopCurrentTimer();
-
-
-            if (_typingCoroutine != null)
-                _coroutines.StopPerform(_typingCoroutine);
+            if (_dialogSequence != null)
+                _coroutines.StopPerform(_dialogSequence);
 
             DialogEnded = null;
         }

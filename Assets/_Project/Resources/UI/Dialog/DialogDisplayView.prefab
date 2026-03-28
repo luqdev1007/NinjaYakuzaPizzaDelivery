@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2895790244682952770}
   - component: {fileID: 6047803017699756058}
-  - component: {fileID: 1887035396241602517}
-  - component: {fileID: 4916479017731506267}
+  - component: {fileID: 8714836143904523966}
+  - component: {fileID: 8662791067416123590}
   m_Layer: 5
   m_Name: Mask
   m_TagString: Untagged
@@ -47,7 +47,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 318401887126282707}
   m_CullTransparentMesh: 1
---- !u!114 &1887035396241602517
+--- !u!114 &8714836143904523966
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -56,7 +56,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 318401887126282707}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -67,14 +67,17 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 5c385a0c9e2f53446a2561c45dd5ebdc, type: 3}
-  m_UVRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 0.5
-    height: 0.89
---- !u!114 &4916479017731506267
+  m_Sprite: {fileID: 21300000, guid: 5c385a0c9e2f53446a2561c45dd5ebdc, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8662791067416123590
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -210,7 +213,6 @@ GameObject:
   - component: {fileID: 6283295469811250133}
   - component: {fileID: 3936328012412509247}
   - component: {fileID: 129397779811518575}
-  - component: {fileID: 8024057730272539022}
   m_Layer: 5
   m_Name: Icon
   m_TagString: Untagged
@@ -275,28 +277,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!95 &8024057730272539022
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3414612298422425325}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 822edfaf7971b0f44867a1c222bec444, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &3627494210295586302
 GameObject:
   m_ObjectHideFlags: 0
@@ -423,7 +403,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   "<\u0421ontentProgressText>k__BackingField": {fileID: 4827920466983079620}
   _portraitImage: {fileID: 129397779811518575}
-  _backgroundImage: {fileID: 5225922843242146686}
+  _backgroundImage: {fileID: 8714836143904523966}
   _animator: {fileID: 1626146559756171416}
 --- !u!1 &4818639573941051520
 GameObject:
