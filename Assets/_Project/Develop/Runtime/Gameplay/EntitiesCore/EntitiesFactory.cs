@@ -185,7 +185,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canFlip = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
                 .Add(new FuncCondition(() => entity.IsSliding.Value == false))
-                .Add(new FuncCondition(() => entity.IsDashing.Value == false));
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.IsOnSlope.Value == false))
+                 ;
 
             // — прыжок —
             ICompositeCondition canJump = new CompositeCondition()
@@ -329,7 +331,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new WallHangSystem(inputService))
                 .AddSystem(new SlideSystem(inputService, coroutinesPerformer))
                 .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask))
-                .AddSystem(new SlopeSystem(inputService))
+                .AddSystem(new SlopeSystem())
 
                 // — броски —
                 .AddSystem(new ThrowableSystem(
