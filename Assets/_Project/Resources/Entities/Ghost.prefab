@@ -258,10 +258,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 2858558461669107319}
-  _viewContainer: {fileID: 5149040113408065364}
+  _breatheContainer: {fileID: 5149040113408065364}
   _zzzParticles: {fileID: 8687595665311057637}
   _breatheSpeed: 2
-  _breatheAmount: 0.5
+  _breatheAmount: 5
   _sleepColor: {r: 0.4008989, g: 0.4008989, b: 0.8584906, a: 0.49019608}
 --- !u!1 &3607678793894935207
 GameObject:
@@ -321,13 +321,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7279735623091931903}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.8867853, y: 0.102991134, z: -0.40885422, w: -0.1893219}
-  m_LocalPosition: {x: 0.26, y: 0.35, z: 0.24}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.09, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8962585156850830168}
-  m_LocalEulerAnglesHint: {x: 194.57, y: 52.141, z: -20.406982}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &8687595665311057637
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -345,7 +345,7 @@ ParticleSystem:
   emitterVelocityMode: 1
   looping: 1
   prewarm: 0
-  playOnAwake: 0
+  playOnAwake: 1
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -5153,7 +5153,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0

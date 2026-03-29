@@ -10,13 +10,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Effects
     {
         [Header("Visuals")]
         [SerializeField] private SpriteRenderer _spriteRenderer;
-        [SerializeField] private Transform _viewContainer;
+        // Transform, который мы будем "пульсировать" (дыхание)
+        [SerializeField] private Transform _breatheContainer;
+        // Партикл-система с Z
         [SerializeField] private ParticleSystem _zzzParticles;
 
         [Header("Breathe Effect")]
         [SerializeField] private float _breatheSpeed = 2f;
-        [SerializeField] private float _breatheAmount = 0.1f; // На сколько меняется масштаб
-        [SerializeField] private Color _sleepColor = new Color(0.5f, 0.5f, 1f, 0.6f); // Блекло-синий
+        [SerializeField] private float _breatheAmount = 0.05f; // Амплитуда (5%)
+        [SerializeField] private Color _sleepColor = new Color(0.4f, 0.4f, 0.8f, 0.7f); // Тусклый синеватый
 
         private Color _initialColor;
         private Vector3 _initialScale;
@@ -27,26 +29,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Effects
         protected override void OnEntityStartedWork(Entity entity)
         {
             _initialColor = _spriteRenderer != null ? _spriteRenderer.color : Color.white;
-            _initialScale = _viewContainer != null ? _viewContainer.localScale : Vector3.one;
+            _initialScale = _breatheContainer != null ? _breatheContainer.localScale : Vector3.one;
 
             _isAsleep = entity.IsAsleep;
+            // Подписываемся на изменение состояния сна.
             _disposable = _isAsleep.Subscribe(OnSleepChanged);
 
-            // Сразу проверяем текущее состояние
+            // Сразу устанавливаем визуальное состояние при старте (если враг уже спит).
             OnSleepChanged(false, _isAsleep.Value);
         }
 
         private void Update()
         {
+            // Если сущность не спит, эффект дыхания не нужен.
             if (_isAsleep == null || !_isAsleep.Value) return;
 
-            // Эффект дыхания (Scale)
+            // Эффект дыхания через Sin.
             _timer += Time.deltaTime * _breatheSpeed;
             float pulse = Mathf.Sin(_timer) * _breatheAmount;
 
-            if (_viewContainer != null)
+            if (_breatheContainer != null)
             {
-                _viewContainer.localScale = _initialScale + new Vector3(pulse, pulse, 0);
+                // Применяем пульсацию к масштабу.
+                _breatheContainer.localScale = _initialScale + new Vector3(pulse, pulse, 0);
             }
         }
 
@@ -56,22 +61,31 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Effects
 
             if (value)
             {
-                // Становимся блеклыми
-                if (_spriteRenderer != null) _spriteRenderer.color = _sleepColor;
-                if (_zzzParticles != null) _zzzParticles.Play();
+                // --- ВРАГ УСНУЛ ---
+                if (_spriteRenderer != null)
+                {
+                    // Делаем его заметно синим и темным (0.2f - это очень темно)
+                    _spriteRenderer.color = new Color(0.2f, 0.4f, 1.0f, 1.0f);
+                }
+
+                if (_zzzParticles != null) _zzzParticles.Play(true);
+
+                // Давай добавим микро-скейл, чтобы он "сжался" когда спит
+                if (_breatheContainer != null) _breatheContainer.localScale = _initialScale * 0.9f;
             }
             else
             {
-                // Возвращаем как было
+                // --- ВРАГ ПРОСНУЛСЯ ---
                 if (_spriteRenderer != null) _spriteRenderer.color = _initialColor;
-                if (_viewContainer != null) _viewContainer.localScale = _initialScale;
-                if (_zzzParticles != null) _zzzParticles.Stop();
+                if (_breatheContainer != null) _breatheContainer.localScale = _initialScale;
+                if (_zzzParticles != null) _zzzParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting);
             }
         }
 
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
+            // Отписываемся, чтобы не было утечек памяти.
             _disposable?.Dispose();
         }
     }
