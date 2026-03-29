@@ -2,32 +2,31 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using System.Collections;
+using System;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
 {
-    public class SlopeSystem : IInitializableSystem, IUpdatableSystem
+    public class SlopeSystem : IInitializableSystem, IUpdatableSystem, IDisposableSystem
     {
         private readonly IInputService _inputService;
 
-        private ReactiveVariable<bool> _isGrounded;
-        private ReactiveVariable<bool> _isOnSlope;
+        private Entity _entity;
         private Rigidbody2D _rigidbody;
-        private Transform _transform;
         private Transform _viewContainerTransform;
         private LayerMask _slopeMask;
+        private EntityCollisionProxy _collisionProxy;
 
         private float _accumulatedSpeed;
-        private Vector2 _currentSlopeNormal;
-        private bool _wasOnSlope;
+        private Vector2 _currentNormal;
+        private bool _isContactingWithSlope;
+        private float _originalGravityScale;
 
-        // Константы настройки
-        private const float BaseSlidingBoost = 1.5f; // Множитель начального переноса скорости
-        private const float GravityAcceleration = 12f; // Нарастание скорости под углом
-        private const float MaxSlideSpeed = 25f;
-        private const float JumpImpulseMultiplier = 1.2f; // Сила отскока
+        // Константы
+        private const float GravityForce = 35f;      // Насколько быстро разгоняемся вниз
+        private const float MaxSlideSpeed = 30f;     // Предел скорости
+        private const float MagnetForce = 8f;       // Прижим к поверхности
+        private const float MinSlopeAngle = 15f;    // Минимальный угол (чтобы не скользить на ровном полу)
 
         public SlopeSystem(IInputService inputService)
         {
@@ -36,106 +35,137 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
 
         public void OnInit(Entity entity)
         {
-            _isGrounded = entity.IsGrounded;
-            _isOnSlope = entity.IsOnSlope;
+            _entity = entity;
             _rigidbody = entity.Rigidbody;
-            _transform = entity.Transform;
             _slopeMask = entity.SlopeMask;
             _viewContainerTransform = entity.Transform.Find("ViewContainer");
+
+            _originalGravityScale = _rigidbody.gravityScale;
+
+            // Находим наш мост коллизий на объекте
+            _collisionProxy = _entity.Transform.GetComponent<EntityCollisionProxy>();
+            if (_collisionProxy != null)
+            {
+                _collisionProxy.OnCollisionStayEvent += HandleCollision;
+            }
         }
 
         public void OnUpdate(float deltaTime)
         {
-            bool isOnSlope = CheckSlope(out float angle, out Vector2 slopeDirection, out Vector3 normal);
-            bool canSlide = isOnSlope && _isGrounded.Value;
-
-            if (canSlide)
+            if (_isContactingWithSlope)
             {
-                HandleSliding(angle, slopeDirection, normal, deltaTime);
+                UpdateSliding(deltaTime);
             }
-            else if (_wasOnSlope)
+            else if (_entity.IsOnSlope.Value)
             {
+                // Если флаг контакта пропал (например, улетели с трамплина), выходим
                 ExitSlope();
             }
+
+            // Сбрасываем каждый кадр. OnCollisionStay поднимет его до конца кадра, если контакт есть.
+            _isContactingWithSlope = false;
         }
 
-        private void HandleSliding(float angle, Vector2 direction, Vector3 normal, float deltaTime)
+        private void HandleCollision(Collision2D collision)
         {
-            _currentSlopeNormal = normal;
+            // Проверяем, что слой объекта входит в SlopeMask
+            if (((1 << collision.gameObject.layer) & _slopeMask) == 0) return;
 
-            if (!_wasOnSlope)
+            ContactPoint2D contact = collision.GetContact(0);
+            float angle = Vector2.Angle(contact.normal, Vector2.up);
+
+            if (angle >= MinSlopeAngle && angle < 89f)
             {
-                // ВХОД НА СКЛОН: Берем текущую горизонтальную скорость и превращаем в импульс скольжения
-                float entrySpeed = Mathf.Abs(_rigidbody.linearVelocity.x);
-                _accumulatedSpeed = Mathf.Max(entrySpeed * BaseSlidingBoost, 5f); // Минимум 5f для сочности
-                _isOnSlope.Value = true;
-                _wasOnSlope = true;
+                _currentNormal = contact.normal;
+                _isContactingWithSlope = true;
+
+                if (!_entity.IsOnSlope.Value)
+                    EnterSlope();
             }
+        }
 
-            // НАРАСТАНИЕ: Скорость растет от гравитации (чем круче склон, тем быстрее)
-            float gravityForce = Mathf.Sin(angle * Mathf.Deg2Rad);
-            _accumulatedSpeed += gravityForce * GravityAcceleration * deltaTime;
-            _accumulatedSpeed = Mathf.Clamp(_accumulatedSpeed, 0, MaxSlideSpeed);
+        private void EnterSlope()
+        {
+            _entity.IsOnSlope.Value = true;
 
-            // ПРИМЕНЕНИЕ: Двигаем строго вдоль поверхности
-            _rigidbody.linearVelocity = direction * _accumulatedSpeed;
+            // Подхватываем текущую инерцию игрока, чтобы не было рывка
+            float entrySpeed = _rigidbody.linearVelocity.magnitude;
+            _accumulatedSpeed = Mathf.Max(entrySpeed, 12f);
 
-            // ВИЗУАЛ: Наклон контейнера
+            _rigidbody.gravityScale = 0f; // Отключаем стандартную гравитацию
+        }
+
+        private void UpdateSliding(float deltaTime)
+        {
+            // 1. Направление движения (перпендикуляр к нормали, смотрящий вниз)
+            Vector2 slideDir = new Vector2(_currentNormal.y, -_currentNormal.x);
+            if (slideDir.y > 0) slideDir = -slideDir;
+
+            // 2. Ускорение (сила гравитации зависит от крутизны склона)
+            float slopeSteepness = 1f - Vector2.Dot(_currentNormal, Vector2.up);
+            _accumulatedSpeed += GravityForce * slopeSteepness * deltaTime;
+            _accumulatedSpeed = Mathf.Min(_accumulatedSpeed, MaxSlideSpeed);
+
+            // 3. Магнитизм (прижимаем игрока к склону, чтобы не "скакал")
+            Vector2 magnet = -_currentNormal * MagnetForce;
+
+            // Применяем скорость напрямую
+            _rigidbody.linearVelocity = (slideDir * _accumulatedSpeed) + magnet;
+
+            // 4. Визуал (поворот персонажа параллельно склону)
             if (_viewContainerTransform != null)
             {
-                float sign = direction.x > 0 ? 1f : -1f;
-                _viewContainerTransform.localEulerAngles = new Vector3(0f, 0f, -angle * sign);
+                float angle = Vector2.SignedAngle(Vector2.up, _currentNormal);
+                _viewContainerTransform.localEulerAngles = new Vector3(0, 0, angle);
             }
 
-            // ПРЫЖОК: Перпендикулярно поверхности
+            // 5. Прыжок (единственное доступное действие)
             if (_inputService.IsJumpKeyPressed)
             {
-                ApplySlopeJump(normal);
+                ApplySlopeJump();
             }
         }
 
-        private void ApplySlopeJump(Vector2 normal)
+        private void ApplySlopeJump()
         {
-            // Прыгаем в сторону нормали (перпендикулярно) + сохраняем часть накопленной скорости
-            Vector2 jumpDirection = (normal + Vector2.up * 0.5f).normalized;
-            float jumpForce = _accumulatedSpeed * JumpImpulseMultiplier;
+            // 1. Вектор "выплеска" - это нормаль (перпендикуляр) 
+            // Мы можем смешать его с направлением взгляда, если нужно
+            Vector2 jumpNormal = _currentNormal;
 
-            _rigidbody.linearVelocity = jumpDirection * Mathf.Max(jumpForce, 12f);
+            // 2. Направление, куда мы катились (для сохранения инерции)
+            Vector2 slideDir = new Vector2(_currentNormal.y, -_currentNormal.x);
+            if (slideDir.y > 0) slideDir = -slideDir;
+
+            // 3. Формула выплеска: Сила из конфига + накопленная скорость
+            // SlopeJumpForce (Vector2) из конфига позволит тебе настроить 
+            // насколько сильно прыжок подбрасывает вверх относительно нормали
+            Vector2 configForce = _entity.SlopeJumpForce.Value;
+
+            // Итоговый вектор скорости
+            Vector2 finalVelocity = (jumpNormal * configForce.y) + (slideDir * _accumulatedSpeed * _entity.SlopeBoostMultiplier.Value);
+
+            _rigidbody.linearVelocity = finalVelocity;
+
+            // Вызываем событие прыжка, чтобы сработала анимация/звук
+            _entity.JumpEvent.Invoke();
 
             ExitSlope();
         }
 
         private void ExitSlope()
         {
-            _isOnSlope.Value = false;
-            _wasOnSlope = false;
+            _entity.IsOnSlope.Value = false;
+            _rigidbody.gravityScale = _originalGravityScale;
             _accumulatedSpeed = 0f;
 
             if (_viewContainerTransform != null)
                 _viewContainerTransform.localEulerAngles = Vector3.zero;
         }
 
-        private bool CheckSlope(out float angle, out Vector2 slopeDirection, out Vector3 normal)
+        public void OnDispose()
         {
-            angle = 0f;
-            slopeDirection = Vector2.right;
-            normal = Vector2.up;
-
-            RaycastHit2D hit = Physics2D.Raycast(_transform.position, Vector2.down, 2f, _slopeMask);
-
-            if (hit.collider == null) return false;
-
-            normal = hit.normal;
-            angle = Vector2.Angle(normal, Vector2.up);
-
-            if (angle < 10f) return false; // Слишком плоская поверхность
-
-            // Вычисляем направление "вниз" вдоль поверхности
-            Vector2 down = new Vector2(normal.y, -normal.x);
-            Vector2 up = new Vector2(-normal.y, normal.x);
-            slopeDirection = down.y < 0 ? down : up;
-
-            return true;
+            if (_collisionProxy != null)
+                _collisionProxy.OnCollisionStayEvent -= HandleCollision;
         }
     }
 }

@@ -39,12 +39,9 @@ public class RigidbodyMovementSystem : IInitializableSystem, IUpdatableSystem
     {
         if (_canMove.Evaluate() == false)
         {
-            _currentSpeedX = Mathf.MoveTowards(
-                _currentSpeedX, 0f, _deceleration.Value * deltaTime);
-            _rigidbody.linearVelocity = new Vector2(
-                _currentSpeedX, _rigidbody.linearVelocity.y);
+            _currentSpeedX = _rigidbody.linearVelocity.x;
             _isMoving.Value = Mathf.Abs(_currentSpeedX) > 0.01f;
-            return;
+            return; 
         }
 
         float inputX = _inputService.MoveDirection.x;

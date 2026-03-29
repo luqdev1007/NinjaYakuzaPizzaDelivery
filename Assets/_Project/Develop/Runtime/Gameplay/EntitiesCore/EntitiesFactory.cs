@@ -190,6 +190,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             // — прыжок —
             ICompositeCondition canJump = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsOnSlope.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
