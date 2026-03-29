@@ -5,14 +5,10 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Utilites.StateMachineCore;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
-using Assets._Project.Develop.Runtime.UI.Core;
-using Assets._Project.Develop.Runtime.UI.Dialog;
-using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
-using Assets._Project.Develop.Runtime.UI.Core.ConfirmPopup;
+using Assets._Project.Develop.Runtime.UI.Dialog;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Hints;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.States
@@ -25,19 +21,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly FinalPointTriggerService _finalPoint;
         private readonly StageProviderService _stageProvider;
         private readonly ICoroutinesPerformer _coroutines;
-        private readonly GameplayUIRoot _gameplayUIRoot;
-        private readonly GameplayPopupService _popupService; // Добавлено
+        private readonly GameplayPopupService _popupService;
+        private readonly LevelConfig _levelConfig;
 
         private FreePanBehaviour _panBehaviour;
         private bool _isIntroFinished;
+        private bool _dialogFinished;
 
-        private readonly ProjectPresentersFactory _presentersFactory;
-        private readonly LevelConfig _levelConfig;
-        private readonly ViewsFactory _viewsFactory;
-
-        private DialogPresenter _activeDialogPresenter;
-        private HintPresenter _hintPopup; // Ссылка на попап с подсказкой
-        private bool _dialogFinished = false;
+        private DialogPresenter _activeDialog;
+        private HintPresenter _hintPopup;
 
         public PreperationState(
             StartGameTriggerService startTrigger,
@@ -46,11 +38,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             FinalPointTriggerService finalPoint,
             StageProviderService stageProvider,
             ICoroutinesPerformer coroutines,
-            ProjectPresentersFactory presentersFactory,
             LevelConfig levelConfig,
-            ViewsFactory viewsFactory,
-            GameplayUIRoot gameplayUIRoot,
-            GameplayPopupService popupService) // Инжектим сервис
+            GameplayPopupService popupService)
         {
             _startTrigger = startTrigger;
             _cameraService = cameraService;
@@ -58,12 +47,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _finalPoint = finalPoint;
             _stageProvider = stageProvider;
             _coroutines = coroutines;
-            _panBehaviour = new FreePanBehaviour(25f);
-            _presentersFactory = presentersFactory;
             _levelConfig = levelConfig;
-            _viewsFactory = viewsFactory;
-            _gameplayUIRoot = gameplayUIRoot;
             _popupService = popupService;
+            _panBehaviour = new FreePanBehaviour(25f);
         }
 
         public override void Enter()
@@ -71,7 +57,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             base.Enter();
             _startTrigger.Reset();
             _isIntroFinished = false;
-            _dialogFinished = _levelConfig.PreparationDialog == null; 
+
+            // Если диалога нет, считаем его сразу завершенным
+            _dialogFinished = _levelConfig.PreparationDialog == null;
 
             _stageProvider.PrepareFirstStage();
             _coroutines.StartPerform(ShowFinishIntro());
@@ -82,9 +70,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _cameraService.SetBehaviour(_panBehaviour);
             yield return null;
 
+            // Запускаем диалог через сервис, если он есть в конфиге
             if (_levelConfig.PreparationDialog != null)
             {
-                _coroutines.StartPerform(StartDialogSequence());
+                _activeDialog = _popupService.OpenDialog(_levelConfig.PreparationDialog, () =>
+                {
+                    _dialogFinished = true;
+                    _activeDialog = null;
+                });
             }
 
             Vector3 targetPos = _finalPoint.FinalPointPosition;
@@ -104,34 +97,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             yield return new WaitForSeconds(0.8f);
 
-            // ПОКАЗЫВАЕМ ПОДСКАЗКУ ПОСЛЕ ОБЛЕТА
+            // Ждем завершения диалога перед показом подсказки
+            yield return new WaitUntil(() => _dialogFinished);
+
             string hintMessage = "Press 'F' to Begin\nUse WASD and LShift to free fly camera";
             _hintPopup = _popupService.OpenHint(hintMessage);
 
             _isIntroFinished = true;
         }
 
-        private IEnumerator StartDialogSequence()
-        {
-            var dialogView = _viewsFactory.Create<DialogDisplayView>(ViewIDs.DialogDisplayView, _gameplayUIRoot.PopupsLayer);
-            _activeDialogPresenter = _presentersFactory.CreateDialogPresenter(dialogView, _levelConfig.PreparationDialog);
-            _activeDialogPresenter.DialogEnded += OnDialogEnded;
-            _activeDialogPresenter.Initialize();
-
-            yield return new WaitUntil(() => _dialogFinished);
-
-            _activeDialogPresenter.Dispose();
-            _activeDialogPresenter = null;
-        }
-
-        private void OnDialogEnded()
-        {
-            _dialogFinished = true;
-        }
-
         public void Update(float deltaTime)
         {
-            _activeDialogPresenter?.Update(deltaTime);
+            // Теперь апдейтим диалог только если он активен (для пропуска реплик)
+            _activeDialog?.Update(deltaTime);
 
             if (!_isIntroFinished)
                 return;
@@ -154,11 +132,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         public override void Exit()
         {
+            // Безопасная очистка ресурсов при выходе из стейта
+            if (_activeDialog != null)
+                _popupService.ClosePopup(_activeDialog);
+
             if (_hintPopup != null)
-            {
                 _popupService.ClosePopup(_hintPopup);
-                _hintPopup = null;
-            }
 
             base.Exit();
 

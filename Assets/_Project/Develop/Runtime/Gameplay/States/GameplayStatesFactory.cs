@@ -28,7 +28,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _inputArgs = inputArgs;
         }
 
-
         public PreperationState CreatePreperationState()
         {
             return new PreperationState(
@@ -36,14 +35,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<CameraService>(),
                 _container.Resolve<MainHeroFactory>(),
                 _container.Resolve<FinalPointTriggerService>(),
-                _container.Resolve<StageProviderService>(), 
+                _container.Resolve<StageProviderService>(),
                 _container.Resolve<ICoroutinesPerformer>(),
-                _container.Resolve<ProjectPresentersFactory>(),
                 _container.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>().GetBy(_inputArgs.LevelNumber),
-                _container.Resolve<ViewsFactory>(),
-                _container.Resolve<GameplayUIRoot>(),
                 _container.Resolve<GameplayPopupService>()
-                );
+            );
         }
 
         public LaunchState CreateLaunchState(float timer)

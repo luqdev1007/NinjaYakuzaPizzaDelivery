@@ -60,6 +60,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
 
         public void Cleanup()
         {
+
             _entitiesLifeContext.Release(_nextStageTrigger);
             _hasMainHeroContact.Value = false;
             _nextStageTrigger = null;

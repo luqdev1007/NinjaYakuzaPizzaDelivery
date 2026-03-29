@@ -1,12 +1,16 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Configs.Dialog;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.UI.Dialog;
 using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Hints;
 using Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
+using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 
@@ -21,6 +25,11 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         {
             _container = container;
             _inputArgs = inputArgs;
+        }
+
+        public DialogPresenter CreateDialogPresenter(DialogDisplayView view, DialogConfig config)
+        {
+            return new DialogPresenter(view, _container.Resolve<ICoroutinesPerformer>(), config, _container.Resolve<ConfigsProviderService>().GetConfig<CharactersConfig>());
         }
 
         public HintPresenter CreateHintPresenter(HintView view, string message)

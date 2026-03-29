@@ -7,10 +7,10 @@ using UnityEngine.UI;
 
 namespace Assets._Project.Develop.Runtime.UI.Dialog
 {
-    public class DialogDisplayView : MonoBehaviour, IView
+    public class DialogDisplayView : PopupViewBase
     {
         public event Action AppearanceFinished;
-        public event Action Hidden; // Новое событие завершения скрытия
+        public event Action Hidden;
 
         [field: SerializeField] public TMP_Text СontentProgressText { get; private set; }
 
@@ -24,25 +24,27 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         private Tween _shakeTween;
         private Tween _holdTween;
 
-        public void Show()
+        protected override void OnPreShow()
         {
+            base.OnPreShow();
+
             _animator.SetTrigger("Show");
             _skipLabelVisual.localScale = Vector3.one;
             _skipLabelVisual.localRotation = Quaternion.identity;
             _skipLabelGroup.alpha = 0;
         }
 
-        public void Hide()
+        protected override void OnPreHide()
         {
+            base.OnPreHide();
+
             StopSkipAnims();
-            // Сначала запускаем эффект пиццы, а Animator дернем из ивента или параллельно
             HideSkipWithPizzaEffect();
             _animator.SetTrigger("Hide");
         }
 
         public void OnAppearanceAnimationEnded() => AppearanceFinished?.Invoke();
 
-        // ВАЖНО: Вызывай этот метод из Animation Event в конце клипа DialogEndAnim
         public void OnHideAnimationEnded() => Hidden?.Invoke();
 
         public void SetText(string text) => СontentProgressText.text = text;

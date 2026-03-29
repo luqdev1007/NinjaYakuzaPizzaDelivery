@@ -76,15 +76,5 @@ namespace Assets._Project.Develop.Runtime.UI
         {
             return new ConfirmPopupPresenter(view, _container.Resolve<ICoroutinesPerformer>(), onConfirmButtonClicked, header);
         }
-
-        public DialogPresenter CreateDialogPresenter(DialogDisplayView view, DialogConfig config)
-        {
-            return new DialogPresenter(
-                view,
-                config,
-                _container.Resolve<ICoroutinesPerformer>(),
-                _container.Resolve<ConfigsProviderService>().GetConfig<CharactersConfig>() // Если нужно брать спрайты персонажей
-            );
-        }
     }
 }

@@ -1,141 +1,134 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Dialog;
 using Assets._Project.Develop.Runtime.UI.Core;
-using Assets._Project.Develop.Runtime.UI.TextFeatures;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using System;
-using System.Collections;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.UI.Dialog
 {
-    public class DialogPresenter : IPresenter, IDisposable
+    public class DialogPresenter : PopupPresenterBase
     {
         public event Action DialogEnded;
 
         private readonly DialogDisplayView _view;
         private readonly DialogConfig _config;
         private readonly CharactersConfig _charactersConfig;
-        private readonly ICoroutinesPerformer _coroutines;
 
-        private Coroutine _dialogSequence;
-        private bool _isAppeared;
-        private bool _fullSkipTriggered;
-        private bool _skipRequested;
-        private float _holdTime;
-        private const float MaxHoldTime = 1.2f;
+        private int _currentLineIndex = -1;
+        private bool _isTyping;
+        private float _currentHoldTime;
+        private bool _isHolding;
 
-        public DialogPresenter(DialogDisplayView view, DialogConfig config,
-            ICoroutinesPerformer coroutines, CharactersConfig charactersConfig)
+        private const KeyCode SkipKey = KeyCode.E;
+        private const float SkipHoldDuration = 1.2f;
+
+        public DialogPresenter(
+            DialogDisplayView view,
+            ICoroutinesPerformer coroutinesPerformer,
+            DialogConfig config,
+            CharactersConfig charactersConfig) : base(coroutinesPerformer)
         {
             _view = view;
             _config = config;
-            _coroutines = coroutines;
             _charactersConfig = charactersConfig;
         }
 
-        public void Initialize()
+        protected override PopupViewBase PopupView => _view;
+
+        public override void Initialize()
         {
+            base.Initialize();
             _view.AppearanceFinished += OnAppearanceFinished;
-            _view.Hidden += OnHidden; // Ждем финала
-            _view.Show();
+            _view.ShowSkipHint();
         }
 
         private void OnAppearanceFinished()
         {
             _view.AppearanceFinished -= OnAppearanceFinished;
-            _isAppeared = true;
-            _dialogSequence = _coroutines.StartPerform(DialogRoutine());
-        }
-
-        private void OnHidden()
-        {
-            _view.Hidden -= OnHidden;
-            DialogEnded?.Invoke(); // Вот теперь официально всё
+            ShowNextLine();
         }
 
         public void Update(float deltaTime)
         {
-            if (!_isAppeared || _fullSkipTriggered) return;
+            HandleProgressInput();
+            HandleSkipInput(deltaTime);
+        }
 
-            if (Input.GetKeyDown(KeyCode.E))
+        private void HandleProgressInput()
+        {
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
             {
-                _skipRequested = true;
-                _view.StartHoldAnims(MaxHoldTime);
+                if (_isTyping)
+                {
+                    FinishTyping();
+                }
+                else
+                {
+                    ShowNextLine();
+                }
+            }
+        }
+
+        private void HandleSkipInput(float deltaTime)
+        {
+            if (Input.GetKeyDown(SkipKey))
+            {
+                _isHolding = true;
+                _currentHoldTime = 0f;
+                _view.StartHoldAnims(SkipHoldDuration);
             }
 
-            if (Input.GetKey(KeyCode.E))
+            if (Input.GetKey(SkipKey) && _isHolding)
             {
-                _holdTime += deltaTime;
-                if (_holdTime >= MaxHoldTime)
+                _currentHoldTime += deltaTime;
+                if (_currentHoldTime >= SkipHoldDuration)
                 {
-                    _fullSkipTriggered = true;
+                    _isHolding = false;
                     _view.ExplodeSkip();
+                    EndDialog();
                 }
             }
 
-            if (Input.GetKeyUp(KeyCode.E))
+            if (Input.GetKeyUp(SkipKey))
             {
-                _holdTime = 0;
+                _isHolding = false;
                 _view.StopHoldAnims();
             }
         }
 
-        private IEnumerator DialogRoutine()
+        private void ShowNextLine()
         {
-            for (int i = 0; i < _config.Replicas.Count; i++)
+            _currentLineIndex++;
+
+            if (_currentLineIndex >= _config.Replicas.Count)
             {
-                if (_fullSkipTriggered) break;
-
-                var replica = _config.Replicas[i];
-                _skipRequested = false;
-
-                _view.SetPortrait(_charactersConfig.GetCharacter(replica.CharacterId).Portrait);
-                _view.SetBackground(_charactersConfig.GetCharacter(replica.CharacterId).Background);
-
-                string processedText = TextHighlightUtility.ProcessText(replica.RawText);
-                yield return _coroutines.StartPerform(TypewriterEffect(processedText));
-
-                if (_fullSkipTriggered) break;
-
-                _view.ShowSkipHint();
-                yield return new WaitUntil(() => _skipRequested || _fullSkipTriggered);
-
-                _skipRequested = false;
-                yield return new WaitForSeconds(0.1f);
+                EndDialog();
+                return;
             }
 
-            _view.Hide(); // Запускаем цепочку скрытия
+            DialogReplica replica = _config.Replicas[_currentLineIndex];
+            CharacterData characterData = _charactersConfig.GetCharacter(replica.CharacterId);
+
+            _view.SetText(replica.RawText);
+            _view.SetPortrait(characterData.Portrait);
+            _view.SetBackground(characterData.Background);
         }
 
-        private IEnumerator TypewriterEffect(string fullText)
+        private void FinishTyping()
         {
-            _view.SetText(fullText);
-            var text = _view.СontentProgressText;
-            text.maxVisibleCharacters = 0;
-            text.ForceMeshUpdate();
-
-            int totalChars = text.textInfo.characterCount > 0 ? text.textInfo.characterCount : fullText.Length;
-            int counter = 0;
-
-            while (counter <= totalChars)
-            {
-                if (_skipRequested || _fullSkipTriggered)
-                {
-                    text.maxVisibleCharacters = totalChars;
-                    break;
-                }
-                text.maxVisibleCharacters = counter;
-                counter++;
-                yield return new WaitForSeconds(0.02f);
-            }
+            _isTyping = false;
         }
 
-        public void Dispose()
+        private void EndDialog()
+        {
+            DialogEnded?.Invoke();
+            OnCloseRequest();
+        }
+
+        public override void Dispose()
         {
             _view.AppearanceFinished -= OnAppearanceFinished;
-            _view.Hidden -= OnHidden;
-            if (_dialogSequence != null) _coroutines.StopPerform(_dialogSequence);
-            DialogEnded = null;
+            base.Dispose();
         }
     }
 }

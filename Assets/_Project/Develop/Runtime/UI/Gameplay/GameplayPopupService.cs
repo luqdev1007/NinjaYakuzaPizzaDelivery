@@ -1,4 +1,6 @@
-﻿using Assets._Project.Develop.Runtime.UI.Core;
+﻿using Assets._Project.Develop.Runtime.Configs.Dialog;
+using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.UI.Dialog;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Hints;
 using Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups;
 using System;
@@ -32,6 +34,17 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             HintPresenter popup = _gameplayPresentersFactory.CreateHintPresenter(view, message);
 
             OnPopupCreated(popup, view);
+
+            return popup;
+        }
+
+        public DialogPresenter OpenDialog(DialogConfig config, Action onEnded = null)
+        {
+            DialogDisplayView view = ViewsFactory.Create<DialogDisplayView>(ViewIDs.DialogDisplayView, PopupLayer);
+
+            DialogPresenter popup = _gameplayPresentersFactory.CreateDialogPresenter(view, config);
+
+            OnPopupCreated(popup, view, onEnded);
 
             return popup;
         }
