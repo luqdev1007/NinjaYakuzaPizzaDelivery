@@ -126,6 +126,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField] public float InstantDamage { get; private set; } = 50f;
         [field: SerializeField] public float Range { get; private set; } = 1.5f;
         [field: SerializeField] public float HitBounceForce { get; private set; } = 8f;
+        [field: SerializeField] public float InvulnerabilityDuration { get; private set; } = 0.2f;
         [field: SerializeField] public LayerMask EnemyMask { get; private set; }
     }
 

@@ -24,6 +24,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
     {
         public ICompositeCondition Value;
     }
+
+    public class IsDriveActive : IEntityComponent
+    {
+        public ReactiveVariable<bool> Value = new();
+    }
+
+    public class DriveAccumulatedTime : IEntityComponent
+    {
+        public float Value;
+    }
 }
 
 

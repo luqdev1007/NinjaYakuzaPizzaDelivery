@@ -41,7 +41,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
             if (_cooldownTimer.Value > 0)
             {
                 _cooldownTimer.Value -= deltaTime;
-                Debug.Log($"Entity timer: {_cooldownTimer.Value}"); // Если этого лога нет в консоли — система не обновляется!
+                // Debug.Log($"Entity timer: {_cooldownTimer.Value}"); // Если этого лога нет в консоли — система не обновляется!
             }
         }
 

@@ -5,6 +5,21 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
+    public class AttackInvulnerabilityDuration : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+    public class AttackInvulnerabilityTimer : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+    public class IsAttackInvulnerable : IEntityComponent
+    {
+        public ReactiveVariable<bool> Value = new();
+    }
+
     public class StartAttackRequest : IEntityComponent
     {
         public ReactiveEvent Value;
@@ -95,3 +110,4 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         public ReactiveVariable<bool> Value;
     }
 }
+

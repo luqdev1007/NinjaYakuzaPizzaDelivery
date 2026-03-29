@@ -792,6 +792,49 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.CanPhysicalyInteract() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.IsDriveActive IsDriveActiveC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.IsDriveActive>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsDriveActive => IsDriveActiveC.Value;
+
+		public bool TryGetIsDriveActive(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.IsDriveActive component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsDriveActive()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.IsDriveActive() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsDriveActive(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.IsDriveActive() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.DriveAccumulatedTime DriveAccumulatedTimeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.DriveAccumulatedTime>();
+
+		public System.Single DriveAccumulatedTime => DriveAccumulatedTimeC.Value;
+
+		public bool TryGetDriveAccumulatedTime(out System.Single value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.DriveAccumulatedTime component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(System.Single);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDriveAccumulatedTime(System.Single value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.DriveAccumulatedTime() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.CanFlip CanFlipC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.CanFlip>();
 
 		public Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition CanFlip => CanFlipC.Value;
@@ -2393,6 +2436,78 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBodyContactDamage(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.BodyContactDamage() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Attack.AttackInvulnerabilityDuration AttackInvulnerabilityDurationC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Attack.AttackInvulnerabilityDuration>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> AttackInvulnerabilityDuration => AttackInvulnerabilityDurationC.Value;
+
+		public bool TryGetAttackInvulnerabilityDuration(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Attack.AttackInvulnerabilityDuration component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAttackInvulnerabilityDuration()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Attack.AttackInvulnerabilityDuration() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAttackInvulnerabilityDuration(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Attack.AttackInvulnerabilityDuration() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Attack.AttackInvulnerabilityTimer AttackInvulnerabilityTimerC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Attack.AttackInvulnerabilityTimer>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> AttackInvulnerabilityTimer => AttackInvulnerabilityTimerC.Value;
+
+		public bool TryGetAttackInvulnerabilityTimer(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Attack.AttackInvulnerabilityTimer component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAttackInvulnerabilityTimer()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Attack.AttackInvulnerabilityTimer() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAttackInvulnerabilityTimer(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Attack.AttackInvulnerabilityTimer() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Attack.IsAttackInvulnerable IsAttackInvulnerableC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Attack.IsAttackInvulnerable>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsAttackInvulnerable => IsAttackInvulnerableC.Value;
+
+		public bool TryGetIsAttackInvulnerable(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Attack.IsAttackInvulnerable component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsAttackInvulnerable()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Attack.IsAttackInvulnerable() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsAttackInvulnerable(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Attack.IsAttackInvulnerable() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.Attack.StartAttackRequest StartAttackRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Attack.StartAttackRequest>();

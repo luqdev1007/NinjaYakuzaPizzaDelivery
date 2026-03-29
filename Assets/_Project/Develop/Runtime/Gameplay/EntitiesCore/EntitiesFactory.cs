@@ -67,6 +67,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddIsGrounded()
                 .AddGroundMask(config.GroundMask)
 
+                // — драйв (баг-фича) —
+                .AddIsDriveActive(new ReactiveVariable<bool>(false))
+                .AddDriveAccumulatedTime(0f)
+
                 // — движение —
                 .AddMoveDirection()
                 .AddMoveSpeed(new ReactiveVariable<float>(config.Movement.MoveSpeed))
@@ -120,6 +124,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddAttackCooldownCurrentTime()
                 .AddInAttackCooldown()
                 .AddAttackRange(new ReactiveVariable<float>(config.Attack.Range))
+
+                .AddAttackInvulnerabilityDuration(new ReactiveVariable<float>(config.Attack.InvulnerabilityDuration))
+                .AddAttackInvulnerabilityTimer()
+                .AddIsAttackInvulnerable(new ReactiveVariable<bool>(false))
 
                 // — броски —
                 .AddIsThrowing()
@@ -196,6 +204,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsDriveActive.Value == false)) 
                 .Add(new FuncCondition(() => entity.JumpsAvailable.Value > 0));
 
             // — рывок —
@@ -289,6 +298,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canApplyDamage = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
+                .Add(new FuncCondition(() => entity.IsAttackInvulnerable.Value == false))
                 .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
@@ -323,6 +334,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new PlayerInputSystem(inputService))
                 .AddSystem(new GroundCheckSystem(coyoteTime: 0.1f))
 
+                // — логика драйва —
+                .AddSystem(new DriveSystem()) // Добавляем сюда
+
                 // — движение —
                 .AddSystem(new RigidbodyMovementSystem(inputService))
                 .AddSystem(new JumpSystem(inputService))
@@ -332,6 +346,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new SlideSystem(inputService, coroutinesPerformer))
                 .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask))
                 .AddSystem(new SlopeSystem())
+
 
                 // — броски —
                 .AddSystem(new ThrowableSystem(
@@ -352,6 +367,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new AttackDelayEndTriggerSystem())
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem())
+                .AddSystem(new AttackInvulnerabilitySystem())
                 .AddSystem(new MeleeAttackHitSystem(config.Attack.EnemyMask, config.Attack.HitBounceForce))
 
                 // — урон / жизненный цикл —
@@ -359,7 +375,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new DamageKnockbackSystem())
                 .AddSystem(new DeathSystem())
                 .AddSystem(new DeathProcessTimerSystem())
-                .AddSystem(new DisableCollidersOnDeathSystem())
 
                 // — визуал —
                 .AddSystem(new FlipDirectionSystem())

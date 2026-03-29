@@ -27,7 +27,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         public void Update(float deltaTime)
         {
             _elapsed += deltaTime;
-            Debug.Log($"Launch countdown: {Mathf.Max(0, Duration - _elapsed):F1}");
 
             if (_elapsed >= Duration)
                 IsFinished = true;

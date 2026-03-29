@@ -90,7 +90,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             ICondition toDefeat = new FuncCondition(() =>
             {
                 if (mainHeroHolderService.MainHero != null)
-                    return mainHeroHolderService.MainHero.IsDead.Value;
+                {
+                    return mainHeroHolderService.MainHero.IsDead.Value &&
+                           mainHeroHolderService.MainHero.InDeathProcess.Value == false;
+                }
                 return false;
             });
 
