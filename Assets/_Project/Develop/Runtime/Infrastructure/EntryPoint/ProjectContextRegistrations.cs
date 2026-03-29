@@ -100,7 +100,11 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
         }
 
         private static SceneSwitcherService CreateSceneSwitcherService(DIContainer container) 
-            => new SceneSwitcherService(container.Resolve<SceneLoaderService>(), container.Resolve<ILoadingScreen>(), container);
+            => new SceneSwitcherService(
+                container.Resolve<SceneLoaderService>(), 
+                container.Resolve<ILoadingScreen>(), 
+                container, 
+                container.Resolve<ICoroutinesPerformer>());
 
         private static SceneLoaderService CreateSceneLoaderService(DIContainer container) 
             => new SceneLoaderService();

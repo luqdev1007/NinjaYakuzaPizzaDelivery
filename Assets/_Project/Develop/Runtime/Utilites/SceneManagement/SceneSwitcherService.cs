@@ -1,10 +1,13 @@
 ﻿using Assets._Project.Develop.Infrastructure;
 using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilites.LoadingScreen;
+using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace Assets._Project.Develop.Runtime.Utilites.SceneManagement
 {
@@ -13,18 +16,33 @@ namespace Assets._Project.Develop.Runtime.Utilites.SceneManagement
         private readonly SceneLoaderService _sceneLoaderService;
         private readonly ILoadingScreen _loadingScreen;
         private readonly DIContainer _projectContainer;
+        private readonly ICoroutinesPerformer _coroutines; // Наш исполнитель корутин
 
         private DIContainer _currentSceneContainer;
 
-        public SceneSwitcherService(SceneLoaderService sceneLoaderService, ILoadingScreen loadingScreen, DIContainer projectContainer)
+        private readonly List<string> _loadingHints = new List<string>
+        {
+            "3.50$ vashno",
+            "Cake is a lie, but Pizza is real.",
+        };
+
+        public SceneSwitcherService(
+            SceneLoaderService sceneLoaderService,
+            ILoadingScreen loadingScreen,
+            DIContainer projectContainer,
+            ICoroutinesPerformer coroutines)
         {
             _sceneLoaderService = sceneLoaderService;
             _loadingScreen = loadingScreen;
             _projectContainer = projectContainer;
+            _coroutines = coroutines;
         }
 
         public IEnumerator ProcessingSwitchTo(string sceneName, IInputSceneArgs sceneArgs = null)
         {
+            CoolLoadingScreen coolScreen = _loadingScreen as CoolLoadingScreen;
+            Coroutine hintRoutine = _coroutines.StartPerform(HintCycleRoutine(coolScreen));
+
             _loadingScreen.Show();
 
             _currentSceneContainer?.Dispose();
@@ -38,16 +56,54 @@ namespace Assets._Project.Develop.Runtime.Utilites.SceneManagement
                 throw new NullReferenceException($"Bootstrap for scene: '{sceneName}' not found");
 
             _currentSceneContainer = new DIContainer(_projectContainer);
-
             sceneBootstrap.ProcessRegistrations(_currentSceneContainer, sceneArgs);
-
             _currentSceneContainer.Initialize();
 
+            // long loadings tests
+            /*
+            float timer = 5;
+
+            while (timer > 0)
+            {
+                timer -= Time.deltaTime;
+
+                if (Input.GetKeyDown(KeyCode.Escape))
+                    yield break;
+
+                yield return null;
+            }
+
+            timer = 0;
+            */
+            // long loadings tests
+
             yield return sceneBootstrap.Initialize();
+
+            /*
+            if (hintRoutine != null) 
+                _coroutines.StopPerform(hintRoutine);
+            */
+
+            // coolScreen.SetHint("");
+
+            coolScreen.ShowPressAnyKey();
+
+            yield return new WaitUntil(() => Input.anyKeyDown);
 
             _loadingScreen.Hide();
 
             sceneBootstrap.Run();
+        }
+
+        private IEnumerator HintCycleRoutine(CoolLoadingScreen screen)
+        {
+            while (true)
+            {
+                string randomHint = _loadingHints[Random.Range(0, _loadingHints.Count)];
+                screen.SetHint(randomHint);
+
+                yield return new WaitForSeconds(3f);
+            }
         }
     }
 }

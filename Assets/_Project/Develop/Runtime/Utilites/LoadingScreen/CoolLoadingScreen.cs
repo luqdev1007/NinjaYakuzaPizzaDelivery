@@ -32,7 +32,6 @@ namespace Assets._Project.Develop.Runtime.Utilites.LoadingScreen
 
         public void SetHint(string text)
         {
-            // Плавная смена текста через Fade
             _hintFadeTween?.Kill();
             _hintFadeTween = _hintText.DOFade(0, 0.3f).OnComplete(() =>
             {
@@ -45,8 +44,8 @@ namespace Assets._Project.Develop.Runtime.Utilites.LoadingScreen
         {
             _pressAnyKeyText.gameObject.SetActive(true);
             _pressAnyKeyText.alpha = 0;
+            _pressAnyKeyText.text = "Press Any Key To Continue...";
 
-            // Мигание: за 0.8 сек от 0 до 1 и обратно бесконечно
             _blinkTween = _pressAnyKeyText.DOFade(1f, 0.8f)
                 .SetLoops(-1, LoopType.Yoyo)
                 .SetEase(Ease.InOutSine);

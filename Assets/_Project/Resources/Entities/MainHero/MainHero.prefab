@@ -4930,6 +4930,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2884100874251622537}
   - component: {fileID: 1587270918963700498}
+  - component: {fileID: 155187284992558416}
   m_Layer: 12
   m_Name: PizzaBody
   m_TagString: Untagged
@@ -4978,8 +4979,34 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
+--- !u!233 &155187284992558416
+HingeJoint2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 153062706832048645}
+  m_Enabled: 1
+  serializedVersion: 4
+  m_EnableCollision: 1
+  m_ConnectedRigidBody: {fileID: 1215709225792161530}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_BreakAction: 3
+  m_AutoConfigureConnectedAnchor: 0
+  m_Anchor: {x: -0.35341033, y: 0.03642051}
+  m_ConnectedAnchor: {x: -0.15324792, y: 0.000052485615}
+  m_UseConnectedAnchor: 1
+  m_UseMotor: 0
+  m_Motor:
+    m_MotorSpeed: 0
+    m_MaximumMotorForce: 10000
+  m_UseLimits: 1
+  m_AngleLimits:
+    m_LowerAngle: -65
+    m_UpperAngle: 65
 --- !u!1 &175165516894784309
 GameObject:
   m_ObjectHideFlags: 0
@@ -19883,8 +19910,8 @@ Transform:
   m_GameObject: {fileID: 1631770823310125184}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.061, y: -0.09, z: 0}
-  m_LocalScale: {x: 0.26267573, y: 0.0317013, z: 0.2}
+  m_LocalPosition: {x: -0.075, y: -0.071, z: 0}
+  m_LocalScale: {x: 0.26267573, y: 0.013383338, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3740306962911839365}
@@ -30152,9 +30179,9 @@ Transform:
   m_GameObject: {fileID: 2745461240603326010}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.33, y: -0.138, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 1
+  m_LocalPosition: {x: -0.45866, y: -0.18003, z: 0}
+  m_LocalScale: {x: 1.875, y: 1.4625001, z: 1.5}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3740306962911839365}
   - {fileID: 5440242270887683228}
@@ -45043,6 +45070,86 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!1 &4111102121341674015
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7470608435736880541}
+  - component: {fileID: 4753250174965649890}
+  - component: {fileID: 3440293243168077533}
+  m_Layer: 0
+  m_Name: PizzaPivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7470608435736880541
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4111102121341674015}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.069, y: 0.01, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5149040113408065364}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &4753250174965649890
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4111102121341674015}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!257 &3440293243168077533
+TargetJoint2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4111102121341674015}
+  m_Enabled: 1
+  serializedVersion: 4
+  m_EnableCollision: 1
+  m_ConnectedRigidBody: {fileID: 0}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_BreakAction: 3
+  m_Anchor: {x: 0, y: 0}
+  m_Target: {x: -0.069, y: 0.01}
+  m_AutoConfigureTarget: 1
+  m_MaxForce: 10000
+  m_DampingRatio: 1
+  m_Frequency: 5
 --- !u!1 &4111782969927755764
 GameObject:
   m_ObjectHideFlags: 0
@@ -50047,8 +50154,8 @@ Transform:
   m_GameObject: {fileID: 4165494852262015288}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.062, y: 0.028, z: 0}
-  m_LocalScale: {x: 0.26267573, y: 0.0317013, z: 0.2}
+  m_LocalPosition: {x: -0.076, y: 0.014, z: 0}
+  m_LocalScale: {x: 0.26267573, y: 0.016400984, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3740306962911839365}
@@ -66427,6 +66534,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5373311607167498598, guid: 45fdc72a38b91ae479fc901becb660f0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5191637363851920567}
+    - targetCorrespondingSourceObject: {fileID: 5373311607167498598, guid: 45fdc72a38b91ae479fc901becb660f0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7470608435736880541}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5476442007397641218, guid: 45fdc72a38b91ae479fc901becb660f0, type: 3}
       insertIndex: -1
