@@ -7,6 +7,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.HangWall;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature;
@@ -162,6 +163,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddDeathProcessCurrentTime()
                 .AddTakeDamageRequest()
                 .AddTakeDamageEvent()
+                .AddDamageCooldown(new ReactiveVariable<float>(1.0f))
+                .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
                 .AddSpawnInitialTime(new ReactiveVariable<float>(config.LifeCycle.SpawnProcessTime))
                 .AddSpawnCurrentTime()
                 .AddInSpawnProcess()
@@ -283,6 +286,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canApplyDamage = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
             entity
@@ -330,11 +334,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new ThrowableSystem(
                     inputService,
                     coroutinesPerformer,
-                    new ThrowableConfig[] 
-                    { 
-                        config.Throwables.GrappleConfig, 
-                        config.Throwables.ShurikenConfig, 
-                        config.Throwables.SleepDartConfig 
+                    new ThrowableConfig[]
+                    {
+                        config.Throwables.GrappleConfig,
+                        config.Throwables.ShurikenConfig,
+                        config.Throwables.SleepDartConfig
                     },
                     throwableBehaviourFactory))
 
@@ -349,6 +353,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // — урон / жизненный цикл —
                 .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new DamageKnockbackSystem())
                 .AddSystem(new DeathSystem())
                 .AddSystem(new DeathProcessTimerSystem())
                 .AddSystem(new DisableCollidersOnDeathSystem())
@@ -399,7 +404,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // — Движение —
                 .AddMoveDirection()
                 .AddRotationDirection()
-                .AddIsMoving() 
+                .AddIsMoving()
                 .AddMoveSpeed(new ReactiveVariable<float>(ghostConfig.MovementSpeed))
 
                 // — Боёвка —
@@ -416,9 +421,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddDeathProcessInitialTime(new ReactiveVariable<float>(ghostConfig.DeathProcessTime))
                 .AddDeathProcessCurrentTime()
                 .AddTakeDamageRequest()
-                .AddTakeDamageEvent();
+                .AddTakeDamageEvent()
+                .AddDamageCooldown(new ReactiveVariable<float>(1.0f))
+                .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
+                ;
 
             // conditions
+            ICompositeCondition canMove = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.HasComponent<IsGrappledTarget>() == false || entity.IsGrappledTarget.Value == false));
+
             ICompositeCondition canFlip = new CompositeCondition()
                 .Add(new FuncCondition(() => true));
 
@@ -430,9 +442,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.InDeathProcess.Value == false));
 
             ICompositeCondition canApplyDamage = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false));
 
             entity
+                .AddCanMove(canMove)
                 .AddCanPhysicalyInteract(canApplyDamage)
                 .AddCanFlip(canFlip)
                 .AddCanApplyDamage(canApplyDamage)
@@ -450,6 +464,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 .AddSystem(new FlipDirectionSystem())
                 .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new DamageKnockbackSystem())
                 .AddSystem(new DeathSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
 

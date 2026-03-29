@@ -1,10 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 {
@@ -12,9 +7,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
     {
         public static bool TryTakeDamageFrom(Entity source, Entity damageable, float damage)
         {
-            if (damageable.TryGetTakeDamageRequest(out ReactiveEvent<float> takeDamageRequest) == false)
+            if (damageable.TryGetTakeDamageRequest(out ReactiveEvent<DamageData> takeDamageRequest) == false)
                 return false;
 
+            // Проверка команд
             if (source.TryGetTeam(out ReactiveVariable<Teams> sourceTeam)
                 && damageable.TryGetTeam(out ReactiveVariable<Teams> damageableTeam))
             {
@@ -22,7 +18,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                     return false;
             }
 
-            takeDamageRequest.Invoke(damage);
+            DamageData data = new DamageData
+            {
+                Amount = damage,
+                SourcePosition = source.Transform.position 
+            };
+
+            takeDamageRequest.Invoke(data);
 
             return true;
         }

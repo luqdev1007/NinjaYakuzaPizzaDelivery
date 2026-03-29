@@ -7,10 +7,13 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
 {
-    public class ApplyDamageSystem : IInitializableSystem, IDisposableSystem
+    public class ApplyDamageSystem : IInitializableSystem, IDisposableSystem, IUpdatableSystem
     {
-        private ReactiveEvent<float> _damageRequest;
-        private ReactiveEvent<float> _damageEvent;
+        private ReactiveEvent<DamageData> _damageRequest;
+        private ReactiveEvent<DamageData> _damageEvent;
+
+        private ReactiveVariable<float> _cooldownTimer;
+        private float _defaultCooldown;
 
         private ReactiveVariable<float> _health;
 
@@ -23,34 +26,35 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
         public void OnInit(Entity entity)
         {
             _entityName = entity.Transform.gameObject.name;
-
             _damageRequest = entity.TakeDamageRequest;
             _damageEvent = entity.TakeDamageEvent;
-
             _health = entity.CurrentHealth;
-
             _canApplyDamage = entity.CanApplyDamage;
+            _cooldownTimer = entity.DamageCooldownTimer;
+            _defaultCooldown = entity.DamageCooldown.Value;
 
             _requestDisposable = _damageRequest.Subscribe(OnDamageRequest);
         }
 
-        public void OnDispose()
+        public void OnUpdate(float deltaTime)
         {
-            _requestDisposable.Dispose();
+            if (_cooldownTimer.Value > 0)
+            {
+                _cooldownTimer.Value -= deltaTime;
+                Debug.Log($"Entity timer: {_cooldownTimer.Value}"); // Если этого лога нет в консоли — система не обновляется!
+            }
         }
 
-        private void OnDamageRequest(float damage)
+        private void OnDamageRequest(DamageData damage)
         {
-            if (damage < 0)
-                throw new ArgumentOutOfRangeException($"{nameof(damage)} can't be less than 0");
-
             if (_canApplyDamage.Evaluate() == false)
                 return;
 
-            _health.Value = MathF.Max(_health.Value - damage, 0);
+            _health.Value = MathF.Max(_health.Value - damage.Amount, 0);
+            _cooldownTimer.Value = _defaultCooldown; 
             _damageEvent.Invoke(damage);
-
-            Debug.Log($"{_entityName} получил урон, у него осталось {_health.Value} ед. здоровья");
         }
+
+        public void OnDispose() => _requestDisposable.Dispose();
     }
 }

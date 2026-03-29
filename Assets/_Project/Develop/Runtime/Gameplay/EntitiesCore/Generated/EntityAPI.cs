@@ -1781,6 +1781,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleMaxDistance() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.IsGrappledTarget IsGrappledTargetC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.IsGrappledTarget>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsGrappledTarget => IsGrappledTargetC.Value;
+
+		public bool TryGetIsGrappledTarget(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.IsGrappledTarget component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsGrappledTarget()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.IsGrappledTarget() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsGrappledTarget(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.IsGrappledTarget() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.CanGrapple CanGrappleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.CanGrapple>();
 
 		public Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition CanGrapple => CanGrappleC.Value;
@@ -2788,50 +2812,98 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Attack.InAttackCooldown() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageCooldown DamageCooldownC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageCooldown>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> DamageCooldown => DamageCooldownC.Value;
+
+		public bool TryGetDamageCooldown(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageCooldown component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDamageCooldown()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageCooldown() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDamageCooldown(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageCooldown() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageCooldownTimer DamageCooldownTimerC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageCooldownTimer>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> DamageCooldownTimer => DamageCooldownTimerC.Value;
+
+		public bool TryGetDamageCooldownTimer(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageCooldownTimer component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDamageCooldownTimer()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageCooldownTimer() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDamageCooldownTimer(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageCooldownTimer() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.TakeDamageRequest TakeDamageRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.TakeDamageRequest>();
 
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<System.Single> TakeDamageRequest => TakeDamageRequestC.Value;
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<DamageData> TakeDamageRequest => TakeDamageRequestC.Value;
 
-		public bool TryGetTakeDamageRequest(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<System.Single> value)
+		public bool TryGetTakeDamageRequest(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<DamageData> value)
 		{
 			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.TakeDamageRequest component);
 			if (result)
 				value = component.Value;
 			else
-				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<System.Single>);
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<DamageData>);
 			return result;
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTakeDamageRequest()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.TakeDamageRequest() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<System.Single>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.TakeDamageRequest() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<DamageData>() }); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTakeDamageRequest(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<System.Single> value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTakeDamageRequest(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<DamageData> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.TakeDamageRequest() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.TakeDamageEvent TakeDamageEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.TakeDamageEvent>();
 
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<System.Single> TakeDamageEvent => TakeDamageEventC.Value;
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<DamageData> TakeDamageEvent => TakeDamageEventC.Value;
 
-		public bool TryGetTakeDamageEvent(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<System.Single> value)
+		public bool TryGetTakeDamageEvent(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<DamageData> value)
 		{
 			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.TakeDamageEvent component);
 			if (result)
 				value = component.Value;
 			else
-				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<System.Single>);
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<DamageData>);
 			return result;
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTakeDamageEvent()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.TakeDamageEvent() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<System.Single>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.TakeDamageEvent() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<DamageData>() }); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTakeDamageEvent(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<System.Single> value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTakeDamageEvent(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<DamageData> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.TakeDamageEvent() {Value = value}); 
 		}
