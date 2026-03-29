@@ -23,6 +23,9 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 
         private Tween _shakeTween;
         private Tween _holdTween;
+        private Tween _typewriterTween;
+
+        private const float TextSpeed = 0.03f; // Скорость печати за символ
 
         protected override void OnPreShow()
         {
@@ -32,6 +35,7 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             _skipLabelVisual.localScale = Vector3.one;
             _skipLabelVisual.localRotation = Quaternion.identity;
             _skipLabelGroup.alpha = 0;
+            СontentProgressText.text = string.Empty;
         }
 
         protected override void OnPreHide()
@@ -39,6 +43,7 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             base.OnPreHide();
 
             StopSkipAnims();
+            _typewriterTween?.Kill();
             HideSkipWithPizzaEffect();
             _animator.SetTrigger("Hide");
         }
@@ -47,7 +52,27 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 
         public void OnHideAnimationEnded() => Hidden?.Invoke();
 
-        public void SetText(string text) => СontentProgressText.text = text;
+        public void SetText(string text)
+        {
+            _typewriterTween?.Kill();
+
+            СontentProgressText.text = text;
+            СontentProgressText.maxVisibleCharacters = 0;
+
+            // Анимация печати текста
+            _typewriterTween = DOTween.To(() => СontentProgressText.maxVisibleCharacters,
+                x => СontentProgressText.maxVisibleCharacters = x,
+                text.Length,
+                text.Length * TextSpeed)
+                .SetEase(Ease.Linear);
+        }
+
+        public void FinishTypingInstant()
+        {
+            _typewriterTween?.Kill();
+            СontentProgressText.maxVisibleCharacters = СontentProgressText.text.Length;
+        }
+
         public void SetPortrait(Sprite portrait) => _portraitImage.sprite = portrait;
         public void SetBackground(Sprite bg) => _backgroundImage.sprite = bg;
 

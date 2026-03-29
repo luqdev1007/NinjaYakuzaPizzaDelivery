@@ -1,6 +1,8 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using UnityEngine;
@@ -114,21 +116,34 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private void PushAndDamage(Collider2D hit, float damage, float force)
         {
-            if (hit == null || !hit.gameObject.activeSelf) return;
+            if (hit == null || !hit.gameObject.activeSelf) 
+                return;
 
-            // Логика расталкивания "ветром"
             Rigidbody2D rb = hit.GetComponent<Rigidbody2D>();
+
             if (rb != null)
             {
-                // Вектор от центра игрока к врагу (горизонтальный акцент)
                 Vector2 direction = ((Vector2)hit.transform.position - (Vector2)_transform.position);
-                direction.y += 0.5f; // Немного подкидываем вверх для эффекта "бабаха"
-
+                direction.y += 0.5f;
                 rb.AddForce(direction.normalized * force, ForceMode2D.Impulse);
             }
 
-            // Здесь вызывай метод получения урона у врага
-            // hit.GetComponent<IDamageable>()?.TakeDamage(damage);
+            var monoEntity = hit.GetComponentInParent<MonoEntity>();
+
+            if (monoEntity != null)
+            {
+                var target = monoEntity.LinkedEntity;
+                if (target != null && target.HasComponent<CurrentHealth>())
+                {
+                    target.CurrentHealth.Value -= damage;
+
+                    target.TakeDamageEvent?.Invoke(new DamageData
+                    {
+                        Amount = damage,
+                        SourcePosition = hit.transform.position
+                    });
+                }
+            }
         }
 
         private void StopPlunge()

@@ -1,29 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Assets._Project.Develop.Runtime.UI.TextFeatures
 {
     public static class TextHighlightUtility
     {
-        // Можно заменить на загрузку из твоего конфига
         private static readonly Dictionary<string, string> Keywords = new()
         {
-            { "CAREFULLY", "#FF0000" }, // Red
-            { "PIZZA", "#FFD700" },     // Gold
-            { "NINJA", "#00FF00" }      // Green
+            { "CAREFULLY", "#FF0000" },
+            { "PIZZA", "#FFD700" },
+            { "NINJA", "#00FF00" },
+            { "TIPS", "#00FF00" } 
         };
 
         public static string ProcessText(string input)
         {
-            foreach (var pair in Keywords)
+            if (string.IsNullOrEmpty(input)) return input;
+
+            string[] words = input.Split(' ');
+            for (int i = 0; i < words.Length; i++)
             {
-                if (input.Contains(pair.Key))
-                    input = input.Replace(pair.Key, $"<color={pair.Value}>{pair.Key}</color>");
+                string cleanWord = words[i].Trim(',', '.', '!', '?', ':').ToUpper();
+
+                if (Keywords.TryGetValue(cleanWord, out string color))
+                {
+                    words[i] = words[i].Replace(words[i].Trim(',', '.', '!', '?', ':'),
+                        $"<color={color}>{cleanWord}</color>");
+                }
             }
-            return input;
+
+            return string.Join(" ", words);
         }
     }
 }

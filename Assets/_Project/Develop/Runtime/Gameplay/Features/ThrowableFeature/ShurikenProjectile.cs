@@ -29,6 +29,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                 if (target != null && target.HasComponent<CurrentHealth>())
                     target.CurrentHealth.Value -= _config.Damage;
 
+                target.TakeDamageEvent?.Invoke(new DamageData
+                {
+                    Amount = _config.Damage,
+                    SourcePosition = hit.ClosestPoint(Instance.transform.position)
+                });
+
                 Destroy(); // Исчезает мгновенно
             }
             else

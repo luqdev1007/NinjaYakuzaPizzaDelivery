@@ -11,8 +11,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
         private IDisposable _eventSubscription;
 
         // Константы для настройки баланса
-        private const float BaseKnockbackX = 15f;    // Минимальный толчок по X
-        private const float BaseKnockbackY = 8f;     // Минимальный подброс вверх
+        private const float BaseKnockbackX = 3f;    // Минимальный толчок по X
+        private const float BaseKnockbackY = 2f;     // Минимальный подброс вверх
         private const float DamageMultiplier = 1.2f; // На сколько умножаем каждый хитпоинт урона
         private const float MaxForce = 60f;          // Ограничитель, чтобы при огромном уроне не улететь за карту
 

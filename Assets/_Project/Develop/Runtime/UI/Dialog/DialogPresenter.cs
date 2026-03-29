@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Dialog;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.UI.TextFeatures; // Подключили утилиту
 using System;
 using UnityEngine;
 
@@ -19,8 +20,12 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         private float _currentHoldTime;
         private bool _isHolding;
 
+        // Таймер для быстрого пролистывания при зажатии
+        private float _fastForwardTimer;
+
         private const KeyCode SkipKey = KeyCode.E;
-        private const float SkipHoldDuration = 1.2f;
+        private const float SkipHoldDuration = 0.8f; // Уменьшил, чтобы быстрее реагировало
+        private const float FastForwardInterval = 0.2f; // Скорость прокрутки при зажатии
 
         public DialogPresenter(
             DialogDisplayView view,
@@ -56,16 +61,23 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 
         private void HandleProgressInput()
         {
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+            // Теперь и E (нажатие) тоже продвигает диалог
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0) || Input.GetKeyDown(SkipKey))
             {
-                if (_isTyping)
-                {
-                    FinishTyping();
-                }
-                else
-                {
-                    ShowNextLine();
-                }
+                ProgressDialog();
+            }
+        }
+
+        private void ProgressDialog()
+        {
+            if (_isTyping)
+            {
+                FinishTyping();
+                _view.FinishTypingInstant(); // Нужно, чтобы View сразу показала весь текст
+            }
+            else
+            {
+                ShowNextLine();
             }
         }
 
@@ -75,12 +87,23 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             {
                 _isHolding = true;
                 _currentHoldTime = 0f;
+                _fastForwardTimer = 0f;
                 _view.StartHoldAnims(SkipHoldDuration);
             }
 
             if (Input.GetKey(SkipKey) && _isHolding)
             {
                 _currentHoldTime += deltaTime;
+                _fastForwardTimer += deltaTime;
+
+                // Если зажали — начинаем быстро пролистывать реплики
+                if (_fastForwardTimer >= FastForwardInterval)
+                {
+                    _fastForwardTimer = 0f;
+                    ProgressDialog();
+                }
+
+                // Если держим долго — полный выход из диалога (взрыв)
                 if (_currentHoldTime >= SkipHoldDuration)
                 {
                     _isHolding = false;
@@ -109,9 +132,14 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             DialogReplica replica = _config.Replicas[_currentLineIndex];
             CharacterData characterData = _charactersConfig.GetCharacter(replica.CharacterId);
 
-            _view.SetText(replica.RawText);
+            // Обработка текста утилитой подсветки перед выводом
+            string processedText = TextHighlightUtility.ProcessText(replica.RawText);
+
+            _view.SetText(processedText);
             _view.SetPortrait(characterData.Portrait);
             _view.SetBackground(characterData.Background);
+
+            _isTyping = true; // Считаем, что начали печатать
         }
 
         private void FinishTyping()
