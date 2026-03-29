@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: ShurikenConfig
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/Projectiles/Shuriken
-  <ProjectileSpeed>k__BackingField: 25
+  <ProjectileSpeed>k__BackingField: 33
   <MaxDistance>k__BackingField: 10
   <MinDistance>k__BackingField: 1
-  <MaxCharges>k__BackingField: 100
+  <MaxCharges>k__BackingField: 125
   <HitMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 3840
-  <Damage>k__BackingField: 5
-  <PenetrateEnemies>k__BackingField: 0
+  <Damage>k__BackingField: 2
+  <PierceCount>k__BackingField: 3

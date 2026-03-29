@@ -442,26 +442,40 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddTakeDamageEvent()
                 .AddDamageCooldown(new ReactiveVariable<float>(1.0f))
                 .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
+
+                // — Эффекты (Сон) —
+                .AddIsAsleep()
+                .AddSleepTimer(new ReactiveVariable<float>(0f))
                 ;
 
-            // conditions
+            // — Условия —
+
+            // Не может двигаться, если мертв, притянут хуком ИЛИ спит
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.HasComponent<IsGrappledTarget>() == false || entity.IsGrappledTarget.Value == false));
+                .Add(new FuncCondition(() => entity.HasComponent<IsGrappledTarget>() == false || entity.IsGrappledTarget.Value == false))
+                .Add(new FuncCondition(() => entity.IsAsleep.Value == false))
+                ;
+
+            // Не может дамажить, если в откате, мертв ИЛИ спит
+            ICompositeCondition canApplyDamage = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsAsleep.Value == false))
+                ;
 
             ICompositeCondition canFlip = new CompositeCondition()
-                .Add(new FuncCondition(() => true));
+                .Add(new FuncCondition(() => true))
+                ;
 
             ICompositeCondition mustDie = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
+                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0))
+                ;
 
             ICompositeCondition mustSelfRelease = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == true))
-                .Add(new FuncCondition(() => entity.InDeathProcess.Value == false));
-
-            ICompositeCondition canApplyDamage = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
-                .Add(new FuncCondition(() => entity.IsDead.Value == false));
+                .Add(new FuncCondition(() => entity.InDeathProcess.Value == false))
+                ;
 
             entity
                 .AddCanMove(canMove)
@@ -478,8 +492,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new BodyContactDetectingSystem())
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
                 .AddSystem(new DealDamageOnContactSystem())
-                .AddSystem(new TransformMovementSystem())
 
+                // Таймеры эффектов
+                .AddSystem(new SleepTimerSystem()) // Сама сбросит IsAsleep в false, когда время выйдет
+
+                .AddSystem(new TransformMovementSystem())
                 .AddSystem(new FlipDirectionSystem())
                 .AddSystem(new ApplyDamageSystem())
                 .AddSystem(new DamageKnockbackSystem())

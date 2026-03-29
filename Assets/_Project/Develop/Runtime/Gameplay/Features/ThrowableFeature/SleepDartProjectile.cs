@@ -1,6 +1,8 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using UnityEngine;
+using Assets._Project.Develop.Runtime.Gameplay.Common;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 {
@@ -8,21 +10,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
     {
         private readonly SleepDartConfig _config;
 
-        public SleepDartProjectile(
-            SleepDartConfig config,
-            ICoroutinesPerformer coroutinesPerformer) : base(config, coroutinesPerformer)
+        public SleepDartProjectile(SleepDartConfig config, ICoroutinesPerformer coroutinesPerformer)
+            : base(config, coroutinesPerformer)
         {
             _config = config;
         }
 
         protected override void OnHit(Collider2D hit)
         {
-            Debug.Log($"Дротик попал в {hit.gameObject.name}, усыпляет на {_config.SleepDuration}с");
-            Destroy();
-        }
+            var monoEntity = hit.GetComponentInParent<MonoEntity>();
+            if (monoEntity != null)
+            {
+                var entity = monoEntity.LinkedEntity;
 
-        protected override void OnMaxDistanceReached(Vector3 startPosition)
-        {
+                if (!entity.HasComponent<IsAsleep>())
+                    entity.AddIsAsleep();
+
+                entity.IsAsleep.Value = true;
+                
+                Debug.Log($"Entity {hit.name} уснул на {_config.SleepDuration}с");
+            }
+
             Destroy();
         }
     }

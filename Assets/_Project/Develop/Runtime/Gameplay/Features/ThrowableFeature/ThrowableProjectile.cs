@@ -22,7 +22,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             CoroutinesPerformer = coroutinesPerformer;
         }
 
-
         public void Launch(Vector3 from, Vector3 direction)
         {
             GameObject prefab = Resources.Load<GameObject>(Config.PrefabPath);
@@ -45,7 +44,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         protected virtual void Destroy()
         {
             OnCompleted?.Invoke();
-            OnCompleted = null; // очищаем всех подписчиков
+            OnCompleted = null;
 
             if (Instance != null)
             {
@@ -61,6 +60,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             while (Instance != null)
             {
                 Instance.transform.position += direction * Config.ProjectileSpeed * Time.deltaTime;
+
+                // Внедренный поворот
+                ApplyRotation(direction);
 
                 float travelled = Vector3.Distance(startPosition, Instance.transform.position);
 
@@ -80,6 +82,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
                 yield return null;
             }
+        }
+
+        // Базовая логика поворота: смотрит по направлению вектора
+        protected virtual void ApplyRotation(Vector3 direction)
+        {
+            if (Instance == null) return;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            Instance.transform.rotation = Quaternion.Euler(0, 0, angle);
         }
 
         protected virtual void OnHit(Collider2D hit) => Destroy();
