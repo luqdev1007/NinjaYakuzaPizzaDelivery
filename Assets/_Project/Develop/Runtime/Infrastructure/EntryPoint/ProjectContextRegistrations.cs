@@ -126,12 +126,12 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             return Object.Instantiate(coroutinesPerformer);
         }
 
-        private static StandartLoadingScreen CreateStandartLoadingScreen(DIContainer container)
+        private static CoolLoadingScreen CreateStandartLoadingScreen(DIContainer container)
         {
             ResourcesAssetsLoader resourcesAssetsLoader = container.Resolve<ResourcesAssetsLoader>();
 
-            StandartLoadingScreen standartLoadingScreen = resourcesAssetsLoader
-                .Load<StandartLoadingScreen>("Utilities/StandartLoadingScreen");
+            CoolLoadingScreen standartLoadingScreen = resourcesAssetsLoader
+                .Load<CoolLoadingScreen>("Utilities/StandartLoadingScreen");
 
             return Object.Instantiate(standartLoadingScreen);
         }
