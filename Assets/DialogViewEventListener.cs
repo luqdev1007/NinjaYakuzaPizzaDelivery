@@ -5,24 +5,16 @@ public class DialogViewEventListener : MonoBehaviour
 {
     [SerializeField] private DialogDisplayView _view;
 
-    // Этот метод вызываем из Animation Event в конце анимации появления (Show)
     public void OnShowAnimationEnded()
     {
-        if (_view != null)
-        {
-            _view.OnAppearanceAnimationEnded();
-        }
+        if (_view != null) _view.OnAppearanceAnimationEnded();
     }
 
-    // Если захочешь ловить конец анимации скрытия (Hide)
+    // ВАЖНО: Добавь Animation Event в конец DialogEndAnim и выбери этот метод
     public void OnHideAnimationEnded()
     {
-        // Сюда можно добавить вызов, если во вьюхе появится ивент DisappearanceFinished
+        if (_view != null) _view.OnHideAnimationEnded();
     }
 
-    // На случай, если забудешь прокинуть ссылку в инспекторе
-    private void Reset()
-    {
-        _view = GetComponentInParent<DialogDisplayView>();
-    }
+    private void Reset() => _view = GetComponentInParent<DialogDisplayView>();
 }

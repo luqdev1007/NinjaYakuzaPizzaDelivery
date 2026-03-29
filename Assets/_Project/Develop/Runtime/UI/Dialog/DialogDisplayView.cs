@@ -10,6 +10,7 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
     public class DialogDisplayView : MonoBehaviour, IView
     {
         public event Action AppearanceFinished;
+        public event Action Hidden; // Новое событие завершения скрытия
 
         [field: SerializeField] public TMP_Text СontentProgressText { get; private set; }
 
@@ -26,7 +27,6 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         public void Show()
         {
             _animator.SetTrigger("Show");
-            // Сброс состояния лейбла
             _skipLabelVisual.localScale = Vector3.one;
             _skipLabelVisual.localRotation = Quaternion.identity;
             _skipLabelGroup.alpha = 0;
@@ -35,11 +35,15 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         public void Hide()
         {
             StopSkipAnims();
+            // Сначала запускаем эффект пиццы, а Animator дернем из ивента или параллельно
             HideSkipWithPizzaEffect();
             _animator.SetTrigger("Hide");
         }
 
         public void OnAppearanceAnimationEnded() => AppearanceFinished?.Invoke();
+
+        // ВАЖНО: Вызывай этот метод из Animation Event в конце клипа DialogEndAnim
+        public void OnHideAnimationEnded() => Hidden?.Invoke();
 
         public void SetText(string text) => СontentProgressText.text = text;
         public void SetPortrait(Sprite portrait) => _portraitImage.sprite = portrait;
@@ -73,7 +77,6 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         public void ExplodeSkip()
         {
             StopSkipAnims();
-            // Эффект взрыва
             _skipLabelVisual.DOScale(2.5f, 0.25f).SetEase(Ease.OutExpo);
             _skipLabelGroup.DOFade(0f, 0.2f);
         }
@@ -83,12 +86,7 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             _skipLabelVisual.DOKill();
             _skipLabelGroup.DOKill();
 
-            // Эффект подбрасывания теста пиццы:
-            // 1. Подлетает вверх и закручивается по X/Z
-            // 2. Уменьшается в точку
-            // 3. Исчезает
             Sequence pizzaSequence = DOTween.Sequence();
-
             pizzaSequence.Join(_skipLabelVisual.DOAnchorPosY(_skipLabelVisual.anchoredPosition.y + 150f, 0.6f).SetEase(Ease.OutQuad));
             pizzaSequence.Join(_skipLabelVisual.DORotate(new Vector3(360, 0, 180), 0.6f, RotateMode.LocalAxisAdd).SetEase(Ease.Linear));
             pizzaSequence.Join(_skipLabelVisual.DOScale(0f, 0.6f).SetEase(Ease.InBack));
@@ -101,8 +99,6 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         {
             _shakeTween?.Kill();
             _holdTween?.Kill();
-            // Не убиваем всё сразу, чтобы дать доиграть эффекту пиццы в Hide, 
-            // но убиваем интерактивные твины
         }
     }
 }

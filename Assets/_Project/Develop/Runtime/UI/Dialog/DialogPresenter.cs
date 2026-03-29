@@ -19,11 +19,10 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 
         private Coroutine _dialogSequence;
         private bool _isAppeared;
-
-        private float _holdTime;
-        private const float MaxHoldTime = 1.2f; // Немного ускорил для динамики
         private bool _fullSkipTriggered;
         private bool _skipRequested;
+        private float _holdTime;
+        private const float MaxHoldTime = 1.2f;
 
         public DialogPresenter(DialogDisplayView view, DialogConfig config,
             ICoroutinesPerformer coroutines, CharactersConfig charactersConfig)
@@ -37,6 +36,7 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         public void Initialize()
         {
             _view.AppearanceFinished += OnAppearanceFinished;
+            _view.Hidden += OnHidden; // Ждем финала
             _view.Show();
         }
 
@@ -45,6 +45,12 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             _view.AppearanceFinished -= OnAppearanceFinished;
             _isAppeared = true;
             _dialogSequence = _coroutines.StartPerform(DialogRoutine());
+        }
+
+        private void OnHidden()
+        {
+            _view.Hidden -= OnHidden;
+            DialogEnded?.Invoke(); // Вот теперь официально всё
         }
 
         public void Update(float deltaTime)
@@ -98,7 +104,7 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
                 yield return new WaitForSeconds(0.1f);
             }
 
-            FinishDialog();
+            _view.Hide(); // Запускаем цепочку скрытия
         }
 
         private IEnumerator TypewriterEffect(string fullText)
@@ -118,22 +124,16 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
                     text.maxVisibleCharacters = totalChars;
                     break;
                 }
-
                 text.maxVisibleCharacters = counter;
                 counter++;
-                yield return new WaitForSeconds(0.02f); // Чуть быстрее печать
+                yield return new WaitForSeconds(0.02f);
             }
-        }
-
-        private void FinishDialog()
-        {
-            _view.Hide();
-            DialogEnded?.Invoke();
         }
 
         public void Dispose()
         {
             _view.AppearanceFinished -= OnAppearanceFinished;
+            _view.Hidden -= OnHidden;
             if (_dialogSequence != null) _coroutines.StopPerform(_dialogSequence);
             DialogEnded = null;
         }
