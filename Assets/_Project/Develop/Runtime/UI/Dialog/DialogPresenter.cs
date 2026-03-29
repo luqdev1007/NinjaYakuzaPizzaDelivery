@@ -18,14 +18,15 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         private readonly ICoroutinesPerformer _coroutines;
 
         private Coroutine _dialogSequence;
-        private bool _isTyping;
+        private bool _isAppeared;
+
+        private float _holdTime;
+        private const float MaxHoldTime = 1.2f; // Немного ускорил для динамики
+        private bool _fullSkipTriggered;
         private bool _skipRequested;
 
-        public DialogPresenter(
-            DialogDisplayView view,
-            DialogConfig config,
-            ICoroutinesPerformer coroutines,
-            CharactersConfig charactersConfig)
+        public DialogPresenter(DialogDisplayView view, DialogConfig config,
+            ICoroutinesPerformer coroutines, CharactersConfig charactersConfig)
         {
             _view = view;
             _config = config;
@@ -35,17 +36,41 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 
         public void Initialize()
         {
+            _view.AppearanceFinished += OnAppearanceFinished;
             _view.Show();
-            // Запускаем одну главную корутину всего диалога
+        }
+
+        private void OnAppearanceFinished()
+        {
+            _view.AppearanceFinished -= OnAppearanceFinished;
+            _isAppeared = true;
             _dialogSequence = _coroutines.StartPerform(DialogRoutine());
         }
 
         public void Update(float deltaTime)
         {
-            // Слушаем нажатие E для скипа
+            if (!_isAppeared || _fullSkipTriggered) return;
+
             if (Input.GetKeyDown(KeyCode.E))
             {
                 _skipRequested = true;
+                _view.StartHoldAnims(MaxHoldTime);
+            }
+
+            if (Input.GetKey(KeyCode.E))
+            {
+                _holdTime += deltaTime;
+                if (_holdTime >= MaxHoldTime)
+                {
+                    _fullSkipTriggered = true;
+                    _view.ExplodeSkip();
+                }
+            }
+
+            if (Input.GetKeyUp(KeyCode.E))
+            {
+                _holdTime = 0;
+                _view.StopHoldAnims();
             }
         }
 
@@ -53,28 +78,23 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         {
             for (int i = 0; i < _config.Replicas.Count; i++)
             {
+                if (_fullSkipTriggered) break;
+
                 var replica = _config.Replicas[i];
                 _skipRequested = false;
 
-                // 1. Настройка визуала
-                var character = _charactersConfig.GetCharacter(replica.CharacterId);
-                _view.SetPortrait(character.Portrait);
-                _view.SetBackground(character.Background);
+                _view.SetPortrait(_charactersConfig.GetCharacter(replica.CharacterId).Portrait);
+                _view.SetBackground(_charactersConfig.GetCharacter(replica.CharacterId).Background);
 
-                // 2. Печать текста
                 string processedText = TextHighlightUtility.ProcessText(replica.RawText);
                 yield return _coroutines.StartPerform(TypewriterEffect(processedText));
 
-                // 3. Ожидание нажатия E для перехода к следующей реплике
-                Debug.Log($"[Dialog] Replica {i} finished typing. Waiting for 'E'...");
+                if (_fullSkipTriggered) break;
 
-                // Ждем, пока игрок нажмет E (флаг поднимется в Update)
-                yield return new WaitUntil(() => _skipRequested);
+                _view.ShowSkipHint();
+                yield return new WaitUntil(() => _skipRequested || _fullSkipTriggered);
 
-                // Сбрасываем флаг для следующей итерации
                 _skipRequested = false;
-
-                // Небольшая задержка, чтобы одно нажатие не проскочило две реплики
                 yield return new WaitForSeconds(0.1f);
             }
 
@@ -83,42 +103,26 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 
         private IEnumerator TypewriterEffect(string fullText)
         {
-            _isTyping = true;
             _view.SetText(fullText);
-
             var text = _view.СontentProgressText;
-
-            // --- ВАЖНО: Принудительное обновление меша ---
             text.maxVisibleCharacters = 0;
-            text.ForceMeshUpdate(); // Заставляем TMP рассчитать текст прямо сейчас
+            text.ForceMeshUpdate();
 
-            // Даем один кадр на всякий случай
-            yield return null;
-
-            int totalChars = text.textInfo.characterCount;
-
-            // Если после ForceMeshUpdate все еще 0, берем длину строки напрямую
-            if (totalChars == 0 && fullText.Length > 0)
-                totalChars = fullText.Length;
-
-            Debug.Log($"[Typewriter] Typing started. Total chars: {totalChars}");
-
+            int totalChars = text.textInfo.characterCount > 0 ? text.textInfo.characterCount : fullText.Length;
             int counter = 0;
+
             while (counter <= totalChars)
             {
-                if (_skipRequested)
+                if (_skipRequested || _fullSkipTriggered)
                 {
                     text.maxVisibleCharacters = totalChars;
-                    // Не сбрасываем _skipRequested здесь, чтобы основная корутина увидела нажатие
                     break;
                 }
 
                 text.maxVisibleCharacters = counter;
                 counter++;
-                yield return new WaitForSeconds(0.03f);
+                yield return new WaitForSeconds(0.02f); // Чуть быстрее печать
             }
-
-            _isTyping = false;
         }
 
         private void FinishDialog()
@@ -129,9 +133,8 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 
         public void Dispose()
         {
-            if (_dialogSequence != null)
-                _coroutines.StopPerform(_dialogSequence);
-
+            _view.AppearanceFinished -= OnAppearanceFinished;
+            if (_dialogSequence != null) _coroutines.StopPerform(_dialogSequence);
             DialogEnded = null;
         }
     }
