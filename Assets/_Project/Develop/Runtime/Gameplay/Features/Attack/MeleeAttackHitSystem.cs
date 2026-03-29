@@ -57,7 +57,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
             if (hitAny)
             {
-                ApplyJuggle();
+                ApplyJuggle(dir); // Передаем направление взгляда
                 ExtendInvulnerability();
                 _coroutines.StartPerform(DoHitStop());
             }
@@ -72,10 +72,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             }
         }
 
-        private void ApplyJuggle()
+        private void ApplyJuggle(float direction)
         {
-            float jump = _entity.IsGrounded.Value ? _hitBounceForce * 0.5f : _hitBounceForce;
-            _entity.Rigidbody.linearVelocity = new Vector2(_entity.Rigidbody.linearVelocity.x, Mathf.Max(0, _entity.Rigidbody.linearVelocity.y) + jump);
+            // Горизонтальный рывок в сторону удара, чтобы догнать отлетающую цель
+            float horizontalImpulse = direction * _hitBounceForce * 0.7f;
+
+            // Вертикальный подброс (джаггл)
+            float verticalImpulse = _entity.IsGrounded.Value ? _hitBounceForce * 0.4f : _hitBounceForce * 0.8f;
+
+            // Устанавливаем новую скорость, игнорируя старую инерцию для четкости контроля
+            _entity.Rigidbody.linearVelocity = new Vector2(horizontalImpulse, Mathf.Max(0, _entity.Rigidbody.linearVelocity.y) + verticalImpulse);
         }
 
         private void ExtendInvulnerability()
