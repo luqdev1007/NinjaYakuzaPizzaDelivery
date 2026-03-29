@@ -17,6 +17,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         private readonly LayerMask _enemyMask;
         private Func<bool> _isCancelled;
 
+        private const float MaxDistanceMultiplier = 1.5f;
+
         public event Action OnGrappleStarted;
         public event Action OnGrappleEnded;
         public event Action OnEnemyArrived;
@@ -43,13 +45,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
             bool isEnemy = (_enemyMask.value & (1 << hit.gameObject.layer)) != 0;
 
-            // ПРОВЕРКА: Если это враг, но он не может получать урон (уже мертв или в спавне) — летим мимо
             if (isEnemy && (targetEntity == null || targetEntity.CanApplyDamage.Evaluate() == false))
             {
                 return;
             }
 
-            // Приковываем визуальный объект крюка к цели, чтобы он двигался вместе с ней
             if (Instance != null)
             {
                 Instance.transform.SetParent(hit.transform);
@@ -72,38 +72,42 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             float originalGravity = _heroRigidbody.gravityScale;
             float originalDrag = _heroRigidbody.linearDamping;
 
-            // ОБЕЗДВИЖИВАНИЕ ЦЕЛИ
             if (isEnemy && targetEntity != null)
             {
                 if (!targetEntity.HasComponent<IsGrappledTarget>()) targetEntity.AddIsGrappledTarget();
                 targetEntity.IsGrappledTarget.Value = true;
             }
 
-            // Оставляем небольшую гравитацию и сопротивление для "веса" и стабильности полета
             _heroRigidbody.gravityScale = 0.5f;
             _heroRigidbody.linearDamping = 0.5f;
             _heroRigidbody.linearVelocity = Vector2.zero;
 
-            // 1. Начальный импульс: подброс вверх и немного в сторону цели
             Vector2 toTargetInitial = (anchor - (Vector2)_heroTransform.position).normalized;
             Vector2 popUpForce = (Vector2.up + toTargetInitial * 0.5f).normalized * _config.InitialPopUpForce;
             _heroRigidbody.AddForce(popUpForce, ForceMode2D.Impulse);
 
-            yield return new WaitForSeconds(0.05f); // Даем импульсу сработать
+            yield return new WaitForSeconds(0.05f);
 
             while (true)
             {
                 if (_isCancelled != null && _isCancelled()) break;
 
-                // Если цель исчезла или умерла в процессе полета
                 if (isEnemy && (hitCollider == null || targetEntity == null || targetEntity.IsDead.Value)) break;
 
-                // Точка притяжения теперь всегда актуальна (даже если враг падает или идет)
                 if (hitCollider != null) anchor = hitCollider.transform.position;
 
                 Vector2 playerPos = _heroTransform.position;
                 Vector2 toTarget = anchor - playerPos;
                 float distance = toTarget.magnitude;
+
+                // Проверка на критическое удаление (разрыв хука)
+                if (distance > _config.MaxDistance * MaxDistanceMultiplier)
+                {
+                    Debug.LogWarning($"[Grapple] Дистанция {distance} превысила лимит. Разрыв!");
+                    // Легкий импульс в сторону цели при разрыве для инерции
+                    _heroRigidbody.AddForce(toTarget.normalized * _config.GrappleSpeed * 0.5f, ForceMode2D.Impulse);
+                    break;
+                }
 
                 if (distance <= _config.ArriveDistance)
                 {
@@ -111,21 +115,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                     break;
                 }
 
-                // 2. Притяжение через силу (Force) для инерции
-                // Чем дальше цель, тем сильнее тянет (эффект резинки)
                 float pullPower = _config.GrappleSpeed * 2.5f;
                 _heroRigidbody.AddForce(toTarget.normalized * pullPower, ForceMode2D.Force);
 
-                // Ограничиваем безумный разгон
                 if (_heroRigidbody.linearVelocity.magnitude > _config.GrappleSpeed * 1.5f)
                 {
                     _heroRigidbody.linearVelocity = _heroRigidbody.linearVelocity.normalized * _config.GrappleSpeed * 1.5f;
                 }
 
-                yield return new WaitForFixedUpdate(); // Важно для физики Rigidbody
+                yield return new WaitForFixedUpdate();
             }
 
-            // СНИМАЕМ ОБЕЗДВИЖИВАНИЕ ПРИ ЛЮБОМ ИСХОДЕ
             if (targetEntity != null && targetEntity.HasComponent<IsGrappledTarget>())
             {
                 targetEntity.IsGrappledTarget.Value = false;
@@ -139,7 +139,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         {
             if (targetEntity != null)
             {
-                // Убиваем через здоровье, чтобы сработали системы смерти
                 if (targetEntity.CurrentHealth != null)
                 {
                     targetEntity.CurrentHealth.Value = 0;
@@ -157,7 +156,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         {
             _heroRigidbody.gravityScale = originalGravity;
 
-            // Сохраняем инерцию: подбрасываем игрока в направлении полета
             Vector2 boost = _heroRigidbody.linearVelocity * _config.CancelInertiaMultiplier;
             if (boost.y > 0) boost.y *= 1.2f;
 
