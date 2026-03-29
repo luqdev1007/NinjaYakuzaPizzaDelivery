@@ -9,7 +9,10 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 
         [Header("Movement")]
         [field: SerializeField] public float MovementSpeed { get; private set; } = 2f;
+        [field: SerializeField] public float LinearDrag { get; private set; } = 2f;
+        [field: SerializeField] public float AngularDrag { get; private set; } = 2f;
         [field: SerializeField] public float DirectionChangeCooldown { get; private set; } = 2f;
+
 
         [Header("Life Cycle")]
         [field: SerializeField] public float MaxHealth { get; private set; } = 30f;
@@ -17,5 +20,6 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 
         [Header("Combat")]
         [field: SerializeField] public float ContactDamage { get; private set; } = 10f;
+
     }
 }

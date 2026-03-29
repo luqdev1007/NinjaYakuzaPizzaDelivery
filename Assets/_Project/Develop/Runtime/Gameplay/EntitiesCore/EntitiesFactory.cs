@@ -12,6 +12,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature;
@@ -392,6 +393,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory.Create(entity, at, ghostConfig.PrefabPath);
 
             entity
+                .AddLinearDrag(new ReactiveVariable<float>(ghostConfig.LinearDrag))
+                .AddAngularDrag(new ReactiveVariable<float>(ghostConfig.AngularDrag))
+
                 // — Движение —
                 .AddMoveDirection()
                 .AddRotationDirection()
@@ -429,6 +433,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsDead.Value == false));
 
             entity
+                .AddCanPhysicalyInteract(canApplyDamage)
                 .AddCanFlip(canFlip)
                 .AddCanApplyDamage(canApplyDamage)
                 .AddMustDie(mustDie)
@@ -437,6 +442,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             entity
                 // Системы логики
+                .AddSystem(new PhysicsStabilizationSystem())
                 .AddSystem(new BodyContactDetectingSystem())
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
                 .AddSystem(new DealDamageOnContactSystem())

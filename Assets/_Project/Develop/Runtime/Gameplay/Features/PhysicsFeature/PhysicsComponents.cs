@@ -1,0 +1,29 @@
+﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Utilites.Conditions;
+using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using UnityEngine;
+
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
+{
+    public class AngularDrag : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+    public class LinearDrag : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+    public class Velocity : IEntityComponent
+    {
+        public ReactiveVariable<Vector2> Value;
+    }
+
+    public class CanPhysicalyInteract : IEntityComponent
+    {
+        public ICompositeCondition Value;
+    }
+}
+
+
