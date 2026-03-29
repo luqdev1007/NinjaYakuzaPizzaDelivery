@@ -9,8 +9,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
         private Rigidbody2D _rigidbody;
         private Entity _entity;
 
-        private const float MinUpwardVelocity = 0.1f;
-        private const float RequiredTimeInAir = 4.0f;
+        // Порог скорости, выше которого мы считаем, что начался "беспредел"
+        private const float AnomalousVelocityThreshold = 25f;
+        private const float MinUpwardVelocity = 0.5f;
+
+        // Уменьшил время накопления, 4 сек - это вечность. Сделаем 1.5-2.
+        private const float RequiredTimeInAir = 1.8f;
         private const float DriveDuration = 3.0f;
 
         private float _accumulationTimer;
@@ -32,11 +36,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
             }
 
             bool isInAir = _entity.IsGrounded.Value == false;
+            // Проверяем не только движение вверх, но и аномально высокую горизонтальную скорость
+            bool isChaotic = _rigidbody.linearVelocity.magnitude > AnomalousVelocityThreshold;
             bool isMovingUp = _rigidbody.linearVelocity.y > MinUpwardVelocity;
 
-            if (isInAir && isMovingUp)
+            if (isInAir && (isMovingUp || isChaotic))
             {
-                _accumulationTimer += deltaTime;
+                // Если скорость зашкаливает, таймер копится в 2 раза быстрее (быстрый вход в драйв)
+                float multiplier = isChaotic ? 2f : 1f;
+                _accumulationTimer += deltaTime * multiplier;
 
                 if (_accumulationTimer >= RequiredTimeInAir)
                 {
@@ -45,7 +53,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
             }
             else
             {
-                _accumulationTimer = Mathf.MoveTowards(_accumulationTimer, 0, deltaTime * 3f);
+                // Медленно сбрасываем, если просто стоим на земле
+                _accumulationTimer = Mathf.MoveTowards(_accumulationTimer, 0, deltaTime * 2f);
             }
         }
 
@@ -54,17 +63,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
             _isDriveActive = true;
             _driveTimer = DriveDuration;
 
+            // Включаем неуязвимость на время Драйва (логично же!)
+            if (_entity.IsAttackInvulnerable != null)
+                _entity.IsAttackInvulnerable.Value = true;
+
             if (_entity.IsDriveActive != null)
                 _entity.IsDriveActive.Value = true;
 
-            Debug.Log("<color=orange>ОБНАРУЖЕН АНОМАЛЬНЫЙ ПОЛЕТ!</color>");
+            // Гасим дикую инерцию, чтобы игрок не улетел за карту сразу после включения
+            _rigidbody.linearVelocity = Vector2.ClampMagnitude(_rigidbody.linearVelocity, AnomalousVelocityThreshold);
+
+            Debug.Log("<color=orange>КРИТИЧЕСКАЯ ИНЕРЦИЯ! РЕЖИМ ДРАЙВА АКТИВИРОВАН</color>");
         }
 
         private void HandleDrive(float deltaTime)
         {
             _driveTimer -= deltaTime;
 
-            Debug.Log("<color=red>ДРАЙВ!</color> " + _driveTimer.ToString("F1"));
+            // Во время драйва отключаем гравитацию полностью, чтобы он "плыл", но под контролем
+            _rigidbody.gravityScale = 0f;
+
+            // Добавляем микро-сопротивление воздуха, чтобы "бесоебство" затухало
+            _rigidbody.linearDamping = 2f;
 
             if (_driveTimer <= 0)
             {
@@ -77,13 +97,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
             _isDriveActive = false;
             _accumulationTimer = 0;
 
-            _rigidbody.linearVelocity = Vector2.zero;
-            _rigidbody.angularVelocity = 0f;
+            _rigidbody.linearDamping = 0f; // Возвращаем как было
+            _rigidbody.gravityScale = 3f; // Твое стандартное значение гравитации
+
+            // Важно: при выходе из драйва резко гасим скорость, чтобы персонаж не "застрял"
+            _rigidbody.linearVelocity *= 0.1f;
 
             if (_entity.IsDriveActive != null)
                 _entity.IsDriveActive.Value = false;
 
-            Debug.Log("<color=cyan>СТАБИЛИЗАЦИЯ ПОТОКА ЗАВЕРШЕНА.</color>");
+            if (_entity.IsAttackInvulnerable != null)
+                _entity.IsAttackInvulnerable.Value = false;
+
+            Debug.Log("<color=cyan>ПОТОК СТАБИЛИЗИРОВАН.</color>");
         }
     }
 }

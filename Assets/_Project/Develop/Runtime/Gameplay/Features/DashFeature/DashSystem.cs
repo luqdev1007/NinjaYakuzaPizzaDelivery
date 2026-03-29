@@ -4,14 +4,18 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
     public class DashSystem : IInitializableSystem, IUpdatableSystem
     {
+        private Entity _entity;
         private readonly IInputService _inputService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly LayerMask _enemyMask;
@@ -36,7 +40,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
         private float _dashBufferTimer;
         private bool _isCharging;
 
-        private const float DashBufferTime = 0.1f;
+        private const float DashBufferTime = 0.15f;
 
         public DashSystem(IInputService inputService, ICoroutinesPerformer coroutinesPerformer, LayerMask enemyMask)
         {
@@ -47,6 +51,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 
         public void OnInit(Entity entity)
         {
+            _entity = entity;
             _canDash = entity.CanDash;
             _isDashing = entity.IsDashing;
             _isGrounded = entity.IsGrounded;
@@ -65,59 +70,55 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 
         public void OnUpdate(float deltaTime)
         {
+            // Используем unscaledDeltaTime, чтобы кулдаун шел даже во время хит-стопа
+            float unscaledDt = Time.unscaledDeltaTime;
+
             if (_cooldownTimer > 0f)
-                _cooldownTimer -= deltaTime;
+                _cooldownTimer -= unscaledDt;
 
             if (_inputService.IsDashKeyPressed)
                 _dashBufferTimer = DashBufferTime;
-            else
-                _dashBufferTimer -= deltaTime;
+            else if (_dashBufferTimer > 0f)
+                _dashBufferTimer -= unscaledDt;
 
-            if (_dashBufferTimer > 0f && _canDash.Evaluate() && !_isCharging)
+            // Проверка возможности рывка
+            if (_dashBufferTimer > 0f && _canDash.Evaluate() && !_isCharging && _cooldownTimer <= 0)
             {
                 _isCharging = true;
                 _chargeTimer = 0f;
                 _dashBufferTimer = 0f;
             }
 
-            if (_isCharging && _inputService.IsDashKeyHeld)
+            if (_isCharging)
             {
-                _chargeTimer = Mathf.Min(
-                    _chargeTimer + deltaTime,
-                    _dashChargeTime.Value);
-            }
+                if (_inputService.IsDashKeyHeld)
+                {
+                    _chargeTimer = Mathf.Min(_chargeTimer + deltaTime, _dashChargeTime.Value);
+                }
 
-            if (_isCharging && _inputService.IsDashKeyReleased)
-            {
-                if (_canDash.Evaluate())
-                    ExecuteDash();
-                else
-                    _isCharging = false;
+                if (_inputService.IsDashKeyReleased)
+                {
+                    if (_canDash.Evaluate())
+                        ExecuteDash();
+                    else
+                        _isCharging = false;
+                }
             }
         }
 
         private void ExecuteDash()
         {
-            float chargeRatio = _dashChargeTime.Value > 0f
-                ? _chargeTimer / _dashChargeTime.Value
-                : 1f;
-
-            float force = Mathf.Lerp(
-                _dashForceMin.Value,
-                _dashForceMax.Value,
-                chargeRatio);
+            float chargeRatio = _dashChargeTime.Value > 0f ? _chargeTimer / _dashChargeTime.Value : 1f;
+            float force = Mathf.Lerp(_dashForceMin.Value, _dashForceMax.Value, chargeRatio);
 
             bool inAir = !_isGrounded.Value;
-
-            if (inAir)
-                force *= _airDashMultiplier.Value;
+            if (inAir) force *= _airDashMultiplier.Value;
 
             float direction = _transform.localScale.x > 0 ? 1f : -1f;
 
             _isDashing.Value = true;
             _cooldownTimer = _dashCooldown.Value;
             _isCharging = false;
-            _chargeTimer = 0f;
 
             _coroutinesPerformer.StartPerform(DashCoroutine(force, direction, inAir));
         }
@@ -127,57 +128,59 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
             float elapsed = 0f;
             float duration = _dashDuration.Value;
             float gravityScale = _rigidbody.gravityScale;
-            HashSet<Collider2D> hitEnemies = new HashSet<Collider2D>();
+            HashSet<Entity> hitEntities = new HashSet<Entity>();
 
             _rigidbody.gravityScale = 0f;
 
-            if (inAir)
-                _rigidbody.linearVelocity = new Vector2(
-                    _rigidbody.linearVelocity.x,
-                    _airDashVerticalBoost.Value);
+            // Начальный импульс
+            Vector2 dashVelocity = new Vector2(direction * force, inAir ? _airDashVerticalBoost.Value : 0f);
+            _rigidbody.linearVelocity = dashVelocity;
 
             while (elapsed < duration)
             {
+                // Для плавности можно оставить затухание, но если "пролетает мимо", 
+                // лучше держать скорость чуть дольше
                 float t = elapsed / duration;
-                float currentSpeed = Mathf.Lerp(force, 0f, t * t);
+                float currentSpeed = Mathf.Lerp(force, force * 0.2f, t);
 
-                float verticalVelocity = inAir
-                    ? Mathf.Lerp(_airDashVerticalBoost.Value, 0f, t)
-                    : 0f;
+                _rigidbody.linearVelocity = new Vector2(direction * currentSpeed, _rigidbody.linearVelocity.y);
 
-                _rigidbody.linearVelocity = new Vector2(
-                    direction * currentSpeed,
-                    verticalVelocity);
-
-                ApplyDashHit(hitEnemies);
+                ApplyDashDamage(hitEntities, inAir);
 
                 elapsed += Time.deltaTime;
                 yield return null;
             }
 
-            _rigidbody.linearVelocity = new Vector2(0f, _rigidbody.linearVelocity.y);
+            _rigidbody.linearVelocity = new Vector2(direction * 2f, _rigidbody.linearVelocity.y);
             _rigidbody.gravityScale = gravityScale;
             _isDashing.Value = false;
         }
 
-        private void ApplyDashHit(HashSet<Collider2D> hitEnemies)
+        private void ApplyDashDamage(HashSet<Entity> hitEntities, bool inAir)
         {
-            Collider2D[] hits = Physics2D.OverlapBoxAll(
-                _transform.position,
-                _dashHitboxSize.Value,
-                0f,
-                _enemyMask);
+            // Увеличиваем область проверки по направлению движения (чтобы не "проскакивать")
+            Vector2 checkPos = (Vector2)_transform.position;
+            Collider2D[] hits = Physics2D.OverlapBoxAll(checkPos, _dashHitboxSize.Value, 0f, _enemyMask);
 
             foreach (Collider2D hit in hits)
             {
-                if (hit == null || !hit.gameObject.activeSelf)
-                    continue;
+                if (hit == null) continue;
 
-                if (hitEnemies.Contains(hit))
-                    continue;
+                var mono = hit.GetComponentInParent<MonoEntity>();
+                if (mono == null) continue;
 
-                hitEnemies.Add(hit);
-                hit.gameObject.SetActive(false);
+                Entity target = mono.LinkedEntity;
+                if (hitEntities.Contains(target)) continue;
+
+                float damage = _dashDamage.Value;
+                if (inAir) damage *= _airDashMultiplier.Value;
+
+                if (target.HasComponent<CurrentHealth>())
+                {
+                    target.CurrentHealth.Value -= damage;
+                    target.TakeDamageEvent?.Invoke(new DamageData { Amount = damage, SourcePosition = checkPos });
+                    hitEntities.Add(target);
+                }
             }
         }
     }

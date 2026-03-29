@@ -194,6 +194,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canFlip = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
                 .Add(new FuncCondition(() => entity.IsSliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
                 .Add(new FuncCondition(() => entity.IsOnSlope.Value == false))
                  ;
