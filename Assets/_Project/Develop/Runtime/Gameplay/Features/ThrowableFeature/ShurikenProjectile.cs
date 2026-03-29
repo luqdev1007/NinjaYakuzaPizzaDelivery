@@ -5,6 +5,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using System.Collections.Generic;
 using UnityEngine;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
+using System.Collections;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 {
@@ -34,26 +35,42 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             {
                 Entity target = monoEntity.LinkedEntity;
 
-                // Чтобы не дамажить одного и того же врага каждым кадром пролета
                 if (target != null && !_hitEntities.Contains(target))
                 {
                     _hitEntities.Add(target);
 
-                    // Наносим урон (замени на свою переменную здоровья)
                     if (target.HasComponent<CurrentHealth>())
                         target.CurrentHealth.Value -= _config.Damage;
 
                     _pierceLeft--;
-                    Debug.Log($"Сюрикен пробил {hit.name}, осталось пробитий: {_pierceLeft}");
+                    Debug.Log($"Пробитие! Осталось: {_pierceLeft}");
 
+                    // Если пробития кончились — уничтожаем (или втыкаем во врага, если хочешь)
                     if (_pierceLeft <= 0) Destroy();
                 }
             }
             else
             {
-                // Если попали не в Entity (например, стена) — ломаемся сразу
-                Destroy();
+                // ПОПАЛИ В ЗЕМЛЮ/СТЕНУ
+                CoroutinesPerformer.StartPerform(StickInSurfaceCoroutine());
             }
+        }
+
+        private IEnumerator StickInSurfaceCoroutine()
+        {
+            // Останавливаем вращение и движение
+            var rb = Instance.GetComponent<Rigidbody2D>();
+            if (rb != null) rb.simulated = false; // Выключаем физику, чтобы не падал
+
+            // Выключаем коллайдер снаряда, чтобы он больше ничего не задевал
+            var col = Instance.GetComponent<Collider2D>();
+            if (col != null) col.enabled = false;
+
+            Debug.Log("Сюрикен застрял в стене на 3 секунды...");
+
+            yield return new WaitForSeconds(3f);
+
+            Destroy();
         }
     }
 }
