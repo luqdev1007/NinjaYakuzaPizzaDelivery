@@ -76,7 +76,7 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 512
   _lifeCycle:
-    <MaxHealth>k__BackingField: 10
+    <MaxHealth>k__BackingField: 5
     <DeathProcessTime>k__BackingField: 1.5
     <SpawnProcessTime>k__BackingField: 0.75
   _throwables:
