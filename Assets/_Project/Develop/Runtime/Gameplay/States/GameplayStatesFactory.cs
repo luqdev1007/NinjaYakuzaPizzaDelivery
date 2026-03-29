@@ -38,7 +38,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<StageProviderService>(),
                 _container.Resolve<ICoroutinesPerformer>(),
                 _container.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>().GetBy(_inputArgs.LevelNumber),
-                _container.Resolve<GameplayPopupService>()
+                _container.Resolve<GameplayPopupService>(),
+                _inputArgs
             );
         }
 

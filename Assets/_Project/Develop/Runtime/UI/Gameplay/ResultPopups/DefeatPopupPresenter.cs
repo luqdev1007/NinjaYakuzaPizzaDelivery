@@ -56,6 +56,9 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
 
         private void OnRestartClicked()
         {
+            // Помечаем, что следующий вход в сцену — это рестарт
+            _inputArgs.IsRestart = true;
+
             _coroutinesPerformer.StartPerform(_sceneSwitcherService.ProcessingSwitchTo(Scenes.Gameplay, _inputArgs));
             OnCloseRequest();
         }

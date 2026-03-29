@@ -11,6 +11,8 @@ namespace Assets._Project.Develop.Runtime.Utilites.SceneManagement
             FinalPointSpawnPosition = levelSpawnPointPosition;
         }
 
+        public bool IsRestart;
+
         public int LevelNumber { get; private set; }
         public Vector3 FinalPointSpawnPosition { get; private set; }
     }

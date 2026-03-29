@@ -10,6 +10,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.UI.Dialog;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Hints;
+using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.States
 {
@@ -23,6 +24,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly ICoroutinesPerformer _coroutines;
         private readonly GameplayPopupService _popupService;
         private readonly LevelConfig _levelConfig;
+        private readonly GameplayInputArgs _inputArgs;
 
         private FreePanBehaviour _panBehaviour;
         private bool _isIntroFinished;
@@ -39,7 +41,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             StageProviderService stageProvider,
             ICoroutinesPerformer coroutines,
             LevelConfig levelConfig,
-            GameplayPopupService popupService)
+            GameplayPopupService popupService,
+            GameplayInputArgs inputArgs)
         {
             _startTrigger = startTrigger;
             _cameraService = cameraService;
@@ -49,6 +52,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _coroutines = coroutines;
             _levelConfig = levelConfig;
             _popupService = popupService;
+            _inputArgs = inputArgs;
             _panBehaviour = new FreePanBehaviour(25f);
         }
 
@@ -56,13 +60,35 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         {
             base.Enter();
             _startTrigger.Reset();
-            _isIntroFinished = false;
-
-            // Если диалога нет, считаем его сразу завершенным
-            _dialogFinished = _levelConfig.PreparationDialog == null;
-
             _stageProvider.PrepareFirstStage();
-            _coroutines.StartPerform(ShowFinishIntro());
+
+            if (_inputArgs != null && _inputArgs.IsRestart)
+            {
+                // Если это рестарт — скипаем всё нафиг
+                SkipIntro();
+            }
+            else
+            {
+                // Первый вход — играем кино
+                _isIntroFinished = false;
+                _dialogFinished = _levelConfig.PreparationDialog == null;
+                _coroutines.StartPerform(ShowFinishIntro());
+            }
+        }
+
+        private void SkipIntro()
+        {
+            _cameraService.SetBehaviour(_panBehaviour);
+
+            // Сразу ставим камеру на финальную точку (или куда нужно)
+            Vector3 targetPos = _finalPoint.FinalPointPosition;
+            targetPos.z = -10f;
+            Camera.main.transform.position = targetPos;
+
+            _dialogFinished = true;
+            _isIntroFinished = true;
+
+            ShowHint();
         }
 
         private IEnumerator ShowFinishIntro()
@@ -70,7 +96,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _cameraService.SetBehaviour(_panBehaviour);
             yield return null;
 
-            // Запускаем диалог через сервис, если он есть в конфиге
             if (_levelConfig.PreparationDialog != null)
             {
                 _activeDialog = _popupService.OpenDialog(_levelConfig.PreparationDialog, () =>
@@ -96,19 +121,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             }
 
             yield return new WaitForSeconds(0.8f);
-
-            // Ждем завершения диалога перед показом подсказки
             yield return new WaitUntil(() => _dialogFinished);
 
+            ShowHint();
+            _isIntroFinished = true;
+        }
+
+        private void ShowHint()
+        {
             string hintMessage = "Press 'F' to Begin\nUse WASD and LShift to free fly camera";
             _hintPopup = _popupService.OpenHint(hintMessage);
-
-            _isIntroFinished = true;
         }
 
         public void Update(float deltaTime)
         {
-            // Теперь апдейтим диалог только если он активен (для пропуска реплик)
             _activeDialog?.Update(deltaTime);
 
             if (!_isIntroFinished)
@@ -132,7 +158,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         public override void Exit()
         {
-            // Безопасная очистка ресурсов при выходе из стейта
             if (_activeDialog != null)
                 _popupService.ClosePopup(_activeDialog);
 
