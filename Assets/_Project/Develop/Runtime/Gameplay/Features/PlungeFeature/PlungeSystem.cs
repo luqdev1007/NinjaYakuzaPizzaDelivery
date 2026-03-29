@@ -22,6 +22,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         private Rigidbody2D _rigidbody;
         private Transform _transform;
 
+        // Параметры "ветра" во время полета
+        private const float FlightCheckWidth = 1.5f;
+        private const float FlightCheckHeight = 1.0f;
+        private const float FlightKnockbackMultiplier = 0.3f; // Насколько слабее расталкивает в полете
+
         public PlungeSystem(IInputService inputService, LayerMask enemyMask)
         {
             _inputService = inputService;
@@ -45,7 +50,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         {
             if (_isPlunging.Value)
             {
-                UpdatePlunge();
+                UpdatePlunge(deltaTime);
                 return;
             }
 
@@ -56,17 +61,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         private void StartPlunge()
         {
             _isPlunging.Value = true;
-            _rigidbody.linearVelocity = new Vector2(
-                _rigidbody.linearVelocity.x,
-                -_plungeSpeed.Value);
+            // Сбрасываем X скорость для более точного падения, либо оставляем небольшую инерцию
+            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x * 0.5f, -_plungeSpeed.Value);
         }
 
-        private void UpdatePlunge()
+        private void UpdatePlunge(float deltaTime)
         {
+            // Поддержание скорости падения
             if (_rigidbody.linearVelocity.y > -_plungeSpeed.Value)
-                _rigidbody.linearVelocity = new Vector2(
-                    _rigidbody.linearVelocity.x,
-                    -_plungeSpeed.Value);
+            {
+                _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, -_plungeSpeed.Value);
+            }
+
+            // Наносим урон и расталкиваем врагов "ветром" в полете
+            ApplyFlightDamage();
 
             if (_isGrounded.Value)
             {
@@ -78,28 +86,49 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
                 StopPlunge();
         }
 
+        private void ApplyFlightDamage()
+        {
+            // Проверяем зону под игроком (имитация потока воздуха)
+            Vector2 checkPos = (Vector2)_transform.position + Vector2.down * 0.5f;
+            Collider2D[] hits = Physics2D.OverlapBoxAll(checkPos, new Vector2(FlightCheckWidth, FlightCheckHeight), 0, _enemyMask);
+
+            foreach (var hit in hits)
+            {
+                PushAndDamage(hit, _plungeAOEDamage.Value * 0.5f, _plungeKnockbackForce.Value * FlightKnockbackMultiplier);
+            }
+        }
+
         private void LandPlunge()
         {
-            Collider2D[] hits = Physics2D.OverlapCircleAll(
-                _transform.position,
-                _plungeAOERadius.Value,
-                _enemyMask);
+            // Финальный взрыв при приземлении
+            Collider2D[] hits = Physics2D.OverlapCircleAll(_transform.position, _plungeAOERadius.Value, _enemyMask);
 
             foreach (Collider2D hit in hits)
             {
-                if (hit == null || !hit.gameObject.activeSelf)
-                    continue;
-
-                Rigidbody2D rb = hit.GetComponent<Rigidbody2D>();
-
-                if (rb != null)
-                {
-                    Vector2 knockbackDir = ((Vector2)hit.transform.position - (Vector2)_transform.position).normalized;
-                    rb.AddForce(knockbackDir * _plungeKnockbackForce.Value, ForceMode2D.Impulse);
-                }
+                PushAndDamage(hit, _plungeAOEDamage.Value, _plungeKnockbackForce.Value);
             }
 
+            // Можно добавить Screen Shake здесь
             StopPlunge();
+        }
+
+        private void PushAndDamage(Collider2D hit, float damage, float force)
+        {
+            if (hit == null || !hit.gameObject.activeSelf) return;
+
+            // Логика расталкивания "ветром"
+            Rigidbody2D rb = hit.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                // Вектор от центра игрока к врагу (горизонтальный акцент)
+                Vector2 direction = ((Vector2)hit.transform.position - (Vector2)_transform.position);
+                direction.y += 0.5f; // Немного подкидываем вверх для эффекта "бабаха"
+
+                rb.AddForce(direction.normalized * force, ForceMode2D.Impulse);
+            }
+
+            // Здесь вызывай метод получения урона у врага
+            // hit.GetComponent<IDamageable>()?.TakeDamage(damage);
         }
 
         private void StopPlunge()

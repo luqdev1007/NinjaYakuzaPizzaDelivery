@@ -11,6 +11,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         [Header("Air Cone")]
         [SerializeField] private ParticleSystem _airConePS;
 
+        [Header("Fire Cones (High Speed)")]
+        [SerializeField] private ParticleSystem[] _fireCones; // Теперь массив
+        [SerializeField] private float _fireSpeedThresholdMultiplier = 1.2f;
+
         [Header("Impact")]
         [SerializeField] private ParticleSystem _impactPS;
 
@@ -24,6 +28,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private IReadOnlyVariable<bool> _isPlunging;
         private IReadOnlyVariable<bool> _isGrounded;
+        private IReadOnlyVariable<float> _basePlungeSpeed;
+
+        private Rigidbody2D _rigidbody;
         private IDisposable _isPlungingDisposable;
         private IDisposable _isGroundedDisposable;
 
@@ -37,6 +44,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         {
             _isPlunging = entity.IsPlunging;
             _isGrounded = entity.IsGrounded;
+            _basePlungeSpeed = entity.PlungeSpeed;
+            _rigidbody = entity.Rigidbody;
 
             _isPlungingDisposable = _isPlunging.Subscribe(OnIsPlungingChanged);
             _isGroundedDisposable = _isGrounded.Subscribe(OnIsGroundedChanged);
@@ -47,9 +56,33 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private void Update()
         {
-            if (_viewContainer == null)
-                return;
+            if (_viewContainer == null) return;
 
+            HandleFireCones();
+            HandleSquashStretch();
+        }
+
+        private void HandleFireCones()
+        {
+            if (_fireCones == null || _fireCones.Length == 0) return;
+
+            // Проверка превышения скорости
+            bool isSuperFast = _plunging &&
+                               Mathf.Abs(_rigidbody.linearVelocity.y) > (_basePlungeSpeed.Value * _fireSpeedThresholdMultiplier);
+
+            foreach (var ps in _fireCones)
+            {
+                if (ps == null) continue;
+
+                if (isSuperFast && !ps.isPlaying)
+                    ps.Play();
+                else if (!isSuperFast && ps.isPlaying)
+                    ps.Stop();
+            }
+        }
+
+        private void HandleSquashStretch()
+        {
             if (_squashing)
             {
                 _squashTimer += Time.deltaTime;
@@ -96,14 +129,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             if (value)
             {
                 _wasPlunging = true;
-
-                if (_airConePS != null)
-                    _airConePS.Play();
+                if (_airConePS != null) _airConePS.Play();
             }
             else
             {
-                if (_airConePS != null)
-                    _airConePS.Stop();
+                if (_airConePS != null) _airConePS.Stop();
+                StopAllFireCones();
             }
         }
 
@@ -111,13 +142,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         {
             if (value && _wasPlunging)
             {
-                if (_impactPS != null)
-                    _impactPS.Play();
+                if (_impactPS != null) _impactPS.Play();
+                StopAllFireCones();
 
                 _squashing = true;
                 _squashTimer = 0f;
-
                 _wasPlunging = false;
+            }
+        }
+
+        private void StopAllFireCones()
+        {
+            if (_fireCones == null) return;
+            foreach (var ps in _fireCones)
+            {
+                if (ps != null) ps.Stop();
             }
         }
 
