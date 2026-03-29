@@ -21,5 +21,6 @@
         public const string LevelProgressView = nameof(LevelProgressView);
 
         public const string DialogDisplayView = nameof(DialogDisplayView);
+        public const string HintView = nameof(HintView);
     }
 }

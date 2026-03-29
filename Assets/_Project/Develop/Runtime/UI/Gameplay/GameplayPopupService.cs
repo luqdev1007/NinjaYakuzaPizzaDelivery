@@ -1,4 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.UI.Gameplay.Hints;
 using Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups;
 using System;
 using UnityEngine;
@@ -23,6 +24,17 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
         protected override Transform PopupLayer => _uiRoot.PopupsLayer;
         protected override Transform VFXOverPopupsLayer => _uiRoot.VFXOverPopupsLayer;
+
+        public HintPresenter OpenHint(string message)
+        {
+            HintView view = ViewsFactory.Create<HintView>(ViewIDs.HintView, PopupLayer);
+
+            HintPresenter popup = _gameplayPresentersFactory.CreateHintPresenter(view, message);
+
+            OnPopupCreated(popup, view);
+
+            return popup;
+        }
 
         public WinPopupPresenter OpenWinPopup()
         {

@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
+using Assets._Project.Develop.Runtime.UI.Gameplay.Hints;
 using Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
@@ -20,6 +21,11 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         {
             _container = container;
             _inputArgs = inputArgs;
+        }
+
+        public HintPresenter CreateHintPresenter(HintView view, string message)
+        {
+            return new HintPresenter(view, _container.Resolve<ICoroutinesPerformer>(), message);
         }
 
         public LevelProgressPresenter CreateLevelProgressPresenter(BarWithText view)

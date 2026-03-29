@@ -29,6 +29,8 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             {ViewIDs.LevelProgressView, "UI/Gameplay/LevelProgress/LevelProgressView" },
 
             {ViewIDs.DialogDisplayView, "UI/Dialog/DialogDisplayView" },
+
+            {ViewIDs.HintView, "UI/Hint/HintView" },
         };
 
         public ViewsFactory(ResourcesAssetsLoader resourcesAssetsLoader)
@@ -54,6 +56,11 @@ namespace Assets._Project.Develop.Runtime.UI.Core
         public void Release<TView>(TView view) where TView : MonoBehaviour, IView
         {
             Object.Destroy(view.gameObject);
+        }
+
+        internal T Create<T>(object hintView, Transform popupLayer)
+        {
+            throw new NotImplementedException();
         }
     }
 }
