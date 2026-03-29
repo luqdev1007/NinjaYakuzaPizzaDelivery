@@ -119,6 +119,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddAttackDelayTime(new ReactiveVariable<float>(config.Attack.DelayTime))
                 .AddAttackDelayEndEvent()
                 .AddInstantAttackDamage(new ReactiveVariable<float>(config.Attack.InstantDamage))
+                .AddAttackDamage(new ReactiveVariable<float>(config.Attack.InstantDamage))
                 .AddAttackCanceledEvent()
                 .AddAttackCooldownInitialTime(new ReactiveVariable<float>(config.Attack.Cooldown))
                 .AddAttackCooldownCurrentTime()
@@ -368,7 +369,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem())
                 .AddSystem(new AttackInvulnerabilitySystem())
-                .AddSystem(new MeleeAttackHitSystem(config.Attack.EnemyMask, config.Attack.HitBounceForce))
+                .AddSystem(new MeleeAttackHitSystem(config.Attack.EnemyMask, config.Attack.HitBounceForce, _container.Resolve<ICoroutinesPerformer>()))
 
                 // — урон / жизненный цикл —
                 .AddSystem(new ApplyDamageSystem())
