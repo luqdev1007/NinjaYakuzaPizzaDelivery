@@ -18,7 +18,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
         private Buffer<Entity> _nextStageTriggerContacts;
 
         public FinalPointTriggerService(
-            EntitiesFactory entitiesFactory, 
+            EntitiesFactory entitiesFactory,
             EntitiesLifeContext entitiesLifeContext)
         {
             _entitiesFactory = entitiesFactory;
@@ -60,8 +60,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
 
         public void Cleanup()
         {
+            if (_nextStageTrigger == null)
+                return;
+
+            Transform view = _nextStageTrigger.Transform.Find("View");
+
+            if (view != null)
+                view.SetParent(null);
 
             _entitiesLifeContext.Release(_nextStageTrigger);
+
             _hasMainHeroContact.Value = false;
             _nextStageTrigger = null;
             _nextStageTriggerContacts = null;
