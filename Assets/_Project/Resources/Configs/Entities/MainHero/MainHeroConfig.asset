@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MainHeroConfig
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/MainHero/MainHero
-  <MinFallVelocityForAction>k__BackingField: -2
+  <MinFallVelocityForAction>k__BackingField: -2.5
   <GroundMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 2304
@@ -29,8 +29,8 @@ MonoBehaviour:
     <MaxJumps>k__BackingField: 1
   _dash:
     <Duration>k__BackingField: 0.2
-    <ForceMin>k__BackingField: 16
-    <ForceMax>k__BackingField: 24
+    <ForceMin>k__BackingField: 24
+    <ForceMax>k__BackingField: 32
     <ChargeTime>k__BackingField: 0.25
     <Cooldown>k__BackingField: 0.5
     <AirMultiplier>k__BackingField: 2
@@ -39,12 +39,12 @@ MonoBehaviour:
     <HitboxSize>k__BackingField: {x: 0.7, y: 1.5}
   _glide:
     <HorizontalDrag>k__BackingField: 3
-    <MaxFallSpeed>k__BackingField: -2
-    <SpeedDamping>k__BackingField: 5
+    <MaxFallSpeed>k__BackingField: -4
+    <SpeedDamping>k__BackingField: 8
     <BounceForce>k__BackingField: 6
     <MinFallVelocity>k__BackingField: -3
-    <SnapSpeed>k__BackingField: 40
-    <SnapDuration>k__BackingField: 0.15
+    <SnapSpeed>k__BackingField: 50
+    <SnapDuration>k__BackingField: 0.1
   _wallHang:
     <Layer>k__BackingField:
       serializedVersion: 2
@@ -53,20 +53,20 @@ MonoBehaviour:
     <JumpForce>k__BackingField: {x: 8, y: 12}
   _slide:
     <Duration>k__BackingField: 0.25
-    <Speed>k__BackingField: 24
+    <Speed>k__BackingField: 32
   _plunge:
     <Speed>k__BackingField: 25
     <AOERadius>k__BackingField: 5
     <AOEDamage>k__BackingField: 25
     <KnockbackForce>k__BackingField: 4
   _slope:
-    <BoostMultiplier>k__BackingField: 2
-    <JumpForce>k__BackingField: {x: 12, y: 24}
+    <BoostMultiplier>k__BackingField: 4
+    <JumpForce>k__BackingField: {x: 16, y: 32}
     <Mask>k__BackingField:
       serializedVersion: 2
       m_Bits: 2048
   _attack:
-    <ProcessTime>k__BackingField: 0.15
+    <ProcessTime>k__BackingField: 0.2
     <DelayTime>k__BackingField: 0.1
     <Cooldown>k__BackingField: 0.05
     <InstantDamage>k__BackingField: 2
@@ -79,7 +79,7 @@ MonoBehaviour:
   _lifeCycle:
     <MaxHealth>k__BackingField: 5
     <DeathProcessTime>k__BackingField: 1.5
-    <SpawnProcessTime>k__BackingField: 0.75
+    <SpawnProcessTime>k__BackingField: 0.65
   _throwables:
     <GrappleConfig>k__BackingField: {fileID: 11400000, guid: 6443bd3d003d36342a2d702adbc37789, type: 2}
     <ShurikenConfig>k__BackingField: {fileID: 11400000, guid: b348a5f78cee93b4cbdd19f8eead08a4, type: 2}

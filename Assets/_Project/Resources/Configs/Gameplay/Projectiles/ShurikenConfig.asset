@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/Projectiles/Shuriken
   <ProjectileSpeed>k__BackingField: 33
-  <MaxDistance>k__BackingField: 10
+  <MaxDistance>k__BackingField: 15
   <MinDistance>k__BackingField: 1
   <MaxCharges>k__BackingField: 125
   <HitMask>k__BackingField:
