@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using UnityEngine;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 {
@@ -13,6 +14,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
     {
         private readonly IInputService _inputService;
         private readonly LayerMask _enemyMask;
+        private readonly AudioService _audioService;
 
         private ICompositeCondition _canPlunge;
         private ReactiveVariable<bool> _isPlunging;
@@ -24,15 +26,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         private Rigidbody2D _rigidbody;
         private Transform _transform;
 
-        // Параметры "ветра" во время полета
+        private string _activeLoopId;
+
         private const float FlightCheckWidth = 1.5f;
         private const float FlightCheckHeight = 1.0f;
-        private const float FlightKnockbackMultiplier = 0.3f; // Насколько слабее расталкивает в полете
+        private const float FlightKnockbackMultiplier = 0.3f;
 
-        public PlungeSystem(IInputService inputService, LayerMask enemyMask)
+        public PlungeSystem(IInputService inputService, LayerMask enemyMask, AudioService audioService)
         {
             _inputService = inputService;
             _enemyMask = enemyMask;
+            _audioService = audioService;
         }
 
         public void OnInit(Entity entity)
@@ -50,6 +54,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         public void OnUpdate(float deltaTime)
         {
+            // Гвардия: Если мы не в состоянии пикирования, но звук зациклен — принудительно выключаем.
+            // Это лечит баги, когда ввод прерывается или состояние сбрасывается извне.
+            if (!_isPlunging.Value && !string.IsNullOrEmpty(_activeLoopId))
+            {
+                ClearPlungeLoop();
+            }
+
             if (_isPlunging.Value)
             {
                 UpdatePlunge(deltaTime);
@@ -63,19 +74,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         private void StartPlunge()
         {
             _isPlunging.Value = true;
-            // Сбрасываем X скорость для более точного падения, либо оставляем небольшую инерцию
             _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x * 0.5f, -_plungeSpeed.Value);
+
+            // На всякий случай чистим старый ID перед запуском нового
+            ClearPlungeLoop();
+            _activeLoopId = _audioService.PlaySfxVariationLoop("AbilityImpactPlungeLoop", 1, 3);
         }
 
         private void UpdatePlunge(float deltaTime)
         {
-            // Поддержание скорости падения
             if (_rigidbody.linearVelocity.y > -_plungeSpeed.Value)
             {
                 _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, -_plungeSpeed.Value);
             }
 
-            // Наносим урон и расталкиваем врагов "ветром" в полете
             ApplyFlightDamage();
 
             if (_isGrounded.Value)
@@ -90,7 +102,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private void ApplyFlightDamage()
         {
-            // Проверяем зону под игроком (имитация потока воздуха)
             Vector2 checkPos = (Vector2)_transform.position + Vector2.down * 0.5f;
             Collider2D[] hits = Physics2D.OverlapBoxAll(checkPos, new Vector2(FlightCheckWidth, FlightCheckHeight), 0, _enemyMask);
 
@@ -102,7 +113,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private void LandPlunge()
         {
-            // Финальный взрыв при приземлении
+            // Разовый звук удара с высоким питчем (как в твоем конфиге)
+            _audioService.PlaySfxVariation("AbilityImpactPlunge", 1, 3, 1.5f);
+
             Collider2D[] hits = Physics2D.OverlapCircleAll(_transform.position, _plungeAOERadius.Value, _enemyMask);
 
             foreach (Collider2D hit in hits)
@@ -110,13 +123,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
                 PushAndDamage(hit, _plungeAOEDamage.Value, _plungeKnockbackForce.Value);
             }
 
-            // Можно добавить Screen Shake здесь
             StopPlunge();
         }
 
         private void PushAndDamage(Collider2D hit, float damage, float force)
         {
-            if (hit == null || !hit.gameObject.activeSelf) 
+            if (hit == null || !hit.gameObject.activeSelf)
                 return;
 
             Rigidbody2D rb = hit.GetComponent<Rigidbody2D>();
@@ -149,6 +161,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         private void StopPlunge()
         {
             _isPlunging.Value = false;
+            ClearPlungeLoop();
+        }
+
+        private void ClearPlungeLoop()
+        {
+            if (!string.IsNullOrEmpty(_activeLoopId))
+            {
+                _audioService.StopLoopingSfx(_activeLoopId);
+                _activeLoopId = null;
+            }
         }
     }
 }

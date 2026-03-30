@@ -346,7 +346,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new GlideSystem(inputService))
                 .AddSystem(new WallHangSystem(inputService))
                 .AddSystem(new SlideSystem(inputService, coroutinesPerformer, slopeSystem))
-                .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask))
+                .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask, _container.Resolve<AudioService>()))
                 .AddSystem(slopeSystem)
 
 

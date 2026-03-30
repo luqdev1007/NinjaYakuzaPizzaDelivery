@@ -173,6 +173,32 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
             _mixer.SetFloat(parameterName, targetDb);
         }
 
+        // Добавьте этот метод в AudioService.cs
+        public string PlaySfxVariationLoop(string prefix, int minIndex, int maxIndex, float volumeMultiplier = 1f)
+        {
+            int randomIndex = UnityEngine.Random.Range(minIndex, maxIndex + 1);
+            string fullId = $"{prefix}{randomIndex}";
+            var data = _config.GetById(fullId);
+
+            if (data == null) return null;
+
+            // Проверяем, не запущен ли уже этот конкретный цикл
+            if (_activeLoops.ContainsKey(fullId)) return fullId;
+
+            AudioSource source = _manager.PlaySfxReturnSource(data.Clip, data.Volume * volumeMultiplier, data.BasePitch);
+            if (source != null)
+            {
+                source.loop = true;
+                _activeLoops[fullId] = source;
+                return fullId; // Возвращаем ID, чтобы потом вызвать StopLoopingSfx
+            }
+
+            return null;
+        }
+
+        // Переименуем старый метод для консистентности, либо просто добавим обертку:
+        public void StopSfx(string loopId) => StopLoopingSfx(loopId);
+
         // Измени SetMusicMuted, чтобы он мог быть мгновенным или плавным
         public void SetMusicMuted(bool isMuted, float duration = 0f, ICoroutinesPerformer performer = null)
         {

@@ -12,8 +12,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         [SerializeField] private ParticleSystem _airConePS;
 
         [Header("Fire Cones (High Speed)")]
-        [SerializeField] private ParticleSystem[] _fireCones; // Теперь массив
+        [SerializeField] private ParticleSystem[] _fireCones;
         [SerializeField] private float _fireSpeedThresholdMultiplier = 1.2f;
+        [SerializeField] private float _minFireEmission = 5f; // Сколько частиц в начале разгорания
+        [SerializeField] private float _maxFireEmission = 40f; // Максимум при полном разгоне
 
         [Header("Impact")]
         [SerializeField] private ParticleSystem _impactPS;
@@ -58,6 +60,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         {
             if (_viewContainer == null) return;
 
+            if (!_plunging)
+            {
+                StopAllFlightEffects();
+            }
+
             HandleFireCones();
             HandleSquashStretch();
         }
@@ -66,19 +73,39 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         {
             if (_fireCones == null || _fireCones.Length == 0) return;
 
-            // Проверка превышения скорости
-            bool isSuperFast = _plunging &&
-                               Mathf.Abs(_rigidbody.linearVelocity.y) > (_basePlungeSpeed.Value * _fireSpeedThresholdMultiplier);
+            float currentYVelo = Mathf.Abs(_rigidbody.linearVelocity.y);
+            float threshold = _basePlungeSpeed.Value * _fireSpeedThresholdMultiplier;
+
+            // Начинаем "разгораться" уже с 80% от пороговой скорости
+            float startFadingAt = threshold * 0.8f;
+
+            bool shouldShowFire = _plunging && currentYVelo > startFadingAt;
 
             foreach (var ps in _fireCones)
             {
                 if (ps == null) continue;
 
-                if (isSuperFast && !ps.isPlaying)
-                    ps.Play();
-                else if (!isSuperFast && ps.isPlaying)
+                if (shouldShowFire)
+                {
+                    if (!ps.isPlaying) ps.Play();
+
+                    // Рассчитываем интенсивность (0.0 до 1.0)
+                    float intensity = Mathf.InverseLerp(startFadingAt, threshold, currentYVelo);
+                    UpdateEmission(ps, intensity);
+                }
+                else if (ps.isPlaying)
+                {
                     ps.Stop();
+                }
             }
+        }
+
+        private void UpdateEmission(ParticleSystem ps, float intensity)
+        {
+            var emission = ps.emission;
+            // Линейно интерполируем количество частиц между мин и макс
+            float currentRate = Mathf.Lerp(_minFireEmission, _maxFireEmission, intensity);
+            emission.rateOverTime = currentRate;
         }
 
         private void HandleSquashStretch()
@@ -133,8 +160,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             }
             else
             {
-                if (_airConePS != null) _airConePS.Stop();
-                StopAllFireCones();
+                _wasPlunging = false;
+                StopAllFlightEffects();
             }
         }
 
@@ -143,7 +170,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             if (value && _wasPlunging)
             {
                 if (_impactPS != null) _impactPS.Play();
-                StopAllFireCones();
+                StopAllFlightEffects();
 
                 _squashing = true;
                 _squashTimer = 0f;
@@ -151,12 +178,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             }
         }
 
+        private void StopAllFlightEffects()
+        {
+            if (_airConePS != null && _airConePS.isPlaying) _airConePS.Stop();
+            StopAllFireCones();
+        }
+
         private void StopAllFireCones()
         {
             if (_fireCones == null) return;
             foreach (var ps in _fireCones)
             {
-                if (ps != null) ps.Stop();
+                if (ps != null && ps.isPlaying) ps.Stop();
             }
         }
 

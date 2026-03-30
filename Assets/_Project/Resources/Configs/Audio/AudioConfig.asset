@@ -157,7 +157,7 @@ MonoBehaviour:
       BasePitch: 1.5
     - Id: AbilityImpactSlideLoop1
       Clip: {fileID: 8300000, guid: 1b86363fc63c42a4abf7c73fae9c29d0, type: 3}
-      Volume: 1
+      Volume: 0.99298215
       BasePitch: 1.5
     - Id: AbilityImpactSlideLoop2
       Clip: {fileID: 8300000, guid: e5753fddbd54fde4281e92272ff3a4fe, type: 3}
