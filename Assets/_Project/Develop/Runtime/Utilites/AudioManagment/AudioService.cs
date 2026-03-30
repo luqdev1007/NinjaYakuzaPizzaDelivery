@@ -213,5 +213,18 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
                 _mixer.SetFloat("MusicVolume", targetVolume);
             }
         }
+
+        public void SetPitch(string loopId, float targetPitch)
+        {
+            // Проверяем, есть ли такой запущенный цикл в словаре
+            if (_activeLoops.TryGetValue(loopId, out AudioSource source))
+            {
+                // Если источник всё еще проигрывается, меняем питч
+                if (source != null && source.isPlaying)
+                {
+                    source.pitch = targetPitch;
+                }
+            }
+        }
     }
 }
