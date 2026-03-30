@@ -100,6 +100,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 
             while (_isOnSlope.Value && elapsed < SlopeSlideMaxDuration)
             {
+                // ... (твой текущий код расчета сил AddForce) ...
                 Vector2 slopeNormal = _slopeSystem.SlopeNormal;
                 Vector2 downhill = new Vector2(slopeNormal.y, -slopeNormal.x);
                 if (downhill.y > 0f) downhill = -downhill;
@@ -107,6 +108,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
                 float speed = _slideSpeed.Value + (_slopeAccumSpeed.Value * SlopeSlideSpeedBonus);
                 _rigidbody.AddForce(downhill * speed, ForceMode2D.Force);
                 _rigidbody.AddForce(-slopeNormal * 10f, ForceMode2D.Force);
+
+                // --- РАЗВОРОТ ПЕРСОНАЖА ПО ВЕКТОРУ ДВИЖЕНИЯ ---
+                // Проверяем горизонтальную скорость. Если катимся вправо — смотрим вправо, влево — влево.
+                if (Mathf.Abs(_rigidbody.linearVelocity.x) > 0.2f)
+                {
+                    float direction = _rigidbody.linearVelocity.x > 0 ? 1f : -1f;
+                    Vector3 scale = _transform.localScale;
+                    // Учитываем абсолютное значение, чтобы не "сплющить" спрайт, если исходный scale не 1
+                    scale.x = direction * Mathf.Abs(scale.x);
+                    _transform.localScale = scale;
+                }
 
                 elapsed += Time.deltaTime;
                 yield return null;
