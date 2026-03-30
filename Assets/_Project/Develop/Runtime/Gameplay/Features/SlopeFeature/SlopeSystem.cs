@@ -10,7 +10,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
     {
         private const float MinSlopeAngle = 15f;
         private const float MaxSlopeAngle = 75f;
-
         private const float DownhillAccelForce = 8f;
         private const float MaxAccumSpeed = 12f;
         private const float AccumGainRate = 4f;
@@ -24,6 +23,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
         private EntityCollisionProxy _collisionProxy;
 
         private ReactiveVariable<bool> _isOnSlope;
+        private ReactiveVariable<bool> _isSliding; // Добавили зависимость
         private ReactiveVariable<float> _slopeAccumSpeed;
         private ReactiveVariable<float> _slopeBoostMultiplier;
         private LayerMask _slopeMask;
@@ -37,6 +37,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
             _entity = entity;
             _rigidbody = entity.Rigidbody;
             _isOnSlope = entity.IsOnSlope;
+            _isSliding = entity.IsSliding;
             _slopeAccumSpeed = entity.SlopeAccumSpeed;
             _slopeBoostMultiplier = entity.SlopeBoostMultiplier;
             _slopeMask = entity.SlopeMask;
@@ -51,27 +52,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
             if (!_contactThisFrame)
             {
                 _slideOffTimer += deltaTime;
-
-                if (_isOnSlope.Value && _slopeAccumSpeed.Value > 6f)
-                {
-                    HandleAutoEject();
-                }
-
-                if (_slideOffTimer >= SlideOffDelay && _isOnSlope.Value)
-                {
-                    ResetSlopeState();
-                }
+                if (_isOnSlope.Value && _slopeAccumSpeed.Value > 6f) HandleAutoEject();
+                if (_slideOffTimer >= SlideOffDelay && _isOnSlope.Value) ResetSlopeState();
             }
-            else
-            {
-                _slideOffTimer = 0f;
-            }
+            else _slideOffTimer = 0f;
 
             if (!_isOnSlope.Value && _slopeAccumSpeed.Value > 0f)
             {
-                _slopeAccumSpeed.Value = Mathf.MoveTowards(
-                    _slopeAccumSpeed.Value, 0f, AccumDecayRate * deltaTime);
+                _slopeAccumSpeed.Value = Mathf.MoveTowards(_slopeAccumSpeed.Value, 0f, AccumDecayRate * deltaTime);
             }
+
+            // ПОВОРОТ ТОЛЬКО В СЛАЙДЕ
+            UpdateViewRotation(deltaTime);
 
             _contactThisFrame = false;
         }
@@ -82,10 +74,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
 
             ContactPoint2D contact = collision.GetContact(0);
             float angle = Vector2.Angle(contact.normal, Vector2.up);
-
             if (angle < MinSlopeAngle || angle > MaxSlopeAngle) return;
 
-            // --- ЛОГИКА КОНВЕРТАЦИИ ПАДЕНИЯ В СКОРОСТЬ ---
             if (!_isOnSlope.Value && _rigidbody.linearVelocity.y < -3f)
             {
                 float impactEnergy = Mathf.Abs(_rigidbody.linearVelocity.y);
@@ -96,29 +86,32 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
             _isOnSlope.Value = true;
             _slopeNormal = contact.normal;
 
-            Vector2 downhill = GetDownhill(contact.normal);
-            float velX = _rigidbody.linearVelocity.x;
-
-            bool movingDownhill = Mathf.Sign(velX) == Mathf.Sign(downhill.x) && Mathf.Abs(velX) > 0.5f;
-            bool movingUphill = Mathf.Sign(velX) != Mathf.Sign(downhill.x) && Mathf.Abs(velX) > 0.5f;
-
-            if (movingDownhill)
+            // ФИЗИКА СКЛОНА РАБОТАЕТ ТОЛЬКО ЕСЛИ МЫ В СЛАЙДЕ
+            if (_isSliding.Value)
             {
-                float boost = DownhillAccelForce * _slopeBoostMultiplier.Value;
-                _rigidbody.AddForce(downhill * boost, ForceMode2D.Force);
-                _rigidbody.AddForce(-contact.normal * MagnetForce, ForceMode2D.Force);
+                Vector2 downhill = GetDownhill(contact.normal);
+                float velX = _rigidbody.linearVelocity.x;
 
-                _slopeAccumSpeed.Value = Mathf.Min(
-                    _slopeAccumSpeed.Value + AccumGainRate * Time.fixedDeltaTime,
-                    MaxAccumSpeed);
-            }
-            else if (movingUphill)
-            {
-                _rigidbody.AddForce(downhill * UphillSlideForce, ForceMode2D.Force);
-                _slopeAccumSpeed.Value = Mathf.MoveTowards(_slopeAccumSpeed.Value, 0f, AccumDecayRate * Time.fixedDeltaTime);
-            }
+                bool movingDownhill = Mathf.Sign(velX) == Mathf.Sign(downhill.x) && Mathf.Abs(velX) > 0.5f;
 
-            UpdateViewRotation(contact.normal);
+                if (movingDownhill)
+                {
+                    float boost = DownhillAccelForce * _slopeBoostMultiplier.Value;
+                    _rigidbody.AddForce(downhill * boost, ForceMode2D.Force);
+                    _rigidbody.AddForce(-contact.normal * MagnetForce, ForceMode2D.Force);
+                    _slopeAccumSpeed.Value = Mathf.Min(_slopeAccumSpeed.Value + AccumGainRate * Time.fixedDeltaTime, MaxAccumSpeed);
+                }
+            }
+        }
+
+        private void UpdateViewRotation(float deltaTime)
+        {
+            Transform view = _entity.Transform.Find("ViewContainer");
+            if (view == null) return;
+
+            // Если мы скользим — наклоняемся по нормали, если нет — выравниваемся в 0
+            float targetZ = _isSliding.Value ? Vector2.SignedAngle(Vector2.up, _slopeNormal) : 0f;
+            view.rotation = Quaternion.Lerp(view.rotation, Quaternion.Euler(0f, 0f, targetZ), 0.15f);
         }
 
         private void HandleAutoEject()
@@ -126,7 +119,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
             Vector2 downhill = GetDownhill(_slopeNormal);
             Vector2 ejectDir = (downhill + Vector2.up * 0.5f).normalized;
             _rigidbody.AddForce(ejectDir * (_slopeAccumSpeed.Value * 0.8f), ForceMode2D.Impulse);
-
             ResetSlopeState();
             _slopeAccumSpeed.Value = 0f;
         }
@@ -144,19 +136,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
             return downhill;
         }
 
-        private void UpdateViewRotation(Vector2 normal)
-        {
-            Transform view = _entity.Transform.Find("ViewContainer");
-            if (view == null) return;
-            float targetAngle = Vector2.SignedAngle(Vector2.up, normal);
-            view.rotation = Quaternion.Lerp(view.rotation, Quaternion.Euler(0f, 0f, targetAngle), 0.15f);
-        }
-
         public Vector2 SlopeNormal => _slopeNormal;
-
-        public void OnDispose()
-        {
-            if (_collisionProxy != null) _collisionProxy.OnCollisionStayEvent -= OnCollisionStay;
-        }
+        public void OnDispose() { if (_collisionProxy != null) _collisionProxy.OnCollisionStayEvent -= OnCollisionStay; }
     }
 }

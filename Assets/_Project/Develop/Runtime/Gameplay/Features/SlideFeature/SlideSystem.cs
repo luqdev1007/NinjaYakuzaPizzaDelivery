@@ -64,18 +64,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         {
             if (_isSliding.Value) return;
 
-            // 1. Активация по кнопке
+            // 1. АКТИВАЦИЯ (Обычная или удержание при падении)
+            // Если зажат Ctrl И мы на склоне ИЛИ мы на земле
             if (_inputService.IsSlideKeyPressed && _canSlide.Evaluate())
             {
-                if (_isOnSlope.Value) _coroutinesPerformer.StartPerform(SlopeSlideCoroutine());
-                else if (_isGrounded.Value) _coroutinesPerformer.StartPerform(SlideCoroutine());
-                return;
-            }
-
-            // 2. АВТО-ПОДКАТ ПРИ ПРИЗЕМЛЕНИИ НА СКЛОН
-            if (_isOnSlope.Value && _slopeAccumSpeed.Value > 7f && _canSlide.Evaluate())
-            {
-                _coroutinesPerformer.StartPerform(SlopeSlideCoroutine());
+                if (_isOnSlope.Value)
+                {
+                    _coroutinesPerformer.StartPerform(SlopeSlideCoroutine());
+                }
+                else if (_isGrounded.Value)
+                {
+                    _coroutinesPerformer.StartPerform(SlideCoroutine());
+                }
             }
         }
 
@@ -92,12 +92,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
                 float t = elapsed / duration;
                 float currentSpeed = Mathf.Lerp(_slideSpeed.Value, 0f, t * t);
                 _rigidbody.linearVelocity = new Vector2(direction * currentSpeed, _rigidbody.linearVelocity.y);
+
+                // Если в процессе обычного слайда заехали на склон — переключаемся на SlopeCoroutine
+                if (_isOnSlope.Value) break;
+
                 elapsed += Time.deltaTime;
                 yield return null;
             }
 
-            SetSlideCollider(false);
-            _isSliding.Value = false;
+            // Если вышли из цикла по break (нашли склон)
+            if (_isOnSlope.Value) yield return SlopeSlideCoroutine();
+            else
+            {
+                SetSlideCollider(false);
+                _isSliding.Value = false;
+            }
         }
 
         private IEnumerator SlopeSlideCoroutine()
@@ -109,14 +118,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
             while (_isOnSlope.Value && elapsed < SlopeSlideMaxDuration)
             {
                 Vector2 slopeNormal = _slopeSystem.SlopeNormal;
-                Vector2 downhill = new Vector2(slopeNormal.y, -slopeNormal.x);
-                if (downhill.y > 0f) downhill = -downhill;
+                Vector2 downhill = GetDownhill(slopeNormal);
 
                 float speed = _slideSpeed.Value + (_slopeAccumSpeed.Value * SlopeSlideSpeedBonus);
                 _rigidbody.AddForce(downhill * speed, ForceMode2D.Force);
                 _rigidbody.AddForce(-slopeNormal * 10f, ForceMode2D.Force);
 
-                // --- ПРИНУДИТЕЛЬНЫЙ РАЗВОРОТ ПО ДВИЖЕНИЮ ---
+                // Поворот спрайта по скорости только в подкате
                 if (Mathf.Abs(_rigidbody.linearVelocity.x) > 0.2f)
                 {
                     float direction = _rigidbody.linearVelocity.x > 0 ? 1f : -1f;
@@ -140,6 +148,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
                 capsule.size = sliding ? _slideColliderSize : _defaultColliderSize;
                 capsule.offset = sliding ? _slideColliderOffset : _defaultColliderOffset;
             }
+        }
+
+        private Vector2 GetDownhill(Vector2 normal)
+        {
+            Vector2 downhill = new Vector2(normal.y, -normal.x);
+            if (downhill.y > 0f) downhill = -downhill;
+            return downhill;
         }
     }
 }

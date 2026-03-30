@@ -195,7 +195,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsSliding.Value == false))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-                .Add(new FuncCondition(() => entity.IsOnSlope.Value == false))
+                // .Add(new FuncCondition(() => entity.IsOnSlope.Value == false))
                  ;
 
             // — прыжок —
