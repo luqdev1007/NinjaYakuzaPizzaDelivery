@@ -4,6 +4,11 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
 {
+    public class SlopeAccumSpeed : IEntityComponent
+    {
+        public ReactiveVariable<float> Value = new(0f);
+    }
+
     public class IsOnSlope : IEntityComponent
     {
         public ReactiveVariable<bool> Value = new();

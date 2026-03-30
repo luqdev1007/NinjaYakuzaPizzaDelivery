@@ -5,7 +5,6 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
-using Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.HangWall;
@@ -25,7 +24,6 @@ using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using System;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
@@ -162,6 +160,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddIsOnSlope()
                 .AddSlopeBoostMultiplier(new ReactiveVariable<float>(config.Slope.BoostMultiplier))
                 .AddSlopeJumpForce(new ReactiveVariable<Vector2>(config.Slope.JumpForce))
+                .AddSlopeAccumSpeed(new ReactiveVariable<float>(0f))
                 .AddSlopeMask(config.Slope.Mask)
 
                 // — жизненный цикл —
@@ -189,7 +188,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsSliding.Value == false))
                 .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
-                .Add(new FuncCondition(() => entity.IsOnSlope.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
             ICompositeCondition canFlip = new CompositeCondition()
@@ -203,7 +201,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             // — прыжок —
             ICompositeCondition canJump = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.IsOnSlope.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
@@ -331,6 +328,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             ThrowableBehaviourFactory throwableBehaviourFactory = new ThrowableBehaviourFactory(coroutinesPerformer);
 
+            SlopeSystem slopeSystem = new SlopeSystem();
+
             entity
                 // — инициализация —
                 .AddSystem(new SpawnProcessTimerSystem())
@@ -342,13 +341,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // — движение —
                 .AddSystem(new RigidbodyMovementSystem(inputService))
-                .AddSystem(new JumpSystem(inputService))
+                .AddSystem(new JumpSystem(inputService, slopeSystem))
                 .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.Attack.EnemyMask))
                 .AddSystem(new GlideSystem(inputService))
                 .AddSystem(new WallHangSystem(inputService))
-                .AddSystem(new SlideSystem(inputService, coroutinesPerformer))
+                .AddSystem(new SlideSystem(inputService, coroutinesPerformer, slopeSystem))
                 .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask))
-                .AddSystem(new SlopeSystem())
+                .AddSystem(slopeSystem)
 
 
                 // — броски —
@@ -371,9 +370,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem())
                 .AddSystem(new AttackInvulnerabilitySystem())
-                .AddSystem(new MeleeAttackHitSystem(config.Attack.EnemyMask, config.Attack.HitBounceForce, 
-                _container.Resolve<ICoroutinesPerformer>(),
-                _container.Resolve<AudioService>()))
+                .AddSystem(new MeleeAttackHitSystem(config.Attack.EnemyMask, 
+                                                    config.Attack.HitBounceForce, 
+                                                    _container.Resolve<ICoroutinesPerformer>(),
+                                                    _container.Resolve<AudioService>()))
 
                 // — урон / жизненный цикл —
                 .AddSystem(new ApplyDamageSystem("MainHero", _container.Resolve<AudioService>()))

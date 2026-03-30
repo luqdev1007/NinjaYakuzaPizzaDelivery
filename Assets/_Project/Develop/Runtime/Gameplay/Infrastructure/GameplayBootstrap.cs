@@ -62,7 +62,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             if (_inputArgs.IsRestart == false)
             {
                 _audioService.StartPlaylist("Gameplay");
-                _audioService.SetMusicMuted(false);
             }
 
             _gameplayStatesContext.Run();

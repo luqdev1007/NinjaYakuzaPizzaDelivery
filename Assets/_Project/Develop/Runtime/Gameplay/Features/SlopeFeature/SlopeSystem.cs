@@ -1,82 +1,164 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
+using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
 {
-    public class SlopeSystem : IInitializableSystem, IDisposableSystem
+    /// <summary>
+    /// Отвечает за физику на склонах:
+    ///   • Определяет IsOnSlope и SlopeNormal через OnCollisionStay2D
+    ///   • Скатывает игрока при беге вверх (против нормали)
+    ///   • Накапливает SlopeAccumSpeed при спуске вниз
+    ///   • Сбрасывает SlopeAccumSpeed при уходе со склона
+    ///
+    /// Slope-прыжок и slope-slide реализованы в JumpSystem / SlideSystem
+    /// через флаги IsOnSlope + SlopeAccumSpeed.
+    /// </summary>
+    public class SlopeSystem : IInitializableSystem, IUpdatableSystem, IDisposableSystem
     {
+        // ── Настройки ──────────────────────────────────────────────────────
+        private const float MinSlopeAngle = 15f;   // минимальный угол для активации склона
+        private const float MaxSlopeAngle = 75f;   // максимальный угол (выше = стена)
+        private const float UphillSlideForce = 18f;   // сила выталкивания назад при беге вверх
+        private const float DownhillAccelForce = 12f;   // сила ускорения при спуске
+        private const float MagnetForce = 20f;   // прижим к поверхности
+        private const float MaxAccumSpeed = 20f;   // потолок накопленной скорости
+        private const float AccumDecayRate = 8f;    // скорость затухания накопленной скорости вне склона
+        private const float AccumGainRate = 6f;    // скорость набора накопленной скорости на спуске
+        private const float SlideOffDelay = 0.1f;  // задержка перед сбросом IsOnSlope (coyote)
+
+        // ── Зависимости ────────────────────────────────────────────────────
         private Entity _entity;
         private Rigidbody2D _rigidbody;
-        private LayerMask _slopeMask;
         private EntityCollisionProxy _collisionProxy;
 
-        private const float MinEntrySpeed = 8f;     // Минимальная скорость для активации буста
-        private const float SlopeBoostPower = 1.4f; // Множитель скорости при входе на склон
-        private const float MagnetForce = 15f;      // Сила прижима к склону (чтобы не подлетал на кочках)
+        // ── Компоненты Entity ───────────────────────────────────────────────
+        private ReactiveVariable<bool> _isOnSlope;
+        private ReactiveVariable<float> _slopeAccumSpeed;
+        private ReactiveVariable<float> _slopeBoostMultiplier;
+        private LayerMask _slopeMask;
 
+        // ── Внутреннее состояние ────────────────────────────────────────────
+        private Vector2 _slopeNormal = Vector2.up;
+        private bool _contactThisFrame = false;
+        private float _slideOffTimer = 0f;
+
+        // ── IInitializableSystem ────────────────────────────────────────────
         public void OnInit(Entity entity)
         {
             _entity = entity;
             _rigidbody = entity.Rigidbody;
+            _isOnSlope = entity.IsOnSlope;
+            _slopeAccumSpeed = entity.SlopeAccumSpeed;
+            _slopeBoostMultiplier = entity.SlopeBoostMultiplier;
             _slopeMask = entity.SlopeMask;
 
-            _collisionProxy = _entity.Transform.GetComponent<EntityCollisionProxy>();
+            _collisionProxy = entity.Transform.GetComponent<EntityCollisionProxy>();
             if (_collisionProxy != null)
-                _collisionProxy.OnCollisionStayEvent += HandleSlopePhysics;
+                _collisionProxy.OnCollisionStayEvent += OnCollisionStay;
         }
 
-        private void HandleSlopePhysics(Collision2D collision)
+        // ── IUpdatableSystem ────────────────────────────────────────────────
+        public void OnUpdate(float deltaTime)
         {
-            // 1. Проверка слоя
-            if (((1 << collision.gameObject.layer) & _slopeMask) == 0) return;
+            if (!_contactThisFrame)
+            {
+                // Небольшой coyote-delay перед сбросом IsOnSlope
+                _slideOffTimer += deltaTime;
+                if (_slideOffTimer >= SlideOffDelay && _isOnSlope.Value)
+                {
+                    _isOnSlope.Value = false;
+                    _slopeNormal = Vector2.up;
+                }
+            }
+            else
+            {
+                _slideOffTimer = 0f;
+            }
+
+            // Плавно сбрасываем накопленную скорость, когда не на склоне
+            if (!_isOnSlope.Value && _slopeAccumSpeed.Value > 0f)
+            {
+                _slopeAccumSpeed.Value = Mathf.MoveTowards(
+                    _slopeAccumSpeed.Value, 0f, AccumDecayRate * deltaTime);
+            }
+
+            // Сбрасываем флаг контакта — он выставляется заново в OnCollisionStay
+            _contactThisFrame = false;
+        }
+
+        // ── Физика склона (вызывается из EntityCollisionProxy) ──────────────
+        private void OnCollisionStay(Collision2D collision)
+        {
+            if (((1 << collision.gameObject.layer) & _slopeMask) == 0)
+                return;
 
             ContactPoint2D contact = collision.GetContact(0);
             float angle = Vector2.Angle(contact.normal, Vector2.up);
 
-            // Работаем только на средних и крутых склонах (15-70 градусов)
-            if (angle < 15f || angle > 75f) return;
+            if (angle < MinSlopeAngle || angle > MaxSlopeAngle)
+                return;
 
-            // 2. Направление спуска (вектор вдоль поверхности вниз)
-            Vector2 slopeDir = new Vector2(contact.normal.y, -contact.normal.x);
-            if (slopeDir.y > 0) slopeDir = -slopeDir;
+            _contactThisFrame = true;
+            _isOnSlope.Value = true;
+            _slopeNormal = contact.normal;
 
-            // 3. Главная логика: Если мы летим/бежим В СТОРОНУ спуска
-            float currentHorizontalMove = _rigidbody.linearVelocity.x;
-            bool movingTowardsDownhill = Mathf.Sign(currentHorizontalMove) == Mathf.Sign(slopeDir.x);
+            // Вектор "вниз по склону"
+            Vector2 downhill = new Vector2(contact.normal.y, -contact.normal.x);
+            if (downhill.y > 0f) downhill = -downhill;
 
-            if (movingTowardsDownhill && Mathf.Abs(currentHorizontalMove) > MinEntrySpeed)
+            float velX = _rigidbody.linearVelocity.x;
+            bool movingDownhill = Mathf.Sign(velX) == Mathf.Sign(downhill.x) && Mathf.Abs(velX) > 0.5f;
+            bool movingUphill = Mathf.Sign(velX) != Mathf.Sign(downhill.x) && Mathf.Abs(velX) > 0.5f;
+
+            if (movingDownhill)
             {
-                // РАЗОВЫЙ БУСТ (если мы еще не разогнались до предела)
-                if (_rigidbody.linearVelocity.magnitude < 25f)
-                {
-                    _rigidbody.AddForce(slopeDir * SlopeBoostPower, ForceMode2D.Impulse);
-                }
-
-                // ПОСТОЯННЫЙ ПРИЖИМ (Magnet)
-                // Это самое важное: прижимаем игрока к склону, чтобы он "обтекал" его
+                // Ускорение + прижим при спуске
+                float boost = DownhillAccelForce * _slopeBoostMultiplier.Value;
+                _rigidbody.AddForce(downhill * boost, ForceMode2D.Force);
                 _rigidbody.AddForce(-contact.normal * MagnetForce, ForceMode2D.Force);
+
+                // Накапливаем скорость (используется slope jump)
+                _slopeAccumSpeed.Value = Mathf.Min(
+                    _slopeAccumSpeed.Value + AccumGainRate * Time.fixedDeltaTime,
+                    MaxAccumSpeed);
+            }
+            else if (movingUphill)
+            {
+                // Скатывание назад при беге вверх — отталкиваем вниз по склону
+                _rigidbody.AddForce(downhill * UphillSlideForce, ForceMode2D.Force);
+
+                // На подъёме не накапливаем
+                _slopeAccumSpeed.Value = Mathf.MoveTowards(
+                    _slopeAccumSpeed.Value, 0f, AccumDecayRate * Time.fixedDeltaTime);
             }
 
-            // 4. Визуал (просто и без багов)
-            UpdateRotation(contact.normal);
+            UpdateViewRotation(contact.normal);
         }
 
-        private void UpdateRotation(Vector2 normal)
+        // ── Визуальный поворот по нормали ────────────────────────────────────
+        private void UpdateViewRotation(Vector2 normal)
         {
             Transform view = _entity.Transform.Find("ViewContainer");
-            if (view != null)
-            {
-                float targetAngle = Vector2.SignedAngle(Vector2.up, normal);
-                // Плавно подкручиваем визуал, чтобы не было рывков
-                view.rotation = Quaternion.Lerp(view.rotation, Quaternion.Euler(0, 0, targetAngle), 0.2f);
-            }
+            if (view == null) return;
+
+            float targetAngle = Vector2.SignedAngle(Vector2.up, normal);
+            view.rotation = Quaternion.Lerp(
+                view.rotation,
+                Quaternion.Euler(0f, 0f, targetAngle),
+                0.15f);
         }
 
+        // Публичный доступ к нормали для JumpSystem / SlideSystem
+        public Vector2 SlopeNormal => _slopeNormal;
+
+        // ── IDisposableSystem ───────────────────────────────────────────────
         public void OnDispose()
         {
             if (_collisionProxy != null)
-                _collisionProxy.OnCollisionStayEvent -= HandleSlopePhysics;
+                _collisionProxy.OnCollisionStayEvent -= OnCollisionStay;
         }
     }
 }
