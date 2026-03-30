@@ -68,6 +68,7 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
         UI,
         Music,
         TakeDamage,
-        Death
+        Death,
+        AbilityImpact
     }
 }

@@ -101,6 +101,28 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: 0a3d0306828e3d649a35428443a11edd, type: 3}
       Volume: 1
       BasePitch: 1
+  - Type: 7
+    Clips:
+    - Id: AbilityImpactCharge1
+      Clip: {fileID: 8300000, guid: 0191523bd6976364880117069705c3c5, type: 3}
+      Volume: 1
+      BasePitch: 1.5
+    - Id: AbilityImpactCharge2
+      Clip: {fileID: 8300000, guid: ab9ea9ea13110ae45bfbc62008c8b347, type: 3}
+      Volume: 1
+      BasePitch: 1.5
+    - Id: AbilityImpactCharge3
+      Clip: {fileID: 8300000, guid: 164330e21ad7dca4fb1369f8dc193947, type: 3}
+      Volume: 1
+      BasePitch: 1.5
+    - Id: AbilityImpactCharge4
+      Clip: {fileID: 8300000, guid: 1d29c538043769840a2c451fb2205d88, type: 3}
+      Volume: 1
+      BasePitch: 1.5
+    - Id: AbilityImpactCharge5
+      Clip: {fileID: 8300000, guid: a17a4569f836b2f449460c94172b959f, type: 3}
+      Volume: 1
+      BasePitch: 1.5
   _playlists:
   - Id: MainMenu
     Tracks:
