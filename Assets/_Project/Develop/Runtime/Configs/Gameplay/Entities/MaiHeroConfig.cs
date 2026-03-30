@@ -120,14 +120,38 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     [Serializable]
     public class AttackSettings
     {
-        [field: SerializeField] public float ProcessTime { get; private set; } = 1.5f;
-        [field: SerializeField] public float DelayTime { get; private set; } = 0.75f;
-        [field: SerializeField] public float Cooldown { get; private set; } = 1f;
+        [Header("Timings")]
+        [field: SerializeField, Tooltip("Общая длительность всей атаки")]
+        public float ProcessTime { get; private set; } = 1.5f;
+
+        [field: SerializeField, Tooltip("Задержка перед самим нанесением урона (момент взмаха)")]
+        public float DelayTime { get; private set; } = 0.75f;
+
+        [field: SerializeField, Tooltip("Кулдаун между атаками")]
+        public float Cooldown { get; private set; } = 1f;
+
+        [Header("Combat Parameters")]
         [field: SerializeField] public float InstantDamage { get; private set; } = 50f;
         [field: SerializeField] public float Range { get; private set; } = 1.5f;
-        [field: SerializeField] public float HitBounceForce { get; private set; } = 8f;
-        [field: SerializeField] public float InvulnerabilityDuration { get; private set; } = 0.2f;
         [field: SerializeField] public LayerMask EnemyMask { get; private set; }
+        [field: SerializeField] public float InvulnerabilityDuration { get; private set; } = 0.2f;
+
+        [Header("Hit Bounce (Physics)")]
+        [field: SerializeField, Tooltip("Базовая сила отскока при попадании")]
+        public float HitBounceForce { get; private set; } = 8f;
+
+        [field: SerializeField, Tooltip("Множители X (горизонт) и Y (вертикаль) для отскока, когда герой НА ЗЕМЛЕ")]
+        public Vector2 GroundHitBounceModifiers { get; private set; } = new Vector2(0.7f, 0.4f);
+
+        [field: SerializeField, Tooltip("Множители X и Y для отскока, когда герой В ВОЗДУХЕ")]
+        public Vector2 AirHitBounceModifiers { get; private set; } = new Vector2(0.7f, 0.8f);
+
+        [Header("Hit Stop (Juice)")]
+        [field: SerializeField, Range(0f, 1f), Tooltip("На сколько замедляется время (0 - полная остановка)")]
+        public float HitStopScale { get; private set; } = 0.05f;
+
+        [field: SerializeField, Tooltip("Длительность эффекта заморозки времени")]
+        public float HitStopDuration { get; private set; } = 0.15f;
     }
 
     [Serializable]

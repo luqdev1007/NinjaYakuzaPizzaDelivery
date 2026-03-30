@@ -46,6 +46,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
         // ─── HERO ────────────────────────────────────────────────────────────
 
+        // ─── HERO ────────────────────────────────────────────────────────────
+
         public Entity CreateHero(Vector3 position, MaiHeroConfig config)
         {
             Entity entity = CreateEmpty();
@@ -109,7 +111,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddGlideSnapSpeed(new ReactiveVariable<float>(config.Glide.SnapSpeed))
                 .AddGlideSnapDuration(new ReactiveVariable<float>(config.Glide.SnapDuration))
 
-                // — атака —
+                // — атака (ОБНОВЛЕНО) —
                 .AddSuccessfulHitEvent()
                 .AddStartAttackRequest()
                 .AddStartAttackEvent()
@@ -126,6 +128,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddAttackCooldownCurrentTime()
                 .AddInAttackCooldown()
                 .AddAttackRange(new ReactiveVariable<float>(config.Attack.Range))
+                .AddAttackEnemyMask(new ReactiveVariable<LayerMask>(config.Attack.EnemyMask))
+
+                // Новые параметры сочности и физики из конфига
+                .AddAttackHitStopScale(new ReactiveVariable<float>(config.Attack.HitStopScale))
+                .AddAttackHitStopDuration(new ReactiveVariable<float>(config.Attack.HitStopDuration))
+                .AddAttackHitBounceForce(new ReactiveVariable<float>(config.Attack.HitBounceForce))
+                .AddGroundHitBounceModifiers(new ReactiveVariable<Vector2>(config.Attack.GroundHitBounceModifiers))
+                .AddAirHitBounceModifiers(new ReactiveVariable<Vector2>(config.Attack.AirHitBounceModifiers))
 
                 .AddAttackInvulnerabilityDuration(new ReactiveVariable<float>(config.Attack.InvulnerabilityDuration))
                 .AddAttackInvulnerabilityTimer()
@@ -179,6 +189,70 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSpawnInitialTime(new ReactiveVariable<float>(config.LifeCycle.SpawnProcessTime))
                 .AddSpawnCurrentTime()
                 .AddInSpawnProcess()
+                ;
+        }
+
+        private void AddHeroSystems(Entity entity, MaiHeroConfig config)
+        {
+            IInputService inputService = _container.Resolve<IInputService>();
+            ICoroutinesPerformer coroutinesPerformer = _container.Resolve<ICoroutinesPerformer>();
+            AudioService audioService = _container.Resolve<AudioService>();
+
+            ThrowableBehaviourFactory throwableBehaviourFactory = new ThrowableBehaviourFactory(coroutinesPerformer);
+            SlopeSystem slopeSystem = new SlopeSystem();
+
+            entity
+                // — инициализация —
+                .AddSystem(new SpawnProcessTimerSystem())
+                .AddSystem(new PlayerInputSystem(inputService))
+                .AddSystem(new GroundCheckSystem(coyoteTime: 0.1f))
+
+                // — логика драйва —
+                .AddSystem(new DriveSystem())
+
+                // — движение —
+                .AddSystem(new RigidbodyMovementSystem(inputService))
+                .AddSystem(new JumpSystem(inputService, slopeSystem))
+                .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.Attack.EnemyMask))
+                .AddSystem(new GlideSystem(inputService))
+                .AddSystem(new WallHangSystem(inputService))
+                .AddSystem(new SlideSystem(inputService, coroutinesPerformer, slopeSystem))
+                .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask, _container.Resolve<AudioService>()))
+                .AddSystem(slopeSystem)
+
+                // — броски —
+                .AddSystem(new ThrowableSystem(
+                    inputService,
+                    coroutinesPerformer,
+                    new ThrowableConfig[]
+                    {
+                 config.Throwables.GrappleConfig,
+                 config.Throwables.ShurikenConfig,
+                 config.Throwables.SleepDartConfig
+                    },
+                    throwableBehaviourFactory))
+
+                // — атака —
+                .AddSystem(new AttackCancelSystem())
+                .AddSystem(new StartAttackSystem(inputService))
+                .AddSystem(new AttackProcessTimerSystem())
+                .AddSystem(new AttackDelayEndTriggerSystem())
+                .AddSystem(new EndAttackSystem())
+                .AddSystem(new AttackCooldownTimerSystem())
+                .AddSystem(new AttackInvulnerabilitySystem())
+                .AddSystem(new MeleeAttackHitSystem(coroutinesPerformer)) // Теперь только корутины
+
+                // — урон / жизненный цикл —
+                .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new DamageKnockbackSystem())
+                .AddSystem(new DeathSystem("MainHero", audioService))
+                .AddSystem(new DeathProcessTimerSystem())
+
+                // — визуал —
+                .AddSystem(new FlipDirectionSystem())
+
+                // — последней всегда —
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
                 ;
         }
 
@@ -323,74 +397,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 ;
         }
 
-        private void AddHeroSystems(Entity entity, MaiHeroConfig config)
-        {
-            IInputService inputService = _container.Resolve<IInputService>();
-            ICoroutinesPerformer coroutinesPerformer = _container.Resolve<ICoroutinesPerformer>();
-
-            ThrowableBehaviourFactory throwableBehaviourFactory = new ThrowableBehaviourFactory(coroutinesPerformer);
-
-            SlopeSystem slopeSystem = new SlopeSystem();
-
-            entity
-                // — инициализация —
-                .AddSystem(new SpawnProcessTimerSystem())
-                .AddSystem(new PlayerInputSystem(inputService))
-                .AddSystem(new GroundCheckSystem(coyoteTime: 0.1f))
-
-                // — логика драйва —
-                .AddSystem(new DriveSystem()) // Добавляем сюда
-
-                // — движение —
-                .AddSystem(new RigidbodyMovementSystem(inputService))
-                .AddSystem(new JumpSystem(inputService, slopeSystem))
-                .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.Attack.EnemyMask))
-                .AddSystem(new GlideSystem(inputService))
-                .AddSystem(new WallHangSystem(inputService))
-                .AddSystem(new SlideSystem(inputService, coroutinesPerformer, slopeSystem))
-                .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask, _container.Resolve<AudioService>()))
-                .AddSystem(slopeSystem)
-
-
-                // — броски —
-                .AddSystem(new ThrowableSystem(
-                    inputService,
-                    coroutinesPerformer,
-                    new ThrowableConfig[]
-                    {
-                        config.Throwables.GrappleConfig,
-                        config.Throwables.ShurikenConfig,
-                        config.Throwables.SleepDartConfig
-                    },
-                    throwableBehaviourFactory))
-
-                // — атака —
-                .AddSystem(new AttackCancelSystem())
-                .AddSystem(new StartAttackSystem(inputService))
-                .AddSystem(new AttackProcessTimerSystem())
-                .AddSystem(new AttackDelayEndTriggerSystem())
-                .AddSystem(new EndAttackSystem())
-                .AddSystem(new AttackCooldownTimerSystem())
-                .AddSystem(new AttackInvulnerabilitySystem())
-                .AddSystem(
-                    new MeleeAttackHitSystem(
-                        config.Attack.EnemyMask, 
-                        config.Attack.HitBounceForce, 
-                        _container.Resolve<ICoroutinesPerformer>()))
-
-                // — урон / жизненный цикл —
-                .AddSystem(new ApplyDamageSystem())
-                .AddSystem(new DamageKnockbackSystem())
-                .AddSystem(new DeathSystem("MainHero", _container.Resolve<AudioService>()))
-                .AddSystem(new DeathProcessTimerSystem())
-
-                // — визуал —
-                .AddSystem(new FlipDirectionSystem())
-
-                // — последней всегда —
-                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
-                ;
-        }
 
         // ─── OTHER ──────────────────────────────────────────────────────────
 

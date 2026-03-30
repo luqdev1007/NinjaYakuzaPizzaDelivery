@@ -5,9 +5,43 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
+    // Событие для View, чтобы проиграть звук и эффект попадания
     public class SuccessfulHitEvent : IEntityComponent
     {
         public ReactiveEvent Value = new();
+    }
+
+    // Настройки HitStop (замедление времени)
+    public class AttackHitStopScale : IEntityComponent
+    {
+        public ReactiveVariable<float> Value = new();
+    }
+
+    public class AttackHitStopDuration : IEntityComponent
+    {
+        public ReactiveVariable<float> Value = new();
+    }
+
+    // Настройки отскока (Bounce)
+    public class AttackHitBounceForce : IEntityComponent
+    {
+        public ReactiveVariable<float> Value = new();
+    }
+
+    public class GroundHitBounceModifiers : IEntityComponent
+    {
+        public ReactiveVariable<Vector2> Value = new();
+    }
+
+    public class AirHitBounceModifiers : IEntityComponent
+    {
+        public ReactiveVariable<Vector2> Value = new();
+    }
+
+    // Слой врагов для системы попадания
+    public class AttackEnemyMask : IEntityComponent
+    {
+        public ReactiveVariable<LayerMask> Value = new();
     }
 
     public class AttackInvulnerabilityDuration : IEntityComponent
