@@ -123,6 +123,50 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: a17a4569f836b2f449460c94172b959f, type: 3}
       Volume: 1
       BasePitch: 1.5
+    - Id: AbilityImpactPlunge1
+      Clip: {fileID: 8300000, guid: 21579bceae2597648acd39c80e17cc2a, type: 3}
+      Volume: 1
+      BasePitch: 1.5
+    - Id: AbilityImpactPlunge2
+      Clip: {fileID: 8300000, guid: 4715302eb1d9a484883c86eafcaad337, type: 3}
+      Volume: 1
+      BasePitch: 1.5
+    - Id: AbilityImpactPlungeLoop1
+      Clip: {fileID: 8300000, guid: aa7f9d4426a11354eb985124161f0f0f, type: 3}
+      Volume: 1
+      BasePitch: 1.5
+    - Id: AbilityImpactPlungeLoop2
+      Clip: {fileID: 8300000, guid: d8c543e928f964f4d851504e004d874c, type: 3}
+      Volume: 1
+      BasePitch: 1.5
+    - Id: AbilityImpactPlungeLoop3
+      Clip: {fileID: 8300000, guid: ffb54208d812afc4eadc5b51cf184ed6, type: 3}
+      Volume: 1
+      BasePitch: 1.5
+    - Id: AbilityImpactSlide1
+      Clip: {fileID: 8300000, guid: c759676fd596bce4ab2850ce03c37189, type: 3}
+      Volume: 1
+      BasePitch: 1.5
+    - Id: AbilityImpactSlide2
+      Clip: {fileID: 8300000, guid: c19ac5d2108c3bd4b81e18efdaf475bc, type: 3}
+      Volume: 1
+      BasePitch: 1.5
+    - Id: AbilityImpactSlide3
+      Clip: {fileID: 8300000, guid: 8890543def7af004a8a3de0006ced636, type: 3}
+      Volume: 1
+      BasePitch: 1.5
+    - Id: AbilityImpactSlideLoop1
+      Clip: {fileID: 8300000, guid: 1b86363fc63c42a4abf7c73fae9c29d0, type: 3}
+      Volume: 1
+      BasePitch: 1.5
+    - Id: AbilityImpactSlideLoop2
+      Clip: {fileID: 8300000, guid: e5753fddbd54fde4281e92272ff3a4fe, type: 3}
+      Volume: 1
+      BasePitch: 1.5
+    - Id: AbilityImpactSlideLoop3
+      Clip: {fileID: 8300000, guid: 885446618e02ffb4abf47ee8e1af9094, type: 3}
+      Volume: 1
+      BasePitch: 1.5
   _playlists:
   - Id: MainMenu
     Tracks:
