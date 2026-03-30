@@ -13,7 +13,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
     public class SlideSystem : IInitializableSystem, IUpdatableSystem
     {
         private const float SlopeSlideMaxDuration = 2.5f;
-        private const float SlopeSlideSpeedBonus = 0.6f; // Снижено для стабильности
+        private const float SlopeSlideSpeedBonus = 0.6f;
 
         private readonly IInputService _inputService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
@@ -64,10 +64,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         {
             if (_isSliding.Value) return;
 
+            // 1. Активация по кнопке
             if (_inputService.IsSlideKeyPressed && _canSlide.Evaluate())
             {
                 if (_isOnSlope.Value) _coroutinesPerformer.StartPerform(SlopeSlideCoroutine());
                 else if (_isGrounded.Value) _coroutinesPerformer.StartPerform(SlideCoroutine());
+                return;
+            }
+
+            // 2. АВТО-ПОДКАТ ПРИ ПРИЗЕМЛЕНИИ НА СКЛОН
+            if (_isOnSlope.Value && _slopeAccumSpeed.Value > 7f && _canSlide.Evaluate())
+            {
+                _coroutinesPerformer.StartPerform(SlopeSlideCoroutine());
             }
         }
 
@@ -77,7 +85,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
             SetSlideCollider(true);
             float direction = _transform.localScale.x > 0 ? 1f : -1f;
             float elapsed = 0f;
-            float duration = 0.6f; // Фиксированная длительность обычного слайда
+            float duration = 0.6f;
 
             while (elapsed < duration)
             {
@@ -100,7 +108,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 
             while (_isOnSlope.Value && elapsed < SlopeSlideMaxDuration)
             {
-                // ... (твой текущий код расчета сил AddForce) ...
                 Vector2 slopeNormal = _slopeSystem.SlopeNormal;
                 Vector2 downhill = new Vector2(slopeNormal.y, -slopeNormal.x);
                 if (downhill.y > 0f) downhill = -downhill;
@@ -109,13 +116,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
                 _rigidbody.AddForce(downhill * speed, ForceMode2D.Force);
                 _rigidbody.AddForce(-slopeNormal * 10f, ForceMode2D.Force);
 
-                // --- РАЗВОРОТ ПЕРСОНАЖА ПО ВЕКТОРУ ДВИЖЕНИЯ ---
-                // Проверяем горизонтальную скорость. Если катимся вправо — смотрим вправо, влево — влево.
+                // --- ПРИНУДИТЕЛЬНЫЙ РАЗВОРОТ ПО ДВИЖЕНИЮ ---
                 if (Mathf.Abs(_rigidbody.linearVelocity.x) > 0.2f)
                 {
                     float direction = _rigidbody.linearVelocity.x > 0 ? 1f : -1f;
                     Vector3 scale = _transform.localScale;
-                    // Учитываем абсолютное значение, чтобы не "сплющить" спрайт, если исходный scale не 1
                     scale.x = direction * Mathf.Abs(scale.x);
                     _transform.localScale = scale;
                 }

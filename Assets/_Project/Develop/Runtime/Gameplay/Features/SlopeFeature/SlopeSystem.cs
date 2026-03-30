@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using UnityEngine;
+using System;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
 {
@@ -10,11 +11,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
         private const float MinSlopeAngle = 15f;
         private const float MaxSlopeAngle = 75f;
 
-        private const float DownhillAccelForce = 8f;   // Сбалансировано
-        private const float MaxAccumSpeed = 12f;        // Потолок скорости
+        private const float DownhillAccelForce = 8f;
+        private const float MaxAccumSpeed = 12f;
         private const float AccumGainRate = 4f;
         private const float UphillSlideForce = 12f;
-        private const float MagnetForce = 15f;          // Ослабил, чтобы легче прыгалось
+        private const float MagnetForce = 15f;
         private const float AccumDecayRate = 10f;
         private const float SlideOffDelay = 0.1f;
 
@@ -51,7 +52,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
             {
                 _slideOffTimer += deltaTime;
 
-                // АВТО-ВЫБРОС: если летели быстро, а склон кончился
                 if (_isOnSlope.Value && _slopeAccumSpeed.Value > 6f)
                 {
                     HandleAutoEject();
@@ -85,6 +85,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
 
             if (angle < MinSlopeAngle || angle > MaxSlopeAngle) return;
 
+            // --- ЛОГИКА КОНВЕРТАЦИИ ПАДЕНИЯ В СКОРОСТЬ ---
+            if (!_isOnSlope.Value && _rigidbody.linearVelocity.y < -3f)
+            {
+                float impactEnergy = Mathf.Abs(_rigidbody.linearVelocity.y);
+                _slopeAccumSpeed.Value = Mathf.Clamp(_slopeAccumSpeed.Value + impactEnergy, 0, MaxAccumSpeed);
+            }
+
             _contactThisFrame = true;
             _isOnSlope.Value = true;
             _slopeNormal = contact.normal;
@@ -117,7 +124,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
         private void HandleAutoEject()
         {
             Vector2 downhill = GetDownhill(_slopeNormal);
-            // Направление выброса: чуть вверх и вперед по инерции
             Vector2 ejectDir = (downhill + Vector2.up * 0.5f).normalized;
             _rigidbody.AddForce(ejectDir * (_slopeAccumSpeed.Value * 0.8f), ForceMode2D.Impulse);
 
