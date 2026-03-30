@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
@@ -19,6 +20,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private readonly IInputService _inputService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly LayerMask _enemyMask;
+        private readonly AudioService _audioService;
 
         private ICompositeCondition _canDash;
         private ReactiveVariable<bool> _isDashing;
@@ -42,11 +44,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private const float DashBufferTime = 0.15f;
 
-        public DashSystem(IInputService inputService, ICoroutinesPerformer coroutinesPerformer, LayerMask enemyMask)
+        public DashSystem(IInputService inputService, ICoroutinesPerformer coroutinesPerformer, LayerMask enemyMask, AudioService audioService)
         {
             _inputService = inputService;
             _coroutinesPerformer = coroutinesPerformer;
             _enemyMask = enemyMask;
+            _audioService = audioService;
         }
 
         public void OnInit(Entity entity)
@@ -108,9 +111,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private void ExecuteDash()
         {
+            // 1. Считаем силу заряда (0.0 - 1.0)
             float chargeRatio = _dashChargeTime.Value > 0f ? _chargeTimer / _dashChargeTime.Value : 1f;
             float force = Mathf.Lerp(_dashForceMin.Value, _dashForceMax.Value, chargeRatio);
 
+            // 2. Считаем питч: от 1.0 (слабый) до 1.3 (максимальный заряд)
+            // Это даст ощущение "мощности" без ухода в ультразвук
+            float dashPitch = 1f + (chargeRatio * 0.3f);
+
+            // 3. Воспроизводим одну из 5 вариаций "AbilityImpactCharge" (1, 2, 3, 4 или 5)
+            _audioService.PlaySfxVariation("AbilityImpactCharge", 1, 5, dashPitch);
+
+            // Дальнейшая логика рывка...
             bool inAir = !_isGrounded.Value;
             if (inAir) force *= _airDashMultiplier.Value;
 

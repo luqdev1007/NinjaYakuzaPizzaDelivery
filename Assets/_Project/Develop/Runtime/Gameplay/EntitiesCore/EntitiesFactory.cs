@@ -342,7 +342,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // — движение —
                 .AddSystem(new RigidbodyMovementSystem(inputService))
                 .AddSystem(new JumpSystem(inputService, slopeSystem))
-                .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.Attack.EnemyMask))
+                .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.Attack.EnemyMask, _container.Resolve<AudioService>()))
                 .AddSystem(new GlideSystem(inputService))
                 .AddSystem(new WallHangSystem(inputService))
                 .AddSystem(new SlideSystem(inputService, coroutinesPerformer, slopeSystem))
@@ -445,7 +445,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddDeathProcessCurrentTime()
                 .AddTakeDamageRequest()
                 .AddTakeDamageEvent()
-                .AddDamageCooldown(new ReactiveVariable<float>(1.0f))
+                // Возвращаем компоненты кулдауна, так как ApplyDamageSystem ожидает их наличие в OnInit
+                .AddDamageCooldown(new ReactiveVariable<float>(0.1f)) // Небольшой кулдаун, чтобы звук не спамил
                 .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
 
                 // — Эффекты (Сон) —
@@ -455,17 +456,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             // — Условия —
 
-            // Не может двигаться, если мертв, притянут хуком ИЛИ спит
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.HasComponent<IsGrappledTarget>() == false || entity.IsGrappledTarget.Value == false))
                 .Add(new FuncCondition(() => entity.IsAsleep.Value == false))
                 ;
 
-            // Не может дамажить, если в откате, мертв ИЛИ спит
+            // Условие получения урона: не мертв и кулдаун прошел
             ICompositeCondition canApplyDamage = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
                 .Add(new FuncCondition(() => entity.IsAsleep.Value == false))
                 ;
 
@@ -499,6 +499,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new DealDamageOnContactSystem())
                 .AddSystem(new TransformMovementSystem())
                 .AddSystem(new FlipDirectionSystem())
+
+                // Системы урона
                 .AddSystem(new ApplyDamageSystem("Ghost", _container.Resolve<AudioService>()))
                 .AddSystem(new DamageKnockbackSystem())
                 .AddSystem(new DeathSystem("Ghost", _container.Resolve<AudioService>()))

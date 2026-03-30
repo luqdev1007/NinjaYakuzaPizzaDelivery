@@ -54,15 +54,15 @@ MonoBehaviour:
     - Id: GhostHit1
       Clip: {fileID: 8300000, guid: dec74dacefe9d8a47b730c05675462a3, type: 3}
       Volume: 1
-      BasePitch: 1.5
+      BasePitch: 2
     - Id: GhostHit2
       Clip: {fileID: 8300000, guid: 675c9744e3abedb49a5ca68b44db23fe, type: 3}
       Volume: 1
-      BasePitch: 1.5
+      BasePitch: 2
     - Id: GhostHit3
       Clip: {fileID: 8300000, guid: b06008c9d32f7ad4686ddea227cc43fe, type: 3}
       Volume: 1
-      BasePitch: 1.5
+      BasePitch: 2
     - Id: MainHeroHit1
       Clip: {fileID: 8300000, guid: 056f29afc65df3d4ea0bbe6cc82f40e0, type: 3}
       Volume: 1

@@ -71,10 +71,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private void ApplyDamage(Entity target, Vector2 pos)
         {
-            if (target.HasComponent<CurrentHealth>())
+            // Вместо прямой модификации здоровья проверяем наличие компонента запроса
+            if (target.HasComponent<TakeDamageRequest>())
             {
-                target.CurrentHealth.Value -= _entity.AttackDamage.Value;
-                target.TakeDamageEvent?.Invoke(new DamageData { Amount = _entity.AttackDamage.Value, SourcePosition = pos });
+                // Создаем данные об уроне
+                var damageData = new DamageData
+                {
+                    Amount = _entity.AttackDamage.Value,
+                    SourcePosition = pos
+                };
+
+                // Отправляем запрос. Его подхватит ApplyDamageSystem цели,
+                // проверит условия (canApplyDamage) и сама отыграет звук.
+                target.TakeDamageRequest.Invoke(damageData);
             }
         }
 

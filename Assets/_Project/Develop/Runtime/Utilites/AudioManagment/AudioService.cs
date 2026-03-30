@@ -14,6 +14,8 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
 
         private readonly Dictionary<string, float> _lastPlayedTimes = new Dictionary<string, float>();
 
+        private readonly Dictionary<string, AudioSource> _activeLoops = new Dictionary<string, AudioSource>();
+
         private MusicPlaylist _currentPlaylist;
         private int _lastTrackIndex = -1;
         private const float GlobalSfxCooldown = 0.05f;
@@ -26,6 +28,48 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
             _mixer = mixer;
             _manager.OnMusicEnded += PlayNextFromPlaylist;
         }
+
+        /// <summary>
+        /// Проигрывает зацикленный звук. Использовать для Plunge, Slide и т.д.
+        /// </summary>
+        public void PlayLoopingSfx(string loopId, AudioCategoryType category, float volumeMultiplier = 1f)
+        {
+            if (_activeLoops.ContainsKey(loopId)) return;
+
+            var data = _config.GetRandomFromCategory(category);
+            if (data == null) return;
+
+            // Используем GetFreeSource напрямую из менеджера
+            AudioSource source = _manager.PlaySfxReturnSource(data.Clip, data.Volume * volumeMultiplier, data.BasePitch);
+            if (source != null)
+            {
+                source.loop = true;
+                _activeLoops[loopId] = source;
+            }
+        }
+
+        // В AudioService.cs
+        public void PlaySfxVariation(string prefix, int minIndex, int maxIndex, float pitch)
+        {
+            int randomIndex = UnityEngine.Random.Range(minIndex, maxIndex + 1);
+            var data = _config.GetById($"{prefix}{randomIndex}");
+
+            if (data == null) return;
+
+            // Проигрываем через менеджер с нашим высчитанным питчем
+            _manager.PlaySfx(data.Clip, data.Volume, pitch);
+        }
+
+        public void StopLoopingSfx(string loopId)
+        {
+            if (_activeLoops.TryGetValue(loopId, out AudioSource source))
+            {
+                source.Stop();
+                source.loop = false;
+                _activeLoops.Remove(loopId);
+            }
+        }
+
 
         /// <summary>
         /// Проигрывает случайный звук из указанной категории (атака, шаги и т.д.)
@@ -47,6 +91,8 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
         /// </summary>
         public void PlaySfxByPrefix(string prefix, bool useRandomPitch = true)
         {
+            Debug.Log($"[AudioService] Searching for prefix: {prefix}"); // Добавь это
+
             if (IsSpamming(prefix)) return;
 
             var data = _config.GetRandomByPrefix(prefix);

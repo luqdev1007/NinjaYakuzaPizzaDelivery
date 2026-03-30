@@ -12,7 +12,7 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
         [SerializeField] private AudioSource _musicSourceB;
         [SerializeField] private AudioMixerGroup _musicGroup;
         [SerializeField] private AudioMixerGroup _sfxGroup;
-        [SerializeField] private int _maxSfxSources = 12;
+        [SerializeField] private int _maxSfxSources = 32;
         [SerializeField] private float _transitionDuration = 1.2f;
 
         private readonly List<AudioSource> _sfxPool = new List<AudioSource>();
@@ -68,30 +68,57 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
             _activeMusicSource = newSource;
         }
 
+        /// <summary>
+        /// Проигрывает SFX без возврата ссылки.
+        /// </summary>
         public void PlaySfx(AudioClip clip, float volume, float pitch)
         {
+            PlaySfxReturnSource(clip, volume, pitch);
+        }
+
+        /// <summary>
+        /// Проигрывает SFX и возвращает AudioSource для дальнейшего контроля (например, для зацикливания или остановки).
+        /// </summary>
+        public AudioSource PlaySfxReturnSource(AudioClip clip, float volume, float pitch)
+        {
             AudioSource source = GetFreeSource();
-            if (source == null) return;
+
+            if (source == null)
+                return null;
+
             source.clip = clip;
             source.volume = volume;
             source.pitch = pitch;
             source.outputAudioMixerGroup = _sfxGroup;
             source.Play();
+
+            return source;
         }
 
         private AudioSource GetFreeSource()
         {
+            // Ищем свободный источник в пуле
             for (int i = 0; i < _sfxPool.Count; i++)
-                if (!_sfxPool[i].isPlaying) return _sfxPool[i];
+            {
+                if (!_sfxPool[i].isPlaying)
+                    return _sfxPool[i];
+            }
 
+            // Если свободных нет и пул не переполнен — создаем новый
             if (_sfxPool.Count < _maxSfxSources)
             {
                 GameObject obj = new GameObject($"SFX_Source_{_sfxPool.Count}");
                 obj.transform.SetParent(transform);
                 AudioSource newSource = obj.AddComponent<AudioSource>();
+
+                // Настройки по умолчанию для 2D звука
+                newSource.playOnAwake = false;
+                newSource.spatialBlend = 0f;
+
                 _sfxPool.Add(newSource);
                 return newSource;
             }
+
             return null;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using System.Collections;
@@ -30,10 +31,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             if (monoEntity != null)
             {
                 var target = monoEntity.LinkedEntity;
-                if (target != null && target.HasComponent<CurrentHealth>())
+
+                // Вместо проверки здоровья проверяем наличие компонента запроса урона
+                if (target != null && target.HasComponent<TakeDamageRequest>())
                 {
-                    target.CurrentHealth.Value -= _config.Damage;
-                    target.TakeDamageEvent?.Invoke(new DamageData
+                    // Формируем запрос, который активирует ApplyDamageSystem
+                    target.TakeDamageRequest.Invoke(new DamageData
                     {
                         Amount = _config.Damage,
                         SourcePosition = hit.ClosestPoint(Instance.transform.position)
