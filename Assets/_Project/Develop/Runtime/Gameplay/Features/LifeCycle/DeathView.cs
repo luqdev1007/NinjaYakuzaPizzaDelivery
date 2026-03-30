@@ -10,21 +10,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
     public class DeathView : EntityView
     {
         private readonly int IsDyingKey = Animator.StringToHash("IsDying");
+
         [SerializeField] private Animator _animator;
-        private IReadOnlyVariable<bool> _isDead;
         private IDisposable _isDeadChangedDisposable;
 
         private void OnValidate() => _animator ??= GetComponent<Animator>();
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _isDead = entity.IsDead;
-            _isDeadChangedDisposable = _isDead.Subscribe(OnIsDeadChanged);
-
-            if (_isDead.Value) UpdateIsDead(true);
+            _isDeadChangedDisposable = entity.IsDead.Subscribe(OnIsDeadChanged);
+            if (entity.IsDead.Value) UpdateIsDead(true);
         }
 
-        private void OnIsDeadChanged(bool old, bool isDead) => UpdateIsDead(isDead);
+        private void OnIsDeadChanged(bool old, bool isDead)
+        {
+            UpdateIsDead(isDead);
+        }
 
         private void UpdateIsDead(bool value)
         {

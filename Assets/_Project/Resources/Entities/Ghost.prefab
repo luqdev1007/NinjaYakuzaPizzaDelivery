@@ -147,6 +147,7 @@ GameObject:
   - component: {fileID: 2858558461669107319}
   - component: {fileID: 2078683810804283525}
   - component: {fileID: 8267039545226137563}
+  - component: {fileID: 1130839634098478934}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -165,7 +166,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 5149040113408065364}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -276,6 +277,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 708cb269588edeb48818c8732e6fbef6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _customDamageSoundId: GhostHit
+  _useRandomPitch: 1
   _applyDamageEffectPrefab: {fileID: 864988755647194453, guid: a0bfa3c27a41fa54e93f06ca17129753, type: 3}
   _effectSpawnPoint: {fileID: 2720600874618316831}
   _vfxStopAction: 2
@@ -285,6 +288,20 @@ MonoBehaviour:
   _pizzaDisplay: {fileID: 0}
   _shakeDuration: 0.2
   _shakeStrength: 0.5
+--- !u!114 &1130839634098478934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2306742963253549328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dca1fc68a3e6224892919599a326a7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _customDeathSoundId: GhostDeath
+  _animator: {fileID: 1784155885393087696}
 --- !u!1 &3607678793894935207
 GameObject:
   m_ObjectHideFlags: 0

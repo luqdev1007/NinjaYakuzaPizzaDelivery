@@ -6,11 +6,11 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.States;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,8 +26,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private GameplayScreenPresenter _screenPresenter;
         private EntitiesLifeContext _entitiesLifeContext;
         private CameraService _cameraService;
-        private Entity _mainHero;
         private AIBrainsContext _brainsContext;
+        private AudioService _audioService;
 
         public override void ProcessRegistrations(DIContainer container, IInputSceneArgs sceneArgs = null)
         {
@@ -46,8 +46,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _brainsContext = _container.Resolve<AIBrainsContext>();
             _gameplayStatesContext = _container.Resolve<GameplayStatesContext>();
             _cameraService = _container.Resolve<CameraService>();
+            _audioService = _container.Resolve<AudioService>();
 
-            // Опционально: Ищем коллайдер границ уровня по тегу
             GameObject boundsObj = GameObject.FindWithTag("LevelBounds");
             if (boundsObj != null && boundsObj.TryGetComponent<Collider2D>(out var col))
                 _cameraService.SetConstraints(col.bounds);
@@ -55,6 +55,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             CreateEnemiesOnLevel();
 
             yield break;
+        }
+
+        public override void Run()
+        {
+            _audioService.PlayMusic("GameplayTheme");
+            _gameplayStatesContext.Run();
         }
 
         private void CreateEnemiesOnLevel()
@@ -69,25 +75,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 _container.Resolve<EnemiesFactory>().Create(spawnPoint, config);
         }
 
-        public override void Run() => _gameplayStatesContext.Run();
-
         private void Update()
         {
             _brainsContext?.Update(Time.deltaTime);
             _entitiesLifeContext?.Update(Time.deltaTime);
             _gameplayStatesContext?.Update(Time.deltaTime);
-
-            // Debug controls
-            if (Input.GetKeyDown(KeyCode.Equals)) 
-                Time.timeScale = Mathf.Min(1f, (float)Math.Round(Time.timeScale + 0.1f, 1));
-
-            if (Input.GetKeyDown(KeyCode.Minus)) 
-                Time.timeScale = Mathf.Max(0f, (float)Math.Round(Time.timeScale - 0.1f, 1));
         }
 
         private void LateUpdate()
         {
-            // Обновляем камеру после всех перемещений в LateUpdate
             _cameraService?.Update(Time.deltaTime);
             _screenPresenter?.LateUpdate();
         }

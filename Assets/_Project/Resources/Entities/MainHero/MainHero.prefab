@@ -34791,6 +34791,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dca1fc68a3e6224892919599a326a7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _customDeathSoundId: MainHeroDeath
   _animator: {fileID: 7142319570205284036}
 --- !u!114 &8298525861719048196
 MonoBehaviour:
@@ -34972,12 +34973,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 708cb269588edeb48818c8732e6fbef6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _customDamageSoundId: MainHeroHit
+  _useRandomPitch: 1
   _applyDamageEffectPrefab: {fileID: 5436667852462279511}
   _effectSpawnPoint: {fileID: 5440242270887683228}
-  _vfxStopAction: 0
+  _vfxStopAction: 2
   _spriteRenderer: {fileID: 4010868416834219212}
   _flashColor: {r: 1, g: 1, b: 1, a: 1}
-  _flashDuration: 0.1
+  _flashDuration: 0.2
   _pizzaDisplay: {fileID: 2074096976373253779}
   _shakeDuration: 0.3
   _shakeStrength: 1

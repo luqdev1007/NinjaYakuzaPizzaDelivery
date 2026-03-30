@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
 {
@@ -6,6 +7,9 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
     {
         private readonly AudioConfig _config;
         private readonly AudioManager _manager;
+        private readonly Dictionary<string, float> _lastPlayedTimes = new Dictionary<string, float>();
+
+        private const float GlobalSfxCooldown = 0.05f;
 
         public AudioService(AudioConfig config, AudioManager manager)
         {
@@ -13,29 +17,16 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
             _manager = manager;
         }
 
-        public void PlayRandomSfx(AudioCategoryType category, bool useRandomPitch = true)
+        public void PlaySfxByPrefix(string prefix, bool useRandomPitch = true)
         {
-            var data = _config.GetRandomFromCategory(category);
+            if (IsSpamming(prefix)) return;
+
+            var data = _config.GetRandomByPrefix(prefix);
             if (data == null) return;
 
-            float pitch = data.BasePitch;
+            _lastPlayedTimes[prefix] = Time.time;
 
-            if (useRandomPitch)
-                pitch *= Random.Range(0.85f, 1.15f);
-
-            _manager.PlaySfx(data.Clip, data.Volume, pitch);
-        }
-
-        public void PlaySfxById(string id, bool useRandomPitch = false)
-        {
-            var data = _config.GetById(id);
-            if (data == null) return;
-
-            float pitch = data.BasePitch;
-
-            if (useRandomPitch)
-                pitch *= Random.Range(0.9f, 1.1f);
-
+            float pitch = useRandomPitch ? data.BasePitch * Random.Range(0.9f, 1.1f) : data.BasePitch;
             _manager.PlaySfx(data.Clip, data.Volume, pitch);
         }
 
@@ -45,6 +36,24 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
             if (data == null) return;
 
             _manager.PlayMusic(data.Clip, data.Volume);
+        }
+
+        private bool IsSpamming(string id)
+        {
+            if (_lastPlayedTimes.TryGetValue(id, out float lastTime))
+            {
+                return (Time.time - lastTime) < GlobalSfxCooldown;
+            }
+            return false;
+        }
+
+        public void PlayRandomSfx(AudioCategoryType category, bool useRandomPitch = true)
+        {
+            var data = _config.GetRandomFromCategory(category);
+            if (data == null) return;
+
+            float pitch = useRandomPitch ? data.BasePitch * Random.Range(0.85f, 1.15f) : data.BasePitch;
+            _manager.PlaySfx(data.Clip, data.Volume, pitch);
         }
     }
 }

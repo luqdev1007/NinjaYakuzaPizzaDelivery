@@ -25,7 +25,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
         [SerializeField] private float _shakeDuration = 0.2f;
         [SerializeField] private float _shakeStrength = 0.5f;
 
-        private ReactiveEvent<DamageData> _damageEvent;
         private IDisposable _damageEventDisposable;
         private Entity _linkedEntity;
         private Color _originalColor;
@@ -33,23 +32,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
         protected override void OnEntityStartedWork(Entity entity)
         {
             _linkedEntity = entity;
-            _damageEvent = entity.TakeDamageEvent;
-            _damageEventDisposable = _damageEvent.Subscribe(OnDamaged);
+            _damageEventDisposable = entity.TakeDamageEvent.Subscribe(OnDamaged);
 
             if (_spriteRenderer != null)
                 _originalColor = _spriteRenderer.color;
 
             if (_pizzaDisplay != null)
-            {
                 _pizzaDisplay.Initialize(entity);
-            }
         }
 
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
             _damageEventDisposable?.Dispose();
-            _spriteRenderer.DOKill();
+            if (_spriteRenderer != null) _spriteRenderer.DOKill();
         }
 
         private void OnDamaged(DamageData data)
@@ -60,7 +56,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
             if (_pizzaDisplay != null)
             {
                 _pizzaDisplay.UpdateHealthVisual(_linkedEntity.CurrentHealth.Value, _linkedEntity.MaxHealth.Value);
-
                 _pizzaDisplay.transform.DOComplete();
                 _pizzaDisplay.transform.DOShakePosition(_shakeDuration, _shakeStrength);
             }
@@ -73,7 +68,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
             _spriteRenderer.DOKill();
             _spriteRenderer.color = _originalColor;
 
-            // Короткий блик: красим в белый и возвращаем обратно
             _spriteRenderer.DOColor(_flashColor, _flashDuration)
                 .SetLoops(2, LoopType.Yoyo)
                 .OnComplete(() => _spriteRenderer.color = _originalColor);
@@ -81,8 +75,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
 
         private void SpawnDamageParticles()
         {
-            if (_applyDamageEffectPrefab == null)
-                return;
+            if (_applyDamageEffectPrefab == null) return;
 
             Vector3 spawnPos = _effectSpawnPoint != null ? _effectSpawnPoint.position : transform.position;
             ParticleSystem vfx = Instantiate(_applyDamageEffectPrefab, spawnPos, Quaternion.identity);

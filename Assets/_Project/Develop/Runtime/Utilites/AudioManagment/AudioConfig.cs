@@ -20,6 +20,19 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
             return category.Clips[UnityEngine.Random.Range(0, category.Clips.Count)];
         }
 
+        public AudioData GetRandomByPrefix(string prefix)
+        {
+            var matches = _categories
+                .SelectMany(c => c.Clips)
+                .Where(d => d.Id.StartsWith(prefix))
+                .ToList();
+
+            if (matches.Count == 0)
+                return null;
+
+            return matches[UnityEngine.Random.Range(0, matches.Count)];
+        }
+
         public AudioData GetById(string id)
         {
             return _categories
@@ -50,6 +63,8 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
         HeroAttackHit,
         Footsteps,
         UI,
-        Music
+        Music,
+        TakeDamage,
+        Death
     }
 }

@@ -376,9 +376,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 _container.Resolve<AudioService>()))
 
                 // — урон / жизненный цикл —
-                .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new ApplyDamageSystem("MainHero", _container.Resolve<AudioService>()))
                 .AddSystem(new DamageKnockbackSystem())
-                .AddSystem(new DeathSystem())
+                .AddSystem(new DeathSystem("MainHero", _container.Resolve<AudioService>()))
                 .AddSystem(new DeathProcessTimerSystem())
 
                 // — визуал —
@@ -497,16 +497,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new BodyContactDetectingSystem())
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
                 .AddSystem(new DealDamageOnContactSystem())
-
-                // Таймеры эффектов
-                .AddSystem(new SleepTimerSystem()) // Сама сбросит IsAsleep в false, когда время выйдет
-
                 .AddSystem(new TransformMovementSystem())
                 .AddSystem(new FlipDirectionSystem())
-                .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new ApplyDamageSystem("Ghost", _container.Resolve<AudioService>()))
                 .AddSystem(new DamageKnockbackSystem())
-                .AddSystem(new DeathSystem())
-                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
+                .AddSystem(new DeathSystem("Ghost", _container.Resolve<AudioService>()))
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
+
+                // Таймеры эффектов
+                .AddSystem(new SleepTimerSystem())
+                ;
 
             return entity;
         }
