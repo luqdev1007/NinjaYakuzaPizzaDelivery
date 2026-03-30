@@ -49,6 +49,34 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: 0a1a5cc4da33c8c489acf5e20db9038b, type: 3}
       Volume: 1
       BasePitch: 2
+    - Id: WallHit1
+      Clip: {fileID: 8300000, guid: 106a4cf08f8140a47b5ecb7d3f9a5f9e, type: 3}
+      Volume: 1
+      BasePitch: 1
+    - Id: WallHit2
+      Clip: {fileID: 8300000, guid: 2030ca27b70bc924aafa748f8a20c768, type: 3}
+      Volume: 1
+      BasePitch: 1
+    - Id: WallHit3
+      Clip: {fileID: 8300000, guid: 23bf65fed9987cb43a87151fafb48d46, type: 3}
+      Volume: 1
+      BasePitch: 1
+    - Id: WallHit4
+      Clip: {fileID: 8300000, guid: e1988c9a3c62dac49af7e7ff59ca342b, type: 3}
+      Volume: 1
+      BasePitch: 1
+    - Id: WallHitLoop1
+      Clip: {fileID: 8300000, guid: e2313b3f294df094b82fc7074104f891, type: 3}
+      Volume: 1
+      BasePitch: 1
+    - Id: WallHitLoop2
+      Clip: {fileID: 8300000, guid: 56dd0bed93eefe54893b888c67367f9e, type: 3}
+      Volume: 1
+      BasePitch: 1
+    - Id: WallHitLoop3
+      Clip: {fileID: 8300000, guid: c809edbe3ef6b1046b0f74f48b64faa3, type: 3}
+      Volume: 1
+      BasePitch: 1
   - Type: 5
     Clips:
     - Id: GhostHit1
