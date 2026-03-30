@@ -9,8 +9,6 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
@@ -20,7 +18,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private readonly IInputService _inputService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly LayerMask _enemyMask;
-        private readonly AudioService _audioService;
 
         private ICompositeCondition _canDash;
         private ReactiveVariable<bool> _isDashing;
@@ -44,12 +41,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private const float DashBufferTime = 0.15f;
 
-        public DashSystem(IInputService inputService, ICoroutinesPerformer coroutinesPerformer, LayerMask enemyMask, AudioService audioService)
+        public DashSystem(IInputService inputService, ICoroutinesPerformer coroutinesPerformer, LayerMask enemyMask)
         {
             _inputService = inputService;
             _coroutinesPerformer = coroutinesPerformer;
             _enemyMask = enemyMask;
-            _audioService = audioService;
         }
 
         public void OnInit(Entity entity)
@@ -73,7 +69,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         public void OnUpdate(float deltaTime)
         {
-            // Используем unscaledDeltaTime, чтобы кулдаун шел даже во время хит-стопа
             float unscaledDt = Time.unscaledDeltaTime;
 
             if (_cooldownTimer > 0f)
@@ -84,7 +79,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             else if (_dashBufferTimer > 0f)
                 _dashBufferTimer -= unscaledDt;
 
-            // Проверка возможности рывка
             if (_dashBufferTimer > 0f && _canDash.Evaluate() && !_isCharging && _cooldownTimer <= 0)
             {
                 _isCharging = true;
@@ -111,18 +105,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private void ExecuteDash()
         {
-            // 1. Считаем силу заряда (0.0 - 1.0)
             float chargeRatio = _dashChargeTime.Value > 0f ? _chargeTimer / _dashChargeTime.Value : 1f;
             float force = Mathf.Lerp(_dashForceMin.Value, _dashForceMax.Value, chargeRatio);
 
-            // 2. Считаем питч: от 1.0 (слабый) до 1.3 (максимальный заряд)
-            // Это даст ощущение "мощности" без ухода в ультразвук
-            float dashPitch = 1f + (chargeRatio * 0.3f);
-
-            // 3. Воспроизводим одну из 5 вариаций "AbilityImpactCharge" (1, 2, 3, 4 или 5)
-            _audioService.PlaySfxVariation("AbilityImpactCharge", 1, 5, dashPitch);
-
-            // Дальнейшая логика рывка...
             bool inAir = !_isGrounded.Value;
             if (inAir) force *= _airDashMultiplier.Value;
 
@@ -143,18 +128,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             HashSet<Entity> hitEntities = new HashSet<Entity>();
 
             _rigidbody.gravityScale = 0f;
-
-            // Начальный импульс
             Vector2 dashVelocity = new Vector2(direction * force, inAir ? _airDashVerticalBoost.Value : 0f);
             _rigidbody.linearVelocity = dashVelocity;
 
             while (elapsed < duration)
             {
-                // Для плавности можно оставить затухание, но если "пролетает мимо", 
-                // лучше держать скорость чуть дольше
                 float t = elapsed / duration;
                 float currentSpeed = Mathf.Lerp(force, force * 0.2f, t);
-
                 _rigidbody.linearVelocity = new Vector2(direction * currentSpeed, _rigidbody.linearVelocity.y);
 
                 ApplyDashDamage(hitEntities, inAir);
@@ -173,8 +153,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             Vector2 checkPos = (Vector2)_transform.position;
             Collider2D[] hits = Physics2D.OverlapBoxAll(checkPos, _dashHitboxSize.Value, 0f, _enemyMask);
 
-            int newHitsInThisFrame = 0;
-
             foreach (Collider2D hit in hits)
             {
                 if (hit == null) continue;
@@ -185,9 +163,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
                 Entity target = mono.LinkedEntity;
                 if (hitEntities.Contains(target)) continue;
 
-                // Нашли новую цель
                 hitEntities.Add(target);
-                newHitsInThisFrame++;
 
                 float damage = _dashDamage.Value;
                 if (inAir) damage *= _airDashMultiplier.Value;
@@ -198,40 +174,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
                     target.TakeDamageRequest.Invoke(damageData);
                 }
             }
-
-            // Если в этом кадре задели кого-то, запускаем очередь звуков
-            if (newHitsInThisFrame > 0)
-            {
-                _coroutinesPerformer.StartPerform(PlayHitSoundsSequence(newHitsInThisFrame));
-            }
-        }
-
-        private IEnumerator PlayHitSoundsSequence(int count)
-        {
-            // Чем больше целей, тем выше может быть прогрессия питча, 
-            // чтобы создать эффект "нарастания" или просто хаоса
-            for (int i = 0; i < count; i++)
-            {
-                // Базовый высокий питч для Dash (например 1.4f) 
-                // + небольшая случайность, чтобы звуки отличались
-                float pitch = 1.4f + UnityEngine.Random.Range(-0.1f, 0.1f);
-
-                _audioService.PlayRandomSfx(AudioCategoryType.HeroAttackHit, true, pitch);
-
-                // Ждем крошечное количество времени (0.02 - 0.05 сек) 
-                // Этого достаточно, чтобы ухо различило отдельные удары
-                if (count > 1)
-                    yield return new WaitForSecondsRealtime(0.03f);
-            }
-        }
-
-        // Добавим маленький локальный хит-стоп для Dash, если нужно
-        private IEnumerator DoDashHitStop()
-        {
-            float originalScale = Time.timeScale;
-            Time.timeScale = 0.1f; // Не такой жесткий, как в мели
-            yield return new WaitForSecondsRealtime(0.05f);
-            Time.timeScale = originalScale;
         }
     }
 }

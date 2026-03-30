@@ -1177,6 +1177,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.IsMainHero() ); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.AudioComponent AudioC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.AudioComponent>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAudio(Assets._Project.Develop.Runtime.Utilites.AudioManagement.AudioService service)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.AudioComponent() {Service = service}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.HealthBarPoint HealthBarPointC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.HealthBarPoint>();
 
 		public UnityEngine.Transform HealthBarPoint => HealthBarPointC.Value;

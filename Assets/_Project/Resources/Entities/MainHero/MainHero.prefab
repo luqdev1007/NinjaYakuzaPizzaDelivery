@@ -34791,7 +34791,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dca1fc68a3e6224892919599a326a7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _customDeathSoundId: MainHeroDeath
   _animator: {fileID: 7142319570205284036}
 --- !u!114 &8298525861719048196
 MonoBehaviour:
@@ -34933,6 +34932,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 7142319570205284036}
+  _isDashingAnimParam: IsDashing
+  _spriteRenderer: {fileID: 4010868416834219212}
+  _flashDuration: 0.1
+  _flashColor: {r: 1, g: 1, b: 1, a: 1}
+  _afterimagePrefab: {fileID: 2092742535912402765, guid: bfa1d847138cafb4dbc0719e21491257, type: 3}
+  _spawnInterval: 0.04
+  _afterimageLifetime: 0.2
+  _afterimageColor: {r: 0.81953907, g: 0.5019608, b: 1, a: 0.8}
+  _poolSize: 8
+  _dashSoundPrefix: AbilityImpactCharge
+  _dashPitchRange: {x: 1.2, y: 1.4}
+  _hitCategory: 1
+  _hitPitchBase: 1.4
 --- !u!114 &6592515004558342224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34973,8 +34985,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 708cb269588edeb48818c8732e6fbef6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _customDamageSoundId: MainHeroHit
-  _useRandomPitch: 1
   _applyDamageEffectPrefab: {fileID: 5436667852462279511}
   _effectSpawnPoint: {fileID: 5440242270887683228}
   _vfxStopAction: 2
@@ -34984,6 +34994,8 @@ MonoBehaviour:
   _pizzaDisplay: {fileID: 2074096976373253779}
   _shakeDuration: 0.3
   _shakeStrength: 1
+  _damageSoundPrefix: MainHeroHit
+  _useVariation: 1
 --- !u!1 &2684084550196932738
 GameObject:
   m_ObjectHideFlags: 0
@@ -69814,6 +69826,8 @@ MonoBehaviour:
   - {fileID: 7518450432451936732}
   - {fileID: 3303103631818105528}
   _fireSpeedThresholdMultiplier: 1.05
+  _minFireEmission: 5
+  _maxFireEmission: 40
   _impactPS: {fileID: 5366238092746749147}
   _viewContainer: {fileID: 5149040113408065364}
   _stretchY: 1.4
@@ -69821,56 +69835,6 @@ MonoBehaviour:
   _squashDuration: 0.15
   _stretchLerpSpeed: 10
   _recoveryLerpSpeed: 8
---- !u!1 &5248142395289317712
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5408027250726950103}
-  - component: {fileID: 5633726330559190299}
-  m_Layer: 7
-  m_Name: DashVFX
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5408027250726950103
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5248142395289317712}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3817552431921455846}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5633726330559190299
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5248142395289317712}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3dba35b484781d6458130f964c20caa1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _afterimagePrefab: {fileID: 2092742535912402765, guid: bfa1d847138cafb4dbc0719e21491257, type: 3}
-  _heroSpriteRenderer: {fileID: 4010868416834219212}
-  _spawnInterval: 0.04
-  _afterimageLifetime: 0.2
-  _afterimageColor: {r: 0.5, g: 0.7, b: 1, a: 0.8}
-  _poolSize: 8
 --- !u!1 &5264996147728413291
 GameObject:
   m_ObjectHideFlags: 0
@@ -84755,7 +84719,6 @@ Transform:
   - {fileID: 5708196104238758929}
   - {fileID: 4525073869628518464}
   - {fileID: 2465651715336827443}
-  - {fileID: 5408027250726950103}
   - {fileID: 8118959697840262916}
   - {fileID: 5177754318514575334}
   - {fileID: 8063226271664128683}

@@ -277,8 +277,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 708cb269588edeb48818c8732e6fbef6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _customDamageSoundId: GhostHit
-  _useRandomPitch: 1
   _applyDamageEffectPrefab: {fileID: 864988755647194453, guid: a0bfa3c27a41fa54e93f06ca17129753, type: 3}
   _effectSpawnPoint: {fileID: 2720600874618316831}
   _vfxStopAction: 2
@@ -288,6 +286,8 @@ MonoBehaviour:
   _pizzaDisplay: {fileID: 0}
   _shakeDuration: 0.2
   _shakeStrength: 0.5
+  _damageSoundPrefix: GhostHit
+  _useVariation: 1
 --- !u!114 &1130839634098478934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,7 +300,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dca1fc68a3e6224892919599a326a7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _customDeathSoundId: GhostDeath
   _animator: {fileID: 1784155885393087696}
 --- !u!1 &3607678793894935207
 GameObject:

@@ -64,6 +64,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // — общее —
                 .AddMinFallVelocityForAction(new ReactiveVariable<float>(config.MinFallVelocityForAction))
                 .AddIsGrounded()
+                .AddAudio(_container.Resolve<AudioService>())
                 .AddGroundMask(config.GroundMask)
 
                 // — драйв (баг-фича) —
@@ -342,7 +343,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // — движение —
                 .AddSystem(new RigidbodyMovementSystem(inputService))
                 .AddSystem(new JumpSystem(inputService, slopeSystem))
-                .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.Attack.EnemyMask, _container.Resolve<AudioService>()))
+                .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.Attack.EnemyMask))
                 .AddSystem(new GlideSystem(inputService))
                 .AddSystem(new WallHangSystem(inputService))
                 .AddSystem(new SlideSystem(inputService, coroutinesPerformer, slopeSystem))
@@ -376,7 +377,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                                                     _container.Resolve<AudioService>()))
 
                 // — урон / жизненный цикл —
-                .AddSystem(new ApplyDamageSystem("MainHero", _container.Resolve<AudioService>()))
+                .AddSystem(new ApplyDamageSystem())
                 .AddSystem(new DamageKnockbackSystem())
                 .AddSystem(new DeathSystem("MainHero", _container.Resolve<AudioService>()))
                 .AddSystem(new DeathProcessTimerSystem())
@@ -421,6 +422,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory.Create(entity, at, ghostConfig.PrefabPath);
 
             entity
+                .AddAudio(_container.Resolve<AudioService>())
                 .AddLinearDrag(new ReactiveVariable<float>(ghostConfig.LinearDrag))
                 .AddAngularDrag(new ReactiveVariable<float>(ghostConfig.AngularDrag))
 
@@ -501,7 +503,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new FlipDirectionSystem())
 
                 // Системы урона
-                .AddSystem(new ApplyDamageSystem("Ghost", _container.Resolve<AudioService>()))
+                .AddSystem(new ApplyDamageSystem())
                 .AddSystem(new DamageKnockbackSystem())
                 .AddSystem(new DeathSystem("Ghost", _container.Resolve<AudioService>()))
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))

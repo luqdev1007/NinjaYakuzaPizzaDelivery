@@ -18,13 +18,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
         {
             _linkedEntity = entity;
 
+            EntityView[] views = GetComponentsInChildren<EntityView>();
+
             MonoEntityRegistrator[] registrators = GetComponentsInChildren<MonoEntityRegistrator>();
 
             if (registrators != null)
                 foreach (MonoEntityRegistrator registrator in registrators)
                     registrator.Register(entity);
-
-            EntityView[] views = GetComponentsInChildren<EntityView>();
 
             if (views != null)
                 foreach (EntityView entityView in views)
