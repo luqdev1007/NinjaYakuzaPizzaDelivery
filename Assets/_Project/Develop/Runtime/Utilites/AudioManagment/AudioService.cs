@@ -74,7 +74,7 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
         /// <summary>
         /// Проигрывает случайный звук из указанной категории (атака, шаги и т.д.)
         /// </summary>
-        public void PlayRandomSfx(AudioCategoryType category, bool useRandomPitch = true)
+        public void PlayRandomSfx(AudioCategoryType category, bool useRandomPitch = true, float multiplier = 1)
         {
             if (IsSpamming(category.ToString())) return;
 
@@ -83,7 +83,7 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
 
             _lastPlayedTimes[category.ToString()] = Time.time;
             float pitch = useRandomPitch ? data.BasePitch * Random.Range(0.9f, 1.1f) : data.BasePitch;
-            _manager.PlaySfx(data.Clip, data.Volume, pitch);
+            _manager.PlaySfx(data.Clip, data.Volume, pitch * multiplier);
         }
 
         /// <summary>

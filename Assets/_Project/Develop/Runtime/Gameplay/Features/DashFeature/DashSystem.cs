@@ -170,9 +170,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private void ApplyDashDamage(HashSet<Entity> hitEntities, bool inAir)
         {
-            // Увеличиваем область проверки по направлению движения (чтобы не "проскакивать")
             Vector2 checkPos = (Vector2)_transform.position;
             Collider2D[] hits = Physics2D.OverlapBoxAll(checkPos, _dashHitboxSize.Value, 0f, _enemyMask);
+
+            int newHitsInThisFrame = 0;
 
             foreach (Collider2D hit in hits)
             {
@@ -184,16 +185,53 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
                 Entity target = mono.LinkedEntity;
                 if (hitEntities.Contains(target)) continue;
 
+                // Нашли новую цель
+                hitEntities.Add(target);
+                newHitsInThisFrame++;
+
                 float damage = _dashDamage.Value;
                 if (inAir) damage *= _airDashMultiplier.Value;
 
-                if (target.HasComponent<CurrentHealth>())
+                if (target.HasComponent<TakeDamageRequest>())
                 {
-                    target.CurrentHealth.Value -= damage;
-                    target.TakeDamageEvent?.Invoke(new DamageData { Amount = damage, SourcePosition = checkPos });
-                    hitEntities.Add(target);
+                    var damageData = new DamageData { Amount = damage, SourcePosition = checkPos };
+                    target.TakeDamageRequest.Invoke(damageData);
                 }
             }
+
+            // Если в этом кадре задели кого-то, запускаем очередь звуков
+            if (newHitsInThisFrame > 0)
+            {
+                _coroutinesPerformer.StartPerform(PlayHitSoundsSequence(newHitsInThisFrame));
+            }
+        }
+
+        private IEnumerator PlayHitSoundsSequence(int count)
+        {
+            // Чем больше целей, тем выше может быть прогрессия питча, 
+            // чтобы создать эффект "нарастания" или просто хаоса
+            for (int i = 0; i < count; i++)
+            {
+                // Базовый высокий питч для Dash (например 1.4f) 
+                // + небольшая случайность, чтобы звуки отличались
+                float pitch = 1.4f + UnityEngine.Random.Range(-0.1f, 0.1f);
+
+                _audioService.PlayRandomSfx(AudioCategoryType.HeroAttackHit, true, pitch);
+
+                // Ждем крошечное количество времени (0.02 - 0.05 сек) 
+                // Этого достаточно, чтобы ухо различило отдельные удары
+                if (count > 1)
+                    yield return new WaitForSecondsRealtime(0.03f);
+            }
+        }
+
+        // Добавим маленький локальный хит-стоп для Dash, если нужно
+        private IEnumerator DoDashHitStop()
+        {
+            float originalScale = Time.timeScale;
+            Time.timeScale = 0.1f; // Не такой жесткий, как в мели
+            yield return new WaitForSecondsRealtime(0.05f);
+            Time.timeScale = originalScale;
         }
     }
 }
