@@ -167,14 +167,34 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: 885446618e02ffb4abf47ee8e1af9094, type: 3}
       Volume: 1
       BasePitch: 1.5
+    - Id: AbilityImpactGlideStart1
+      Clip: {fileID: 8300000, guid: c255035ed0e9a2a46aa10963493d6a3f, type: 3}
+      Volume: 0.7
+      BasePitch: 1.05
+    - Id: AbilityImpactGlideLoop1
+      Clip: {fileID: 8300000, guid: a1ad270a82b5d8c49b8f56710d81ae00, type: 3}
+      Volume: 0.31
+      BasePitch: 0.72
+    - Id: AbilityImpactGlideLoop2
+      Clip: {fileID: 8300000, guid: 50013a896ec595e4e81effad7ce6d922, type: 3}
+      Volume: 0.31
+      BasePitch: 0.72
+    - Id: AbilityImpactGlideLoop3
+      Clip: {fileID: 8300000, guid: 60f8e5c53fee1814c93eacf7f79293f0, type: 3}
+      Volume: 0.31
+      BasePitch: 0.77
+    - Id: AbilityImpactGlideStart2
+      Clip: {fileID: 8300000, guid: 302a5215bc93a6a408e487df77028621, type: 3}
+      Volume: 0.85
+      BasePitch: 0.96
   _playlists:
   - Id: MainMenu
     Tracks:
     - {fileID: 8300000, guid: 7917330994f8ad14784d8f4c7b458375, type: 3}
     - {fileID: 8300000, guid: 858cb41ba33f4c24189ce448ea8a6603, type: 3}
-    Volume: 1
+    Volume: 0
   - Id: Gameplay
     Tracks:
     - {fileID: 8300000, guid: 19fe9163ebd1a224f85ecdaeb4cdee2e, type: 3}
     - {fileID: 8300000, guid: ce03eeea0c6699c4195725abc10353a8, type: 3}
-    Volume: 1
+    Volume: 0
