@@ -61,7 +61,7 @@ MonoBehaviour:
     <KnockbackForce>k__BackingField: 4
   _slope:
     <BoostMultiplier>k__BackingField: 2
-    <JumpForce>k__BackingField: {x: 0.5, y: 1}
+    <JumpForce>k__BackingField: {x: 0.5, y: 3}
     <Mask>k__BackingField:
       serializedVersion: 2
       m_Bits: 2048

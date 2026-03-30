@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -107,6 +109,37 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
             if (_lastPlayedTimes.TryGetValue(id, out float lastTime))
                 return (Time.time - lastTime) < GlobalSfxCooldown;
             return false;
+        }
+
+        // В AudioService.cs добавь корутину для миксера:
+        public IEnumerator FadeMixerGroup(string parameterName, float targetDb, float duration)
+        {
+            _mixer.GetFloat(parameterName, out float startValue);
+            float timer = 0;
+
+            while (timer < duration)
+            {
+                timer += Time.deltaTime;
+                float newValue = Mathf.Lerp(startValue, targetDb, timer / duration);
+                _mixer.SetFloat(parameterName, newValue);
+                yield return null;
+            }
+            _mixer.SetFloat(parameterName, targetDb);
+        }
+
+        // Измени SetMusicMuted, чтобы он мог быть мгновенным или плавным
+        public void SetMusicMuted(bool isMuted, float duration = 0f, ICoroutinesPerformer performer = null)
+        {
+            float targetVolume = isMuted ? -15f : 0f;
+
+            if (duration > 0 && performer != null)
+            {
+                performer.StartPerform(FadeMixerGroup("MusicVolume", targetVolume, duration));
+            }
+            else
+            {
+                _mixer.SetFloat("MusicVolume", targetVolume);
+            }
         }
     }
 }

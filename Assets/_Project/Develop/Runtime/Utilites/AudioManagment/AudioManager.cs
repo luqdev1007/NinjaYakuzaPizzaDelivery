@@ -33,12 +33,15 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
             }
         }
 
+        private Coroutine _musicFadeCoroutine;
+
         public void PlayMusic(AudioClip clip, float volume, bool loop = true)
         {
             if (_activeMusicSource.clip == clip) return;
             AudioSource inactiveSource = (_activeMusicSource == _musicSourceA) ? _musicSourceB : _musicSourceA;
-            StopAllCoroutines();
-            StartCoroutine(FadeMusic(inactiveSource, clip, volume, loop));
+
+            if (_musicFadeCoroutine != null) StopCoroutine(_musicFadeCoroutine);
+            _musicFadeCoroutine = StartCoroutine(FadeMusic(inactiveSource, clip, volume, loop));
         }
 
         private IEnumerator FadeMusic(AudioSource newSource, AudioClip clip, float targetVolume, bool loop)

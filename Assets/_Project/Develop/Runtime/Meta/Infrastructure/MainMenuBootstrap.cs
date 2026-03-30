@@ -33,6 +33,8 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
 
         public override void Run()
         {
+            // Сбрасываем приглушение мгновенно, чтобы музыка меню сразу звучала сочно
+            _audioService.SetMusicMuted(false);
             _audioService.StartPlaylist("MainMenu");
         }
 

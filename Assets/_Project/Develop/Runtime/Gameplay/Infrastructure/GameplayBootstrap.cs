@@ -15,6 +15,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 {
@@ -59,8 +60,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         public override void Run()
         {
-            if (_inputArgs.IsRestart == false)
+            if (_inputArgs.IsRestart)
             {
+                // Плавно возвращаем музыку в норму за 1 секунду после рестарта
+                // Используем ICoroutinesPerformer из контейнера (или сам бутстрап через MonoBehaviour)
+                var performer = _container.Resolve<ICoroutinesPerformer>();
+                _audioService.SetMusicMuted(false, 1f, performer);
+            }
+            else
+            {
+                // Первый вход — сбрасываем приглушение мгновенно и играем
+                _audioService.SetMusicMuted(false);
                 _audioService.StartPlaylist("Gameplay");
             }
 

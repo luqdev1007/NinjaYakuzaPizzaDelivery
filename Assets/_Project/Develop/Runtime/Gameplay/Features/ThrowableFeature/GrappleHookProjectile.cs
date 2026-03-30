@@ -69,6 +69,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         private IEnumerator PullPhysicsCoroutine(Vector2 anchor, Collider2D hitCollider, bool isEnemy, Entity targetEntity)
         {
             OnGrappleStarted?.Invoke();
+
+            // Защита от уничтожения игрока на старте
+            if (_heroTransform == null || _heroRigidbody == null) yield break;
+
             float originalGravity = _heroRigidbody.gravityScale;
             float originalDrag = _heroRigidbody.linearDamping;
 
@@ -92,19 +96,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             {
                 if (_isCancelled != null && _isCancelled()) break;
 
-                if (isEnemy && (hitCollider == null || targetEntity == null || targetEntity.IsDead.Value)) break;
+                // ГЛАВНЫЙ ФИКС: Проверка на существование объектов в каждом кадре
+                if (_heroTransform == null || _heroRigidbody == null) yield break;
+                if (hitCollider == null) break;
+                if (isEnemy && (targetEntity == null || targetEntity.IsDead.Value)) break;
 
-                if (hitCollider != null) anchor = hitCollider.transform.position;
+                // Теперь безопасно берем позицию
+                anchor = hitCollider.transform.position;
 
                 Vector2 playerPos = _heroTransform.position;
                 Vector2 toTarget = anchor - playerPos;
                 float distance = toTarget.magnitude;
 
-                // Проверка на критическое удаление (разрыв хука)
                 if (distance > _config.MaxDistance * MaxDistanceMultiplier)
                 {
-                    Debug.LogWarning($"[Grapple] Дистанция {distance} превысила лимит. Разрыв!");
-                    // Легкий импульс в сторону цели при разрыве для инерции
                     _heroRigidbody.AddForce(toTarget.normalized * _config.GrappleSpeed * 0.5f, ForceMode2D.Impulse);
                     break;
                 }
@@ -126,23 +131,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                 yield return new WaitForFixedUpdate();
             }
 
+            // Очистка
             if (targetEntity != null && targetEntity.HasComponent<IsGrappledTarget>())
             {
                 targetEntity.IsGrappledTarget.Value = false;
             }
 
-            _heroRigidbody.linearDamping = originalDrag;
-            EndGrapple(originalGravity);
+            if (_heroRigidbody != null)
+            {
+                _heroRigidbody.linearDamping = originalDrag;
+                EndGrapple(originalGravity);
+            }
         }
 
         private void HandleEnemyCollision(Entity targetEntity, Collider2D enemyCollider)
         {
             if (targetEntity != null)
             {
-                if (targetEntity.CurrentHealth != null)
-                {
-                    targetEntity.CurrentHealth.Value = 0;
-                }
+                if (targetEntity.CurrentHealth != null) targetEntity.CurrentHealth.Value = 0;
             }
             else if (enemyCollider != null)
             {
@@ -154,8 +160,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         private void EndGrapple(float originalGravity)
         {
-            _heroRigidbody.gravityScale = originalGravity;
+            if (_heroRigidbody == null) return;
 
+            _heroRigidbody.gravityScale = originalGravity;
             Vector2 boost = _heroRigidbody.linearVelocity * _config.CancelInertiaMultiplier;
             if (boost.y > 0) boost.y *= 1.2f;
 
@@ -169,6 +176,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             while (Instance != null)
             {
                 if (_isCancelled != null && _isCancelled()) break;
+
+                // Проверка на случай удаления Instance в процессе
+                if (Instance == null) break;
+
                 Instance.transform.position = Vector3.MoveTowards(Instance.transform.position, returnTarget, Config.ProjectileSpeed * 2f * Time.deltaTime);
                 if (Vector3.Distance(Instance.transform.position, returnTarget) <= 0.1f) break;
                 yield return null;
@@ -179,6 +190,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         private void FlipTowards(Vector3 target)
         {
+            if (_heroTransform == null) return;
             Vector3 scale = _heroTransform.localScale;
             scale.x = (target.x > _heroTransform.position.x) ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
             _heroTransform.localScale = scale;
