@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Utilites.AssetsManagment;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement; // Добавил пространство имен
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,17 +20,13 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
         {
             { typeof(StartWalletConfig), "Configs/Meta/Wallet/StartWalletConfig" },
             { typeof(CurrencyIconsConfig), "Configs/Meta/Wallet/CurrencyIconsConfig" },
-
             { typeof(GameRewardsConfig), "Configs/Meta/Stats/GameRewardsConfig" },
-
             { typeof(LevelsListConfig), "Configs/Gameplay/Levels/LevelsListConfig" },
-
             { typeof(MaiHeroConfig), "Configs/Entities/MainHero/MainHeroConfig" },
             { typeof(GhostConfig), "Configs/Entities/GhostConfig" },
-
             { typeof(DialogConfig), "Configs/Dialogs/TutorialDialog" },
-
-            { typeof(CharactersConfig), "Configs/Dialogs/CharactersConfig" }
+            { typeof(CharactersConfig), "Configs/Dialogs/CharactersConfig" },
+            { typeof(AudioConfig), "Configs/Audio/AudioConfig" } 
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)

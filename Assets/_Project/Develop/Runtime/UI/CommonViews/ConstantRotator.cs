@@ -5,21 +5,27 @@ namespace Assets._Project.Develop.Runtime.UI.CommonViews
 {
     public class ConstantRotator : MonoBehaviour
     {
-        [SerializeField] private float _duration = 2f; // Время одного полного оборота
+        [SerializeField] private float _duration = 0.3f; // Сюрикен должен крутиться быстро!
+
+        private Tween _rotateTween;
 
         private void Start()
         {
-            // Вращаем по Z на 360 градусов относительно текущего угла
-            transform.DOLocalRotate(new Vector3(0, 0, 360), _duration, RotateMode.FastBeyond360)
-                .SetRelative(true)            // Вращение относительно текущего состояния
-                .SetEase(Ease.Linear)         // Линейно, без замедлений/ускорений
-                .SetLoops(-1, LoopType.Incremental); // Бесконечно в одном направлении
+            _rotateTween = transform.DOLocalRotate(new Vector3(0, 0, 360), _duration, RotateMode.FastBeyond360)
+                .SetRelative(true)
+                .SetEase(Ease.Linear)
+                .SetLoops(-1, LoopType.Incremental);
+        }
+
+        // Метод для внешней остановки
+        public void StopRotation()
+        {
+            _rotateTween?.Kill();
         }
 
         private void OnDestroy()
         {
-            // Хорошая практика — убивать твин при уничтожении объекта
-            transform.DOKill();
+            _rotateTween?.Kill();
         }
     }
 }

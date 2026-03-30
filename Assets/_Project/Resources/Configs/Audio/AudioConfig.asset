@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e0f14fb553e4ba4183af79685d75c62, type: 3}
+  m_Name: AudioConfig
+  m_EditorClassIdentifier: 
+  _categories:
+  - Type: 0
+    Clips:
+    - Id: Swing1
+      Clip: {fileID: 8300000, guid: dc20931434ca8cc4c8623f16a6fdbb5c, type: 3}
+      Volume: 1
+      BasePitch: 2
+    - Id: Swing2
+      Clip: {fileID: 8300000, guid: fc3222ac98b2091449f1fc19361f7116, type: 3}
+      Volume: 1
+      BasePitch: 2
+    - Id: Swing3
+      Clip: {fileID: 8300000, guid: afc496af20c412e418fee0ff7f852f18, type: 3}
+      Volume: 1
+      BasePitch: 2
+  - Type: 1
+    Clips:
+    - Id: Hit1
+      Clip: {fileID: 8300000, guid: ab12d6d2151051844bf3d85acb1ef5f5, type: 3}
+      Volume: 1
+      BasePitch: 2
+    - Id: Hit2
+      Clip: {fileID: 8300000, guid: de4fc12d9e9b8c6428ce2f34fa0e2243, type: 3}
+      Volume: 1
+      BasePitch: 2
+    - Id: Hit3
+      Clip: {fileID: 8300000, guid: ee7a572eb006c514f9769255f346dbcf, type: 3}
+      Volume: 1
+      BasePitch: 2
+    - Id: Hit4
+      Clip: {fileID: 8300000, guid: b7f1d236cbba22742aaadc81fa571283, type: 3}
+      Volume: 1
+      BasePitch: 2
+    - Id: Hit5
+      Clip: {fileID: 8300000, guid: 0a1a5cc4da33c8c489acf5e20db9038b, type: 3}
+      Volume: 1
+      BasePitch: 2

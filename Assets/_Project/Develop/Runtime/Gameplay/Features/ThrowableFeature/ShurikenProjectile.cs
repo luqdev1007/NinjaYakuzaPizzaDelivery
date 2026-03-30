@@ -3,7 +3,6 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
@@ -11,6 +10,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
     public class ShurikenProjectile : ThrowableProjectile
     {
         private readonly ShurikenConfig _config;
+        private bool _isStuck;
+
+        // Скорость вращения (градусы в секунду)
+        private const float RotationSpeed = 360 * 5f;
 
         public ShurikenProjectile(ShurikenConfig config, ICoroutinesPerformer coroutinesPerformer)
             : base(config, coroutinesPerformer)
@@ -20,26 +23,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         protected override void OnHit(Collider2D hit)
         {
+            if (_isStuck) return;
+
             var monoEntity = hit.GetComponentInParent<MonoEntity>();
 
             if (monoEntity != null)
             {
-                // Попали во врага: наносим урон и исчезаем
                 var target = monoEntity.LinkedEntity;
                 if (target != null && target.HasComponent<CurrentHealth>())
-                    target.CurrentHealth.Value -= _config.Damage;
-
-                target.TakeDamageEvent?.Invoke(new DamageData
                 {
-                    Amount = _config.Damage,
-                    SourcePosition = hit.ClosestPoint(Instance.transform.position)
-                });
+                    target.CurrentHealth.Value -= _config.Damage;
+                    target.TakeDamageEvent?.Invoke(new DamageData
+                    {
+                        Amount = _config.Damage,
+                        SourcePosition = hit.ClosestPoint(Instance.transform.position)
+                    });
+                }
 
-                Destroy(); // Исчезает мгновенно
+                Destroy(); // Мясо — уничтожаем сразу
             }
             else
             {
-                // Попали в стену: втыкаемся
+                // Стена — фиксируем
+                _isStuck = true;
                 CoroutinesPerformer.StartPerform(StickInSurfaceCoroutine());
             }
         }
@@ -48,17 +54,33 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         {
             if (Instance == null) yield break;
 
+            // Отключаем физику и коллизии мгновенно
             var col = Instance.GetComponent<Collider2D>();
             if (col != null) col.enabled = false;
 
+            var rb = Instance.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+                rb.angularVelocity = 0f;
+                rb.bodyType = RigidbodyType2D.Kinematic;
+                rb.simulated = false;
+            }
+
+            // Висим 3 секунды и исчезаем
             yield return new WaitForSeconds(3f);
             Destroy();
         }
 
         protected override void ApplyRotation(Vector3 direction)
         {
-            if (Instance != null)
-                Instance.transform.Rotate(0, 0, 1200f * Time.deltaTime);
+            // Пока не воткнулись — крутимся
+            if (Instance != null && !_isStuck)
+            {
+                Instance.transform.Rotate(0, 0, RotationSpeed * Time.deltaTime);
+            }
+            // Как только _isStuck станет true, этот метод перестанет крутить объект,
+            // и сюрикен застынет под тем углом, под которым ударился.
         }
     }
 }

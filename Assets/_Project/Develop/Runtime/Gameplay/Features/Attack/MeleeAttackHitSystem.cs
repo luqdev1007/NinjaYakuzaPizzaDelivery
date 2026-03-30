@@ -8,6 +8,7 @@ using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using System;
 using System.Collections;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
@@ -18,15 +19,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private readonly LayerMask _enemyMask;
         private readonly float _hitBounceForce;
         private readonly ICoroutinesPerformer _coroutines;
+        private readonly AudioService _audioService;
 
         private const float HitStopDuration = 0.15f;
         private const float HitStopScale = 0.05f;
 
-        public MeleeAttackHitSystem(LayerMask enemyMask, float hitBounceForce, ICoroutinesPerformer coroutines)
+        public MeleeAttackHitSystem(LayerMask enemyMask, float hitBounceForce, ICoroutinesPerformer coroutines, AudioService audioService)
         {
             _enemyMask = enemyMask;
             _hitBounceForce = hitBounceForce;
             _coroutines = coroutines;
+            _audioService = audioService;
         }
 
         public void OnInit(Entity entity)
@@ -37,6 +40,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private void OnAttackHit()
         {
+            _audioService.PlayRandomSfx(AudioCategoryType.HeroAttackSwing);
+
             float dir = _entity.Transform.localScale.x > 0 ? 1f : -1f;
             Collider2D[] hits = Physics2D.OverlapCircleAll(
                 (Vector2)_entity.Transform.position + Vector2.right * dir * (_entity.AttackRange.Value * 0.5f),
@@ -57,7 +62,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
             if (hitAny)
             {
-                ApplyJuggle(dir); // Передаем направление взгляда
+                _audioService.PlayRandomSfx(AudioCategoryType.HeroAttackHit);
+                ApplyJuggle(dir);
                 ExtendInvulnerability();
                 _coroutines.StartPerform(DoHitStop());
             }
@@ -74,13 +80,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private void ApplyJuggle(float direction)
         {
-            // Горизонтальный рывок в сторону удара, чтобы догнать отлетающую цель
             float horizontalImpulse = direction * _hitBounceForce * 0.7f;
-
-            // Вертикальный подброс (джаггл)
             float verticalImpulse = _entity.IsGrounded.Value ? _hitBounceForce * 0.4f : _hitBounceForce * 0.8f;
 
-            // Устанавливаем новую скорость, игнорируя старую инерцию для четкости контроля
             _entity.Rigidbody.linearVelocity = new Vector2(horizontalImpulse, Mathf.Max(0, _entity.Rigidbody.linearVelocity.y) + verticalImpulse);
         }
 

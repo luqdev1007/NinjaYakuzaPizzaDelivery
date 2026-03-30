@@ -5,6 +5,7 @@ using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilites.AssetsManagment;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.DataManagment;
@@ -55,6 +56,22 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             container.RegisterAsSingle(CreateTimerServiceFactory);
 
             container.RegisterAsSingle(CreateLevelsProgressionService).NonLazy();
+
+            container.RegisterAsSingle(CreateAudioService);
+        }
+
+        private static AudioService CreateAudioService(DIContainer container)
+        {
+            var assetsLoader = container.Resolve<ResourcesAssetsLoader>();
+            var configProvider = container.Resolve<ConfigsProviderService>();
+
+            AudioConfig config = configProvider.GetConfig<AudioConfig>();
+            AudioManager prefab = assetsLoader.Load<AudioManager>("Utilities/AudioManager");
+
+            AudioManager managerInstance = Object.Instantiate(prefab);
+            Object.DontDestroyOnLoad(managerInstance);
+
+            return new AudioService(config, managerInstance);
         }
 
         private static TimerServiceFactory CreateTimerServiceFactory(DIContainer container)

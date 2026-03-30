@@ -1,0 +1,55 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
+{
+    [CreateAssetMenu(fileName = "AudioConfig", menuName = "Configs/Audio/AudioConfig")]
+    public class AudioConfig : ScriptableObject
+    {
+        [SerializeField] private List<AudioCategory> _categories;
+
+        public AudioData GetRandomFromCategory(AudioCategoryType type)
+        {
+            var category = _categories.FirstOrDefault(c => c.Type == type);
+
+            if (category == null || category.Clips == null || category.Clips.Count == 0)
+                return null;
+
+            return category.Clips[UnityEngine.Random.Range(0, category.Clips.Count)];
+        }
+
+        public AudioData GetById(string id)
+        {
+            return _categories
+                .SelectMany(c => c.Clips)
+                .FirstOrDefault(d => d.Id == id);
+        }
+    }
+
+    [Serializable]
+    public class AudioCategory
+    {
+        public AudioCategoryType Type;
+        public List<AudioData> Clips;
+    }
+
+    [Serializable]
+    public class AudioData
+    {
+        public string Id;
+        public AudioClip Clip;
+        [Range(0, 1)] public float Volume = 1f;
+        [Range(0.1f, 3f)] public float BasePitch = 1f;
+    }
+
+    public enum AudioCategoryType
+    {
+        HeroAttackSwing,
+        HeroAttackHit,
+        Footsteps,
+        UI,
+        Music
+    }
+}
