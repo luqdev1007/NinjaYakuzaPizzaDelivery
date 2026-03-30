@@ -34637,7 +34637,6 @@ GameObject:
   - component: {fileID: 4010868416834219212}
   - component: {fileID: 7142319570205284036}
   - component: {fileID: 2140099232092585705}
-  - component: {fileID: 948128365703281077}
   - component: {fileID: 6032324195974777070}
   - component: {fileID: 8298525861719048196}
   - component: {fileID: 7833469927091323597}
@@ -34650,7 +34649,6 @@ GameObject:
   - component: {fileID: 1178100613394687203}
   - component: {fileID: 5986732417377409905}
   - component: {fileID: 6592515004558342224}
-  - component: {fileID: 6998541200289890700}
   - component: {fileID: 6237053472596339389}
   m_Layer: 0
   m_Name: View
@@ -34764,21 +34762,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 7142319570205284036}
+  _attackAnimationClip: {fileID: 7400000, guid: a456fbe13b2c80444b359fffdd65481a, type: 2}
+  _isAttackingParam: IsAttacking
+  _speedMultiplierParam: AttackAnimationSpeedMultiplier
   _slashParticle: {fileID: 8548548235128150207}
---- !u!114 &948128365703281077
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2402411871318597321}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68b4d5cf4a52b234b97ab7f138dac947, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _animationClip: {fileID: 7400000, guid: a456fbe13b2c80444b359fffdd65481a, type: 2}
-  _animator: {fileID: 7142319570205284036}
+  _swingCategory: 0
+  _hitCategory: 1
 --- !u!114 &6032324195974777070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34944,7 +34933,7 @@ MonoBehaviour:
   _dashSoundPrefix: AbilityImpactCharge
   _dashPitchRange: {x: 1.2, y: 1.4}
   _hitCategory: 1
-  _hitPitchBase: 1.4
+  _hitPitchBase: 0.9
 --- !u!114 &6592515004558342224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34958,21 +34947,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 7142319570205284036}
---- !u!114 &6998541200289890700
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2402411871318597321}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a1c807b7b3bad448b2fe374dc122260, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _spriteRenderer: {fileID: 4010868416834219212}
-  _flashDuration: 0.1
-  _flashColor: {r: 0.19215688, g: 0.027450982, b: 0.21568629, a: 1}
 --- !u!114 &6237053472596339389
 MonoBehaviour:
   m_ObjectHideFlags: 0

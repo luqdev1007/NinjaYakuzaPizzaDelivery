@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
+    public class SuccessfulHitEvent : IEntityComponent
+    {
+        public ReactiveEvent Value = new();
+    }
+
     public class AttackInvulnerabilityDuration : IEntityComponent
     {
         public ReactiveVariable<float> Value;

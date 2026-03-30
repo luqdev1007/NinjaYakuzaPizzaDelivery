@@ -1,24 +1,40 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Hero;
 using System;
 using UnityEngine;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
     [RequireComponent(typeof(Animator))]
     public class AttackView : EntityView
     {
-        private readonly int IsAttackingKey = Animator.StringToHash("IsAttacking");
-
+        [Header("Animation")]
         [SerializeField] private Animator _animator;
+        [SerializeField] private AnimationClip _attackAnimationClip;
+        [SerializeField] private string _isAttackingParam = "IsAttacking";
+        [SerializeField] private string _speedMultiplierParam = "AttackAnimationSpeedMultiplier";
+
+        [Header("VFX")]
         [SerializeField] private ParticleSystem _slashParticle;
 
+        [Header("Audio")]
+        [SerializeField] private AudioCategoryType _swingCategory = AudioCategoryType.HeroAttackSwing;
+        [SerializeField] private AudioCategoryType _hitCategory = AudioCategoryType.HeroAttackHit;
+
+        private AudioService _audioService;
         private ParticleSystemRenderer _particleRenderer;
-        private Transform _rootTransform; // Ссылка на ту самую верхнюю пустышку
-        private IReadOnlyVariable<bool> _inAttackProcess;
-        private IDisposable _inAttackProcessChangedDisposable;
+        private Transform _rootTransform;
+
+        private IDisposable _inAttackProcessDisposable;
         private IDisposable _attackHitDisposable;
+        private IDisposable _successfulHitDisposable;
+
+        private readonly int IsAttackingKey = Animator.StringToHash("IsAttacking");
+        private readonly int SpeedMultiplierKey = Animator.StringToHash("AttackAnimationSpeedMultiplier");
 
         private void OnValidate()
         {
@@ -27,36 +43,55 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _inAttackProcess = entity.InAttackProcess;
-
-            // Берем ссылку на трансформ главной пустышки из сущности
+            _audioService = entity.GetComponent<AudioComponent>().Service;
             _rootTransform = entity.Transform;
 
             if (_slashParticle != null)
                 _particleRenderer = _slashParticle.GetComponent<ParticleSystemRenderer>();
 
-            _inAttackProcessChangedDisposable = _inAttackProcess.Subscribe(OninAttackProcessChanged);
-            UpdateInAttackProcess(_inAttackProcess.Value);
+            // Настройка скорости анимации под логику
+            if (_attackAnimationClip != null && entity.HasComponent<AttackProcessInitialTime>())
+            {
+                float speedMultiplier = _attackAnimationClip.length / entity.AttackProcessInitialTime.Value;
+                _animator.SetFloat(SpeedMultiplierKey, speedMultiplier);
+            }
 
-            _attackHitDisposable = entity.AttackDelayEndEvent.Subscribe(PlaySlashEffect);
+            // Подписки
+            _inAttackProcessDisposable = entity.InAttackProcess.Subscribe(OnAttackProcessChanged);
+            _attackHitDisposable = entity.AttackDelayEndEvent.Subscribe(OnAttackMoment);
+
+            if (entity.HasComponent<SuccessfulHitEvent>())
+                _successfulHitDisposable = entity.GetComponent<SuccessfulHitEvent>().Value.Subscribe(OnSuccessfulHit);
+
+            UpdateInAttackProcess(entity.InAttackProcess.Value);
         }
 
-        public override void Cleanup(Entity entity)
+        private void OnAttackProcessChanged(bool old, bool current)
         {
-            base.Cleanup(entity);
-            _inAttackProcessChangedDisposable?.Dispose();
-            _attackHitDisposable?.Dispose();
+            UpdateInAttackProcess(current);
+            if (current)
+            {
+                // Звук взмаха всегда в начале
+                _audioService.PlayRandomSfx(_swingCategory);
+            }
+        }
+
+        private void OnAttackMoment()
+        {
+            PlaySlashEffect();
+        }
+
+        private void OnSuccessfulHit()
+        {
+            // Сочный звук попадания при контакте с врагом
+            _audioService.PlayRandomSfx(_hitCategory);
         }
 
         private void PlaySlashEffect()
         {
-            if (_slashParticle == null || _particleRenderer == null || _rootTransform == null)
-                return;
+            if (_slashParticle == null || _particleRenderer == null || _rootTransform == null) return;
 
-            // Читаем скейл САМОЙ ВЕРХНЕЙ пустышки, которую крутит логика
             float rootScaleX = _rootTransform.localScale.x;
-
-            // Твоя логика: вправо (scale > 0) -> flip 1, влево -> flip 0
             Vector3 currentFlip = _particleRenderer.flip;
             currentFlip.x = rootScaleX > 0 ? 1 : 0;
             _particleRenderer.flip = currentFlip;
@@ -66,6 +101,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         }
 
         private void UpdateInAttackProcess(bool value) => _animator.SetBool(IsAttackingKey, value);
-        private void OninAttackProcessChanged(bool oldVal, bool newVal) => UpdateInAttackProcess(newVal);
+
+        public override void Cleanup(Entity entity)
+        {
+            base.Cleanup(entity);
+            _inAttackProcessDisposable?.Dispose();
+            _attackHitDisposable?.Dispose();
+            _successfulHitDisposable?.Dispose();
+        }
     }
 }

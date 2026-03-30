@@ -110,6 +110,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddGlideSnapDuration(new ReactiveVariable<float>(config.Glide.SnapDuration))
 
                 // — атака —
+                .AddSuccessfulHitEvent()
                 .AddStartAttackRequest()
                 .AddStartAttackEvent()
                 .AddEndAttackEvent()
@@ -371,10 +372,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem())
                 .AddSystem(new AttackInvulnerabilitySystem())
-                .AddSystem(new MeleeAttackHitSystem(config.Attack.EnemyMask, 
-                                                    config.Attack.HitBounceForce, 
-                                                    _container.Resolve<ICoroutinesPerformer>(),
-                                                    _container.Resolve<AudioService>()))
+                .AddSystem(
+                    new MeleeAttackHitSystem(
+                        config.Attack.EnemyMask, 
+                        config.Attack.HitBounceForce, 
+                        _container.Resolve<ICoroutinesPerformer>()))
 
                 // — урон / жизненный цикл —
                 .AddSystem(new ApplyDamageSystem())
