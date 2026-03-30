@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.DataProviders;
@@ -22,6 +23,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly GameplayPopupService _gameplayPopupService;
         private readonly WalletService _walletService;
         private readonly ConfigsProviderService _configsProviderService;
+        private readonly AudioService _audioService;
 
         public WinState(
             IInputService inputService,
@@ -31,7 +33,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             ICoroutinesPerformer coroutinesPerformer,
             GameplayPopupService gameplayPopupService,
             WalletService walletService,
-            ConfigsProviderService configsProviderService) : base(inputService)
+            ConfigsProviderService configsProviderService,
+            AudioService audioService) : base(inputService)
         {
             _levelsProgressionService = levelsProgressionService;
             _gameplayInputArgs = gameplayInputArgs;
@@ -40,6 +43,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _gameplayPopupService = gameplayPopupService;
             _walletService = walletService;
             _configsProviderService = configsProviderService;
+            _audioService = audioService;
         }
 
         public override void Enter()
@@ -48,15 +52,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             Debug.Log("VICTORY!");
 
+            // Обращаемся к AudioService через твой DI (нужно добавить в конструктор)
+            _audioService.SetMusicMuted(true);
+
             int reward = _configsProviderService.GetConfig<GameRewardsConfig>().RewardForWin;
             _walletService.Add(CurrencyTypes.Gold, reward);
 
             _levelsProgressionService.AddLevelToCompleted(_gameplayInputArgs.LevelNumber);
 
-
             _coroutinesPerformer.StartPerform(_playerDataProvider.SaveAsync());
 
-            _gameplayPopupService.OpenWinPopup();            
+            _gameplayPopupService.OpenWinPopup();
         }
 
         public void Update(float deltaTime)

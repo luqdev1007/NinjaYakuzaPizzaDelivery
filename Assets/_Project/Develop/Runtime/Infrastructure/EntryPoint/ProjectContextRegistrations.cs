@@ -71,7 +71,11 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             AudioManager managerInstance = Object.Instantiate(prefab);
             Object.DontDestroyOnLoad(managerInstance);
 
-            return new AudioService(config, managerInstance);
+            // Достаем миксер из менеджера (убедись, что в AudioManager.cs есть публичное поле Mixer 
+            // или достань его через outputAudioMixerGroup.audioMixer)
+            var mixer = managerInstance.MusicMixer;
+
+            return new AudioService(config, managerInstance, mixer);
         }
 
         private static TimerServiceFactory CreateTimerServiceFactory(DIContainer container)

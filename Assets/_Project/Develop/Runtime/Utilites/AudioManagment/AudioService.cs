@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
 {
@@ -7,23 +8,28 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
     {
         private readonly AudioConfig _config;
         private readonly AudioManager _manager;
+        private readonly AudioMixer _mixer;
+
         private readonly Dictionary<string, float> _lastPlayedTimes = new Dictionary<string, float>();
 
         private MusicPlaylist _currentPlaylist;
         private int _lastTrackIndex = -1;
         private const float GlobalSfxCooldown = 0.05f;
 
-        public AudioService(AudioConfig config, AudioManager manager)
+        // Конструктор принимает миксер для управления приглушением при смерти
+        public AudioService(AudioConfig config, AudioManager manager, AudioMixer mixer)
         {
             _config = config;
             _manager = manager;
+            _mixer = mixer;
             _manager.OnMusicEnded += PlayNextFromPlaylist;
         }
 
-        // Тот самый метод для систем атаки
+        /// <summary>
+        /// Проигрывает случайный звук из указанной категории (атака, шаги и т.д.)
+        /// </summary>
         public void PlayRandomSfx(AudioCategoryType category, bool useRandomPitch = true)
         {
-            // Используем имя категории как ключ для кулдауна
             if (IsSpamming(category.ToString())) return;
 
             var data = _config.GetRandomFromCategory(category);
@@ -34,6 +40,9 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
             _manager.PlaySfx(data.Clip, data.Volume, pitch);
         }
 
+        /// <summary>
+        /// Проигрывает звук по префиксу (например, "BatHit" или "ImpDeath")
+        /// </summary>
         public void PlaySfxByPrefix(string prefix, bool useRandomPitch = true)
         {
             if (IsSpamming(prefix)) return;
@@ -46,11 +55,30 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
             _manager.PlaySfx(data.Clip, data.Volume, pitch);
         }
 
+        /// <summary>
+        /// Запускает плейлист по ID (Menu, Gameplay) с логикой псевдорандома
+        /// </summary>
         public void StartPlaylist(string playlistId)
         {
-            _currentPlaylist = _config.GetPlaylist(playlistId);
+            var playlist = _config.GetPlaylist(playlistId);
+            if (playlist == null) return;
+
+            // Автоматически возвращаем громкость в норму при смене плейлиста
+            SetMusicMuted(false);
+
+            _currentPlaylist = playlist;
             _lastTrackIndex = -1;
             PlayNextFromPlaylist();
+        }
+
+        /// <summary>
+        /// Управляет приглушением музыки (например, при поражении) через Mixer
+        /// </summary>
+        public void SetMusicMuted(bool isMuted)
+        {
+            // -15f или -20f создают приятный эффект "фоновости", -80f — полная тишина
+            float targetVolume = isMuted ? -15f : 0f;
+            _mixer.SetFloat("MusicVolume", targetVolume);
         }
 
         private void PlayNextFromPlaylist()
@@ -58,14 +86,19 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
             if (_currentPlaylist == null || _currentPlaylist.Tracks.Count == 0) return;
 
             int nextIndex;
-            if (_currentPlaylist.Tracks.Count == 1) nextIndex = 0;
+            if (_currentPlaylist.Tracks.Count == 1)
+            {
+                nextIndex = 0;
+            }
             else
             {
+                // Выбираем следующий трек так, чтобы он не повторял предыдущий
                 do { nextIndex = Random.Range(0, _currentPlaylist.Tracks.Count); }
                 while (nextIndex == _lastTrackIndex);
             }
 
             _lastTrackIndex = nextIndex;
+            // loop: false нужен, чтобы AudioManager вызвал OnMusicEnded по завершении клипа
             _manager.PlayMusic(_currentPlaylist.Tracks[nextIndex], _currentPlaylist.Volume, false);
         }
 

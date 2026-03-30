@@ -18,6 +18,8 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
         private readonly List<AudioSource> _sfxPool = new List<AudioSource>();
         private AudioSource _activeMusicSource;
 
+        public AudioMixer MusicMixer => _musicGroup.audioMixer;
+
         public event Action OnMusicEnded;
 
         private void Awake() => _activeMusicSource = _musicSourceA;
