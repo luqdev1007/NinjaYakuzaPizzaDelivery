@@ -101,3 +101,14 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: 0a3d0306828e3d649a35428443a11edd, type: 3}
       Volume: 1
       BasePitch: 1
+  _playlists:
+  - Id: MainMenu
+    Tracks:
+    - {fileID: 8300000, guid: 7917330994f8ad14784d8f4c7b458375, type: 3}
+    - {fileID: 8300000, guid: 858cb41ba33f4c24189ce448ea8a6603, type: 3}
+    Volume: 1
+  - Id: Gameplay
+    Tracks:
+    - {fileID: 8300000, guid: 19fe9163ebd1a224f85ecdaeb4cdee2e, type: 3}
+    - {fileID: 8300000, guid: ce03eeea0c6699c4195725abc10353a8, type: 3}
+    Volume: 1

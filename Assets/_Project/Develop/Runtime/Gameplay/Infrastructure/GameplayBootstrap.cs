@@ -59,7 +59,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         public override void Run()
         {
-            _audioService.PlayMusic("GameplayTheme");
+            _audioService.StartPlaylist("Gameplay");
             _gameplayStatesContext.Run();
         }
 

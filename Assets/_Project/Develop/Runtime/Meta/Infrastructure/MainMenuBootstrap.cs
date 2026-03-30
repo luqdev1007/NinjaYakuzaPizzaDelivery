@@ -33,7 +33,7 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
 
         public override void Run()
         {
-            _audioService.PlayMusic("MainMenuTheme");
+            _audioService.StartPlaylist("MainMenu");
         }
 
         private void Update()
