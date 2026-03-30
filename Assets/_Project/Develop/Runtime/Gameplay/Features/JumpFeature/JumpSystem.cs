@@ -139,18 +139,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
         /// </summary>
         private void ExecuteSlopeJump(float verticalForce)
         {
+            _rigidbody.linearVelocity = Vector2.zero;
+
             Vector2 slopeNormal = _slopeSystem != null ? _slopeSystem.SlopeNormal : Vector2.up;
             float accumSpeed = _slopeAccumSpeed.Value;
 
-            // Компонент по нормали склона (отталкивание от поверхности)
-            Vector2 normalImpulse = slopeNormal * (accumSpeed * _slopeJumpForce.Value.x);
+            // 1. Смягчаем влияние накопленной скорости коэффициентом (например, 0.4f)
+            // Чтобы прыжок не рос бесконечно
+            float speedBonus = accumSpeed * 0.4f;
 
-            // Стандартный вертикальный импульс + бонус от скорости
-            Vector2 verticalImpulse = Vector2.up * (verticalForce + accumSpeed * _slopeJumpForce.Value.y);
+            // 2. Рассчитываем импульс отталкивания от поверхности (нормаль)
+            // Используем x из конфига как множитель "вылета" вбок
+            Vector2 normalImpulse = slopeNormal * (speedBonus * _slopeJumpForce.Value.x);
 
+            // 3. Вертикальный прыжок теперь получает лишь небольшую добавку от скорости
+            // Используем y из конфига для контроля высоты
+            float finalVerticalForce = verticalForce + (speedBonus * _slopeJumpForce.Value.y);
+            Vector2 verticalImpulse = Vector2.up * finalVerticalForce;
+
+            // Применяем итоговый вектор
             _rigidbody.AddForce(normalImpulse + verticalImpulse, ForceMode2D.Impulse);
 
-            // Сбрасываем накопленное — скорость потрачена на прыжок
+            // Сбрасываем накопленное
             _slopeAccumSpeed.Value = 0f;
         }
     }

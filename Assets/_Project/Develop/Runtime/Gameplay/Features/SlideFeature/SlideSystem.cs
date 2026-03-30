@@ -26,7 +26,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
     public class SlideSystem : IInitializableSystem, IUpdatableSystem
     {
         private const float SlopeSlideMaxDuration = 3f;   // страховочное ограничение slope-slide
-        private const float SlopeSlideSpeedBonus = 1.5f; // множитель к накопленной скорости
+        private const float SlopeSlideSpeedBonus = 0.7f; // Было 1.5 (снижаем влияние накопленной скорости на импульс)
 
         private readonly IInputService _inputService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;

@@ -30,6 +30,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
 
         public void OnUpdate(float deltaTime)
         {
+            return;
+
             if (_isDriveActive)
             {
                 HandleDrive(deltaTime);

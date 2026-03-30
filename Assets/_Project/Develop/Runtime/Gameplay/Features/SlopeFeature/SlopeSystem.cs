@@ -21,12 +21,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
         // ── Настройки ──────────────────────────────────────────────────────
         private const float MinSlopeAngle = 15f;   // минимальный угол для активации склона
         private const float MaxSlopeAngle = 75f;   // максимальный угол (выше = стена)
-        private const float UphillSlideForce = 18f;   // сила выталкивания назад при беге вверх
-        private const float DownhillAccelForce = 12f;   // сила ускорения при спуске
+
+        private const float DownhillAccelForce = 7f;   // Было 12
+        private const float MaxAccumSpeed = 12f;       // Было 20
+        private const float AccumGainRate = 3f;        // Было 6
+        private const float UphillSlideForce = 12f;    // Было 18 (чтобы не так резко выталкивало назад)
+
         private const float MagnetForce = 20f;   // прижим к поверхности
-        private const float MaxAccumSpeed = 20f;   // потолок накопленной скорости
         private const float AccumDecayRate = 8f;    // скорость затухания накопленной скорости вне склона
-        private const float AccumGainRate = 6f;    // скорость набора накопленной скорости на спуске
         private const float SlideOffDelay = 0.1f;  // задержка перед сбросом IsOnSlope (coyote)
 
         // ── Зависимости ────────────────────────────────────────────────────
