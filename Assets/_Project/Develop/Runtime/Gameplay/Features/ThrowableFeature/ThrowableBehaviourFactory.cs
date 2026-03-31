@@ -23,7 +23,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             return config switch
             {
                 GrappleHookConfig grappleConfig => new GrappleHookProjectile(
-                    grappleConfig, _coroutinesPerformer),
+                    grappleConfig, _coroutinesPerformer, _audioService),
 
                 ShurikenConfig shurikenConfig => new ShurikenProjectile(
                     shurikenConfig, _coroutinesPerformer, _audioService),

@@ -233,7 +233,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                     inputService,
                     coroutinesPerformer,
                     config.Throwables.GrappleConfig,
-                    throwableBehaviourFactory))
+                    throwableBehaviourFactory,
+                    audioService))
 
                 // — инвентарь (Сюрикены/Дротики на Q + Колесико) —
                 .AddSystem(new InventorySystem(

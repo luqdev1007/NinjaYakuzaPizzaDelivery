@@ -137,24 +137,24 @@ MonoBehaviour:
       BasePitch: 1
     - Id: GhostHitShuriken1
       Clip: {fileID: 8300000, guid: 01faf4d547cc6cb4cb55abc790323733, type: 3}
-      Volume: 1
-      BasePitch: 1
+      Volume: 0.686
+      BasePitch: 1.36
     - Id: GhostHitShuriken2
       Clip: {fileID: 8300000, guid: 30c056dc421172145bcf66e4bc4b54a7, type: 3}
-      Volume: 1
-      BasePitch: 1
+      Volume: 0.657
+      BasePitch: 1.47
     - Id: GhostHitShuriken3
       Clip: {fileID: 8300000, guid: a0525551778ba6648a2c5de15584936d, type: 3}
-      Volume: 1
-      BasePitch: 1
+      Volume: 0.564
+      BasePitch: 1.28
     - Id: WallHitShuriken1
       Clip: {fileID: 8300000, guid: 01faf4d547cc6cb4cb55abc790323733, type: 3}
-      Volume: 1
-      BasePitch: 1
+      Volume: 0.5
+      BasePitch: 1.4
     - Id: WallHitShuriken2
       Clip: {fileID: 8300000, guid: 7add59aa6fd89c24881ab889bfc81ffe, type: 3}
-      Volume: 1
-      BasePitch: 1
+      Volume: 0.614
+      BasePitch: 1.57
   - Type: 6
     Clips:
     - Id: GhostDeath1
@@ -261,24 +261,40 @@ MonoBehaviour:
       BasePitch: 0.96
     - Id: AbilityImpactHeroThrow1
       Clip: {fileID: 8300000, guid: c1a91f11dd47f5944a473e0b1ac1dd27, type: 3}
-      Volume: 0.85
-      BasePitch: 1.53
+      Volume: 0.593
+      BasePitch: 1.65
     - Id: AbilityImpactHeroThrow2
       Clip: {fileID: 8300000, guid: b0a9257993ff43d4cb3c563472de30c9, type: 3}
-      Volume: 0.8
-      BasePitch: 1.29
+      Volume: 0.686
+      BasePitch: 1.65
     - Id: AbilityImpactHeroThrow3
       Clip: {fileID: 8300000, guid: 6d8662d0bacbe554fa67d76076a570cb, type: 3}
-      Volume: 0.89
-      BasePitch: 1.1
+      Volume: 0.693
+      BasePitch: 1.61
     - Id: AbilityImpactHeroThrow4
       Clip: {fileID: 8300000, guid: 3798b669f95f92f4ca83d6dfd5f17b2a, type: 3}
-      Volume: 0.93
-      BasePitch: 1
+      Volume: 0.636
+      BasePitch: 1.78
     - Id: AbilityImpactHeroThrow5
       Clip: {fileID: 8300000, guid: 650d1778692081c48b635cbee206a2fe, type: 3}
-      Volume: 0.93
-      BasePitch: 1.34
+      Volume: 0.671
+      BasePitch: 1.72
+    - Id: WallHitHook1
+      Clip: {fileID: 8300000, guid: d8c751cb1fae4c048bcad5d47b0cf73c, type: 3}
+      Volume: 1
+      BasePitch: 1.9
+    - Id: HookShot1
+      Clip: {fileID: 8300000, guid: d183683fdc2885a42a3220abd9edf767, type: 3}
+      Volume: 0.693
+      BasePitch: 1.59
+    - Id: HookLoop1
+      Clip: {fileID: 8300000, guid: 9ed6e0135073fbe44bb9d18e0c490bc4, type: 3}
+      Volume: 0.579
+      BasePitch: 2.05
+    - Id: EnemyHitHook
+      Clip: {fileID: 8300000, guid: d4ff188d94f7ba14ebb963be90d3b2c3, type: 3}
+      Volume: 1
+      BasePitch: 1.53
   - Type: 2
     Clips:
     - Id: MainHeroJump1
@@ -366,9 +382,9 @@ MonoBehaviour:
     Tracks:
     - {fileID: 8300000, guid: 7917330994f8ad14784d8f4c7b458375, type: 3}
     - {fileID: 8300000, guid: 858cb41ba33f4c24189ce448ea8a6603, type: 3}
-    Volume: 0
+    Volume: 0.5
   - Id: Gameplay
     Tracks:
     - {fileID: 8300000, guid: 19fe9163ebd1a224f85ecdaeb4cdee2e, type: 3}
     - {fileID: 8300000, guid: ce03eeea0c6699c4195725abc10353a8, type: 3}
-    Volume: 0
+    Volume: 0.449

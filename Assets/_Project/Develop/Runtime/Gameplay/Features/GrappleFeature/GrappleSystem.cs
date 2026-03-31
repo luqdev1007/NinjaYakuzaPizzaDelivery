@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement; // Добавлено
 using System.Collections;
 using UnityEngine;
 
@@ -15,8 +16,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
     {
         private readonly IInputService _inputService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
-        private readonly GrappleHookConfig _config; // Используем конкретный конфиг
+        private readonly GrappleHookConfig _config;
         private readonly IThrowableBehaviourFactory _behaviourFactory;
+        private readonly AudioService _audioService; // Добавлено
 
         private ICompositeCondition _canThrow;
         private ReactiveVariable<bool> _isThrowing;
@@ -28,17 +30,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         private ThrowableProjectile _activeProjectile;
         private Coroutine _pullCoroutine;
+        private string _activeLoopId; // Для управления звуком полета
 
         private float _defaultGravity;
         private bool _isPulling;
-        private Vector2 _lastPullDirection; 
+        private Vector2 _lastPullDirection;
 
-        public GrappleSystem(IInputService input, ICoroutinesPerformer performer, GrappleHookConfig config, IThrowableBehaviourFactory factory)
+        public GrappleSystem(
+            IInputService input,
+            ICoroutinesPerformer performer,
+            GrappleHookConfig config,
+            IThrowableBehaviourFactory factory,
+            AudioService audioService) // Добавлено в конструктор
         {
             _inputService = input;
             _coroutinesPerformer = performer;
             _config = config;
             _behaviourFactory = factory;
+            _audioService = audioService;
         }
 
         public void OnInit(Entity entity)
@@ -58,11 +67,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         {
             bool isGrappleActive = _activeProjectile is GrappleHookProjectile;
 
-            // Запуск на RMB (IsGrappleKeyPressed)
             if (_inputService.IsGrappleKeyPressed && _canThrow.Evaluate() && !isGrappleActive && !_isPulling)
                 TryLaunch();
 
-            // Отмена при отпускании RMB
             if (_inputService.IsGrappleKeyReleased)
             {
                 if (isGrappleActive || _isPulling)
@@ -74,10 +81,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         private void TryLaunch()
         {
-            if (_charges.Value <= 0) return;
-
-            // Проверка на наличие камеры (редко, но бывает причиной крэша при переключении сцен)
-            if (Camera.main == null) return;
+            if (_charges.Value <= 0 || Camera.main == null) return;
 
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector3 dir = (mousePos - _transform.position).normalized;
@@ -86,15 +90,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             _charges.Value--;
             _isThrowing.Value = true;
 
+            // --- ЗВУК: Старт и запуск цикла полета ---
+            _audioService.PlaySfxByPrefixAuto("HookShot", 1f);
+            _activeLoopId = _audioService.PlaySfxVariationLoop("HookLoop", 1, 1);
+
             _activeProjectile = _behaviourFactory.Create(_config, _rigidbody, _transform);
 
-            // Проверяем, что снаряд вообще создался
             if (_activeProjectile != null && _activeProjectile is GrappleHookProjectile grapple)
             {
-                grapple.OnAnchored += (pos, hit) => StartPulling(pos, hit);
+                grapple.OnAnchored += (pos, hit) =>
+                {
+                    StopLoopSfx(); // Попали — гасим звук полета
+                    StartPulling(pos, hit);
+                };
+
                 _activeProjectile.Launch(_transform.position, dir);
 
-                // Безопасная установка трансформа: проверяем и View, и сам Instance
                 if (_ropeView != null && grapple.Instance != null)
                 {
                     _ropeView.SetHookTransform(grapple.Instance.transform);
@@ -102,12 +113,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
                 _activeProjectile.OnCompleted += () =>
                 {
+                    StopLoopSfx(); // Если снаряд просто исчез (промах)
                     if (!_isPulling) _isThrowing.Value = false;
                 };
             }
             else
             {
-                // Если не удалось создать снаряд, возвращаем состояние
+                StopLoopSfx();
                 _isThrowing.Value = false;
             }
         }
@@ -116,7 +128,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         {
             _rigidbody.gravityScale = 0.2f;
 
-            // Добавляем проверку на существование самого трансформа hit.transform
             while (hit != null && hit.transform != null && _inputService.IsGrappleKeyHeld)
             {
                 Vector2 currentAnchorWorld = (Vector2)hit.transform.TransformPoint(localOffset);
@@ -128,7 +139,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
                 if (dist <= _config.ArriveDistance)
                 {
-                    // Безопасная проверка тега
                     if (hit.gameObject.activeInHierarchy && hit.CompareTag("Enemy"))
                         _startAttackRequest.Invoke();
 
@@ -153,19 +163,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             _pullCoroutine = _coroutinesPerformer.StartPerform(PullRoutine(localOffset, hit));
         }
 
-
-
         private void StopPulling(bool applyInertia)
         {
             if (!_isPulling && _activeProjectile == null) return;
 
             _rigidbody.gravityScale = _defaultGravity;
+            StopLoopSfx(); // На всякий случай гасим звук здесь тоже
 
             if (applyInertia && _isPulling)
             {
                 Vector2 launchDirection = (_lastPullDirection + Vector2.up * 0.4f).normalized;
                 float currentSpeed = _rigidbody.linearVelocity.magnitude;
-                float finalBoost = Mathf.Max(currentSpeed, 15f); 
+                float finalBoost = Mathf.Max(currentSpeed, 15f);
 
                 _rigidbody.linearVelocity = launchDirection * finalBoost;
             }
@@ -182,6 +191,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         private void CancelAll()
         {
+            StopLoopSfx();
             if (_activeProjectile != null)
             {
                 _activeProjectile.Cancel();
@@ -189,6 +199,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             }
             _isThrowing.Value = false;
             _ropeView?.ClearHookTransform();
+        }
+
+        private void StopLoopSfx()
+        {
+            if (!string.IsNullOrEmpty(_activeLoopId))
+            {
+                _audioService.StopSfx(_activeLoopId);
+                _activeLoopId = null;
+            }
         }
     }
 }
