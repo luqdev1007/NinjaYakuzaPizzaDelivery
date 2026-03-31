@@ -29,12 +29,12 @@ MonoBehaviour:
     <MaxJumps>k__BackingField: 1
   _dash:
     <Duration>k__BackingField: 0.2
-    <ForceMin>k__BackingField: 42
-    <ForceMax>k__BackingField: 50
+    <ForceMin>k__BackingField: 32
+    <ForceMax>k__BackingField: 42
     <ChargeTime>k__BackingField: 0.25
     <Cooldown>k__BackingField: 0.5
-    <AirMultiplier>k__BackingField: 2
-    <VerticalBoost>k__BackingField: 3
+    <AirMultiplier>k__BackingField: 1.5
+    <VerticalBoost>k__BackingField: 1.5
     <Damage>k__BackingField: 10
     <HitboxSize>k__BackingField: {x: 0.5, y: 1.8}
   _glide:
