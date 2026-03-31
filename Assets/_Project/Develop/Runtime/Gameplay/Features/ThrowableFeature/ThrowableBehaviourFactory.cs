@@ -15,12 +15,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         public ThrowableProjectile Create(ThrowableConfig config, Rigidbody2D rigidbody, Transform transform)
         {
+            // Теперь все снаряды создаются единообразно, так как логика притяжения крюка 
+            // переехала в ThrowableSystem, а снаряд только детектит попадание.
             return config switch
             {
                 GrappleHookConfig grappleConfig => new GrappleHookProjectile(
-                    grappleConfig, _coroutinesPerformer, rigidbody, transform),
+                    grappleConfig, _coroutinesPerformer),
+
                 ShurikenConfig shurikenConfig => new ShurikenProjectile(
                     shurikenConfig, _coroutinesPerformer),
+
                 SleepDartConfig dartConfig => new SleepDartProjectile(
                     dartConfig, _coroutinesPerformer),
 

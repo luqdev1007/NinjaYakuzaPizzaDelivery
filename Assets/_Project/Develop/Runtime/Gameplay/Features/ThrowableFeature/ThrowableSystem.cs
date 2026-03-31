@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,22 +23,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         private ReactiveVariable<int> _currentIndex;
         private ReactiveVariable<bool> _isThrowing;
         private ReactiveEvent _startAttackRequest;
-        private Transform _transform;
         private Rigidbody2D _rigidbody;
-        private Dictionary<int, ReactiveVariable<int>> _charges;
-        private ThrowableProjectile _activeProjectile;
+        private Transform _transform;
         private GrappleRopeView _ropeView;
 
-        public ThrowableSystem(
-            IInputService inputService,
-            ICoroutinesPerformer coroutinesPerformer,
-            ThrowableConfig[] configs,
-            IThrowableBehaviourFactory behaviourFactory)
+        private Dictionary<int, ReactiveVariable<int>> _charges;
+        private ThrowableProjectile _activeProjectile;
+        private Coroutine _pullCoroutine;
+
+        private float _defaultGravity;
+        private bool _isPulling;
+        private Vector2 _lastPullDirection; // Для инерции
+
+        public ThrowableSystem(IInputService input, ICoroutinesPerformer performer, ThrowableConfig[] configs, IThrowableBehaviourFactory factory)
         {
-            _inputService = inputService;
-            _coroutinesPerformer = coroutinesPerformer;
+            _inputService = input;
+            _coroutinesPerformer = performer;
             _configs = configs;
-            _behaviourFactory = behaviourFactory;
+            _behaviourFactory = factory;
         }
 
         public void OnInit(Entity entity)
@@ -50,6 +53,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             _rigidbody = entity.Rigidbody;
             _ropeView = entity.Transform.GetComponentInChildren<GrappleRopeView>();
 
+            _defaultGravity = _rigidbody.gravityScale;
+
             _charges = new Dictionary<int, ReactiveVariable<int>>
             {
                 { 0, entity.GrappleCharges },
@@ -60,107 +65,133 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         public void OnUpdate(float deltaTime)
         {
-            HandleScrollInput();
+            HandleScroll();
 
-            bool isGrappleHookActive = _activeProjectile is GrappleHookProjectile;
+            bool isGrappleActive = _activeProjectile is GrappleHookProjectile;
 
-            if (_inputService.IsGrappleKeyPressed && _canThrow.Evaluate() && !isGrappleHookActive)
+            if (_inputService.IsGrappleKeyPressed && _canThrow.Evaluate() && !isGrappleActive && !_isPulling)
                 TryLaunch();
 
-            if (_inputService.IsGrappleKeyReleased && isGrappleHookActive)
-                CancelActive();
-        }
-
-        private void HandleScrollInput()
-        {
-            float scroll = Input.GetAxisRaw("Mouse ScrollWheel");
-
-            if (scroll > 0f)
-                _currentIndex.Value = (_currentIndex.Value + 1) % _configs.Length;
-            else if (scroll < 0f)
-                _currentIndex.Value = (_currentIndex.Value - 1 + _configs.Length) % _configs.Length;
-
-            if (scroll != 0f)
+            if (_inputService.IsGrappleKeyReleased)
             {
-                int index = _currentIndex.Value;
-                Debug.Log($"Прожектайл: {_configs[index].name} | Зарядов: {_charges[index].Value}");
+                if (isGrappleActive || _isPulling)
+                {
+                    StopPulling(applyInertia: true);
+                }
             }
         }
 
         private void TryLaunch()
         {
-            int index = _currentIndex.Value;
-            ThrowableConfig config = _configs[index];
+            int idx = _currentIndex.Value;
+            if (_charges[idx].Value <= 0) return;
 
-            if (_charges[index].Value <= 0)
-            {
-                Debug.Log($"Нет зарядов: {config.name}");
-                return;
-            }
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 dir = (mousePos - _transform.position).normalized;
+            dir.z = 0;
 
-            Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mouseWorld.z = _transform.position.z;
-            Vector3 direction = (mouseWorld - _transform.position).normalized;
-
-            if (config is GrappleHookConfig)
-            {
-                RaycastHit2D hit = Physics2D.Raycast(
-                    _transform.position,
-                    direction,
-                    config.MaxDistance,
-                    config.HitMask);
-
-                if (hit.collider != null && hit.distance < config.MinDistance)
-                    return;
-            }
-
-            _charges[index].Value--;
+            _charges[idx].Value--;
             _isThrowing.Value = true;
-            _activeProjectile = _behaviourFactory.Create(config, _rigidbody, _transform);
+            _activeProjectile = _behaviourFactory.Create(_configs[idx], _rigidbody, _transform);
 
             if (_activeProjectile is GrappleHookProjectile grapple)
             {
-                grapple.SetCancelCondition(() => _inputService.IsGrappleKeyReleased);
-                grapple.OnGrappleStarted += OnGrappleStarted;
-                grapple.OnGrappleEnded += OnGrappleEnded;
-                grapple.OnEnemyArrived += OnEnemyArrived;
+                grapple.OnAnchored += (pos, hit) => StartPulling(pos, hit);
+                _activeProjectile.Launch(_transform.position, dir);
+                _ropeView?.SetHookTransform(grapple.Instance.transform);
+            }
+            else
+            {
+                _activeProjectile.Launch(_transform.position, dir);
+                _activeProjectile.OnCompleted += () => _isThrowing.Value = false;
+            }
+        }
+
+        private void StartPulling(Vector2 anchorPos, Collider2D hit)
+        {
+            _isPulling = true;
+            // Вычисляем смещение относительно центра объекта, чтобы крюк "приклеился" к точке попадания
+            Vector2 localOffset = (Vector2)hit.transform.InverseTransformPoint(anchorPos);
+            _pullCoroutine = _coroutinesPerformer.StartPerform(PullRoutine(localOffset, hit));
+        }
+
+        private IEnumerator PullRoutine(Vector2 localOffset, Collider2D hit)
+        {
+            _rigidbody.gravityScale = 0.2f;
+            var config = (GrappleHookConfig)_configs[0];
+
+            while (hit != null && _inputService.IsGrappleKeyHeld)
+            {
+                // Актуальная мировая точка на движущемся объекте
+                Vector2 currentAnchorWorld = (Vector2)hit.transform.TransformPoint(localOffset);
+                Vector2 toTarget = currentAnchorWorld - (Vector2)_transform.position;
+                float dist = toTarget.magnitude;
+
+                _lastPullDirection = toTarget.normalized;
+                _ropeView?.FixateToPoint(currentAnchorWorld);
+
+                if (dist <= config.ArriveDistance)
+                {
+                    if (hit.CompareTag("Enemy")) _startAttackRequest.Invoke();
+                    // Чтобы можно было "кружиться", не гасим скорость в ноль
+                    _rigidbody.linearVelocity *= 0.98f;
+                }
+                else
+                {
+                    // Прогрессивное ускорение для "эффекта рогатки"
+                    float forceMultiplier = Mathf.Clamp(dist / 2f, 1f, 2.5f);
+                    _rigidbody.AddForce(_lastPullDirection * config.GrappleSpeed * forceMultiplier, ForceMode2D.Force);
+                }
+
+                yield return new WaitForFixedUpdate();
             }
 
-            _activeProjectile.OnCompleted += OnProjectileCompleted;
-
-            _activeProjectile.Launch(_transform.position, direction);
-
-            if (_activeProjectile is GrappleHookProjectile grapplerAfterLaunch)
-                _ropeView?.SetHookTransform(grapplerAfterLaunch.Instance.transform);
-            else
-                _isThrowing.Value = false;
+            StopPulling(applyInertia: true);
         }
 
-        private void CancelActive()
+        private void StopPulling(bool applyInertia)
         {
-            _activeProjectile?.Cancel();
-            _activeProjectile = null;
+            if (!_isPulling && _activeProjectile == null) return;
+
+            _rigidbody.gravityScale = _defaultGravity;
+
+            if (applyInertia && _isPulling)
+            {
+                // МОЩНАЯ ИНЕРЦИЯ (Slingshot effect)
+                // Даем импульс в сторону последнего натяжения + небольшой "подброс" вверх
+                Vector2 launchDirection = (_lastPullDirection + Vector2.up * 0.4f).normalized;
+                float currentSpeed = _rigidbody.linearVelocity.magnitude;
+                float finalBoost = Mathf.Max(currentSpeed, 15f); // Минимум 15 для ощутимого вылета
+
+                _rigidbody.linearVelocity = launchDirection * finalBoost;
+            }
+
+            if (_pullCoroutine != null)
+            {
+                _coroutinesPerformer.StopPerform(_pullCoroutine);
+                _pullCoroutine = null;
+            }
+
+            _isPulling = false;
+            CancelAll();
+        }
+
+        private void CancelAll()
+        {
+            if (_activeProjectile != null)
+            {
+                _activeProjectile.Cancel();
+                _activeProjectile = null;
+            }
             _isThrowing.Value = false;
+            _ropeView?.ClearHookTransform();
         }
 
-        private void OnProjectileCompleted()
+        private void HandleScroll()
         {
-            _activeProjectile = null;
-            _isThrowing.Value = false;
-        }
-
-        private void OnGrappleStarted() { }
-
-        private void OnGrappleEnded()
-        {
-            _activeProjectile = null;
-            _isThrowing.Value = false;
-        }
-
-        private void OnEnemyArrived()
-        {
-            Debug.Log("Arrived to enemy on hook");
-            _startAttackRequest.Invoke();
+            float s = Input.GetAxisRaw("Mouse ScrollWheel");
+            if (s == 0) return;
+            _currentIndex.Value = (_currentIndex.Value + (s > 0 ? 1 : -1) + _configs.Length) % _configs.Length;
         }
     }
 }

@@ -283,11 +283,7 @@ MonoBehaviour:
   _spriteRenderer: {fileID: 2858558461669107319}
   _flashColor: {r: 1, g: 1, b: 1, a: 1}
   _flashDuration: 0.2
-  _pizzaDisplay: {fileID: 0}
-  _shakeDuration: 0.2
-  _shakeStrength: 0.5
   _damageSoundPrefix: GhostHit
-  _useAutoVariation: 1
 --- !u!114 &1130839634098478934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5272,6 +5268,10 @@ PrefabInstance:
     - target: {fileID: 5476442007397641218, guid: 45fdc72a38b91ae479fc901becb660f0, type: 3}
       propertyPath: m_Layer
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5476442007397641218, guid: 45fdc72a38b91ae479fc901becb660f0, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 5857535375371146468, guid: 45fdc72a38b91ae479fc901becb660f0, type: 3}
       propertyPath: m_LocalPosition.x

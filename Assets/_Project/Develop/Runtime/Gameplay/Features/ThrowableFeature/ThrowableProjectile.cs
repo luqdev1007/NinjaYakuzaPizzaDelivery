@@ -20,7 +20,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             CoroutinesPerformer = coroutinesPerformer;
         }
 
-        public void Launch(Vector3 from, Vector3 direction)
+        public virtual void Launch(Vector3 from, Vector3 direction)
         {
             GameObject prefab = Resources.Load<GameObject>(Config.PrefabPath);
             if (prefab == null) return;
@@ -28,6 +28,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             Instance = Object.Instantiate(prefab, from, Quaternion.identity);
             CoroutinesPerformer.StartPerform(FlyCoroutine(direction));
         }
+
+        public virtual void Cancel() => Destroy();
 
         protected virtual void Destroy()
         {
@@ -39,6 +41,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         protected IEnumerator FlyCoroutine(Vector3 direction)
         {
             Vector3 startPosition = Instance.transform.position;
+            Vector3 lastPosition = startPosition;
+
             while (Instance != null)
             {
                 Instance.transform.position += direction * Config.ProjectileSpeed * Time.deltaTime;
@@ -50,23 +54,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                     yield break;
                 }
 
-                Collider2D hit = Physics2D.OverlapPoint(Instance.transform.position, Config.HitMask);
-                if (hit != null)
+                RaycastHit2D hit = Physics2D.Linecast(lastPosition, Instance.transform.position, Config.HitMask);
+                if (hit.collider != null)
                 {
-                    OnHit(hit);
-                    yield break; // ВОТ ЭТО ВЕРНУЛИ. Попал = лететь перестал.
+                    // Передаем именно точку попадания hit.point!
+                    OnHitAtPoint(hit.point, hit.collider);
+                    yield break;
                 }
+
+                lastPosition = Instance.transform.position;
                 yield return null;
             }
         }
 
-        public void Cancel()
+        protected abstract void OnHitAtPoint(Vector2 point, Collider2D hit);
+        protected virtual void ApplyRotation(Vector3 direction)
         {
-            Destroy();
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            Instance.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         }
-
-        protected virtual void ApplyRotation(Vector3 direction) { /* дефолтный поворот */ }
-        protected virtual void OnHit(Collider2D hit) => Destroy();
         protected virtual void OnMaxDistanceReached(Vector3 startPosition) => Destroy();
     }
 }

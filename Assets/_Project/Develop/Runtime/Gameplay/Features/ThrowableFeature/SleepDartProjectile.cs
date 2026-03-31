@@ -24,7 +24,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             Instance.transform.rotation = Quaternion.Euler(0, 0, angle);
         }
 
-        protected override void OnHit(Collider2D hit)
+        protected override void OnHitAtPoint(Vector2 point, Collider2D hit)
         {
             var monoEntity = hit.GetComponentInParent<MonoEntity>();
             if (monoEntity != null)

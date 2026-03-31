@@ -11,17 +11,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
         bool IsSlideKeyReleased { get; }
 
         bool IsGrappleKeyPressed { get; }
+        bool IsGrappleKeyHeld { get; } // ДОБАВЛЕНО
         bool IsGrappleKeyReleased { get; }
 
         bool IsDashKeyPressed { get; }
         bool IsDashKeyHeld { get; }
         bool IsDashKeyReleased { get; }
 
-        bool IsJumpKeyHeld { get; }   // Space зажат
-        bool IsJumpKeyReleased { get; } // Space отпущен
+        bool IsJumpKeyHeld { get; }
+        bool IsJumpKeyReleased { get; }
 
         bool IsEnabled { get; set; }
-        Vector2 MoveDirection { get; } 
+        Vector2 MoveDirection { get; }
         bool IsJumpKeyPressed { get; }
         bool IsAttackKeyPressed { get; }
     }

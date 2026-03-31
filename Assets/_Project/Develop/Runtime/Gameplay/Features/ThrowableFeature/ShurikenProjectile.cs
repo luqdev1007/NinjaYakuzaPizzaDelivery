@@ -22,7 +22,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             _config = config;
         }
 
-        protected override void OnHit(Collider2D hit)
+        protected override void OnHitAtPoint(Vector2 point, Collider2D hit)
         {
             if (_isStuck) return;
 
