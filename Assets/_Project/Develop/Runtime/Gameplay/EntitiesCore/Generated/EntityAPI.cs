@@ -1050,6 +1050,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.CanRotate() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.IsMainHero IsMainHeroC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.IsMainHero>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsMainHero()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.IsMainHero() ); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.AudioComponent AudioC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.AudioComponent>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAudio(Assets._Project.Develop.Runtime.Utilites.AudioManagement.AudioService service)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.AudioComponent() {Service = service}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.HealthBarPoint HealthBarPointC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.HealthBarPoint>();
 
 		public UnityEngine.Transform HealthBarPoint => HealthBarPointC.Value;
@@ -3158,20 +3172,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddInAttackCooldown(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Attack.InAttackCooldown() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.IsMainHero IsMainHeroC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.IsMainHero>();
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsMainHero()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.IsMainHero() ); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.AudioComponent AudioC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.AudioComponent>();
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAudio(Assets._Project.Develop.Runtime.Utilites.AudioManagement.AudioService service)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.AudioComponent() {Service = service}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageCooldown DamageCooldownC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageCooldown>();

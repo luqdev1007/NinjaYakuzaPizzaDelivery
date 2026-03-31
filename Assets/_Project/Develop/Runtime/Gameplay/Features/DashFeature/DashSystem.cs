@@ -131,47 +131,77 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             Vector2 dashVelocity = new Vector2(direction * force, inAir ? _airDashVerticalBoost.Value : 0f);
             _rigidbody.linearVelocity = dashVelocity;
 
+            Vector2 lastFramePos = _transform.position;
+
             while (elapsed < duration)
             {
                 float t = elapsed / duration;
-                float currentSpeed = Mathf.Lerp(force, force * 0.2f, t);
+                // Плавное затухание скорости для лучшего ощущения контроля
+                float speedCurve = 1f - (t * t);
+                float currentSpeed = force * speedCurve;
+
                 _rigidbody.linearVelocity = new Vector2(direction * currentSpeed, _rigidbody.linearVelocity.y);
 
-                ApplyDashDamage(hitEntities, inAir);
+                // Проверка урона по траектории от прошлого до текущего кадра
+                ApplyDashDamage(hitEntities, inAir, lastFramePos);
+                lastFramePos = _transform.position;
 
                 elapsed += Time.deltaTime;
                 yield return null;
             }
+
+            // Финальная проверка в конце пути
+            ApplyDashDamage(hitEntities, inAir, lastFramePos);
 
             _rigidbody.linearVelocity = new Vector2(direction * 2f, _rigidbody.linearVelocity.y);
             _rigidbody.gravityScale = gravityScale;
             _isDashing.Value = false;
         }
 
-        private void ApplyDashDamage(HashSet<Entity> hitEntities, bool inAir)
+        private void ApplyDashDamage(HashSet<Entity> hitEntities, bool inAir, Vector2 lastPosition)
         {
-            Vector2 checkPos = (Vector2)_transform.position;
-            Collider2D[] hits = Physics2D.OverlapBoxAll(checkPos, _dashHitboxSize.Value, 0f, _enemyMask);
+            Vector2 currentPos = (Vector2)_transform.position;
+            float direction = Mathf.Sign(_transform.localScale.x);
 
-            foreach (Collider2D hit in hits)
+            // Смещаем центр хитбокса немного вперед относительно спрайта персонажа
+            Vector2 hitboxOffset = new Vector2(direction * (_dashHitboxSize.Value.x * 0.4f), 0f);
+            Vector2 origin = lastPosition + hitboxOffset;
+            Vector2 target = currentPos + hitboxOffset;
+
+            float distance = Vector2.Distance(origin, target);
+            Vector2 castDir = distance > 0.001f ? (target - origin).normalized : Vector2.right * direction;
+
+            // BoxCast рисует "коридор" между кадрами, чтобы никто не проскочил
+            RaycastHit2D[] hits = Physics2D.BoxCastAll(
+                origin,
+                _dashHitboxSize.Value,
+                0f,
+                castDir,
+                distance,
+                _enemyMask
+            );
+
+            foreach (var hit in hits)
             {
-                if (hit == null) continue;
+                if (hit.collider == null) continue;
 
-                var mono = hit.GetComponentInParent<MonoEntity>();
+                var mono = hit.collider.GetComponentInParent<MonoEntity>();
                 if (mono == null) continue;
 
-                Entity target = mono.LinkedEntity;
-                if (hitEntities.Contains(target)) continue;
+                Entity targetEntity = mono.LinkedEntity;
 
-                hitEntities.Add(target);
+                // Проверяем, не били ли мы уже эту сущность за один текущий рывок
+                if (targetEntity == null || hitEntities.Contains(targetEntity)) continue;
+
+                hitEntities.Add(targetEntity);
 
                 float damage = _dashDamage.Value;
                 if (inAir) damage *= _airDashMultiplier.Value;
 
-                if (target.HasComponent<TakeDamageRequest>())
+                if (targetEntity.HasComponent<TakeDamageRequest>())
                 {
-                    var damageData = new DamageData { Amount = damage, SourcePosition = checkPos };
-                    target.TakeDamageRequest.Invoke(damageData);
+                    var damageData = new DamageData { Amount = damage, SourcePosition = currentPos };
+                    targetEntity.TakeDamageRequest.Invoke(damageData);
                 }
             }
         }
