@@ -1,11 +1,9 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
-using Assets._Project.Develop.Runtime.Gameplay.Features.Hero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using System;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
@@ -15,15 +13,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         [Header("Animation")]
         [SerializeField] private Animator _animator;
         [SerializeField] private AnimationClip _attackAnimationClip;
-        [SerializeField] private string _isAttackingParam = "IsAttacking";
-        [SerializeField] private string _speedMultiplierParam = "AttackAnimationSpeedMultiplier";
 
         [Header("VFX")]
         [SerializeField] private ParticleSystem _slashParticle;
 
-        [Header("Audio")]
-        [SerializeField] private AudioCategoryType _swingCategory = AudioCategoryType.HeroAttackSwing;
-        [SerializeField] private AudioCategoryType _hitCategory = AudioCategoryType.HeroAttackHit;
+        [Header("Audio (Auto-detected)")]
+        [Tooltip("Ищет в конфиге SwordSwing1, SwordSwing2...")]
+        [SerializeField] private string _swingPrefix = "SwordSwing";
+
+        [Tooltip("Ищет в конфиге EnemyHit1, EnemyHit2...")]
+        [SerializeField] private string _hitPrefix = "EnemyHit";
 
         private AudioService _audioService;
         private ParticleSystemRenderer _particleRenderer;
@@ -33,13 +32,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private IDisposable _attackHitDisposable;
         private IDisposable _successfulHitDisposable;
 
-        private readonly int IsAttackingKey = Animator.StringToHash("IsAttacking");
-        private readonly int SpeedMultiplierKey = Animator.StringToHash("AttackAnimationSpeedMultiplier");
+        private static readonly int IsAttackingKey = Animator.StringToHash("IsAttacking");
+        private static readonly int SpeedMultiplierKey = Animator.StringToHash("AttackAnimationSpeedMultiplier");
 
-        private void OnValidate()
-        {
-            _animator ??= GetComponent<Animator>();
-        }
+        private void OnValidate() => _animator ??= GetComponent<Animator>();
 
         protected override void OnEntityStartedWork(Entity entity)
         {
@@ -49,14 +45,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             if (_slashParticle != null)
                 _particleRenderer = _slashParticle.GetComponent<ParticleSystemRenderer>();
 
-            // Настройка скорости анимации под логику
+            // Настройка скорости анимации
             if (_attackAnimationClip != null && entity.HasComponent<AttackProcessInitialTime>())
             {
                 float speedMultiplier = _attackAnimationClip.length / entity.AttackProcessInitialTime.Value;
                 _animator.SetFloat(SpeedMultiplierKey, speedMultiplier);
             }
 
-            // Подписки
             _inAttackProcessDisposable = entity.InAttackProcess.Subscribe(OnAttackProcessChanged);
             _attackHitDisposable = entity.AttackDelayEndEvent.Subscribe(OnAttackMoment);
 
@@ -71,29 +66,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             UpdateInAttackProcess(current);
             if (current)
             {
-                // Звук взмаха всегда в начале
-                _audioService.PlayRandomSfx(_swingCategory);
+                // ИСПОЛЬЗУЕМ АВТОМАТИКУ: не нужно знать количество вариаций
+                _audioService.PlaySfxByPrefixAuto(_swingPrefix, UnityEngine.Random.Range(0.95f, 1.05f));
             }
         }
 
-        private void OnAttackMoment()
-        {
-            PlaySlashEffect();
-        }
+        private void OnAttackMoment() => PlaySlashEffect();
 
         private void OnSuccessfulHit()
         {
-            // Сочный звук попадания при контакте с врагом
-            _audioService.PlayRandomSfx(_hitCategory);
+            // ИСПОЛЬЗУЕМ АВТОМАТИКУ: просто передаем префикс "EnemyHit"
+            _audioService.PlaySfxByPrefixAuto(_hitPrefix, UnityEngine.Random.Range(0.95f, 1.1f));
         }
 
         private void PlaySlashEffect()
         {
             if (_slashParticle == null || _particleRenderer == null || _rootTransform == null) return;
 
+            // Разворот партиклов в сторону взгляда персонажа
             float rootScaleX = _rootTransform.localScale.x;
             Vector3 currentFlip = _particleRenderer.flip;
-            currentFlip.x = rootScaleX > 0 ? 1 : 0;
+            currentFlip.x = rootScaleX > 0 ? 0 : 1; // Поменял логику флипа под стандарт Unity
             _particleRenderer.flip = currentFlip;
 
             _slashParticle.Stop();

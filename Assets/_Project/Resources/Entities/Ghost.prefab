@@ -287,7 +287,7 @@ MonoBehaviour:
   _shakeDuration: 0.2
   _shakeStrength: 0.5
   _damageSoundPrefix: GhostHit
-  _useVariation: 1
+  _useAutoVariation: 1
 --- !u!114 &1130839634098478934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -301,6 +301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 1784155885393087696}
+  _deathSoundPrefix: GhostDeath
 --- !u!1 &3607678793894935207
 GameObject:
   m_ObjectHideFlags: 0

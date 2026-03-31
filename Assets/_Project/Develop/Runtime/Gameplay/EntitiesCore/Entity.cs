@@ -103,5 +103,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             return this;
         }
+
+        public TSystem GetSystem<TSystem>() where TSystem : class, IEntitySystem
+        {
+            foreach (var system in _systems)
+            {
+                if (system is TSystem targetSystem)
+                    return targetSystem;
+            }
+
+            return null;
+        }
+
+        public TSystem GetRequiredSystem<TSystem>() where TSystem : class, IEntitySystem
+        {
+            var system = GetSystem<TSystem>();
+            if (system == null)
+                throw new ArgumentException($"System of type {typeof(TSystem)} not found in Entity!");
+
+            return system;
+        }
     }
 }

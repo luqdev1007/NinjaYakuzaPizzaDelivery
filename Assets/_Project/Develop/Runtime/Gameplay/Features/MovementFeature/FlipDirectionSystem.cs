@@ -2,7 +2,6 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.Gameplay.Features.HangWall;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 
 public class FlipDirectionSystem : IInitializableSystem, IUpdatableSystem

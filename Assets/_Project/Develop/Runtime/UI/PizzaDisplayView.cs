@@ -2,10 +2,11 @@ using UnityEngine;
 using System.Collections.Generic;
 using DG.Tweening;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay
 {
-    public class PizzaDisplayView : MonoBehaviour
+    public class PizzaDisplayView : EntityView
     {
         [SerializeField] private List<GameObject> _pizzaSlices;
         [SerializeField] private ParticleSystem _cheeseDripEffect;
@@ -17,6 +18,9 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
         private void FixedUpdate()
         {
+            if (_linkedEntity == null)
+                return;
+
             float heroVelocityX = _linkedEntity.Rigidbody.linearVelocity.x;
 
             if (Mathf.Abs(heroVelocityX) > 0.1f)
@@ -60,6 +64,11 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         internal void Initialize(Entity entity)
         {
             _currentVisibleSlices = _pizzaSlices.Count;
+            _linkedEntity = entity;
+        }
+
+        protected override void OnEntityStartedWork(Entity entity)
+        {
             _linkedEntity = entity;
         }
     }

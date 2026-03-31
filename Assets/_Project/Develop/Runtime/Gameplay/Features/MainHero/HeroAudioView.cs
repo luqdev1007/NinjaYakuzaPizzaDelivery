@@ -2,14 +2,16 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using System;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Hero
 {
     public class HeroAudioView : EntityView
     {
         private AudioService _audioService;
-        private string _entityId;
+        private string _entityPrefix;
 
         private IDisposable _dashDisposable;
         private IDisposable _damageDisposable;
@@ -17,21 +19,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Hero
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            // Достаем сервис из сущности (Вариант 1)
-            // Если выбрал Вариант 2 — сервис уже будет в поле через Construct
-            // _audioService = entity.GetComponent<AudioComponent>().Service;
+            // Раскомментировал получение сервиса, без этого будет NullReferenceException
+            _audioService = entity.GetComponent<AudioComponent>().Service;
 
-            // Предположим, у тебя есть компонент с ID или типом сущности
-            _entityId = "Hero";
+            // Используем префикс, который соответствует именам в конфиге (например, "HeroTakeDamage1")
+            _entityPrefix = "Hero";
 
             // 1. Рывок
             _dashDisposable = entity.IsDashing.Subscribe(OnDashChanged);
 
-            // 2. Получение урона (подписка на ReactiveEvent в сущности)
+            // 2. Получение урона
             if (entity.HasComponent<TakeDamageRequest>())
                 _damageDisposable = entity.TakeDamageEvent.Subscribe(OnTakeDamage);
 
-            // 3. Приземление (для звука после падения/прыжка)
+            // 3. Приземление
             _groundedDisposable = entity.IsGrounded.Subscribe(OnGroundedChanged);
         }
 
@@ -39,20 +40,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Hero
         {
             if (isDashing)
             {
-                // Логика питча остается тут, так как это чисто "сочный" визуал
+                // Используем PlaySfxVariation, так как тут ты жестко задал диапазон 1-5
                 _audioService.PlaySfxVariation("AbilityImpactCharge", 1, 5, 1.3f);
             }
         }
 
         private void OnTakeDamage(DamageData data)
         {
-            _audioService.PlaySfxByPrefix(_entityId + "TakeDamage", true);
+            // Исправлено: заменено на PlaySfxByPrefixAuto
+            // Метод сам найдет HeroTakeDamage1, HeroTakeDamage2 и т.д.
+            _audioService.PlaySfxByPrefixAuto(_entityPrefix + "TakeDamage", UnityEngine.Random.Range(0.9f, 1.1f));
         }
 
         private void OnGroundedChanged(bool old, bool isGrounded)
         {
+            // Приземление: играем звук шага, но чуть тише или с другим питчем
             if (isGrounded)
-                _audioService.PlayRandomSfx(AudioCategoryType.Footsteps, true, 0.8f);
+                _audioService.PlayRandomSfx(AudioCategoryType.Movement, true, 0.8f);
         }
 
         public override void Cleanup(Entity entity)

@@ -15,37 +15,37 @@ MonoBehaviour:
   _categories:
   - Type: 0
     Clips:
-    - Id: Swing1
+    - Id: SwordSwing1
       Clip: {fileID: 8300000, guid: dc20931434ca8cc4c8623f16a6fdbb5c, type: 3}
       Volume: 1
       BasePitch: 2
-    - Id: Swing2
+    - Id: SwordSwing2
       Clip: {fileID: 8300000, guid: fc3222ac98b2091449f1fc19361f7116, type: 3}
       Volume: 1
       BasePitch: 2
-    - Id: Swing3
+    - Id: SwordSwing3
       Clip: {fileID: 8300000, guid: afc496af20c412e418fee0ff7f852f18, type: 3}
       Volume: 1
       BasePitch: 2
   - Type: 1
     Clips:
-    - Id: Hit1
+    - Id: EnemyHit1
       Clip: {fileID: 8300000, guid: ab12d6d2151051844bf3d85acb1ef5f5, type: 3}
       Volume: 1
       BasePitch: 2
-    - Id: Hit2
+    - Id: EnemyHit2
       Clip: {fileID: 8300000, guid: de4fc12d9e9b8c6428ce2f34fa0e2243, type: 3}
       Volume: 1
       BasePitch: 2
-    - Id: Hit3
+    - Id: EnemyHit3
       Clip: {fileID: 8300000, guid: ee7a572eb006c514f9769255f346dbcf, type: 3}
       Volume: 1
       BasePitch: 2
-    - Id: Hit4
+    - Id: EnemyHit4
       Clip: {fileID: 8300000, guid: b7f1d236cbba22742aaadc81fa571283, type: 3}
       Volume: 1
       BasePitch: 2
-    - Id: Hit5
+    - Id: EnemyHit5
       Clip: {fileID: 8300000, guid: 0a1a5cc4da33c8c489acf5e20db9038b, type: 3}
       Volume: 1
       BasePitch: 2
@@ -67,16 +67,16 @@ MonoBehaviour:
       BasePitch: 1
     - Id: WallHitLoop1
       Clip: {fileID: 8300000, guid: e2313b3f294df094b82fc7074104f891, type: 3}
-      Volume: 1
-      BasePitch: 1
+      Volume: 0.42
+      BasePitch: 0.82
     - Id: WallHitLoop2
       Clip: {fileID: 8300000, guid: 56dd0bed93eefe54893b888c67367f9e, type: 3}
-      Volume: 1
-      BasePitch: 1
+      Volume: 0.41
+      BasePitch: 0.67
     - Id: WallHitLoop3
       Clip: {fileID: 8300000, guid: c809edbe3ef6b1046b0f74f48b64faa3, type: 3}
-      Volume: 1
-      BasePitch: 1
+      Volume: 0.44
+      BasePitch: 0.76
   - Type: 5
     Clips:
     - Id: GhostHit1
@@ -215,6 +215,82 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: 302a5215bc93a6a408e487df77028621, type: 3}
       Volume: 0.85
       BasePitch: 0.96
+  - Type: 2
+    Clips:
+    - Id: MainHeroJump1
+      Clip: {fileID: 8300000, guid: 3a45eabd4b2c60f429bda7f09e9a144f, type: 3}
+      Volume: 0.763
+      BasePitch: 1.28
+    - Id: MainHeroJump2
+      Clip: {fileID: 8300000, guid: efb7e37e88e1c324480c6d6989fd5d39, type: 3}
+      Volume: 0.66
+      BasePitch: 1.35
+    - Id: MainHeroJump3
+      Clip: {fileID: 8300000, guid: a09a5a94035b9c94baeb0ea2022517cb, type: 3}
+      Volume: 0.68
+      BasePitch: 1.57
+    - Id: MainHeroJump4
+      Clip: {fileID: 8300000, guid: fc43deafb3ce1ae4ab0a26dc61e3fdc4, type: 3}
+      Volume: 0.62
+      BasePitch: 1.61
+    - Id: MainHeroJump5
+      Clip: {fileID: 8300000, guid: 5ed775a05542ec644a5da124ae109c79, type: 3}
+      Volume: 0.81
+      BasePitch: 0.98
+    - Id: MainHeroDoubleJump1
+      Clip: {fileID: 8300000, guid: a9623d4898fbad54694f769368e2ea03, type: 3}
+      Volume: 1
+      BasePitch: 1.62
+    - Id: MainHeroLand1
+      Clip: {fileID: 8300000, guid: 4d436764dcb85ca449340c5ba781911d, type: 3}
+      Volume: 1
+      BasePitch: 1.15
+    - Id: MainHeroLand2
+      Clip: {fileID: 8300000, guid: 76f603a611ce9ad41ac75b4d3d4333bc, type: 3}
+      Volume: 1
+      BasePitch: 1.15
+    - Id: MainHeroLand3
+      Clip: {fileID: 8300000, guid: 44ef9c31c6e97674fb68c88e2338a653, type: 3}
+      Volume: 1
+      BasePitch: 1.15
+    - Id: MainHeroFootstep1
+      Clip: {fileID: 8300000, guid: 756aa68ad2377e04a84e36de783f9cc3, type: 3}
+      Volume: 1
+      BasePitch: 1.15
+    - Id: MainHeroFootstep2
+      Clip: {fileID: 8300000, guid: cb67f19755b47714db526942e51e765e, type: 3}
+      Volume: 1
+      BasePitch: 1.15
+    - Id: MainHeroFootstep3
+      Clip: {fileID: 8300000, guid: 979dc6a245eb84044b57c1fe7e8cd8d2, type: 3}
+      Volume: 1
+      BasePitch: 1.15
+    - Id: MainHeroFootstep4
+      Clip: {fileID: 8300000, guid: cafade5b1099b7b4b8b39525b3fdc984, type: 3}
+      Volume: 1
+      BasePitch: 1.15
+    - Id: MainHeroFootstep5
+      Clip: {fileID: 8300000, guid: 2a2a8aa705008ba4ab00fc0f55207d68, type: 3}
+      Volume: 1
+      BasePitch: 1.15
+    - Id: MainHeroBrake1
+      Clip: {fileID: 8300000, guid: e0c46b609e4850a47a379fcef35f9566, type: 3}
+      Volume: 1
+      BasePitch: 1.15
+    - Id: MainHeroBrake2
+      Clip: {fileID: 8300000, guid: 28abdc561bf432546a792ff88b2dbb58, type: 3}
+      Volume: 1
+      BasePitch: 1.15
+    - Id: MainHeroBrake3
+      Clip: {fileID: 8300000, guid: 3a4a16a5b192765489a595d347a6bd48, type: 3}
+      Volume: 1
+      BasePitch: 1.15
+  - Type: 8
+    Clips:
+    - Id: MainHeroSpawn1
+      Clip: {fileID: 8300000, guid: a311ac869ea85a34089b874376c01055, type: 3}
+      Volume: 1
+      BasePitch: 1.24
   _playlists:
   - Id: MainMenu
     Tracks:

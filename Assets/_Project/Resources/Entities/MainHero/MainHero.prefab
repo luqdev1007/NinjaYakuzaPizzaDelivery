@@ -34625,13 +34625,13 @@ GameObject:
   - component: {fileID: 815484522690271107}
   - component: {fileID: 9048778638852969282}
   - component: {fileID: 3343253920050489521}
-  - component: {fileID: 6886238033137904204}
   - component: {fileID: 5573792834674994762}
   - component: {fileID: 6854546781538244579}
   - component: {fileID: 1178100613394687203}
   - component: {fileID: 5986732417377409905}
   - component: {fileID: 6592515004558342224}
   - component: {fileID: 6237053472596339389}
+  - component: {fileID: 1692103396629986650}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -34745,11 +34745,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animator: {fileID: 7142319570205284036}
   _attackAnimationClip: {fileID: 7400000, guid: a456fbe13b2c80444b359fffdd65481a, type: 2}
-  _isAttackingParam: IsAttacking
-  _speedMultiplierParam: AttackAnimationSpeedMultiplier
   _slashParticle: {fileID: 8548548235128150207}
-  _swingCategory: 0
-  _hitCategory: 1
+  _swingPrefix: SwordSwing
+  _hitPrefix: EnemyHit
 --- !u!114 &6032324195974777070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34763,6 +34761,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 7142319570205284036}
+  _deathSoundPrefix: MainHeroDeath
 --- !u!114 &8298525861719048196
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34780,6 +34779,11 @@ MonoBehaviour:
   _viewContainer: {fileID: 5149040113408065364}
   _startGlidePrefix: GlideStart
   _loopGlidePrefix: GlideLoop
+  _endGlidePrefix: GlideStart
+  _minPitch: 0.9
+  _maxPitch: 1.3
+  _minVelocityY: -15
+  _maxVelocityY: -2
   _swayAngle: 5
   _swaySpeed: 2
   _swayLerpSpeed: 5
@@ -34809,6 +34813,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 7142319570205284036}
+  _airConePS: {fileID: 1557773387737848066}
+  _fireCones:
+  - {fileID: 815917706757383807}
+  - {fileID: 3303103631818105528}
+  - {fileID: 7518450432451936732}
+  _fullPowerTime: 0.5
+  _maxAirEmission: 40
+  _maxFireEmission: 30
+  _impactPS: {fileID: 5366238092746749147}
+  _plungeLoopPrefix: AbilityImpactPlungeLoop
+  _plungeLandPrefix: AbilityImpactPlunge
+  _minPitch: 1
+  _maxPitch: 1.6
+  _viewContainer: {fileID: 5149040113408065364}
+  _stretchY: 1.4
+  _squashY: 0.6
+  _squashDuration: 0.15
+  _lerpSpeed: 12
 --- !u!114 &9048778638852969282
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34822,6 +34844,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 7142319570205284036}
+  _maxSpeedMultiplier: 2
+  _runDustPS: {fileID: 9033383828084915584}
+  _runDustSpeedThreshold: 2
+  _brakeDustPS: {fileID: 2490116331000950456}
+  _brakeSpeedThreshold: 4
+  _brakeDirectionThreshold: 0.5
+  _startDustPS: {fileID: 4501511461882023438}
+  _startSpeedThreshold: 1
+  _footstepPrefix: MainHeroFootstep
+  _baseFootstepInterval: 0.35
+  _brakeSoundPrefix: MainHeroBrake
 --- !u!114 &3343253920050489521
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34841,20 +34874,6 @@ MonoBehaviour:
   _offDelay: 1
   _trailOffset: 0.15
   _rotationSpeed: 30
---- !u!114 &6886238033137904204
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2402411871318597321}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db79ea0da534f46498a901f0db5b1a95, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _animator: {fileID: 7142319570205284036}
-  _maxSpeedMultiplier: 1.4
 --- !u!114 &5573792834674994762
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34871,6 +34890,8 @@ MonoBehaviour:
   _spawnEffectPrefab: {fileID: 4287474839184976492, guid: e95d97e26829f8b40ab4cef5ab24aa38, type: 3}
   _effectSpawnPoint: {fileID: 1222761960562644359}
   _vfxStopAction: 2
+  _spawnSoundPrefix: LifeCycleMainHeroSpawn
+  _variationsCount: 3
 --- !u!114 &6854546781538244579
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34884,6 +34905,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 7142319570205284036}
+  _frictionPS: {fileID: 2262465841929636248}
+  _maxEmissionRate: 50
+  _vfxRampUpTime: 0.3
+  _slideLoopPrefix: AbilityImpactSlide
+  _minPitch: 0.9
+  _maxPitch: 1.3
+  _viewContainer: {fileID: 5149040113408065364}
+  _slideStretchX: 1.3
+  _slideSquashY: 0.7
+  _slideTiltAngle: 12
+  _lerpSpeed: 10
+  _slopeRotationLerp: 0.15
 --- !u!114 &1178100613394687203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34897,6 +34930,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 7142319570205284036}
+  _viewContainer: {fileID: 5149040113408065364}
+  _sparksPS: {fileID: 4149944531080400842}
+  _debrisPS: {fileID: 213747118901242694}
+  _effectOffset: 0.4
+  _vibrationStrength: 0.03
+  _vibrationSpeed: 30
+  _hitPrefix: WallHit
+  _loopPrefix: WallHitLoop
 --- !u!114 &5986732417377409905
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34910,19 +34951,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 7142319570205284036}
-  _isDashingAnimParam: IsDashing
   _spriteRenderer: {fileID: 4010868416834219212}
-  _flashDuration: 0.1
-  _flashColor: {r: 1, g: 1, b: 1, a: 1}
+  _dashSoundPrefix: AbilityImpactCharge
+  _hitPrefix: EnemyHit
   _afterimagePrefab: {fileID: 2092742535912402765, guid: bfa1d847138cafb4dbc0719e21491257, type: 3}
   _spawnInterval: 0.04
   _afterimageLifetime: 0.2
-  _afterimageColor: {r: 0.81953907, g: 0.5019608, b: 1, a: 0.8}
+  _afterimageColor: {r: 1, g: 0.36320752, b: 0.7239636, a: 0.8}
   _poolSize: 8
-  _dashSoundPrefix: AbilityImpactCharge
-  _dashPitchRange: {x: 1.2, y: 1.4}
-  _hitCategory: 1
-  _hitPitchBase: 0.9
+  _flashDuration: 0.1
+  _flashColor: {r: 1, g: 0.504717, b: 0.7615467, a: 1}
 --- !u!114 &6592515004558342224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34935,7 +34973,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6a9af3215c06af48b9cf9f89828949a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animator: {fileID: 7142319570205284036}
+  _jumpDustPS: {fileID: 1451790781543718166}
+  _jumpSoundPrefix: MainHeroJump
+  _doubleJumpDustPS: {fileID: 7497969023894137337}
+  _doubleJumpSoundPrefix: MainHeroDoubleJump
+  _landDustPS: {fileID: 4416782009159940940}
+  _landSoundPrefix: MainHeroLand
+  _landVelocityThreshold: -5
 --- !u!114 &6237053472596339389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34954,11 +34998,27 @@ MonoBehaviour:
   _spriteRenderer: {fileID: 4010868416834219212}
   _flashColor: {r: 1, g: 1, b: 1, a: 1}
   _flashDuration: 0.2
-  _pizzaDisplay: {fileID: 2074096976373253779}
-  _shakeDuration: 0.3
-  _shakeStrength: 1
   _damageSoundPrefix: MainHeroHit
-  _useVariation: 1
+--- !u!114 &1692103396629986650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2402411871318597321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 390ee53d7b4b00e4bb2a06192131b579, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _pizzaSlices:
+  - {fileID: 514000264343884331}
+  - {fileID: 3438589221511827382}
+  - {fileID: 3621085298518254234}
+  - {fileID: 6895245918529627318}
+  - {fileID: 9096678623028880299}
+  _cheeseDripEffect: {fileID: 5436667852462279511}
+  _rigidbody: {fileID: 1587270918963700498}
 --- !u!1 &2684084550196932738
 GameObject:
   m_ObjectHideFlags: 0
@@ -54616,7 +54676,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2465651715336827443}
-  - component: {fileID: 7146747379664323758}
   m_Layer: 7
   m_Name: JumpVFX
   m_TagString: Untagged
@@ -54642,22 +54701,6 @@ Transform:
   - {fileID: 5824342906555737158}
   m_Father: {fileID: 3817552431921455846}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7146747379664323758
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3555382130903962894}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2bc88906158b3645ac775968d33848b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _jumpDustPS: {fileID: 1451790781543718166}
-  _doubleJumpDustPS: {fileID: 7497969023894137337}
-  _landDustPS: {fileID: 4416782009159940940}
-  _landVelocityThreshold: -5
 --- !u!1 &3614555866832608721
 GameObject:
   m_ObjectHideFlags: 0
@@ -69743,7 +69786,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8063226271664128683}
-  - component: {fileID: 3750980622648883680}
   m_Layer: 7
   m_Name: PlungeVFX
   m_TagString: Untagged
@@ -69771,33 +69813,6 @@ Transform:
   - {fileID: 5635711621788674364}
   m_Father: {fileID: 3817552431921455846}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3750980622648883680
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4204550362813164709}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40ec95c0142af62468b998fe51d42b12, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _airConePS: {fileID: 1557773387737848066}
-  _fireCones:
-  - {fileID: 815917706757383807}
-  - {fileID: 7518450432451936732}
-  - {fileID: 3303103631818105528}
-  _fireSpeedThresholdMultiplier: 1.05
-  _minFireEmission: 5
-  _maxFireEmission: 40
-  _impactPS: {fileID: 5366238092746749147}
-  _viewContainer: {fileID: 5149040113408065364}
-  _stretchY: 1.4
-  _squashY: 0.6
-  _squashDuration: 0.15
-  _stretchLerpSpeed: 10
-  _recoveryLerpSpeed: 8
 --- !u!1 &5264996147728413291
 GameObject:
   m_ObjectHideFlags: 0
@@ -74673,7 +74688,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4525073869628518464}
-  - component: {fileID: 1269169825572022441}
   m_Layer: 7
   m_Name: RunVFX
   m_TagString: Untagged
@@ -74699,25 +74713,6 @@ Transform:
   - {fileID: 1900963690936515712}
   m_Father: {fileID: 3817552431921455846}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1269169825572022441
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6525107998442434960}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6322911063521e4a8fb17267dc8e6d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _runDustPS: {fileID: 9033383828084915584}
-  _runDustSpeedThreshold: 2
-  _brakeDustPS: {fileID: 2490116331000950456}
-  _brakeSpeedThreshold: 4
-  _brakeDirectionThreshold: 0.5
-  _startDustPS: {fileID: 4501511461882023438}
-  _startSpeedThreshold: 1
 --- !u!1 &6807706309655430778
 GameObject:
   m_ObjectHideFlags: 0
@@ -84786,7 +84781,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6270215484436663703}
-  - component: {fileID: 6020594554447038286}
   m_Layer: 7
   m_Name: SlideVFX
   m_TagString: Untagged
@@ -84810,24 +84804,6 @@ Transform:
   - {fileID: 3582191019569824591}
   m_Father: {fileID: 3817552431921455846}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6020594554447038286
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7771732635888869802}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 379a1d08f818fd542bebf0ba66b84dbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _viewContainer: {fileID: 5149040113408065364}
-  _frictionPS: {fileID: 2262465841929636248}
-  _slideStretchX: 1.15
-  _slideSquashY: 0.85
-  _lerpSpeed: 6
-  _slideTiltAngle: 8
 --- !u!1 &7933769064484763506
 GameObject:
   m_ObjectHideFlags: 0
@@ -85042,7 +85018,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5177754318514575334}
-  - component: {fileID: 8890884117908006976}
   m_Layer: 7
   m_Name: WallHangVFX
   m_TagString: Untagged
@@ -85067,23 +85042,6 @@ Transform:
   - {fileID: 399345085233799793}
   m_Father: {fileID: 3817552431921455846}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8890884117908006976
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8269742854564274028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ffcaf53de90b3784bb3a72ed6992ef5c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _sparksPS: {fileID: 4149944531080400842}
-  _debrisPS: {fileID: 213747118901242694}
-  _viewContainer: {fileID: 5149040113408065364}
-  _vibrationStrength: 0.01
-  _vibrationSpeed: 15
 --- !u!1 &8379322101504423394
 GameObject:
   m_ObjectHideFlags: 0

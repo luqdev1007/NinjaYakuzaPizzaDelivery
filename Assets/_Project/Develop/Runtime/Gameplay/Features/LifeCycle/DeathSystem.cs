@@ -41,7 +41,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
         {
             if (isDead)
             {
-                _audioService.PlaySfxByPrefix(_entityId + "Death", true);
+                // _audioService.PlaySfxByPrefix(_entityId + "Death", true);
             }
         }
 

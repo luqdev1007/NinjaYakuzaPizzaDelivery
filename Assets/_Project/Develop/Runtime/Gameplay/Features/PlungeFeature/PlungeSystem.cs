@@ -71,16 +71,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
                 StartPlunge();
         }
 
-        private void StartPlunge()
-        {
-            _isPlunging.Value = true;
-            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x * 0.5f, -_plungeSpeed.Value);
-
-            // На всякий случай чистим старый ID перед запуском нового
-            ClearPlungeLoop();
-            _activeLoopId = _audioService.PlaySfxVariationLoop("AbilityImpactPlungeLoop", 1, 3);
-        }
-
         private void UpdatePlunge(float deltaTime)
         {
             if (_rigidbody.linearVelocity.y > -_plungeSpeed.Value)
@@ -158,17 +148,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             }
         }
 
+        // В OnUpdate просто меняем состояние, View само подхватит
+        private void StartPlunge()
+        {
+            _isPlunging.Value = true;
+            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x * 0.5f, -_plungeSpeed.Value);
+        }
+
         private void StopPlunge()
         {
             _isPlunging.Value = false;
-            ClearPlungeLoop();
         }
 
         private void ClearPlungeLoop()
         {
             if (!string.IsNullOrEmpty(_activeLoopId))
             {
-                _audioService.StopLoopingSfx(_activeLoopId);
+                // _audioService.StopLoopingSfx(_activeLoopId);
                 _activeLoopId = null;
             }
         }

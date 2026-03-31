@@ -24,51 +24,28 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
                 .SelectMany(c => c.Clips)
                 .Where(d => d.Id.StartsWith(prefix))
                 .ToList();
-
             return matches.Count == 0 ? null : matches[UnityEngine.Random.Range(0, matches.Count)];
         }
 
-        public AudioData GetById(string id)
+        public AudioData GetById(string id) =>
+            _categories.SelectMany(c => c.Clips).FirstOrDefault(d => d.Id == id);
+
+        public MusicPlaylist GetPlaylist(string id) =>
+            _playlists.FirstOrDefault(p => p.Id == id);
+
+        // Авто-подсчет вариаций (EnemyHit1, EnemyHit2...)
+        public int GetVariationCount(string prefix)
         {
-            return _categories.SelectMany(c => c.Clips).FirstOrDefault(d => d.Id == id);
+            if (string.IsNullOrEmpty(prefix)) return 0;
+            return _categories
+                .SelectMany(c => c.Clips)
+                .Count(d => d.Id.StartsWith(prefix) && int.TryParse(d.Id.Substring(prefix.Length), out _));
         }
-
-        public MusicPlaylist GetPlaylist(string id) => _playlists.FirstOrDefault(p => p.Id == id);
     }
 
-    [Serializable]
-    public class AudioCategory
-    {
-        public AudioCategoryType Type;
-        public List<AudioData> Clips;
-    }
+    [Serializable] public class AudioCategory { public AudioCategoryType Type; public List<AudioData> Clips; }
+    [Serializable] public class AudioData { public string Id; public AudioClip Clip; [Range(0, 1)] public float Volume = 1f; [Range(0.1f, 3f)] public float BasePitch = 1f; }
+    [Serializable] public class MusicPlaylist { public string Id; public List<AudioClip> Tracks; [Range(0, 1)] public float Volume = 0.5f; }
 
-    [Serializable]
-    public class AudioData
-    {
-        public string Id;
-        public AudioClip Clip;
-        [Range(0, 1)] public float Volume = 1f;
-        [Range(0.1f, 3f)] public float BasePitch = 1f;
-    }
-
-    [Serializable]
-    public class MusicPlaylist
-    {
-        public string Id;
-        public List<AudioClip> Tracks;
-        [Range(0, 1)] public float Volume = 0.5f;
-    }
-
-    public enum AudioCategoryType
-    {
-        HeroAttackSwing,
-        HeroAttackHit,
-        Footsteps,
-        UI,
-        Music,
-        TakeDamage,
-        Death,
-        AbilityImpact
-    }
+    public enum AudioCategoryType { AttackSwing, AttackHit, Movement, UI, Music, TakeDamage, Death, AbilityImpact, LifeCycle }
 }

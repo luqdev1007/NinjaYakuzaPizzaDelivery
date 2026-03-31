@@ -13,6 +13,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
         private readonly IInputService _inputService;
         private readonly SlopeSystem _slopeSystem;
 
+        private ReactiveEvent _doubleJumpEvent;
+        private ReactiveEvent _jumpEvent;
+
         private ICompositeCondition _canJump;
         private ReactiveVariable<bool> _isGrounded;
         private ReactiveVariable<bool> _isOnSlope;
@@ -37,6 +40,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
 
         public void OnInit(Entity entity)
         {
+            _doubleJumpEvent = entity.DoubleJumpEvent;
+            _jumpEvent = entity.JumpEvent;
+
             _canJump = entity.CanJump;
             _isGrounded = entity.IsGrounded;
             _isOnSlope = entity.IsOnSlope;
@@ -78,13 +84,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
             float chargeRatio = _jumpChargeTime.Value > 0f ? _chargeTimer / _jumpChargeTime.Value : 1f;
             float verticalForce = Mathf.Lerp(_jumpForce.Value, _jumpForceMax.Value, chargeRatio);
 
+            // Логика определения: обычный это прыжок или двойной
+            if (_jumpsAvailable.Value < _maxJumps.Value)
+                _doubleJumpEvent.Invoke(); // Вызываем событие двойного прыжка
+            else
+                _jumpEvent.Invoke(); // Вызываем событие обычного прыжка
+
             if (_isOnSlope.Value && _slopeAccumSpeed.Value > 0.1f)
             {
                 ExecuteSlopeJump(verticalForce);
             }
             else
             {
-                // Обычный прыжок: гасим только Y, сохраняем инерцию X
                 _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, 0f);
                 _rigidbody.AddForce(Vector2.up * verticalForce, ForceMode2D.Impulse);
             }
