@@ -44518,7 +44518,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: -7310379999039381107, guid: c7a6dac00f956db418798d83ce72ed37, type: 3}
+  m_Sprite: {fileID: 3153539378023671787, guid: d9bd7fc23cd977642a77f2274e1d97f7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -44605,7 +44605,7 @@ MonoBehaviour:
   _endGlidePrefix: GlideStart
   _minPitch: 0.9
   _maxPitch: 1.3
-  _minVelocityY: -15
+  _minVelocityY: -5
   _maxVelocityY: -2
   _swayAngle: 5
   _swaySpeed: 2
@@ -44643,17 +44643,17 @@ MonoBehaviour:
   - {fileID: 7518450432451936732}
   _fullPowerTime: 0.5
   _maxAirEmission: 40
-  _maxFireEmission: 30
+  _maxFireEmission: 45
   _impactPS: {fileID: 5366238092746749147}
   _plungeLoopPrefix: AbilityImpactPlungeLoop
   _plungeLandPrefix: AbilityImpactPlunge
-  _minPitch: 1
-  _maxPitch: 1.6
+  _minPitch: 1.2
+  _maxPitch: 2
   _viewContainer: {fileID: 5149040113408065364}
-  _stretchY: 1.4
-  _squashY: 0.6
+  _stretchY: 1.2
+  _squashY: 0.8
   _squashDuration: 0.15
-  _lerpSpeed: 12
+  _lerpSpeed: 8
 --- !u!114 &9048778638852969282
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44734,9 +44734,9 @@ MonoBehaviour:
   _minPitch: 0.9
   _maxPitch: 1.3
   _viewContainer: {fileID: 5149040113408065364}
-  _slideStretchX: 1.3
-  _slideSquashY: 0.7
-  _slideTiltAngle: 12
+  _slideStretchX: 1.1
+  _slideSquashY: 0.85
+  _slideTiltAngle: 10
   _lerpSpeed: 10
   _slopeRotationLerp: 0.15
 --- !u!114 &1178100613394687203
@@ -44756,8 +44756,8 @@ MonoBehaviour:
   _sparksPS: {fileID: 4149944531080400842}
   _debrisPS: {fileID: 213747118901242694}
   _effectOffset: 0.4
-  _vibrationStrength: 0.03
-  _vibrationSpeed: 30
+  _vibrationStrength: 0.02
+  _vibrationSpeed: 20
   _hitPrefix: WallHit
   _loopPrefix: WallHitLoop
 --- !u!114 &5986732417377409905

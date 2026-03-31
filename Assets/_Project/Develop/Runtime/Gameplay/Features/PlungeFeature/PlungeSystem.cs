@@ -6,7 +6,6 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 {
@@ -26,11 +25,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         private Rigidbody2D _rigidbody;
         private Transform _transform;
 
-        private string _activeLoopId;
+        // Таймер для расчета прогресса падения
+        private float _currentFlightTime;
 
+        // Константы баланса
         private const float FlightCheckWidth = 1.5f;
         private const float FlightCheckHeight = 1.0f;
         private const float FlightKnockbackMultiplier = 0.3f;
+
+        // Настройки прогрессии урона
+        private const float BaseChargeTime = 0.5f; // Время, за которое набирается 100% мощи
+        private const float MaxDamageMultiplier = 2.5f; // Максимальный бонус урона (x2.5)
+        private const float MaxRadiusMultiplier = 1.4f; // Максимальное расширение радиуса (x1.4)
 
         public PlungeSystem(IInputService inputService, LayerMask enemyMask)
         {
@@ -55,21 +61,34 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         {
             if (_isPlunging.Value)
             {
+                _currentFlightTime += deltaTime;
                 UpdatePlunge(deltaTime);
                 return;
             }
 
             if (_inputService.IsSlideKeyPressed && _canPlunge.Evaluate())
+            {
                 StartPlunge();
+            }
+        }
+
+        private void StartPlunge()
+        {
+            _isPlunging.Value = true;
+            _currentFlightTime = 0f;
+            // Резко толкаем вниз, сохраняя часть горизонтальной инерции
+            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x * 0.5f, -_plungeSpeed.Value);
         }
 
         private void UpdatePlunge(float deltaTime)
         {
+            // Поддерживаем стабильную скорость падения
             if (_rigidbody.linearVelocity.y > -_plungeSpeed.Value)
             {
                 _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, -_plungeSpeed.Value);
             }
 
+            // Наносим урон врагам, через которых пролетаем (со слабым отбросом)
             ApplyFlightDamage();
 
             if (_isGrounded.Value)
@@ -78,8 +97,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
                 return;
             }
 
+            // Прерывание, если отпустили кнопку (если это предусмотрено дизайном)
             if (_inputService.IsSlideKeyReleased)
+            {
                 StopPlunge();
+            }
         }
 
         private void ApplyFlightDamage()
@@ -89,17 +111,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
             foreach (var hit in hits)
             {
+                // Урон в полете всегда фиксированный (50% от базового)
                 PushAndDamage(hit, _plungeAOEDamage.Value * 0.5f, _plungeKnockbackForce.Value * FlightKnockbackMultiplier);
             }
         }
 
         private void LandPlunge()
         {
-            Collider2D[] hits = Physics2D.OverlapCircleAll(_transform.position, _plungeAOERadius.Value, _enemyMask);
+            // Рассчитываем множитель силы удара (минимум 1.0)
+            float intensityRatio = Mathf.Clamp(_currentFlightTime / BaseChargeTime, 0f, 1.0f);
+            float damageMultiplier = Mathf.Lerp(1.0f, MaxDamageMultiplier, intensityRatio);
+            float radiusMultiplier = Mathf.Lerp(1.0f, MaxRadiusMultiplier, intensityRatio);
+
+            float finalDamage = _plungeAOEDamage.Value * damageMultiplier;
+            float finalRadius = _plungeAOERadius.Value * radiusMultiplier;
+            float finalForce = _plungeKnockbackForce.Value * damageMultiplier;
+
+            Collider2D[] hits = Physics2D.OverlapCircleAll(_transform.position, finalRadius, _enemyMask);
 
             foreach (Collider2D hit in hits)
             {
-                PushAndDamage(hit, _plungeAOEDamage.Value, _plungeKnockbackForce.Value);
+                PushAndDamage(hit, finalDamage, finalForce);
             }
 
             StopPlunge();
@@ -107,20 +139,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private void PushAndDamage(Collider2D hit, float damage, float force)
         {
-            if (hit == null || !hit.gameObject.activeSelf)
-                return;
+            if (hit == null || !hit.gameObject.activeSelf) return;
 
+            // 1. Физический импульс
             Rigidbody2D rb = hit.GetComponent<Rigidbody2D>();
-
             if (rb != null)
             {
                 Vector2 direction = ((Vector2)hit.transform.position - (Vector2)_transform.position);
-                direction.y += 0.5f;
+                direction.y += 0.5f; // Подбрасываем немного вверх
                 rb.AddForce(direction.normalized * force, ForceMode2D.Impulse);
             }
 
+            // 2. Нанесение урона через Entity
             var monoEntity = hit.GetComponentInParent<MonoEntity>();
-
             if (monoEntity != null)
             {
                 var target = monoEntity.LinkedEntity;
@@ -131,22 +162,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
                     target.TakeDamageEvent?.Invoke(new DamageData
                     {
                         Amount = damage,
-                        SourcePosition = hit.transform.position
+                        SourcePosition = _transform.position
                     });
                 }
             }
         }
 
-        // В OnUpdate просто меняем состояние, View само подхватит
-        private void StartPlunge()
-        {
-            _isPlunging.Value = true;
-            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x * 0.5f, -_plungeSpeed.Value);
-        }
-
         private void StopPlunge()
         {
             _isPlunging.Value = false;
+            _currentFlightTime = 0f;
         }
     }
 }

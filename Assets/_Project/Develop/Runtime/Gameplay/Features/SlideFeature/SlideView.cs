@@ -77,7 +77,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         {
             if (_viewContainer == null) return;
 
-            // 1. Деформация (Stretch & Squash)
+            // 1. Деформация (Stretch & Squash) остается прежней
             Vector3 targetScale = _defaultScale;
             if (_isSliding.Value)
             {
@@ -85,17 +85,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
             }
             _viewContainer.localScale = Vector3.Lerp(_viewContainer.localScale, targetScale, Time.deltaTime * _lerpSpeed);
 
-            // 2. Вращение (Slope + Tilt)
+            // 2. Исправленное вращение
             float targetZ = 0f;
 
             if (_isSliding.Value)
             {
-                // Если на склоне — берем угол нормали
                 if (_isOnSlope.Value && _slopeSystem != null)
                 {
+                    // Получаем угол наклона поверхности. 
+                    // Мы вычитаем 90 градусов из угла нормали, чтобы спрайт стал параллелен земле.
                     targetZ = Vector2.SignedAngle(Vector2.up, _slopeSystem.SlopeNormal);
+
+                    // Если персонаж смотрит влево (scale.x < 0), угол нужно инвертировать для корректного отображения
+                    float direction = Mathf.Sign(transform.localScale.x);
+                    targetZ += (direction > 0 ? -90f : 90f);
                 }
-                else // Если на ровной земле — просто делаем наклон (Tilt)
+                else
                 {
                     float direction = Mathf.Sign(transform.localScale.x);
                     targetZ = -_slideTiltAngle * direction;

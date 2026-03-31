@@ -106,13 +106,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private void OnGroundedChanged(bool oldValue, bool grounded)
         {
-            // Если приземлились и до этого летели в пике
             if (grounded && _flightTimer > 0.05f)
             {
-                _impactPS?.Play();
+                // 1. Рассчитываем множитель силы (от 0.2 до 1.5 в зависимости от времени полета)
+                float impactRatio = Mathf.Clamp(_flightTimer / _fullPowerTime, 0.2f, 1.5f);
 
-                // Звук удара (чуть выше питч для сочности)
-                _audioService.PlaySfxVariation(_plungeLandPrefix, 1, 3, 1.3f);
+                if (_impactPS != null)
+                {
+                    var main = _impactPS.main;
+                    // Можно масштабировать размер частиц
+                    main.startSizeMultiplier = impactRatio;
+
+                    // Масштабируем количество частиц в Burst
+                    var emission = _impactPS.emission;
+                    var burst = emission.GetBurst(0);
+                    burst.count = new ParticleSystem.MinMaxCurve(10 * impactRatio, 30 * impactRatio);
+                    emission.SetBurst(0, burst);
+
+                    _impactPS.Play();
+                }
+
+                // 2. Звук удара (делаем громче и ниже при сильном падении)
+                float landPitch = Mathf.Lerp(1.5f, 0.8f, impactRatio - 0.2f);
+                _audioService.PlaySfxVariation(_plungeLandPrefix, 1, 3, landPitch);
 
                 StartSquash();
                 StopFlightEffects();
