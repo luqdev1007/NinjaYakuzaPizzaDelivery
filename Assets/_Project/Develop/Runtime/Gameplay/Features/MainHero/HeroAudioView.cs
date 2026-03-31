@@ -4,7 +4,6 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using System;
-using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Hero
 {
@@ -68,3 +67,4 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Hero
         }
     }
 }
+
