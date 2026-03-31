@@ -221,15 +221,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(slopeSystem)
 
                 // — броски —
-                .AddSystem(new ThrowableSystem(
+                .AddSystem(new GrappleSystem(
                     inputService,
                     coroutinesPerformer,
-                    new ThrowableConfig[]
-                    {
-                 config.Throwables.GrappleConfig,
-                 config.Throwables.ShurikenConfig,
-                 config.Throwables.SleepDartConfig
-                    },
+                    config.Throwables.GrappleConfig,
                     throwableBehaviourFactory))
 
                 // — атака —
