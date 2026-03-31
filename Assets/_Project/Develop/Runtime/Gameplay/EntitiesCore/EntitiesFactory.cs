@@ -9,6 +9,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.HangWall;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Inventory;
 using Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
@@ -196,10 +197,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         {
             IInputService inputService = _container.Resolve<IInputService>();
             ICoroutinesPerformer coroutinesPerformer = _container.Resolve<ICoroutinesPerformer>();
-            AudioService audioService = _container.Resolve<AudioService>();
 
             ThrowableBehaviourFactory throwableBehaviourFactory = new ThrowableBehaviourFactory(coroutinesPerformer);
             SlopeSystem slopeSystem = new SlopeSystem();
+
+            ThrowableConfig[] consumables = new ThrowableConfig[]
+            {
+                config.Throwables.ShurikenConfig,
+                config.Throwables.SleepDartConfig
+            };
 
             entity
                 // — инициализация —
@@ -217,15 +223,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new GlideSystem(inputService))
                 .AddSystem(new WallHangSystem(inputService))
                 .AddSystem(new SlideSystem(inputService, coroutinesPerformer, slopeSystem))
-                .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask, _container.Resolve<AudioService>()))
+                .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask))
                 .AddSystem(slopeSystem)
 
-                // — броски —
+                // — броски (Хук отдельно на ПКМ) —
                 .AddSystem(new GrappleSystem(
                     inputService,
                     coroutinesPerformer,
                     config.Throwables.GrappleConfig,
                     throwableBehaviourFactory))
+
+                // — инвентарь (Сюрикены/Дротики на Q + Колесико) —
+                .AddSystem(new InventorySystem(
+                    inputService,
+                    consumables,
+                    throwableBehaviourFactory,
+                    coroutinesPerformer)) // Добавь этот параметр!
 
                 // — атака —
                 .AddSystem(new AttackCancelSystem())
@@ -235,12 +248,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem())
                 .AddSystem(new AttackInvulnerabilitySystem())
-                .AddSystem(new MeleeAttackHitSystem(coroutinesPerformer)) // Теперь только корутины
+                .AddSystem(new MeleeAttackHitSystem(coroutinesPerformer))
 
                 // — урон / жизненный цикл —
                 .AddSystem(new ApplyDamageSystem())
                 .AddSystem(new DamageKnockbackSystem())
-                .AddSystem(new DeathSystem("MainHero", audioService))
+                .AddSystem(new DeathSystem())
                 .AddSystem(new DeathProcessTimerSystem())
 
                 // — визуал —
@@ -508,7 +521,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // Системы урона
                 .AddSystem(new ApplyDamageSystem())
                 .AddSystem(new DamageKnockbackSystem())
-                .AddSystem(new DeathSystem("Ghost", _container.Resolve<AudioService>()))
+                .AddSystem(new DeathSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
 
                 // Таймеры эффектов

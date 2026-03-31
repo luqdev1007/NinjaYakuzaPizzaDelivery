@@ -9,24 +9,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 {
     public class DeathSystem : IInitializableSystem, IUpdatableSystem, IDisposableSystem
     {
-        private readonly string _entityId;
-        private readonly AudioService _audioService;
-
         private ReactiveVariable<bool> _isDead;
         private ICompositeCondition _mustDie;
         private IDisposable _deathSubscription;
-
-        public DeathSystem(string entityId, AudioService audioService)
-        {
-            _entityId = entityId;
-            _audioService = audioService;
-        }
 
         public void OnInit(Entity entity)
         {
             _isDead = entity.IsDead;
             _mustDie = entity.MustDie;
-            _deathSubscription = _isDead.Subscribe(OnDeathChanged);
         }
 
         public void OnUpdate(float deltaTime)
@@ -35,14 +25,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 
             if (_mustDie.Evaluate())
                 _isDead.Value = true;
-        }
-
-        private void OnDeathChanged(bool old, bool isDead)
-        {
-            if (isDead)
-            {
-                // _audioService.PlaySfxByPrefix(_entityId + "Death", true);
-            }
         }
 
         public void OnDispose() => _deathSubscription?.Dispose();

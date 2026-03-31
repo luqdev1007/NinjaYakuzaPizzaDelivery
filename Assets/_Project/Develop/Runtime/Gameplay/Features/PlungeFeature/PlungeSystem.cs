@@ -14,7 +14,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
     {
         private readonly IInputService _inputService;
         private readonly LayerMask _enemyMask;
-        private readonly AudioService _audioService;
 
         private ICompositeCondition _canPlunge;
         private ReactiveVariable<bool> _isPlunging;
@@ -23,6 +22,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         private ReactiveVariable<float> _plungeAOERadius;
         private ReactiveVariable<float> _plungeAOEDamage;
         private ReactiveVariable<float> _plungeKnockbackForce;
+
         private Rigidbody2D _rigidbody;
         private Transform _transform;
 
@@ -32,11 +32,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         private const float FlightCheckHeight = 1.0f;
         private const float FlightKnockbackMultiplier = 0.3f;
 
-        public PlungeSystem(IInputService inputService, LayerMask enemyMask, AudioService audioService)
+        public PlungeSystem(IInputService inputService, LayerMask enemyMask)
         {
             _inputService = inputService;
             _enemyMask = enemyMask;
-            _audioService = audioService;
         }
 
         public void OnInit(Entity entity)
@@ -54,13 +53,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         public void OnUpdate(float deltaTime)
         {
-            // Гвардия: Если мы не в состоянии пикирования, но звук зациклен — принудительно выключаем.
-            // Это лечит баги, когда ввод прерывается или состояние сбрасывается извне.
-            if (!_isPlunging.Value && !string.IsNullOrEmpty(_activeLoopId))
-            {
-                ClearPlungeLoop();
-            }
-
             if (_isPlunging.Value)
             {
                 UpdatePlunge(deltaTime);
@@ -103,9 +95,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private void LandPlunge()
         {
-            // Разовый звук удара с высоким питчем (как в твоем конфиге)
-            _audioService.PlaySfxVariation("AbilityImpactPlunge", 1, 3, 1.5f);
-
             Collider2D[] hits = Physics2D.OverlapCircleAll(_transform.position, _plungeAOERadius.Value, _enemyMask);
 
             foreach (Collider2D hit in hits)
@@ -158,15 +147,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         private void StopPlunge()
         {
             _isPlunging.Value = false;
-        }
-
-        private void ClearPlungeLoop()
-        {
-            if (!string.IsNullOrEmpty(_activeLoopId))
-            {
-                // _audioService.StopLoopingSfx(_activeLoopId);
-                _activeLoopId = null;
-            }
         }
     }
 }

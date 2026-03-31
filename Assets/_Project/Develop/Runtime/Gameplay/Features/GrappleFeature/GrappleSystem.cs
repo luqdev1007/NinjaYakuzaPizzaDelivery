@@ -31,7 +31,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         private float _defaultGravity;
         private bool _isPulling;
-        private Vector2 _lastPullDirection;
+        private Vector2 _lastPullDirection; 
 
         public GrappleSystem(IInputService input, ICoroutinesPerformer performer, GrappleHookConfig config, IThrowableBehaviourFactory factory)
         {
@@ -82,7 +82,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
             _charges.Value--;
             _isThrowing.Value = true;
-
+            
             // Создаем именно крюк
             _activeProjectile = _behaviourFactory.Create(_config, _rigidbody, _transform);
 
@@ -91,9 +91,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                 grapple.OnAnchored += (pos, hit) => StartPulling(pos, hit);
                 _activeProjectile.Launch(_transform.position, dir);
                 _ropeView?.SetHookTransform(grapple.Instance.transform);
-
+                
                 // Если промахнулись и снаряд уничтожился сам
-                _activeProjectile.OnCompleted += () =>
+                _activeProjectile.OnCompleted += () => 
                 {
                     if (!_isPulling) _isThrowing.Value = false;
                 };
@@ -147,7 +147,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             {
                 Vector2 launchDirection = (_lastPullDirection + Vector2.up * 0.4f).normalized;
                 float currentSpeed = _rigidbody.linearVelocity.magnitude;
-                float finalBoost = Mathf.Max(currentSpeed, 15f);
+                float finalBoost = Mathf.Max(currentSpeed, 15f); 
 
                 _rigidbody.linearVelocity = launchDirection * finalBoost;
             }

@@ -6,6 +6,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
     {
         private const string HorizontalAxisName = "Horizontal";
 
+
+        public bool IsThrowKeyPressed => IsEnabled && Input.GetKeyDown(KeyCode.Q);
+        public float MouseScrollDelta => IsEnabled ? Input.GetAxisRaw("Mouse ScrollWheel") : 0f;
+
         public bool IsGrappleKeyPressed => IsEnabled && Input.GetMouseButtonDown(1);
         public bool IsGrappleKeyHeld => IsEnabled && Input.GetMouseButton(1); // ДОБАВЛЕНО
         public bool IsGrappleKeyReleased => IsEnabled && Input.GetMouseButtonUp(1);
