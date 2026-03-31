@@ -26,8 +26,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
         [Header("Audio")]
         [SerializeField] private string _footstepPrefix = "MainHeroFootstep";
-        [SerializeField] private float _baseFootstepInterval = 0.35f; // Базовый интервал шагов
-        [SerializeField] private string _brakeSoundPrefix = "MainHeroBrake";
+        [SerializeField] private float _baseFootstepInterval = 0.35f;
 
         private readonly int IsRunningKey = Animator.StringToHash("IsRunning");
         private readonly int RunSpeedMultiplierKey = Animator.StringToHash("RunAnimationSpeedMultiplier");
@@ -40,7 +39,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
         private float _maxSpeed;
         private float _previousVelocityX;
-        private bool _wasGrounded;
         private bool _wasMoving;
         private float _footstepTimer;
 
@@ -57,14 +55,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             _isMoving = entity.IsMoving;
             _maxSpeed = entity.MoveSpeed.Value;
 
-            _wasGrounded = _isGrounded.Value;
             _wasMoving = _isMoving.Value;
 
-            // Подписка только на смену состояния (чтобы не дергать SetBool каждый кадр)
+            // Подписка на изменение состояния движения
             _isMovingDisposable = _isMoving.Subscribe((oldValue, newValue) =>
             {
                 _animator.SetBool(IsRunningKey, newValue);
             });
+
             _animator.SetBool(IsRunningKey, _isMoving.Value);
         }
 
@@ -76,16 +74,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             bool grounded = _isGrounded.Value;
             bool moving = _isMoving.Value;
 
-            // Вычисляем соотношение текущей скорости к максимальной (от 0 до 1)
+            // Вычисляем интенсивность бега
             float speedRatio = Mathf.Clamp01(Mathf.Abs(velocityX) / _maxSpeed);
 
             UpdateAnimationSpeed(speedRatio);
             UpdateRunVFXAndAudio(grounded, moving, speedRatio);
-            UpdateBrake(grounded, velocityX);
-            UpdateStartMove(grounded, moving, velocityX);
+            UpdateBrakeVFX(grounded, velocityX);
+            UpdateStartMoveVFX(grounded, moving, velocityX);
 
             _previousVelocityX = velocityX;
-            _wasGrounded = grounded;
             _wasMoving = moving;
         }
 
@@ -100,17 +97,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             bool isFastEnough = Mathf.Abs(_rigidbody.linearVelocity.x) > _runDustSpeedThreshold;
             bool isRunning = grounded && moving && isFastEnough;
 
-            // --- Логика пыли ---
+            // Частицы бега
             if (_runDustPS != null)
             {
                 if (isRunning && !_runDustPS.isPlaying) _runDustPS.Play();
                 else if (!isRunning && _runDustPS.isPlaying) _runDustPS.Stop();
             }
 
-            // --- Логика звука шагов ---
+            // Звук шагов
             if (isRunning)
             {
-                // Таймер шагов зависит от множителя скорости анимации. Чем быстрее бежим, тем чаще шаги!
                 float currentMultiplier = Mathf.Lerp(1f, _maxSpeedMultiplier, speedRatio);
                 _footstepTimer -= Time.deltaTime * currentMultiplier;
 
@@ -122,39 +118,40 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             }
             else
             {
-                _footstepTimer = 0f; // Сбрасываем таймер, чтобы первый шаг всегда звучал сразу
+                _footstepTimer = 0f;
             }
         }
 
-        private void UpdateBrake(bool grounded, float velocityX)
+        private void UpdateBrakeVFX(bool grounded, float velocityX)
         {
-            if (!grounded) return;
+            if (!grounded || _brakeDustPS == null) return;
 
+            // Проверка резкой смены направления
             bool changingDirection =
                 (_previousVelocityX > _brakeSpeedThreshold && velocityX < -_brakeDirectionThreshold) ||
                 (_previousVelocityX < -_brakeSpeedThreshold && velocityX > _brakeDirectionThreshold);
 
+            // Проверка резкой остановки
             bool hardStop =
                 Mathf.Abs(_previousVelocityX) > _brakeSpeedThreshold &&
                 Mathf.Abs(velocityX) < _brakeDirectionThreshold;
 
             if (changingDirection || hardStop)
             {
-                if (_brakeDustPS != null) _brakeDustPS.Play();
-
-                // Звук торможения (например, скрип кроссовок)
-                _audioService.PlaySfxByPrefixAuto(_brakeSoundPrefix, UnityEngine.Random.Range(0.95f, 1.05f));
+                _brakeDustPS.Play();
             }
         }
 
-        private void UpdateStartMove(bool grounded, bool moving, float velocityX)
+        private void UpdateStartMoveVFX(bool grounded, bool moving, float velocityX)
         {
+            if (_startDustPS == null) return;
+
             bool justStartedMoving = grounded && moving && !_wasMoving &&
                 Mathf.Abs(velocityX) > _startSpeedThreshold;
 
             if (justStartedMoving)
             {
-                if (_startDustPS != null) _startDustPS.Play();
+                _startDustPS.Play();
             }
         }
 

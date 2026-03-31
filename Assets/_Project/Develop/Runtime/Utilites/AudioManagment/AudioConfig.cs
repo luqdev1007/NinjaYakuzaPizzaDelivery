@@ -47,5 +47,5 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
     [Serializable] public class AudioData { public string Id; public AudioClip Clip; [Range(0, 1)] public float Volume = 1f; [Range(0.1f, 3f)] public float BasePitch = 1f; }
     [Serializable] public class MusicPlaylist { public string Id; public List<AudioClip> Tracks; [Range(0, 1)] public float Volume = 0.5f; }
 
-    public enum AudioCategoryType { AttackSwing, AttackHit, Movement, UI, Music, TakeDamage, Death, AbilityImpact, LifeCycle }
+    public enum AudioCategoryType { AttackSwing, AttackHit, Movement, UI, Music, TakeDamage, Death, AbilityImpact, LifeCycle, Items }
 }

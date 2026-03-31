@@ -291,6 +291,12 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: a311ac869ea85a34089b874376c01055, type: 3}
       Volume: 1
       BasePitch: 1.24
+  - Type: 9
+    Clips:
+    - Id: SwitchItem1
+      Clip: {fileID: 8300000, guid: 86b397fa2d309b44498a0459311b3564, type: 3}
+      Volume: 0.74
+      BasePitch: 1.09
   _playlists:
   - Id: MainMenu
     Tracks:

@@ -76,42 +76,48 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         {
             if (_charges.Value <= 0) return;
 
+            // Проверка на наличие камеры (редко, но бывает причиной крэша при переключении сцен)
+            if (Camera.main == null) return;
+
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector3 dir = (mousePos - _transform.position).normalized;
             dir.z = 0;
 
             _charges.Value--;
             _isThrowing.Value = true;
-            
-            // Создаем именно крюк
+
             _activeProjectile = _behaviourFactory.Create(_config, _rigidbody, _transform);
 
-            if (_activeProjectile is GrappleHookProjectile grapple)
+            // Проверяем, что снаряд вообще создался
+            if (_activeProjectile != null && _activeProjectile is GrappleHookProjectile grapple)
             {
                 grapple.OnAnchored += (pos, hit) => StartPulling(pos, hit);
                 _activeProjectile.Launch(_transform.position, dir);
-                _ropeView?.SetHookTransform(grapple.Instance.transform);
-                
-                // Если промахнулись и снаряд уничтожился сам
-                _activeProjectile.OnCompleted += () => 
+
+                // Безопасная установка трансформа: проверяем и View, и сам Instance
+                if (_ropeView != null && grapple.Instance != null)
+                {
+                    _ropeView.SetHookTransform(grapple.Instance.transform);
+                }
+
+                _activeProjectile.OnCompleted += () =>
                 {
                     if (!_isPulling) _isThrowing.Value = false;
                 };
             }
-        }
-
-        private void StartPulling(Vector2 anchorPos, Collider2D hit)
-        {
-            _isPulling = true;
-            Vector2 localOffset = (Vector2)hit.transform.InverseTransformPoint(anchorPos);
-            _pullCoroutine = _coroutinesPerformer.StartPerform(PullRoutine(localOffset, hit));
+            else
+            {
+                // Если не удалось создать снаряд, возвращаем состояние
+                _isThrowing.Value = false;
+            }
         }
 
         private IEnumerator PullRoutine(Vector2 localOffset, Collider2D hit)
         {
             _rigidbody.gravityScale = 0.2f;
 
-            while (hit != null && _inputService.IsGrappleKeyHeld)
+            // Добавляем проверку на существование самого трансформа hit.transform
+            while (hit != null && hit.transform != null && _inputService.IsGrappleKeyHeld)
             {
                 Vector2 currentAnchorWorld = (Vector2)hit.transform.TransformPoint(localOffset);
                 Vector2 toTarget = currentAnchorWorld - (Vector2)_transform.position;
@@ -122,7 +128,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
                 if (dist <= _config.ArriveDistance)
                 {
-                    if (hit.CompareTag("Enemy")) _startAttackRequest.Invoke();
+                    // Безопасная проверка тега
+                    if (hit.gameObject.activeInHierarchy && hit.CompareTag("Enemy"))
+                        _startAttackRequest.Invoke();
+
                     _rigidbody.linearVelocity *= 0.98f;
                 }
                 else
@@ -136,6 +145,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
             StopPulling(applyInertia: true);
         }
+
+        private void StartPulling(Vector2 anchorPos, Collider2D hit)
+        {
+            _isPulling = true;
+            Vector2 localOffset = (Vector2)hit.transform.InverseTransformPoint(anchorPos);
+            _pullCoroutine = _coroutinesPerformer.StartPerform(PullRoutine(localOffset, hit));
+        }
+
+
 
         private void StopPulling(bool applyInertia)
         {

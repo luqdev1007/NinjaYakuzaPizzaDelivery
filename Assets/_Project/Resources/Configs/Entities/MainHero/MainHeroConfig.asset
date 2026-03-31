@@ -29,8 +29,8 @@ MonoBehaviour:
     <MaxJumps>k__BackingField: 1
   _dash:
     <Duration>k__BackingField: 0.2
-    <ForceMin>k__BackingField: 28
-    <ForceMax>k__BackingField: 36
+    <ForceMin>k__BackingField: 42
+    <ForceMax>k__BackingField: 50
     <ChargeTime>k__BackingField: 0.25
     <Cooldown>k__BackingField: 0.5
     <AirMultiplier>k__BackingField: 2
@@ -52,8 +52,8 @@ MonoBehaviour:
     <SlideSpeed>k__BackingField: 1
     <JumpForce>k__BackingField: {x: 8, y: 12}
   _slide:
-    <Duration>k__BackingField: 0.25
-    <Speed>k__BackingField: 32
+    <Duration>k__BackingField: 0.2
+    <Speed>k__BackingField: 16
   _plunge:
     <Speed>k__BackingField: 25
     <AOERadius>k__BackingField: 2
@@ -71,11 +71,15 @@ MonoBehaviour:
     <Cooldown>k__BackingField: 0.05
     <InstantDamage>k__BackingField: 2
     <Range>k__BackingField: 2
-    <HitBounceForce>k__BackingField: 14
-    <InvulnerabilityDuration>k__BackingField: 0.3
     <EnemyMask>k__BackingField:
       serializedVersion: 2
       m_Bits: 512
+    <InvulnerabilityDuration>k__BackingField: 0.3
+    <HitBounceForce>k__BackingField: 14
+    <GroundHitBounceModifiers>k__BackingField: {x: 0.7, y: 0.4}
+    <AirHitBounceModifiers>k__BackingField: {x: 0.7, y: 0.8}
+    <HitStopScale>k__BackingField: 0.05
+    <HitStopDuration>k__BackingField: 0.15
   _lifeCycle:
     <MaxHealth>k__BackingField: 5
     <DeathProcessTime>k__BackingField: 1.5
