@@ -18,6 +18,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
         private readonly IThrowableBehaviourFactory _factory;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
 
+        private ReactiveEvent _throwEvent;
         private ReactiveVariable<int> _currentIndex;
         private ReactiveVariable<bool> _isThrowing;
         private Transform _transform;
@@ -39,6 +40,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
             _isThrowing = entity.IsThrowing;
             _transform = entity.Transform;
             _rigidbody = entity.Rigidbody;
+
+            // Событие для визуализации мгновенного броска (триггера)
+            _throwEvent = entity.ThrowEvent;
 
             _chargesMap = new Dictionary<int, ReactiveVariable<int>>
             {
@@ -63,16 +67,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
 
             if (_chargesMap[currentIdx].Value <= 0) return;
 
+            // 1. Тратим заряд
             _chargesMap[currentIdx].Value--;
-            _isThrowing.Value = true; // ВКЛ анимацию
 
+            // 2. Включаем общее состояние броска (для логики или зацикленных анимаций)
+            _isThrowing.Value = true;
+
+            // 3. Вызываем событие импульса (для триггера в Animator)
+            _throwEvent?.Invoke();
+
+            // 4. Логика полета
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 direction = ((Vector2)mousePos - (Vector2)_transform.position).normalized;
 
             var projectile = _factory.Create(_consumables[currentIdx], _rigidbody, _transform);
             projectile.Launch(_transform.position, direction);
 
-            // Сброс анимации через 0.15 сек, чтобы не висела
+            // 5. Сброс флага состояния через короткое время
             _coroutinesPerformer.StartPerform(ResetThrowingFlag());
         }
 

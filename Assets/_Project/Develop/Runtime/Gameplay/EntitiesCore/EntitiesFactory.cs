@@ -143,6 +143,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddIsAttackInvulnerable(new ReactiveVariable<bool>(false))
 
                 // — броски —
+                .AddThrowEvent()
                 .AddIsThrowing()
                 .AddIsGrappling()
                 .AddCurrentThrowableIndex(new ReactiveVariable<int>(0))

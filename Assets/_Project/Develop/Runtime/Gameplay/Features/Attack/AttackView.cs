@@ -18,10 +18,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         [SerializeField] private ParticleSystem _slashParticle;
 
         [Header("Audio (Auto-detected)")]
-        [Tooltip("Ищет в конфиге SwordSwing1, SwordSwing2...")]
         [SerializeField] private string _swingPrefix = "SwordSwing";
-
-        [Tooltip("Ищет в конфиге EnemyHit1, EnemyHit2...")]
         [SerializeField] private string _hitPrefix = "EnemyHit";
 
         private AudioService _audioService;
@@ -32,7 +29,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private IDisposable _attackHitDisposable;
         private IDisposable _successfulHitDisposable;
 
-        private static readonly int IsAttackingKey = Animator.StringToHash("IsAttacking");
+        // Имя параметра в аниматоре должно быть типа Trigger
+        private static readonly int AttackTrigger = Animator.StringToHash("Attack");
         private static readonly int SpeedMultiplierKey = Animator.StringToHash("AttackAnimationSpeedMultiplier");
 
         private void OnValidate() => _animator ??= GetComponent<Animator>();
@@ -52,21 +50,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
                 _animator.SetFloat(SpeedMultiplierKey, speedMultiplier);
             }
 
+            // Подписываемся на начало процесса атаки
             _inAttackProcessDisposable = entity.InAttackProcess.Subscribe(OnAttackProcessChanged);
             _attackHitDisposable = entity.AttackDelayEndEvent.Subscribe(OnAttackMoment);
 
             if (entity.HasComponent<SuccessfulHitEvent>())
                 _successfulHitDisposable = entity.GetComponent<SuccessfulHitEvent>().Value.Subscribe(OnSuccessfulHit);
-
-            UpdateInAttackProcess(entity.InAttackProcess.Value);
         }
 
         private void OnAttackProcessChanged(bool old, bool current)
         {
-            UpdateInAttackProcess(current);
+            // Если флаг стал true — это момент начала взмаха
             if (current)
             {
-                // ИСПОЛЬЗУЕМ АВТОМАТИКУ: не нужно знать количество вариаций
+                // Генерируем триггер для аниматора
+                _animator.SetTrigger(AttackTrigger);
+
+                // Звук взмаха
                 _audioService.PlaySfxByPrefixAuto(_swingPrefix, UnityEngine.Random.Range(0.95f, 1.05f));
             }
         }
@@ -75,7 +75,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private void OnSuccessfulHit()
         {
-            // ИСПОЛЬЗУЕМ АВТОМАТИКУ: просто передаем префикс "EnemyHit"
             _audioService.PlaySfxByPrefixAuto(_hitPrefix, UnityEngine.Random.Range(0.95f, 1.1f));
         }
 
@@ -83,17 +82,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         {
             if (_slashParticle == null || _particleRenderer == null || _rootTransform == null) return;
 
-            // Разворот партиклов в сторону взгляда персонажа
             float rootScaleX = _rootTransform.localScale.x;
             Vector3 currentFlip = _particleRenderer.flip;
-            currentFlip.x = rootScaleX > 0 ? 0 : 1; // Поменял логику флипа под стандарт Unity
+            currentFlip.x = rootScaleX > 0 ? 0 : 1;
             _particleRenderer.flip = currentFlip;
 
             _slashParticle.Stop();
             _slashParticle.Play();
         }
-
-        private void UpdateInAttackProcess(bool value) => _animator.SetBool(IsAttackingKey, value);
 
         public override void Cleanup(Entity entity)
         {
