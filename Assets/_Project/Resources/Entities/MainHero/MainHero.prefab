@@ -4931,6 +4931,8 @@ GameObject:
   - component: {fileID: 2884100874251622537}
   - component: {fileID: 1587270918963700498}
   - component: {fileID: 155187284992558416}
+  - component: {fileID: 5793115598745526680}
+  - component: {fileID: 7968153023870437814}
   m_Layer: 12
   m_Name: PizzaBody
   m_TagString: Untagged
@@ -5007,6 +5009,41 @@ HingeJoint2D:
   m_AngleLimits:
     m_LowerAngle: -65
     m_UpperAngle: 65
+--- !u!114 &5793115598745526680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 153062706832048645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82e17bc2a9097774f9e25a248b2a2c9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _pizzaDisplay: {fileID: 7968153023870437814}
+  _shakeDuration: 0.2
+  _shakeStrength: 0.5
+--- !u!114 &7968153023870437814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 153062706832048645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 390ee53d7b4b00e4bb2a06192131b579, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _pizzaSlices:
+  - {fileID: 514000264343884331}
+  - {fileID: 3438589221511827382}
+  - {fileID: 3621085298518254234}
+  - {fileID: 6895245918529627318}
+  - {fileID: 9096678623028880299}
+  _cheeseDripEffect: {fileID: 5436667852462279511}
+  _rigidbody: {fileID: 1587270918963700498}
 --- !u!1 &175165516894784309
 GameObject:
   m_ObjectHideFlags: 0
@@ -34631,7 +34668,6 @@ GameObject:
   - component: {fileID: 5986732417377409905}
   - component: {fileID: 6592515004558342224}
   - component: {fileID: 6237053472596339389}
-  - component: {fileID: 1692103396629986650}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -34891,7 +34927,6 @@ MonoBehaviour:
   _effectSpawnPoint: {fileID: 1222761960562644359}
   _vfxStopAction: 2
   _spawnSoundPrefix: LifeCycleMainHeroSpawn
-  _variationsCount: 3
 --- !u!114 &6854546781538244579
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34999,26 +35034,6 @@ MonoBehaviour:
   _flashColor: {r: 1, g: 1, b: 1, a: 1}
   _flashDuration: 0.2
   _damageSoundPrefix: MainHeroHit
---- !u!114 &1692103396629986650
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2402411871318597321}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 390ee53d7b4b00e4bb2a06192131b579, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _pizzaSlices:
-  - {fileID: 514000264343884331}
-  - {fileID: 3438589221511827382}
-  - {fileID: 3621085298518254234}
-  - {fileID: 6895245918529627318}
-  - {fileID: 9096678623028880299}
-  _cheeseDripEffect: {fileID: 5436667852462279511}
-  _rigidbody: {fileID: 1587270918963700498}
 --- !u!1 &2684084550196932738
 GameObject:
   m_ObjectHideFlags: 0

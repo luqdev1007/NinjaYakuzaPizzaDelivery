@@ -21,9 +21,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         {
             _linkedEntity = entity;
             _damageEventDisposable = entity.TakeDamageEvent.Subscribe(OnDamaged);
-
-            if (_pizzaDisplay != null)
-                _pizzaDisplay.Initialize(entity);
+            _pizzaDisplay.Initialize(entity);
         }
 
         public override void Cleanup(Entity entity)
