@@ -81,16 +81,16 @@ MonoBehaviour:
     Clips:
     - Id: GhostHit1
       Clip: {fileID: 8300000, guid: dec74dacefe9d8a47b730c05675462a3, type: 3}
-      Volume: 1
-      BasePitch: 2
+      Volume: 0.77
+      BasePitch: 3
     - Id: GhostHit2
       Clip: {fileID: 8300000, guid: 675c9744e3abedb49a5ca68b44db23fe, type: 3}
-      Volume: 1
-      BasePitch: 2
+      Volume: 0.76
+      BasePitch: 2.8
     - Id: GhostHit3
       Clip: {fileID: 8300000, guid: b06008c9d32f7ad4686ddea227cc43fe, type: 3}
-      Volume: 1
-      BasePitch: 2
+      Volume: 0.73
+      BasePitch: 2.8
     - Id: MainHeroHit1
       Clip: {fileID: 8300000, guid: 056f29afc65df3d4ea0bbe6cc82f40e0, type: 3}
       Volume: 1
@@ -116,7 +116,7 @@ MonoBehaviour:
     - Id: GhostDeath1
       Clip: {fileID: 8300000, guid: 16b2c1d244661294c81674f77259390b, type: 3}
       Volume: 0.75
-      BasePitch: 1.5
+      BasePitch: 2.5
     - Id: MainHeroDeath1
       Clip: {fileID: 8300000, guid: f73884dfba6b4d446b363ea323f01d1e, type: 3}
       Volume: 1

@@ -15,21 +15,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         [SerializeField] private AnimationClip _attackAnimationClip;
 
         [Header("VFX")]
-        [SerializeField] private ParticleSystem _slashParticle;
+        [Tooltip("Помести сюда 3 разных объекта с партиклами слэша")]
+        [SerializeField] private ParticleSystem[] _slashParticles;
 
         [Header("Audio (Auto-detected)")]
         [SerializeField] private string _swingPrefix = "SwordSwing";
         [SerializeField] private string _hitPrefix = "EnemyHit";
 
         private AudioService _audioService;
-        private ParticleSystemRenderer _particleRenderer;
         private Transform _rootTransform;
+        private int _currentSlashIndex;
 
         private IDisposable _inAttackProcessDisposable;
         private IDisposable _attackHitDisposable;
         private IDisposable _successfulHitDisposable;
 
-        // Имя параметра в аниматоре должно быть типа Trigger
         private static readonly int AttackTrigger = Animator.StringToHash("Attack");
         private static readonly int SpeedMultiplierKey = Animator.StringToHash("AttackAnimationSpeedMultiplier");
 
@@ -40,17 +40,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             _audioService = entity.GetComponent<AudioComponent>().Service;
             _rootTransform = entity.Transform;
 
-            if (_slashParticle != null)
-                _particleRenderer = _slashParticle.GetComponent<ParticleSystemRenderer>();
-
-            // Настройка скорости анимации
             if (_attackAnimationClip != null && entity.HasComponent<AttackProcessInitialTime>())
             {
                 float speedMultiplier = _attackAnimationClip.length / entity.AttackProcessInitialTime.Value;
                 _animator.SetFloat(SpeedMultiplierKey, speedMultiplier);
             }
 
-            // Подписываемся на начало процесса атаки
             _inAttackProcessDisposable = entity.InAttackProcess.Subscribe(OnAttackProcessChanged);
             _attackHitDisposable = entity.AttackDelayEndEvent.Subscribe(OnAttackMoment);
 
@@ -60,13 +55,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private void OnAttackProcessChanged(bool old, bool current)
         {
-            // Если флаг стал true — это момент начала взмаха
             if (current)
             {
-                // Генерируем триггер для аниматора
                 _animator.SetTrigger(AttackTrigger);
-
-                // Звук взмаха
                 _audioService.PlaySfxByPrefixAuto(_swingPrefix, UnityEngine.Random.Range(0.95f, 1.05f));
             }
         }
@@ -80,15 +71,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private void PlaySlashEffect()
         {
-            if (_slashParticle == null || _particleRenderer == null || _rootTransform == null) return;
+            if (_slashParticles == null || _slashParticles.Length == 0 || _rootTransform == null) return;
 
-            float rootScaleX = _rootTransform.localScale.x;
-            Vector3 currentFlip = _particleRenderer.flip;
-            currentFlip.x = rootScaleX > 0 ? 0 : 1;
-            _particleRenderer.flip = currentFlip;
+            // Выбираем текущий эффект
+            ParticleSystem activeSlash = _slashParticles[_currentSlashIndex];
 
-            _slashParticle.Stop();
-            _slashParticle.Play();
+            if (activeSlash != null)
+            {
+                // Настраиваем поворот (скейл)
+                Vector3 effectScale = activeSlash.transform.localScale;
+                effectScale.x = _rootTransform.localScale.x > 0 ? 1f : -1f;
+                activeSlash.transform.localScale = effectScale;
+
+                activeSlash.Stop();
+                activeSlash.Play();
+            }
+
+            // Переходим к следующему индексу (зацикливаем через остаток от деления)
+            _currentSlashIndex = (_currentSlashIndex + 1) % _slashParticles.Length;
         }
 
         public override void Cleanup(Entity entity)
