@@ -1,4 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using UnityEngine;
 
@@ -7,10 +8,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
     public class ThrowableBehaviourFactory : IThrowableBehaviourFactory
     {
         private readonly ICoroutinesPerformer _coroutinesPerformer;
+        private readonly AudioService _audioService;
 
-        public ThrowableBehaviourFactory(ICoroutinesPerformer coroutinesPerformer)
+        public ThrowableBehaviourFactory(ICoroutinesPerformer coroutinesPerformer, AudioService audioService)
         {
             _coroutinesPerformer = coroutinesPerformer;
+            _audioService = audioService;
         }
 
         public ThrowableProjectile Create(ThrowableConfig config, Rigidbody2D rigidbody, Transform transform)
@@ -23,7 +26,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                     grappleConfig, _coroutinesPerformer),
 
                 ShurikenConfig shurikenConfig => new ShurikenProjectile(
-                    shurikenConfig, _coroutinesPerformer),
+                    shurikenConfig, _coroutinesPerformer, _audioService),
 
                 SleepDartConfig dartConfig => new SleepDartProjectile(
                     dartConfig, _coroutinesPerformer),

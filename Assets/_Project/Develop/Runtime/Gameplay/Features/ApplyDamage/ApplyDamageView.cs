@@ -30,6 +30,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
 
         protected override void OnEntityStartedWork(Entity entity)
         {
+            // Получаем сервис аудио через компонент сущности
             _audioService = entity.GetComponent<AudioComponent>().Service;
             _damageEventDisposable = entity.TakeDamageEvent.Subscribe(OnDamaged);
 
@@ -49,8 +50,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
             SpawnDamageParticles();
             PlayFlashEffect();
 
-            // Используем авто-вариации. В конфиге это Element 2 (Take Damage)
-            _audioService.PlaySfxByPrefixAuto(_damageSoundPrefix, UnityEngine.Random.Range(0.9f, 1.1f));
+            // 1. Формируем специфический префикс (например, GhostHit + Shuriken)
+            string typeSuffix = data.Type == DamageType.Cut ? "Shuriken" : data.Type.ToString();
+            string specificPrefix = _damageSoundPrefix + typeSuffix;
+
+            // 2. Логика Fallback:
+            // Сначала ищем специфический звук (например, GhostHitShuriken1)
+            if (_audioService.GetVariationCount(specificPrefix) > 0)
+            {
+                _audioService.PlaySfxByPrefixAuto(specificPrefix, UnityEngine.Random.Range(0.9f, 1.1f));
+            }
+            // Если его нет, ищем базовый звук (например, GhostHit1, GhostHit2)
+            else if (_audioService.GetVariationCount(_damageSoundPrefix) > 0)
+            {
+                _audioService.PlaySfxByPrefixAuto(_damageSoundPrefix, UnityEngine.Random.Range(0.9f, 1.1f));
+            }
         }
 
         private void PlayFlashEffect()
@@ -77,4 +91,3 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
         }
     }
 }
-

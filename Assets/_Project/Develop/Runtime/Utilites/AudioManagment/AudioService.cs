@@ -197,5 +197,11 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
                 return (Time.time - lastTime) < GlobalSfxCooldown;
             return false;
         }
+
+        // Добавь это в AudioService.cs
+        public int GetVariationCount(string prefix)
+        {
+            return _config.GetVariationCount(prefix);
+        }
     }
 }

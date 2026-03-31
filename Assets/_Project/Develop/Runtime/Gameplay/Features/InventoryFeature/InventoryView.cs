@@ -8,6 +8,7 @@ public class InventoryView : EntityView
 {
     [SerializeField] private Animator _animator;
     [SerializeField] private string _switchItemSfxPrefix = "ItemSwitch"; // Префикс для звука "вжух"
+    [SerializeField] private string _throwSfxPrefix = "AbilityImpactHeroThrow";
 
     private static readonly int ThrowTrigger = Animator.StringToHash("Throw");
     private AudioService _audioService;
@@ -23,7 +24,12 @@ public class InventoryView : EntityView
         entity.CurrentThrowableIndex.Subscribe((oldIdx, newIdx) => OnItemSwitched());
     }
 
-    private void OnThrow() => _animator.SetTrigger(ThrowTrigger);
+    private void OnThrow()
+    {
+        _animator.SetTrigger(ThrowTrigger);
+
+        _audioService?.PlaySfxByPrefixAuto(_throwSfxPrefix, Random.Range(0.9f, 1.1f));
+    }
 
     private void OnItemSwitched()
     {

@@ -200,7 +200,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
                 if (targetEntity.HasComponent<TakeDamageRequest>())
                 {
-                    var damageData = new DamageData { Amount = damage, SourcePosition = currentPos };
+                    var damageData = new DamageData { Amount = damage, SourcePosition = currentPos, Type = DamageType.Cut };
                     targetEntity.TakeDamageRequest.Invoke(damageData);
                 }
             }

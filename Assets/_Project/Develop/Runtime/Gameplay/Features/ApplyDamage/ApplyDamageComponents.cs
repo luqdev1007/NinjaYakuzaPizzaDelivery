@@ -32,8 +32,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
     }
 }
 
+public enum DamageType { General, Cut, Blunt, Electric, Grapple }
+
 public struct DamageData
 {
     public float Amount;
     public Vector2 SourcePosition;
+    public DamageType Type; // Добавляем тип
 }

@@ -15,6 +15,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         protected override void OnHitAtPoint(Vector2 point, Collider2D hit)
         {
+            base.OnHitAtPoint(point, hit);
             OnAnchored?.Invoke(point, hit);
             // Снаряд уничтожится, но система уже знает локальное смещение
             Destroy();

@@ -67,7 +67,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             }
         }
 
-        protected abstract void OnHitAtPoint(Vector2 point, Collider2D hit);
+        protected virtual void OnHitAtPoint(Vector2 point, Collider2D hit)
+        {
+            AudioSource audioSource = Instance.GetComponentInChildren<AudioSource>();
+
+            if (audioSource != null)
+                audioSource.Stop();
+        }
+
         protected virtual void ApplyRotation(Vector3 direction)
         {
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;

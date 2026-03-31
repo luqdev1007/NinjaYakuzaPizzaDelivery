@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement; // Добавлено
 using System.Collections;
 using UnityEngine;
 
@@ -11,19 +12,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
     public class ShurikenProjectile : ThrowableProjectile
     {
         private readonly ShurikenConfig _config;
+        private readonly AudioService _audioService; // Добавлено
         private bool _isStuck;
 
         // Скорость вращения (градусы в секунду)
         private const float RotationSpeed = 360 * 5f;
 
-        public ShurikenProjectile(ShurikenConfig config, ICoroutinesPerformer coroutinesPerformer)
+        // Обновленный конструктор с AudioService
+        public ShurikenProjectile(ShurikenConfig config, ICoroutinesPerformer coroutinesPerformer, AudioService audioService)
             : base(config, coroutinesPerformer)
         {
             _config = config;
+            _audioService = audioService;
         }
 
         protected override void OnHitAtPoint(Vector2 point, Collider2D hit)
         {
+            base.OnHitAtPoint(point, hit);
+
             if (_isStuck) return;
 
             var monoEntity = hit.GetComponentInParent<MonoEntity>();
@@ -32,14 +38,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             {
                 var target = monoEntity.LinkedEntity;
 
-                // Вместо проверки здоровья проверяем наличие компонента запроса урона
                 if (target != null && target.HasComponent<TakeDamageRequest>())
                 {
-                    // Формируем запрос, который активирует ApplyDamageSystem
+                    // Передаем Type = DamageType.Cut, чтобы сработала гибкая логика звука у врага
                     target.TakeDamageRequest.Invoke(new DamageData
                     {
                         Amount = _config.Damage,
-                        SourcePosition = hit.ClosestPoint(Instance.transform.position)
+                        SourcePosition = hit.ClosestPoint(Instance.transform.position),
+                        Type = DamageType.Cut
                     });
                 }
 
@@ -49,6 +55,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             {
                 // Стена — фиксируем
                 _isStuck = true;
+
+                // Звук удара о стену (ищет WallHitShuriken1, WallHitShuriken2 и т.д.)
+                _audioService.PlaySfxByPrefixAuto("WallHitShuriken", Random.Range(0.9f, 1.1f));
+
                 CoroutinesPerformer.StartPerform(StickInSurfaceCoroutine());
             }
         }
@@ -82,8 +92,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             {
                 Instance.transform.Rotate(0, 0, RotationSpeed * Time.deltaTime);
             }
-            // Как только _isStuck станет true, этот метод перестанет крутить объект,
-            // и сюрикен застынет под тем углом, под которым ударился.
         }
     }
 }

@@ -5618,6 +5618,7 @@ Transform:
   - {fileID: 2065593108}
   - {fileID: 88070957}
   - {fileID: 939075951}
+  - {fileID: 476041961}
   - {fileID: 697491869}
   - {fileID: 1546411575}
   - {fileID: 654829459}
@@ -6139,13 +6140,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 476041960}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.258819, w: 0.9659259}
-  m_LocalPosition: {x: -0.237, y: 0.149, z: 0}
-  m_LocalScale: {x: 0.1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: 0.52787465, w: 0.8493223}
+  m_LocalPosition: {x: 12.6, y: 7.56, z: 0}
+  m_LocalScale: {x: 1, y: 50, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 697491869}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -30}
+  m_Father: {fileID: 224604680}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 63.724}
 --- !u!212 &476041962
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -6393,7 +6394,7 @@ GameObject:
   - component: {fileID: 697491868}
   - component: {fileID: 697491870}
   m_Layer: 0
-  m_Name: Slope
+  m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6466,8 +6467,7 @@ Transform:
   m_LocalPosition: {x: 2.6, y: 1.7, z: 0}
   m_LocalScale: {x: 30, y: 50, z: 30}
   m_ConstrainProportionsScale: 1
-  m_Children:
-  - {fileID: 476041961}
+  m_Children: []
   m_Father: {fileID: 224604680}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -97.57}
 --- !u!60 &697491870
