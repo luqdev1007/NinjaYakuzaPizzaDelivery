@@ -291,10 +291,14 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: 9ed6e0135073fbe44bb9d18e0c490bc4, type: 3}
       Volume: 0.579
       BasePitch: 2.05
-    - Id: EnemyHitHook
+    - Id: EnemyHitHook1
       Clip: {fileID: 8300000, guid: d4ff188d94f7ba14ebb963be90d3b2c3, type: 3}
       Volume: 1
-      BasePitch: 1.53
+      BasePitch: 0.78
+    - Id: HookBreak1
+      Clip: {fileID: 8300000, guid: 83e7ea37000300547885d3199cb3e26f, type: 3}
+      Volume: 1
+      BasePitch: 1
   - Type: 2
     Clips:
     - Id: MainHeroJump1

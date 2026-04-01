@@ -134,6 +134,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                 Vector2 toTarget = currentAnchorWorld - (Vector2)_transform.position;
                 float dist = toTarget.magnitude;
 
+                // --- НОВАЯ ЛОГИКА: ПРОВЕРКА ОБРЫВА ---
+                // Если улетели слишком далеко (например, из-за инерции или движения платформы)
+                if (dist > _config.MaxDistance * 1.5f)
+                {
+                    _audioService.PlaySfxByPrefixAuto("HookBreak", 1f); // Тот самый характерный звук
+                    StopPulling(applyInertia: false); // Обрыв — это потеря инерции, ставим false
+                    yield break; // Выход из корутины
+                }
+
                 _lastPullDirection = toTarget.normalized;
                 _ropeView?.FixateToPoint(currentAnchorWorld);
 
