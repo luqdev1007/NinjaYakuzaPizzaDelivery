@@ -24,6 +24,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             {
                 // В 2D 0.5f - хороший радиус для "подбора"
                 float distance = Vector2.Distance(_target.Value.Transform.position, _transform.position);
+
                 if (distance < 0.5f)
                 {
                     _isCollected.Value = true;

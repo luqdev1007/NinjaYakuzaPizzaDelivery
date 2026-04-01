@@ -5325,7 +5325,7 @@ GameObject:
   - component: {fileID: 238048777850215702}
   - component: {fileID: 5013237154390771107}
   - component: {fileID: 2063614661504897782}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SimpleOrb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5363,8 +5363,8 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 0.5
-  m_Material: {fileID: 0}
+  m_GravityScale: 1
+  m_Material: {fileID: 6200000, guid: 097e4f61d513033488dfad51b714d4e6, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -5374,7 +5374,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!70 &1144081697907051294
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -5405,7 +5405,7 @@ CapsuleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0

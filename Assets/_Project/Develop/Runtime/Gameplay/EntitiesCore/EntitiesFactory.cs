@@ -28,7 +28,9 @@ using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using Assets._Project.Develop.Runtime.Utilites.Timer;
 using System;
+using System.Threading;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
@@ -219,9 +221,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new PlayerInputSystem(inputService))
                 .AddSystem(new GroundCheckSystem(coyoteTime: 0.1f))
 
-                // — логика драйва —
-                .AddSystem(new DriveSystem())
-
                 // — движение —
                 .AddSystem(new RigidbodyMovementSystem(inputService))
                 .AddSystem(new JumpSystem(inputService, slopeSystem))
@@ -266,7 +265,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // — визуал —
                 .AddSystem(new FlipDirectionSystem())
 
-                .AddSystem(new LootMagnetSystem(_entitiesLifeContext))
+                // лут
+                .AddSystem(new LootMagnetSystem())
 
                 // — последней всегда —
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
@@ -441,6 +441,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
         private Entity CreateEmpty() => new Entity();
 
+        // ENEMIES
         public Entity CreateGhost(Vector3 at, GhostConfig ghostConfig)
         {
             Entity entity = CreateEmpty();
@@ -554,6 +555,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             return entity;
         }
 
+        // LOOT
         public Entity CreatePullable(string prefabPath, Vector3 position)
         {
             Entity entity = CreateEmpty();
@@ -561,30 +563,40 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory.Create(entity, position, prefabPath);
 
             entity
-                .AddIsPullable()
-                .AddIsPullingProcess()
                 .AddInSpawnProcess(new ReactiveVariable<bool>(true))
-                .AddCurrentTarget(new ReactiveVariable<Entity>(null))
+                .AddSpawnCurrentTime(new ReactiveVariable<float>(1f))
+                .AddSpawnInitialTime(new ReactiveVariable<float>(1f))
+
                 .AddMoveDirection()
                 .AddMoveSpeed(new ReactiveVariable<float>(12))
-                .AddIsMoving()
-                .AddIsCollected();
+
+                .AddIsCollected(new ReactiveVariable<bool>(false))
+
+                .AddIsPullable()
+                ;
 
             ICompositeCondition moveCondition = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsPullingProcess.Value))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
+            float autoDeleteInitialTimer = 5f;
+            TimerService autoDeleteTimer = _container.Resolve<TimerServiceFactory>().Create(autoDeleteInitialTimer);
+            autoDeleteTimer.Restart();
+
             ICompositeCondition mustSelfRelease = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsCollected.Value));
+                .Add(new FuncCondition(() => entity.IsCollected.Value == true))
+                .Add(new FuncCondition(() => autoDeleteTimer.IsOver == true));
 
             entity
                 .AddCanMove(moveCondition)
                 .AddMustSelfRelease(mustSelfRelease);
 
             entity
-                .AddSystem(new GenerateMoveDirectionToTargetSystem())
-                .AddSystem(new LootMovementAndSinkSystem())
-                .AddSystem(new CollectedOnNearToTargetSystem())
+                // спавнюсь
+                .AddSystem(new SpawnProcessTimerSystem())
+
+                // если есть цель лечу к ней
+                .AddSystem(new TransformMoveToTargetSystem())
+
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
 
             return entity;

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4090770923794909926}
   - component: {fileID: 6424051551232998453}
   - component: {fileID: 1796608053351494016}
+  - component: {fileID: 38594168780603037}
   m_Layer: 8
   m_Name: Jumpable
   m_TagString: Untagged
@@ -119,7 +120,7 @@ BoxCollider2D:
     serializedVersion: 2
     m_Bits: 4294967295
   m_IsTrigger: 0
-  m_UsedByEffector: 0
+  m_UsedByEffector: 1
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0.27912766}
@@ -134,6 +135,25 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 0.4417447}
   m_EdgeRadius: 0
+--- !u!251 &38594168780603037
+PlatformEffector2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 188080690044704976}
+  m_Enabled: 1
+  m_UseColliderMask: 1
+  m_ColliderMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RotationalOffset: 0
+  m_UseOneWay: 1
+  m_UseOneWayGrouping: 0
+  m_SurfaceArc: 180
+  m_UseSideFriction: 0
+  m_UseSideBounce: 0
+  m_SideArc: 1
 --- !u!1 &2306742963253549328
 GameObject:
   m_ObjectHideFlags: 0
@@ -307,7 +327,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8962585156850830168}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: VFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -342,7 +362,7 @@ GameObject:
   - component: {fileID: 3912926186921139896}
   - component: {fileID: 8687595665311057637}
   - component: {fileID: 6128280015206413811}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: SleepPS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5231,7 +5251,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2720600874618316831}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: HitPointVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}

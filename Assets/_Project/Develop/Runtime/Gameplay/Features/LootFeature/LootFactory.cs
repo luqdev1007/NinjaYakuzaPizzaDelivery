@@ -18,7 +18,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         public Entity Create(LootConfig config, Vector3 position)
         {
-            // Метод CreatePullable сам инициализирует InSpawnProcess(true)
             Entity loot = _entityFactory.CreatePullable(config.PrefabPath, position);
             loot.AddLootTag();
 
@@ -26,11 +25,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             if (rb != null)
             {
                 rb.simulated = true;
-                rb.gravityScale = 1.2f; // Чуть тяжелее, чтобы падали быстрее
-
-                // Разлет веером
-                float forceX = Random.Range(-5f, 5f);
-                float forceY = Random.Range(6f, 9f);
+                // Даем импульс "веером"
+                float forceX = Random.Range(-4f, 4f);
+                float forceY = Random.Range(5f, 8f);
                 rb.AddForce(new Vector2(forceX, forceY), ForceMode2D.Impulse);
             }
 

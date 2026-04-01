@@ -16,6 +16,7 @@ namespace Assets._Project.Develop.Runtime.Utilites
 		public static readonly int LayerWallHangable = LayerMask.NameToLayer("WallHangable");
 		public static readonly int LayerSlope = LayerMask.NameToLayer("Slope");
 		public static readonly int LayerPizza = LayerMask.NameToLayer("Pizza");
+		public static readonly int LayerLoot = LayerMask.NameToLayer("Loot");
 
 		public static readonly int LayerMaskDefault = 1 << LayerDefault;
 		public static readonly int LayerMaskTransparentFX = 1 << LayerTransparentFX;
@@ -29,6 +30,7 @@ namespace Assets._Project.Develop.Runtime.Utilites
 		public static readonly int LayerMaskWallHangable = 1 << LayerWallHangable;
 		public static readonly int LayerMaskSlope = 1 << LayerSlope;
 		public static readonly int LayerMaskPizza = 1 << LayerPizza;
+		public static readonly int LayerMaskLoot = 1 << LayerLoot;
 
 	}
 }
