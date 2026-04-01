@@ -33,14 +33,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             {
                 Entity entity = _lifeContext.Entities[i];
 
-                if (entity.HasComponent<LootTag>() && entity.IsCollected.Value == false)
+                if (entity.HasComponent<LootTag>() && entity.IsCollected.Value == false && entity.InSpawnProcess.Value == false)
                 {
                     float distance = Vector3.Distance(heroPosition, entity.Transform.position);
 
                     if (distance <= _collectDistance.Value)
                     {
                         entity.IsCollected.Value = true;
-                        Debug.Log("Лут собран по дистанции!");
+                        Debug.Log($"Лут собран по дистанции!");
                     }
                 }
             }

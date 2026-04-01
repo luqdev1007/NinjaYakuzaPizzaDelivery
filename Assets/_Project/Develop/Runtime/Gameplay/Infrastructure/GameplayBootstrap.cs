@@ -16,6 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 {
@@ -94,6 +95,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _brainsContext?.Update(Time.deltaTime);
             _entitiesLifeContext?.Update(Time.deltaTime);
             _gameplayStatesContext?.Update(Time.deltaTime);
+
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                _container.Resolve<MainHeroHolderService>().MainHero.CollectRange.Value = 100;
+            }
+
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                _container.Resolve<MainHeroHolderService>().MainHero.CollectRange.Value = 5;
+            }
         }
 
         private void LateUpdate()

@@ -569,28 +569,37 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         }
 
         // LOOT
-        public Entity CreatePullable(string prefabPath, Vector3 position)
+        public Entity CreatePullable(LootConfig config, Vector3 position)
         {
             Entity entity = CreateEmpty();
-
-            _monoEntitiesFactory.Create(entity, position, prefabPath);
+            _monoEntitiesFactory.Create(entity, position, config.PrefabPath);
 
             entity
                 .AddInSpawnProcess(new ReactiveVariable<bool>(true))
-                .AddSpawnCurrentTime(new ReactiveVariable<float>(1f))
-                .AddSpawnInitialTime(new ReactiveVariable<float>(1f))
+                .AddSpawnCurrentTime(new ReactiveVariable<float>(config.SpawnDuration))
+                .AddSpawnInitialTime(new ReactiveVariable<float>(config.SpawnDuration))
+
+                // Таймеры из конфига
+                .AddAutoDeleteCurrentTime(new ReactiveVariable<float>(config.LifeTime))
+                .AddAutoDeleteInitialTime(new ReactiveVariable<float>(config.LifeTime))
+
                 .AddMoveDirection()
-                .AddMoveSpeed(new ReactiveVariable<float>(12))
+                .AddMoveSpeed(new ReactiveVariable<float>(config.MoveSpeed))
                 .AddIsCollected(new ReactiveVariable<bool>(false))
                 .AddCurrentTarget(new ReactiveVariable<Entity>(null));
 
+            // Условие движения (ждем конца спавна)
             ICompositeCondition moveCondition = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
-
-            ICompositeCondition mustSelfRelease = new CompositeCondition()
+            // Умная логика уничтожения
+            ICompositeCondition mustSelfRelease = new CompositeCondition(LogicOperations.Or)
                 .Add(new FuncCondition(() => entity.IsCollected.Value == true))
-                ;
+                .Add(new CompositeCondition(LogicOperations.And)
+                    .Add(new FuncCondition(() => entity.AutoDeleteCurrentTime.Value <= 0))
+                    .Add(new FuncCondition(() => entity.CurrentTarget.Value == null))
+                    .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                );
 
             entity
                 .AddCanMove(moveCondition)
@@ -598,11 +607,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             entity
                 .AddSystem(new SpawnProcessTimerSystem())
-                .AddSystem(new TransformMoveToTargetSystem())
+                .AddSystem(new AutoDeleteTimerSystem())
+                .AddSystem(new LootArcMovementSystem(config.TravelTime, config.ArcHeight)) 
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
 
             _entitiesLifeContext.Add(entity);
-
             return entity;
         }
     }

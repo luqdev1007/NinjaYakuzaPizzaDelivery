@@ -4,14 +4,23 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Loot
 {
     public abstract class LootConfig : ScriptableObject
     {
-        [field: SerializeField] public string ID { get; private set; }
-        [field: SerializeField] public string PrefabPath { get; private set; } // Ссылка на префаб напрямую удобнее для малых проектов
+        [field: SerializeField] public string PrefabPath { get; private set; }
 
-        [Header("Drop Settings")]
-        [field: SerializeField, Range(0, 100)] public float DropChance { get; private set; } = 100f;
-        [field: SerializeField] public Vector2 MinMaxLaunchForce { get; private set; } = new Vector2(3f, 7f);
+        [Header("Audio Settings")]
+        [field: SerializeField] public string CollectSoundId { get; private set; } = "CoinCollect";
 
-        [Header("Magnet Settings")]
-        [field: SerializeField] public float MagnetRadius { get; private set; } = 5f;
+        [Header("Drop & Physics (Взрыв при спавне)")]
+        [field: SerializeField] public Vector2 LaunchForceX { get; private set; } = new Vector2(-7f, 7f);
+        [field: SerializeField] public Vector2 LaunchForceY { get; private set; } = new Vector2(6f, 10f);
+        [field: SerializeField] public Vector2 GravityRange { get; private set; } = new Vector2(4f, 6f);
+
+        [Header("Life Time (Таймеры)")]
+        [field: SerializeField] public float SpawnDuration { get; private set; } = 1f; // Время "разлета"
+        [field: SerializeField] public float LifeTime { get; private set; } = 5f;      // Сколько лежит на земле
+
+        [Header("Magnet & Movement (Полет к игроку)")]
+        [field: SerializeField] public float MoveSpeed { get; private set; } = 12f;
+        [field: SerializeField] public float ArcHeight { get; private set; } = 2.5f; // Высота прыжка при полете
+        [field: SerializeField] public float TravelTime { get; private set; } = 1.0f;  // Время полета до героя
     }
 }

@@ -12,9 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cbbb939340a6994b83726c53d8575a1, type: 3}
   m_Name: MemoryShardConfig
   m_EditorClassIdentifier: 
-  <ID>k__BackingField: SimpleOrb1
   <PrefabPath>k__BackingField: Entities/Loot/SimpleOrb
-  <DropChance>k__BackingField: 100
-  <MinMaxLaunchForce>k__BackingField: {x: 3, y: 7}
-  <MagnetRadius>k__BackingField: 5
+  <CollectSoundId>k__BackingField: ExpCollect
+  <LaunchForceX>k__BackingField: {x: -4, y: 4}
+  <LaunchForceY>k__BackingField: {x: 6, y: 10}
+  <GravityRange>k__BackingField: {x: 4, y: 6}
+  <SpawnDuration>k__BackingField: 0.15
+  <LifeTime>k__BackingField: 4
+  <MoveSpeed>k__BackingField: 15
+  <ArcHeight>k__BackingField: 2
+  <TravelTime>k__BackingField: 1
   <ExperienceAmount>k__BackingField: 15

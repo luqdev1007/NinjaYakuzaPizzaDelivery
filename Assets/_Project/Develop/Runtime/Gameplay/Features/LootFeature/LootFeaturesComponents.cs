@@ -9,6 +9,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
         public ReactiveVariable<float> Value;
     }
 
+    public class AutoDeleteInitialTime : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+    public class AutoDeleteCurrentTime : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
     public class IsPullable : IEntityComponent
     {
     }
@@ -22,6 +32,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
     {
         public ReactiveVariable<bool> Value;
     }
+
 
     public class Coins : IEntityComponent
     {

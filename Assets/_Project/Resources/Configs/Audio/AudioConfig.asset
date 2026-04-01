@@ -381,6 +381,18 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: 86b397fa2d309b44498a0459311b3564, type: 3}
       Volume: 0.74
       BasePitch: 1.09
+    - Id: ExpCollect1
+      Clip: {fileID: 8300000, guid: b5d065535c6728f4badcdb119eff1d85, type: 3}
+      Volume: 0.74
+      BasePitch: 1.16
+    - Id: ExpCollect2
+      Clip: {fileID: 8300000, guid: 2d43c67b83ee0b141a7e54cb30b635fc, type: 3}
+      Volume: 0.74
+      BasePitch: 1.14
+    - Id: ExpCollect3
+      Clip: {fileID: 8300000, guid: ccb9a9b500d0f4f4cbad5859ae75568e, type: 3}
+      Volume: 0.74
+      BasePitch: 1.09
   _playlists:
   - Id: MainMenu
     Tracks:
