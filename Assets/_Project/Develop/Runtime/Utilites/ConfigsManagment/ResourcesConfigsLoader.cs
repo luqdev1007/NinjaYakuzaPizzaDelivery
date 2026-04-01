@@ -1,6 +1,7 @@
 using Assets._Project.Develop.Runtime.Configs.Dialog;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Utilites.AssetsManagment;
@@ -26,7 +27,8 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
             { typeof(GhostConfig), "Configs/Entities/GhostConfig" },
             { typeof(DialogConfig), "Configs/Dialogs/TutorialDialog" },
             { typeof(CharactersConfig), "Configs/Dialogs/CharactersConfig" },
-            { typeof(AudioConfig), "Configs/Audio/AudioConfig" } 
+            { typeof(AudioConfig), "Configs/Audio/AudioConfig" },
+            { typeof(LootTableConfig), "Configs/Gameplay/Loot/LootTable" }
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)

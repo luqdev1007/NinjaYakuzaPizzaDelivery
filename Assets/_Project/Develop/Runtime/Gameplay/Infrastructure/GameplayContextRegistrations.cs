@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
@@ -64,6 +65,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateLevelProgressService);
 
             container.RegisterAsSingle(CreateCameraService);
+
+            container.RegisterAsSingle(CreateLootFactory);
+            container.RegisterAsSingle(CreateDropLootService);
+        }
+
+        private static DropLootService CreateDropLootService(DIContainer container)
+        {
+            return new DropLootService(container.Resolve<LootFactory>());
+        }
+
+        private static LootFactory CreateLootFactory(DIContainer container)
+        {
+            return new LootFactory(container);
         }
 
         private static CameraService CreateCameraService(DIContainer container)

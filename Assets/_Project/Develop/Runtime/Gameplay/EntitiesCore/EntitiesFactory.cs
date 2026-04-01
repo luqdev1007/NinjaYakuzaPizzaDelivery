@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
@@ -12,6 +13,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Inventory;
 using Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature;
@@ -23,8 +25,10 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature;
 using Assets._Project.Develop.Runtime.Utilites;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
+using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using System;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
@@ -261,6 +265,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // — визуал —
                 .AddSystem(new FlipDirectionSystem())
+
+                .AddSystem(new LootMagnetSystem(_entitiesLifeContext))
 
                 // — последней всегда —
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
@@ -530,6 +536,56 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // Таймеры эффектов
                 .AddSystem(new SleepTimerSystem())
                 ;
+
+            entity.AddLootIsDropped(new ReactiveVariable<bool>(false));
+
+            // Условие для срабатывания дропа: здоровье на нуле
+            ICompositeCondition canDropLoot = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
+
+            entity.AddCanDropLoot(canDropLoot);
+
+            // Добавляем систему дропа (предварительно разрешив DropLootService из контейнера)
+            var dropLootService = _container.Resolve<DropLootService>();
+            var lootTable = _container.Resolve<ConfigsProviderService>().GetConfig<LootTableConfig>();
+
+            entity.AddSystem(new DropLootSystem(dropLootService, lootTable));
+
+            return entity;
+        }
+
+        public Entity CreatePullable(string prefabPath, Vector3 position)
+        {
+            Entity entity = CreateEmpty();
+
+            _monoEntitiesFactory.Create(entity, position, prefabPath);
+
+            entity
+                .AddIsPullable()
+                .AddIsPullingProcess()
+                .AddInSpawnProcess(new ReactiveVariable<bool>(true))
+                .AddCurrentTarget(new ReactiveVariable<Entity>(null))
+                .AddMoveDirection()
+                .AddMoveSpeed(new ReactiveVariable<float>(12))
+                .AddIsMoving()
+                .AddIsCollected();
+
+            ICompositeCondition moveCondition = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsPullingProcess.Value))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
+
+            ICompositeCondition mustSelfRelease = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsCollected.Value));
+
+            entity
+                .AddCanMove(moveCondition)
+                .AddMustSelfRelease(mustSelfRelease);
+
+            entity
+                .AddSystem(new GenerateMoveDirectionToTargetSystem())
+                .AddSystem(new LootMovementAndSinkSystem())
+                .AddSystem(new CollectedOnNearToTargetSystem())
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
 
             return entity;
         }
