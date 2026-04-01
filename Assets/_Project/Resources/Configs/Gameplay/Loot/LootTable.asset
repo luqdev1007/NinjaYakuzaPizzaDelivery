@@ -14,4 +14,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _possibleLoot:
   - {fileID: 11400000, guid: 29e08276416407548991bb062299d26e, type: 2}
-  - {fileID: 11400000, guid: c283a0649dbc1694ba7f1c42547b3e70, type: 2}

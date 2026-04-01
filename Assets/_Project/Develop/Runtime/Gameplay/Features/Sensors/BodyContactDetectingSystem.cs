@@ -24,7 +24,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
         {
             _contacts.Count = Physics2D.OverlapCollider(
                 _body,
-                new ContactFilter2D { layerMask = _mask, useLayerMask = true, useTriggers = false },
+                new ContactFilter2D
+                {
+                    layerMask = _mask,
+                    useLayerMask = true,
+                    useTriggers = true 
+                },
                 _contacts.Items);
 
             RemoveSelfFromContacts();

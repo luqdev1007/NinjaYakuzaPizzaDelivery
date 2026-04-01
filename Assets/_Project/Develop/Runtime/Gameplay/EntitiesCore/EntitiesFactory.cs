@@ -29,8 +29,7 @@ using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using Assets._Project.Develop.Runtime.Utilites.Timer;
-using System;
-using System.Threading;
+using System.ComponentModel;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
@@ -41,13 +40,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         private readonly EntitiesLifeContext _entitiesLifeContext;
         private readonly MonoEntitiesFactory _monoEntitiesFactory;
         private readonly CollidersRegistryService _collidersRegistryService;
+        private readonly AudioService _audioService;
+        private readonly LootTableConfig _lootTableConfig;
 
         public EntitiesFactory(DIContainer container)
         {
             _container = container;
+
             _entitiesLifeContext = container.Resolve<EntitiesLifeContext>();
             _monoEntitiesFactory = container.Resolve<MonoEntitiesFactory>();
             _collidersRegistryService = container.Resolve<CollidersRegistryService>();
+            _audioService = container.Resolve<AudioService>();
+
+            _lootTableConfig = container.Resolve<ConfigsProviderService>().GetConfig<LootTableConfig>();
         }
 
 
@@ -183,6 +188,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSlopeAccumSpeed(new ReactiveVariable<float>(0f))
                 .AddSlopeMask(config.Slope.Mask)
 
+                // лут
+                .AddCollectRange(new ReactiveVariable<float>(config.LootCollectRange))
+                /*
+                .AddContactCollidersBuffer(new Buffer<Collider2D>(64))
+                .AddContactEntitiesBuffer(new Buffer<Entity>(64))
+                .AddContactsDetectingMask(~0)
+                */
+
                 // — жизненный цикл —
                 .AddMaxHealth(new ReactiveVariable<float>(config.LifeCycle.MaxHealth))
                 .AddCurrentHealth(new ReactiveVariable<float>(config.LifeCycle.MaxHealth))
@@ -266,7 +279,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new FlipDirectionSystem())
 
                 // лут
-                .AddSystem(new LootMagnetSystem())
+                .AddSystem(new LootMagnetSystem(_collidersRegistryService))
+                .AddSystem(new LootDistanceCollectSystem(_entitiesLifeContext))
 
                 // — последней всегда —
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
@@ -448,7 +462,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory.Create(entity, at, ghostConfig.PrefabPath);
 
             entity
-                .AddAudio(_container.Resolve<AudioService>())
+                .AddAudio(_audioService)
                 .AddLinearDrag(new ReactiveVariable<float>(ghostConfig.LinearDrag))
                 .AddAngularDrag(new ReactiveVariable<float>(ghostConfig.AngularDrag))
 
@@ -473,8 +487,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddDeathProcessCurrentTime()
                 .AddTakeDamageRequest()
                 .AddTakeDamageEvent()
-                // Возвращаем компоненты кулдауна, так как ApplyDamageSystem ожидает их наличие в OnInit
-                .AddDamageCooldown(new ReactiveVariable<float>(0.1f)) // Небольшой кулдаун, чтобы звук не спамил
+
+                .AddDamageCooldown(new ReactiveVariable<float>(0.1f)) 
                 .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
 
                 // — Эффекты (Сон) —
@@ -547,10 +561,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             entity.AddCanDropLoot(canDropLoot);
 
             // Добавляем систему дропа (предварительно разрешив DropLootService из контейнера)
-            var dropLootService = _container.Resolve<DropLootService>();
-            var lootTable = _container.Resolve<ConfigsProviderService>().GetConfig<LootTableConfig>();
+            LootTableConfig lootTable = _lootTableConfig;
 
-            entity.AddSystem(new DropLootSystem(dropLootService, lootTable));
+            entity.AddSystem(new DropLootSystem(_container.Resolve<DropLootService>(), lootTable));
 
             return entity;
         }
@@ -566,38 +579,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddInSpawnProcess(new ReactiveVariable<bool>(true))
                 .AddSpawnCurrentTime(new ReactiveVariable<float>(1f))
                 .AddSpawnInitialTime(new ReactiveVariable<float>(1f))
-
                 .AddMoveDirection()
                 .AddMoveSpeed(new ReactiveVariable<float>(12))
-
                 .AddIsCollected(new ReactiveVariable<bool>(false))
-
-                .AddIsPullable()
-                ;
+                .AddCurrentTarget(new ReactiveVariable<Entity>(null));
 
             ICompositeCondition moveCondition = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
-            float autoDeleteInitialTimer = 5f;
-            TimerService autoDeleteTimer = _container.Resolve<TimerServiceFactory>().Create(autoDeleteInitialTimer);
-            autoDeleteTimer.Restart();
 
             ICompositeCondition mustSelfRelease = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsCollected.Value == true))
-                .Add(new FuncCondition(() => autoDeleteTimer.IsOver == true));
+                ;
 
             entity
                 .AddCanMove(moveCondition)
                 .AddMustSelfRelease(mustSelfRelease);
 
             entity
-                // спавнюсь
                 .AddSystem(new SpawnProcessTimerSystem())
-
-                // если есть цель лечу к ней
                 .AddSystem(new TransformMoveToTargetSystem())
-
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
+
+            _entitiesLifeContext.Add(entity);
 
             return entity;
         }

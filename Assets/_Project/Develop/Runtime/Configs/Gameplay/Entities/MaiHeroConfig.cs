@@ -9,6 +9,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     {
         [Header("Common & Physics")]
         [field: SerializeField] public string PrefabPath { get; private set; } = "Entities/MainHero/MainHero";
+        [field: SerializeField] public float LootCollectRange { get; private set; } = 3f;
         [field: SerializeField] public float MinFallVelocityForAction { get; private set; } = -2f;
         [field: SerializeField] public LayerMask GroundMask { get; private set; }
 
@@ -37,6 +38,8 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         public AttackSettings Attack => _attack;
         public LifeCycleSettings LifeCycle => _lifeCycle;
         public ThrowableSettings Throwables => _throwables;
+
+
     }
 
     // --- ВСПОМОГАТЕЛЬНЫЕ КЛАССЫ (Разворачивающиеся секции) ---

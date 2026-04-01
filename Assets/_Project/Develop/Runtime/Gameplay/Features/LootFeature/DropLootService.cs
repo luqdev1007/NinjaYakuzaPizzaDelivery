@@ -15,18 +15,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         public void DropLootFor(Entity entity, LootTableConfig lootTable)
         {
-            if (lootTable == null) return;
+            if (lootTable == null)
+            {
+                Debug.Log("No loot table");
+                return;
+            }
 
             Vector3 spawnPosition = entity.Transform.position;
 
-            // Высыпаем 4-5 штук гарантированно для теста/визуала
-            int count = Random.Range(4, 6);
+            int count = Random.Range(10, 13);
 
             for (int i = 0; i < count; i++)
             {
-                // Берем случайный конфиг из таблицы
-                var config = lootTable.PossibleLoot[Random.Range(0, lootTable.PossibleLoot.Count)];
-                _lootFactory.Create(config, spawnPosition);
+                var config = lootTable.PossibleLoot[Random.Range(0, lootTable.PossibleLoot.Count)]; // рандом лута
+
+                if (config == null || string.IsNullOrEmpty(config.PrefabPath))
+                {
+                    Debug.LogWarning("DropLootService: Попытка заспавнить пустой лут из таблицы!");
+                    continue;
+                }
+
+                Vector3 offset = new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), 0);
+                _lootFactory.Create(config, spawnPosition + offset);
             }
         }
     }

@@ -36,7 +36,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateGameplayPopupService);
             container.RegisterAsSingle(CreateGameplayPresentersFactory);
 
-            container.RegisterAsSingle(CreateEntitiesFactory);
+            container.RegisterAsSingle(CreateEntitiesFactory).NonLazy();
             container.RegisterAsSingle(CreateEntitiesLifeContext);
             container.RegisterAsSingle(CreateMonoEntitiesFactory).NonLazy();
 
