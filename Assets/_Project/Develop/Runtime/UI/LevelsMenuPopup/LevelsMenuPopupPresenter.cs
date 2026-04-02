@@ -9,7 +9,7 @@ namespace Assets._Project.Develop.Runtime.UI.LevelsMenuPopup
 {
     public class LevelsMenuPopupPresenter : PopupPresenterBase
     {
-        private const string TitleName = "Выберите режим игры";
+        private const string TitleName = "ORDERS";
 
         private readonly ConfigsProviderService _configProviderService;
         private readonly ProjectPresentersFactory _presentersFactory;
