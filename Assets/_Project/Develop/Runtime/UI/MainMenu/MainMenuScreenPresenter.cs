@@ -69,7 +69,7 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             int baseGold = _configsProviderService.GetConfig<StartWalletConfig>().GetValueFor(CurrencyTypes.Gold);
 
             _popupService.OpenConfirmPopup(ResetStats,
-                $"Вы потеряете все золото и начнете с нуля с {baseGold} золота в кармане");
+                $"Reset stats?\nYou will start a new game with {baseGold} gold");
         }
 
         private void ResetStats()
