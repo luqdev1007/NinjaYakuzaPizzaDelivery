@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
 {
@@ -10,23 +9,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
         private Bounds? _levelBounds;
 
         private Vector3 _currentVelocity;
-        private List<ParticleSystem> _leafParticles = new List<ParticleSystem>();
 
         // --- НАСТРОЙКИ ЗУМА ---
-        private const float MinSize = 7f;        // Чуть поближе в покое (было 10)
-        private const float MaxSize = 12.5f;     // Отдаляется поменьше (было 13)
-        private const float ZoomSmoothness = 1.5f; // Плавность (чем меньше, тем медленнее)
+        private const float MinSize = 7f;
+        private const float MaxSize = 12.5f;
+        private const float ZoomSmoothness = 1.5f;
 
         // --- ПОРОГИ (DEADZONES) ---
-        private const float MinVelocityThreshold = 3f;  // Скорость ниже этой игнорируется
-        private const float MaxVelocityForZoom = 22f;    // Порог "максимального" отдаления
+        private const float MinVelocityThreshold = 3f;
+        private const float MaxVelocityForZoom = 22f;
 
         public ICameraBehaviour CurrentBehaviour => _currentBehaviour;
 
         public CameraService(Camera camera)
         {
             _camera = camera;
-            _leafParticles.AddRange(_camera.GetComponentsInChildren<ParticleSystem>());
         }
 
         public void SetBehaviour(ICameraBehaviour behaviour) => _currentBehaviour = behaviour;
@@ -49,8 +46,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
             // 2. Расчет чистой скорости
             _currentVelocity = (targetPos - previousPos) / deltaTime;
 
-            // 3. Эффекты
-            ApplyWindToParticles();
+            // 3. Эффекты (только динамический зум)
             HandleDynamicZoom(deltaTime);
         }
 
@@ -59,56 +55,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
             float speed = _currentVelocity.magnitude;
             float targetSize;
 
-            // Если скорость ниже порога — зум всегда минимальный (базовый)
             if (speed < MinVelocityThreshold)
             {
                 targetSize = MinSize;
             }
             else
             {
-                // Рассчитываем фактор скорости только сверх порога
                 float normalizedSpeed = Mathf.Clamp01((speed - MinVelocityThreshold) / (MaxVelocityForZoom - MinVelocityThreshold));
                 targetSize = Mathf.Lerp(MinSize, MaxSize, normalizedSpeed);
             }
 
-            // Используем Lerp для максимальной мягкости, чтобы камеру не "штормило"
             _camera.orthographicSize = Mathf.Lerp(_camera.orthographicSize, targetSize, deltaTime * ZoomSmoothness);
-        }
-
-        private void ApplyWindToParticles()
-        {
-            float mag = _currentVelocity.magnitude;
-
-            // Листья тоже не должны суетиться от микро-движений
-            if (mag < MinVelocityThreshold)
-            {
-                foreach (var ps in _leafParticles)
-                {
-                    var force = ps.forceOverLifetime;
-                    force.x = 0;
-                    force.y = 0;
-                }
-                return;
-            }
-
-            foreach (var ps in _leafParticles)
-            {
-                var forceModule = ps.forceOverLifetime;
-                forceModule.enabled = true;
-
-                // Инерция
-                Vector3 resistance = -_currentVelocity * 0.12f;
-                forceModule.x = new ParticleSystem.MinMaxCurve(resistance.x);
-                forceModule.y = new ParticleSystem.MinMaxCurve(resistance.y);
-
-                // Турбулентность при рывках
-                var noise = ps.noise;
-                if (noise.enabled)
-                {
-                    float noiseFactor = Mathf.Clamp01(mag / MaxVelocityForZoom);
-                    noise.strength = Mathf.Lerp(0f, 0.6f, noiseFactor);
-                }
-            }
         }
 
         private Vector3 ClampPosition(Vector3 pos)
@@ -122,8 +79,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
             float minY = b.min.y + camHeight;
             float maxY = b.max.y - camHeight;
 
-            // Если зум слишком большой и камера не влезает в границы уровня по X или Y
-            // (защита от тряски, когда maxX становится меньше minX)
             if (minX > maxX) pos.x = b.center.x;
             else pos.x = Mathf.Clamp(pos.x, minX, maxX);
 
