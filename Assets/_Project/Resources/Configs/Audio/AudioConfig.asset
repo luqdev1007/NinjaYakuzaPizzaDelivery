@@ -401,6 +401,23 @@ MonoBehaviour:
     Volume: 0.5
   - Id: Gameplay
     Tracks:
-    - {fileID: 8300000, guid: 19fe9163ebd1a224f85ecdaeb4cdee2e, type: 3}
-    - {fileID: 8300000, guid: ce03eeea0c6699c4195725abc10353a8, type: 3}
+    - {fileID: 8300000, guid: e48048fdadbe0874a85f9142e1fcc511, type: 3}
+    - {fileID: 8300000, guid: ea810f64d94acf34e894fbfe4eb0c089, type: 3}
+    - {fileID: 8300000, guid: defebdae1d1a92e4cb5faf68eaa72309, type: 3}
+    - {fileID: 8300000, guid: 8871dfc8a4a4a784499b02f15a821195, type: 3}
+    - {fileID: 8300000, guid: 8457922481210b347bdcbcf44e8d16a9, type: 3}
+    - {fileID: 8300000, guid: bc31cdc046e84284ca21ad58b19fa372, type: 3}
+    - {fileID: 8300000, guid: 9eba96e683465fd4c8b5242676087fea, type: 3}
+    - {fileID: 8300000, guid: d9e3b6acc5364f34eac82d2196ee8db5, type: 3}
+    - {fileID: 8300000, guid: a98823879c3bb724b9854e05d37e8a3b, type: 3}
+    - {fileID: 8300000, guid: 3c1f937af8f2b1946b17534747bab67f, type: 3}
+    - {fileID: 8300000, guid: 74e431292b4bd34448705bc50ff13295, type: 3}
+    - {fileID: 8300000, guid: 0696a5a098ec22d4b9133c44f085b741, type: 3}
+    - {fileID: 8300000, guid: 90b4776c27cfac446b66e3793d02ef76, type: 3}
+    - {fileID: 8300000, guid: f641c5908b080494a86e83033bb0d4c7, type: 3}
+    - {fileID: 8300000, guid: 11664eba274027048a2eae23f433b371, type: 3}
+    - {fileID: 8300000, guid: 687869fb5ef65d94282b5ac2fb587fbc, type: 3}
+    - {fileID: 8300000, guid: 385b5641f096bb345ad35a4c7f5ca516, type: 3}
+    - {fileID: 8300000, guid: 403f03a0b7fa8f640a1f48415cca8b18, type: 3}
+    - {fileID: 8300000, guid: eddc4fc14814028429494b1ccb9cdaca, type: 3}
     Volume: 0.449
