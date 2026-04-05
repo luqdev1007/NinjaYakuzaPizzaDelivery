@@ -22,6 +22,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature;
 using Assets._Project.Develop.Runtime.Utilites;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
@@ -60,7 +61,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
         // ─── HERO ────────────────────────────────────────────────────────────
 
-        public Entity CreateHero(Vector3 position, MaiHeroConfig config)
+        public Entity CreateHero(Vector3 position, MainHeroConfig config)
         {
             Entity entity = CreateEmpty();
             _monoEntitiesFactory.Create(entity, position, config.PrefabPath);
@@ -72,7 +73,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             return entity;
         }
 
-        private void AddHeroComponents(Entity entity, MaiHeroConfig config)
+        private void AddHeroComponents(Entity entity, MainHeroConfig config)
         {
             entity
                 // — общее —
@@ -82,8 +83,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddGroundMask(config.GroundMask)
 
                 // — драйв (баг-фича) —
-                .AddIsDriveActive(new ReactiveVariable<bool>(false))
-                .AddDriveAccumulatedTime(0f)
 
                 // — движение —
                 .AddMoveDirection()
@@ -101,6 +100,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMaxJumps(new ReactiveVariable<int>(config.Jump.MaxJumps))
                 .AddJumpEvent()
                 .AddDoubleJumpEvent()
+
+                // wall jump params
+                // В AddHeroComponents
+                .AddWallJumpLockTimer(new ReactiveVariable<float>(0f)) // Добавь этот компонент в Entity
+
+                .AddWallJumpParams(
+                    config.WallJump.MinVelocityY,
+                    config.WallJump.JumpForce,
+                    config.WallJump.ControlLockDuration
+                )
+                .AddIsWallJumping(new ReactiveVariable<bool>(false))
 
                 // — рывок —
                 .AddIsDashing()
@@ -213,7 +223,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 ;
         }
 
-        private void AddHeroSystems(Entity entity, MaiHeroConfig config)
+        private void AddHeroSystems(Entity entity, MainHeroConfig config)
         {
             IInputService inputService = _container.Resolve<IInputService>();
             ICoroutinesPerformer coroutinesPerformer = _container.Resolve<ICoroutinesPerformer>();
@@ -252,6 +262,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                     throwableBehaviourFactory,
                     audioService))
 
+                // wall jump
+                .AddSystem(new WallJumpSystem(inputService))
+
                 // — инвентарь (Сюрикены/Дротики на Q + Колесико) —
                 .AddSystem(new InventorySystem(
                     inputService,
@@ -287,7 +300,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 ;
         }
 
-        private void AddHeroConditions(Entity entity, MaiHeroConfig config)
+        private void AddHeroConditions(Entity entity, MainHeroConfig config)
         {
             // — движение —
             ICompositeCondition canMove = new CompositeCondition()
@@ -295,15 +308,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsSliding.Value == false))
                 .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.WallJumpLockTimer.Value <= 0));
 
             ICompositeCondition canFlip = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
                 .Add(new FuncCondition(() => entity.IsSliding.Value == false))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-                // .Add(new FuncCondition(() => entity.IsOnSlope.Value == false))
-                 ;
+                .Add(new FuncCondition(() => entity.WallJumpLockTimer.Value <= 0));
 
             // — прыжок —
             ICompositeCondition canJump = new CompositeCondition()
@@ -311,7 +324,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-                .Add(new FuncCondition(() => entity.IsDriveActive.Value == false)) 
                 .Add(new FuncCondition(() => entity.JumpsAvailable.Value > 0));
 
             // — рывок —

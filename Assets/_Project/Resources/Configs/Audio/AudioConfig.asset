@@ -299,6 +299,10 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: 83e7ea37000300547885d3199cb3e26f, type: 3}
       Volume: 1
       BasePitch: 1
+    - Id: AbilityWallJump1
+      Clip: {fileID: 8300000, guid: a9623d4898fbad54694f769368e2ea03, type: 3}
+      Volume: 1
+      BasePitch: 0.4
   - Type: 2
     Clips:
     - Id: MainHeroJump1

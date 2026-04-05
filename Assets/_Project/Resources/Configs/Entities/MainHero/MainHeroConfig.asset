@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: MainHeroConfig
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/MainHero/MainHero
+  <LootCollectRange>k__BackingField: 3
   <MinFallVelocityForAction>k__BackingField: -2.5
   <GroundMask>k__BackingField:
     serializedVersion: 2
-    m_Bits: 2304
+    m_Bits: 3328
   _movement:
     <MoveSpeed>k__BackingField: 12
     <MoveSpeedMin>k__BackingField: 8
@@ -51,6 +52,11 @@ MonoBehaviour:
       m_Bits: 1024
     <SlideSpeed>k__BackingField: 1
     <JumpForce>k__BackingField: {x: 8, y: 12}
+  _wallJump:
+    <MinVelocityY>k__BackingField: 5
+    <JumpForce>k__BackingField: {x: 12, y: 15}
+    <ControlLockDuration>k__BackingField: 0.2
+    <WallCheckDistance>k__BackingField: 0.1
   _slide:
     <Duration>k__BackingField: 0.2
     <Speed>k__BackingField: 16

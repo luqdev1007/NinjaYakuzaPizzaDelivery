@@ -23,7 +23,7 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
             { typeof(CurrencyIconsConfig), "Configs/Meta/Wallet/CurrencyIconsConfig" },
             { typeof(GameRewardsConfig), "Configs/Meta/Stats/GameRewardsConfig" },
             { typeof(LevelsListConfig), "Configs/Gameplay/Levels/LevelsListConfig" },
-            { typeof(MaiHeroConfig), "Configs/Entities/MainHero/MainHeroConfig" },
+            { typeof(MainHeroConfig), "Configs/Entities/MainHero/MainHeroConfig" },
             { typeof(GhostConfig), "Configs/Entities/GhostConfig" },
             { typeof(DialogConfig), "Configs/Dialogs/TutorialDialog" },
             { typeof(CharactersConfig), "Configs/Dialogs/CharactersConfig" },

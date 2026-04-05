@@ -83,10 +83,5 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
             monoEntity.Cleanup(entity);
             Object.Destroy(monoEntity.gameObject);
         }
-
-        internal void Create(Entity entity, Vector3 at, object prefabPath)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

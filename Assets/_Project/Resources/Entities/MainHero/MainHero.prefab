@@ -44453,6 +44453,7 @@ GameObject:
   - component: {fileID: 6237053472596339389}
   - component: {fileID: 8024449363745788239}
   - component: {fileID: 5752050982543113451}
+  - component: {fileID: 9124001960016943944}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -44849,6 +44850,21 @@ MonoBehaviour:
   _animator: {fileID: 7142319570205284036}
   _switchItemSfxPrefix: SwitchItem
   _throwSfxPrefix: AbilityImpactHeroThrow
+--- !u!114 &9124001960016943944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2402411871318597321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: affbd350bc61ba94ba6505f39ab0fe40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _viewContainer: {fileID: 5149040113408065364}
+  _rotationDuration: 0.4
+  _jumpSfx: AbilityWallJump
 --- !u!1 &2684084550196932738
 GameObject:
   m_ObjectHideFlags: 0
@@ -49759,7 +49775,6 @@ GameObject:
   m_Component:
   - component: {fileID: 580930247600171109}
   - component: {fileID: 894534149593626486}
-  - component: {fileID: 2074096976373253779}
   m_Layer: 0
   m_Name: PizzaDisplayView
   m_TagString: Untagged
@@ -49796,26 +49811,6 @@ SortingGroup:
   m_SortingLayer: 0
   m_SortingOrder: -1
   m_SortAtRoot: 0
---- !u!114 &2074096976373253779
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2745461240603326010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 390ee53d7b4b00e4bb2a06192131b579, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _pizzaSlices:
-  - {fileID: 9096678623028880299}
-  - {fileID: 6895245918529627318}
-  - {fileID: 3621085298518254234}
-  - {fileID: 514000264343884331}
-  - {fileID: 3438589221511827382}
-  _cheeseDripEffect: {fileID: 5436667852462279511}
-  _rigidbody: {fileID: 1587270918963700498}
 --- !u!1 &3022269204806553849
 GameObject:
   m_ObjectHideFlags: 0
@@ -99842,7 +99837,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5819973656363363846}
-  - component: {fileID: 5194075418008501655}
   m_Layer: 7
   m_Name: DriveVFX
   m_TagString: Untagged
@@ -99867,22 +99861,6 @@ Transform:
   - {fileID: 50326189477041098}
   m_Father: {fileID: 3817552431921455846}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5194075418008501655
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8545970973367420864}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c57129629af4fbb469cc3c0cb4a857e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _driveFireStreamPS: {fileID: 1493495792009399010}
-  _driveSparksPS: {fileID: 8045214871879410300}
-  _viewContainer: {fileID: 5149040113408065364}
-  _shakeIntensity: 0.1
 --- !u!1 &8948172081137782889
 GameObject:
   m_ObjectHideFlags: 0

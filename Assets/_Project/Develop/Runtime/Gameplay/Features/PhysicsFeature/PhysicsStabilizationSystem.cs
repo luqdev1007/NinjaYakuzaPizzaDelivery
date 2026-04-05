@@ -7,8 +7,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
 {
     public class PhysicsStabilizationSystem : IEntitySystem, IInitializableSystem, IUpdatableSystem
     {
-        private readonly float _stabilizationThreshold = 0.01f;
-        private readonly float _rotationThreshold = 0.1f;
+        private readonly float _stabilizationThreshold = 0.03f;
+        private readonly float _rotationThreshold = 0.3f;
 
         private float _linearDrag;
         private float _angularDrag;

@@ -2,6 +2,85 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 {
 	public partial class Entity
 	{
+		public Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.CanWallJump CanWallJumpC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.CanWallJump>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> CanWallJump => CanWallJumpC.Value;
+
+		public bool TryGetCanWallJump(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.CanWallJump component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanWallJump()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.CanWallJump() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanWallJump(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.CanWallJump() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.WallJumpLockTimer WallJumpLockTimerC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.WallJumpLockTimer>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> WallJumpLockTimer => WallJumpLockTimerC.Value;
+
+		public bool TryGetWallJumpLockTimer(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.WallJumpLockTimer component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallJumpLockTimer()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.WallJumpLockTimer() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallJumpLockTimer(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.WallJumpLockTimer() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.IsWallJumping IsWallJumpingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.IsWallJumping>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsWallJumping => IsWallJumpingC.Value;
+
+		public bool TryGetIsWallJumping(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.IsWallJumping component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsWallJumping()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.IsWallJumping() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsWallJumping(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.IsWallJumping() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.WallJumpParams WallJumpParamsC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.WallJumpParams>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallJumpParams(System.Single minVelocityY,UnityEngine.Vector2 jumpForce,System.Single controlLockDuration)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.WallJumpParams() {MinVelocityY = minVelocityY, JumpForce = jumpForce, ControlLockDuration = controlLockDuration}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team TeamC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team>();
 
 		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Teams> Team => TeamC.Value;
@@ -694,49 +773,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanPhysicalyInteract(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.CanPhysicalyInteract() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.IsDriveActive IsDriveActiveC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.IsDriveActive>();
-
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsDriveActive => IsDriveActiveC.Value;
-
-		public bool TryGetIsDriveActive(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.IsDriveActive component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsDriveActive()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.IsDriveActive() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsDriveActive(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.IsDriveActive() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.DriveAccumulatedTime DriveAccumulatedTimeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.DriveAccumulatedTime>();
-
-		public System.Single DriveAccumulatedTime => DriveAccumulatedTimeC.Value;
-
-		public bool TryGetDriveAccumulatedTime(out System.Single value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.DriveAccumulatedTime component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(System.Single);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDriveAccumulatedTime(System.Single value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.DriveAccumulatedTime() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.CanFlip CanFlipC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.CanFlip>();
@@ -1912,6 +1948,78 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallDirection() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.GravityFeature.BaseGravity BaseGravityC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GravityFeature.BaseGravity>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> BaseGravity => BaseGravityC.Value;
+
+		public bool TryGetBaseGravity(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GravityFeature.BaseGravity component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBaseGravity()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GravityFeature.BaseGravity() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBaseGravity(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GravityFeature.BaseGravity() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.GravityFeature.GravityModifier GravityModifierC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GravityFeature.GravityModifier>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> GravityModifier => GravityModifierC.Value;
+
+		public bool TryGetGravityModifier(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GravityFeature.GravityModifier component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGravityModifier()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GravityFeature.GravityModifier() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGravityModifier(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GravityFeature.GravityModifier() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.GravityFeature.GravityDirection GravityDirectionC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GravityFeature.GravityDirection>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> GravityDirection => GravityDirectionC.Value;
+
+		public bool TryGetGravityDirection(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GravityFeature.GravityDirection component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGravityDirection()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GravityFeature.GravityDirection() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGravityDirection(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GravityFeature.GravityDirection() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ThrowEvent ThrowEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ThrowEvent>();
 
 		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent ThrowEvent => ThrowEventC.Value;
@@ -2500,6 +2608,102 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSleepTimer(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Effects.SleepTimer() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveAvailableJumps DriveAvailableJumpsC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveAvailableJumps>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> DriveAvailableJumps => DriveAvailableJumpsC.Value;
+
+		public bool TryGetDriveAvailableJumps(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveAvailableJumps component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDriveAvailableJumps()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveAvailableJumps() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDriveAvailableJumps(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveAvailableJumps() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.IsDriveActive IsDriveActiveC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.IsDriveActive>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsDriveActive => IsDriveActiveC.Value;
+
+		public bool TryGetIsDriveActive(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.IsDriveActive component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsDriveActive()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.IsDriveActive() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsDriveActive(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.IsDriveActive() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveDuration DriveDurationC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveDuration>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> DriveDuration => DriveDurationC.Value;
+
+		public bool TryGetDriveDuration(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveDuration component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDriveDuration()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveDuration() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDriveDuration(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveDuration() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveGravityScale DriveGravityScaleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveGravityScale>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> DriveGravityScale => DriveGravityScaleC.Value;
+
+		public bool TryGetDriveGravityScale(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveGravityScale component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDriveGravityScale()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveGravityScale() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDriveGravityScale(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveGravityScale() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.DashForceMin DashForceMinC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.DashForceMin>();

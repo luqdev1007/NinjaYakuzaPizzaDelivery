@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 {
     [CreateAssetMenu(fileName = "MainHeroConfig", menuName = "Configs/Gameplay/Main Hero/New Main Hero Config")]
-    public class MaiHeroConfig : EntityConfig
+    public class MainHeroConfig : EntityConfig
     {
         [Header("Common & Physics")]
         [field: SerializeField] public string PrefabPath { get; private set; } = "Entities/MainHero/MainHero";
@@ -19,6 +19,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [SerializeField] private DashSettings _dash = new();
         [SerializeField] private GlideSettings _glide = new();
         [SerializeField] private WallHangSettings _wallHang = new();
+        [SerializeField] private WallJumpSettings _wallJump = new(); // Добавлено
         [SerializeField] private SlideSettings _slide = new();
         [SerializeField] private PlungeSettings _plunge = new();
         [SerializeField] private SlopeSettings _slope = new();
@@ -26,23 +27,22 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [SerializeField] private LifeCycleSettings _lifeCycle = new();
         [SerializeField] private ThrowableSettings _throwables = new();
 
-        // Геттеры для доступа из систем (теперь через точку: config.Movement.MoveSpeed)
+        // Геттеры
         public MovementSettings Movement => _movement;
         public JumpSettings Jump => _jump;
         public DashSettings Dash => _dash;
         public GlideSettings Glide => _glide;
         public WallHangSettings WallHang => _wallHang;
+        public WallJumpSettings WallJump => _wallJump; // Добавлено
         public SlideSettings Slide => _slide;
         public PlungeSettings Plunge => _plunge;
         public SlopeSettings Slope => _slope;
         public AttackSettings Attack => _attack;
         public LifeCycleSettings LifeCycle => _lifeCycle;
         public ThrowableSettings Throwables => _throwables;
-
-
     }
 
-    // --- ВСПОМОГАТЕЛЬНЫЕ КЛАССЫ (Разворачивающиеся секции) ---
+    // --- ВСПОМОГАТЕЛЬНЫЕ КЛАССЫ ---
 
     [Serializable]
     public class MovementSettings
@@ -89,6 +89,15 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     }
 
     [Serializable]
+    public class WallJumpSettings
+    {
+        [field: SerializeField] public float MinVelocityY { get; private set; } = 5f;
+        [field: SerializeField] public Vector2 JumpForce { get; private set; } = new Vector2(12f, 15f);
+        [field: SerializeField] public float ControlLockDuration { get; private set; } = 0.2f;
+        [field: SerializeField] public float WallCheckDistance { get; private set; } = 0.1f;
+    }
+
+    [Serializable]
     public class WallHangSettings
     {
         [field: SerializeField] public LayerMask Layer { get; private set; }
@@ -124,14 +133,9 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     public class AttackSettings
     {
         [Header("Timings")]
-        [field: SerializeField, Tooltip("Общая длительность всей атаки")]
-        public float ProcessTime { get; private set; } = 1.5f;
-
-        [field: SerializeField, Tooltip("Задержка перед самим нанесением урона (момент взмаха)")]
-        public float DelayTime { get; private set; } = 0.75f;
-
-        [field: SerializeField, Tooltip("Кулдаун между атаками")]
-        public float Cooldown { get; private set; } = 1f;
+        [field: SerializeField] public float ProcessTime { get; private set; } = 1.5f;
+        [field: SerializeField] public float DelayTime { get; private set; } = 0.75f;
+        [field: SerializeField] public float Cooldown { get; private set; } = 1f;
 
         [Header("Combat Parameters")]
         [field: SerializeField] public float InstantDamage { get; private set; } = 50f;
@@ -140,21 +144,13 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField] public float InvulnerabilityDuration { get; private set; } = 0.2f;
 
         [Header("Hit Bounce (Physics)")]
-        [field: SerializeField, Tooltip("Базовая сила отскока при попадании")]
-        public float HitBounceForce { get; private set; } = 8f;
-
-        [field: SerializeField, Tooltip("Множители X (горизонт) и Y (вертикаль) для отскока, когда герой НА ЗЕМЛЕ")]
-        public Vector2 GroundHitBounceModifiers { get; private set; } = new Vector2(0.7f, 0.4f);
-
-        [field: SerializeField, Tooltip("Множители X и Y для отскока, когда герой В ВОЗДУХЕ")]
-        public Vector2 AirHitBounceModifiers { get; private set; } = new Vector2(0.7f, 0.8f);
+        [field: SerializeField] public float HitBounceForce { get; private set; } = 8f;
+        [field: SerializeField] public Vector2 GroundHitBounceModifiers { get; private set; } = new Vector2(0.7f, 0.4f);
+        [field: SerializeField] public Vector2 AirHitBounceModifiers { get; private set; } = new Vector2(0.7f, 0.8f);
 
         [Header("Hit Stop (Juice)")]
-        [field: SerializeField, Range(0f, 1f), Tooltip("На сколько замедляется время (0 - полная остановка)")]
-        public float HitStopScale { get; private set; } = 0.05f;
-
-        [field: SerializeField, Tooltip("Длительность эффекта заморозки времени")]
-        public float HitStopDuration { get; private set; } = 0.15f;
+        [field: SerializeField, Range(0f, 1f)] public float HitStopScale { get; private set; } = 0.05f;
+        [field: SerializeField] public float HitStopDuration { get; private set; } = 0.15f;
     }
 
     [Serializable]
