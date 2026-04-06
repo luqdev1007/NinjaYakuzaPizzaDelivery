@@ -29,7 +29,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
 
         // Новые переменные для логики зажатия
         private float _holdTimer;
-        private const float GlideHoldThreshold = 0.5f; // Время зажатия в секундах
+        private const float GlideHoldThreshold = 0.3f; // Время зажатия в секундах
 
         public GlideSystem(IInputService inputService)
         {

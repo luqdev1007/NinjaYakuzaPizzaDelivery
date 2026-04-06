@@ -5,6 +5,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
+using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
@@ -44,6 +45,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         private readonly AudioService _audioService;
         private readonly LootTableConfig _lootTableConfig;
 
+        private readonly CameraService _cameraService;
+
         public EntitiesFactory(DIContainer container)
         {
             _container = container;
@@ -52,6 +55,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory = container.Resolve<MonoEntitiesFactory>();
             _collidersRegistryService = container.Resolve<CollidersRegistryService>();
             _audioService = container.Resolve<AudioService>();
+
+            _cameraService = _container.Resolve<CameraService>();
 
             _lootTableConfig = container.Resolve<ConfigsProviderService>().GetConfig<LootTableConfig>();
         }
@@ -262,7 +267,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new GlideSystem(inputService))
                 .AddSystem(new WallHangSystem(inputService, audioService))
                 .AddSystem(new SlideSystem(inputService, coroutinesPerformer, slopeSystem))
-                .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask))
+                .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask, _cameraService))
                 .AddSystem(slopeSystem)
 
                 // — броски (Хук отдельно на ПКМ) —
@@ -415,6 +420,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
+                .Add(new FuncCondition(() => entity.Rigidbody.linearVelocityY < config.MinFallVelocityForAction)) // new
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
             // — жизненный цикл —

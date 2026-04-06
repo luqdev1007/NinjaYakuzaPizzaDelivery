@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
+using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
@@ -38,10 +39,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         private const float MaxDamageMultiplier = 2.5f; // Максимальный бонус урона (x2.5)
         private const float MaxRadiusMultiplier = 1.4f; // Максимальное расширение радиуса (x1.4)
 
-        public PlungeSystem(IInputService inputService, LayerMask enemyMask)
+        private readonly CameraService _cameraService;
+
+        public PlungeSystem(IInputService inputService, LayerMask enemyMask, CameraService cameraService)
         {
             _inputService = inputService;
             _enemyMask = enemyMask;
+            _cameraService = cameraService;
         }
 
         public void OnInit(Entity entity)
@@ -118,8 +122,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private void LandPlunge()
         {
-            // Рассчитываем множитель силы удара (минимум 1.0)
             float intensityRatio = Mathf.Clamp(_currentFlightTime / BaseChargeTime, 0f, 1.0f);
+
+            // Если падение длилось дольше 0.1 сек, даем встряску
+            if (intensityRatio > 0.1f)
+            {
+                // Передаем интенсивность (например, от 0.3 до 1.0)
+                _cameraService.Shake(intensityRatio);
+            }
+
             float damageMultiplier = Mathf.Lerp(1.0f, MaxDamageMultiplier, intensityRatio);
             float radiusMultiplier = Mathf.Lerp(1.0f, MaxRadiusMultiplier, intensityRatio);
 
