@@ -91,7 +91,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     [Serializable]
     public class WallJumpSettings
     {
-        [field: SerializeField] public float MinVelocityY { get; private set; } = 5f;
+        [field: SerializeField] public float VelocityYAbs { get; private set; } = 5f;
         [field: SerializeField] public Vector2 JumpForce { get; private set; } = new Vector2(12f, 15f);
         [field: SerializeField] public float ControlLockDuration { get; private set; } = 0.2f;
         [field: SerializeField] public float WallCheckDistance { get; private set; } = 0.1f;

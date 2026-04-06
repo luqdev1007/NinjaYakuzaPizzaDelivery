@@ -61,19 +61,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         public override void Run()
         {
-            if (_inputArgs.IsRestart)
-            {
-                // Плавно возвращаем музыку в норму за 1 секунду после рестарта
-                // Используем ICoroutinesPerformer из контейнера (или сам бутстрап через MonoBehaviour)
-                var performer = _container.Resolve<ICoroutinesPerformer>();
-                _audioService.SetMusicMuted(false);
-            }
-            else
-            {
-                // Первый вход — сбрасываем приглушение мгновенно и играем
-                _audioService.SetMusicMuted(false);
+            _audioService.SetMusicMuted(false);
+
+            if (_inputArgs.IsRestart == false)
                 _audioService.StartPlaylist("Gameplay");
-            }
 
             _gameplayStatesContext.Run();
         }

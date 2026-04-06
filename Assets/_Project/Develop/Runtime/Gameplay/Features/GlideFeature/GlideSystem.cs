@@ -27,8 +27,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         private float _glideTimer;
         private bool _glideUsed;
 
-        private float _glideActivationDelay;
-        private const float GlideActivationDelayTime = 0.08f;
+        // Новые переменные для логики зажатия
+        private float _holdTimer;
+        private const float GlideHoldThreshold = 0.5f; // Время зажатия в секундах
 
         public GlideSystem(IInputService inputService)
         {
@@ -53,10 +54,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
 
         public void OnUpdate(float deltaTime)
         {
+            // Если на земле — сбрасываем всё
             if (_isGrounded.Value)
             {
                 _glideUsed = false;
-                _glideActivationDelay = 0f;
+                _holdTimer = 0f;
 
                 if (_isGliding.Value)
                     StopGlide(applyBounce: false);
@@ -64,27 +66,36 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
                 return;
             }
 
+            // Если уже летим
             if (_isGliding.Value)
             {
                 ApplyGlideDamping(deltaTime);
 
+                // Прерываем глайд при повторном нажатии (прыжке)
                 if (_inputService.IsJumpKeyPressed)
                     StopGlide(applyBounce: true);
 
                 return;
             }
 
+            // Логика активации через зажатие
             bool isFalling = _rigidbody.linearVelocity.y < _minFallVelocity.Value;
 
-            if (_inputService.IsJumpKeyPressed && isFalling && !_glideUsed && _canGlide.Evaluate())
-                _glideActivationDelay = GlideActivationDelayTime;
-
-            if (_glideActivationDelay > 0f)
+            // Проверяем, зажата ли клавиша прыжка (IsJumpKeyHeld)
+            if (_inputService.IsJumpKeyHeld && isFalling && !_glideUsed && _canGlide.Evaluate())
             {
-                _glideActivationDelay -= deltaTime;
+                _holdTimer += deltaTime;
 
-                if (_glideActivationDelay <= 0f && isFalling && !_glideUsed && _canGlide.Evaluate())
+                if (_holdTimer >= GlideHoldThreshold)
+                {
                     StartGlide();
+                    _holdTimer = 0f;
+                }
+            }
+            else
+            {
+                // Если кнопку отпустили раньше времени — обнуляем прогресс зажатия
+                _holdTimer = 0f;
             }
         }
 

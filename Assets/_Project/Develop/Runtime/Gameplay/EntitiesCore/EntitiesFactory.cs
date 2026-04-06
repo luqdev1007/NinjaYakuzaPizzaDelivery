@@ -106,7 +106,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddWallJumpLockTimer(new ReactiveVariable<float>(0f)) // Добавь этот компонент в Entity
 
                 .AddWallJumpParams(
-                    config.WallJump.MinVelocityY,
+                    config.WallJump.VelocityYAbs,
                     config.WallJump.JumpForce,
                     config.WallJump.ControlLockDuration
                 )
