@@ -25,6 +25,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
         private ReactiveVariable<float> _jumpForceMax;
         private ReactiveVariable<float> _jumpChargeTime;
         private ReactiveVariable<float> _slopeAccumSpeed;
+
+        private ReactiveVariable<Vector2> _slopeJumpForce; // Новое поле
+
         private Rigidbody2D _rigidbody;
 
         private float _chargeTimer;
@@ -42,6 +45,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
         {
             _doubleJumpEvent = entity.DoubleJumpEvent;
             _jumpEvent = entity.JumpEvent;
+
+            _slopeJumpForce = entity.SlopeJumpForce;
 
             _canJump = entity.CanJump;
             _isGrounded = entity.IsGrounded;
@@ -109,19 +114,32 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
             Vector2 slopeNormal = _slopeSystem.SlopeNormal;
             float accumSpeed = _slopeAccumSpeed.Value;
 
-            // ЛОГИКА ТРАМПЛИНА: 
-            // Смешиваем "Вверх" и "Нормаль склона" в зависимости от скорости
+            // Берем значения из того самого конфига, где ты ставил 100
+            Vector2 configForce = _slopeJumpForce.Value;
+
+            // 1. Направление вылета
+            // Смешиваем вертикаль и нормаль склона
             float influence = Mathf.Clamp01(accumSpeed / 12f);
             Vector2 jumpDir = Vector2.Lerp(Vector2.up, slopeNormal, influence * 0.7f).normalized;
 
-            // Итоговая сила прыжка
-            float totalForce = baseVerticalForce + (accumSpeed * 0.6f);
+            // 2. Расчет силы
+            // Добавляем к базовому прыжку бонус по Y из конфига и бонус от накопленной скорости
+            float finalVerticalForce = baseVerticalForce + configForce.y + (accumSpeed * 0.5f);
 
-            // Мягкое обнуление скорости для чистого вылета
-            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x * 0.5f, 0f);
+            // Добавляем горизонтальный импульс (X из конфига), чтобы персонаж летел вперед
+            float finalHorizontalForce = configForce.x * (accumSpeed > 1f ? accumSpeed * 0.5f : 1f);
 
-            _rigidbody.AddForce(jumpDir * totalForce, ForceMode2D.Impulse);
+            // 3. Применение
+            // Обнуляем Y, чтобы прыжок всегда был четким, но сохраняем часть X для инерции
+            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x * 0.8f, 0f);
+
+            Vector2 finalImpulse = new Vector2(jumpDir.x * finalHorizontalForce, jumpDir.y * finalVerticalForce);
+
+            _rigidbody.AddForce(finalImpulse, ForceMode2D.Impulse);
+
+            // Сбрасываем состояние
             _slopeAccumSpeed.Value = 0f;
+            _isOnSlope.Value = false;
         }
     }
 }

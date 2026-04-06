@@ -193,10 +193,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // — наклонные поверхности —
                 .AddIsOnSlope()
+                .AddSlopeMask(config.Slope.Mask)
+                .AddSlopeMinAngle(new ReactiveVariable<float>(config.Slope.MinAngle))
+                .AddSlopeMaxAngle(new ReactiveVariable<float>(config.Slope.MaxAngle))
+                .AddSlopeDownhillBaseForce(new ReactiveVariable<float>(config.Slope.DownhillBaseForce))
                 .AddSlopeBoostMultiplier(new ReactiveVariable<float>(config.Slope.BoostMultiplier))
+                .AddSlopeMagnetForce(new ReactiveVariable<float>(config.Slope.MagnetForce))
+                .AddSlopeMaxAccumSpeed(new ReactiveVariable<float>(config.Slope.MaxAccumSpeed))
+                .AddSlopeAccumGainRate(new ReactiveVariable<float>(config.Slope.AccumGainRate))
+                .AddSlopeAccumDecayRate(new ReactiveVariable<float>(config.Slope.AccumDecayRate))
+                .AddSlopeSlideOffDelay(new ReactiveVariable<float>(config.Slope.SlideOffDelay))
+                .AddSlopeMinEjectVelocity(new ReactiveVariable<float>(config.Slope.MinEjectVelocity))
+                .AddSlopeEjectForceMultiplier(new ReactiveVariable<float>(config.Slope.EjectForceMultiplier))
+                .AddSlopeAutoSlidePush(new ReactiveVariable<float>(config.Slope.AutoSlidePush))
                 .AddSlopeJumpForce(new ReactiveVariable<Vector2>(config.Slope.JumpForce))
                 .AddSlopeAccumSpeed(new ReactiveVariable<float>(0f))
-                .AddSlopeMask(config.Slope.Mask)
 
                 // лут
                 .AddCollectRange(new ReactiveVariable<float>(config.LootCollectRange))

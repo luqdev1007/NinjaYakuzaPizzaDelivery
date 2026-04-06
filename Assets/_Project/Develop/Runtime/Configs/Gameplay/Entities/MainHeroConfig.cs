@@ -124,9 +124,30 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     [Serializable]
     public class SlopeSettings
     {
-        [field: SerializeField] public float BoostMultiplier { get; private set; } = 2f;
-        [field: SerializeField] public Vector2 JumpForce { get; private set; } = new Vector2(10f, 6f);
         [field: SerializeField] public LayerMask Mask { get; private set; }
+
+        [Header("Angles")]
+        [field: SerializeField, Range(0, 90)] public float MinAngle { get; private set; } = 15f;
+        [field: SerializeField, Range(0, 90)] public float MaxAngle { get; private set; } = 75f;
+
+        [Header("Forces")]
+        [field: SerializeField] public float DownhillBaseForce { get; private set; } = 10f;
+        [field: SerializeField] public float BoostMultiplier { get; private set; } = 2f;
+        [field: SerializeField] public float MagnetForce { get; private set; } = 15f;
+
+        [Header("Inertia & Decay")]
+        [field: SerializeField] public float MaxAccumSpeed { get; private set; } = 12f;
+        [field: SerializeField] public float AccumGainRate { get; private set; } = 4f;
+        [field: SerializeField] public float AccumDecayRate { get; private set; } = 10f;
+        [field: SerializeField, Tooltip("Задержка перед сбросом состояния склона (чтобы не дергалось на кочках).")]
+        public float SlideOffDelay { get; private set; } = 0.1f;
+
+        [Header("Eject")]
+        [field: SerializeField] public float MinEjectVelocity { get; private set; } = 6f;
+        [field: SerializeField] public float EjectForceMultiplier { get; private set; } = 0.8f;
+        [field: SerializeField] public float AutoSlidePush { get; private set; } = 0.8f;
+
+        [field: SerializeField] public Vector2 JumpForce { get; private set; } = new Vector2(10f, 6f);
     }
 
     [Serializable]

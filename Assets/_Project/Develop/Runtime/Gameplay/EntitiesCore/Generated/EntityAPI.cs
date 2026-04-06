@@ -177,30 +177,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature.InSpawnProcess() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumSpeed SlopeAccumSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumSpeed>();
-
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlopeAccumSpeed => SlopeAccumSpeedC.Value;
-
-		public bool TryGetSlopeAccumSpeed(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumSpeed component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeAccumSpeed()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumSpeed() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeAccumSpeed(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumSpeed() {Value = value}); 
-		}
-
 		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.IsOnSlope IsOnSlopeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.IsOnSlope>();
 
 		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsOnSlope => IsOnSlopeC.Value;
@@ -225,13 +201,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.IsOnSlope() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeBoostMultiplier SlopeBoostMultiplierC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeBoostMultiplier>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumSpeed SlopeAccumSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumSpeed>();
 
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlopeBoostMultiplier => SlopeBoostMultiplierC.Value;
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlopeAccumSpeed => SlopeAccumSpeedC.Value;
 
-		public bool TryGetSlopeBoostMultiplier(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		public bool TryGetSlopeAccumSpeed(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeBoostMultiplier component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumSpeed component);
 			if (result)
 				value = component.Value;
 			else
@@ -239,14 +215,33 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return result;
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeBoostMultiplier()
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeAccumSpeed()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeBoostMultiplier() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumSpeed() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeBoostMultiplier(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeAccumSpeed(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeBoostMultiplier() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumSpeed() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMask SlopeMaskC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMask>();
+
+		public UnityEngine.LayerMask SlopeMask => SlopeMaskC.Value;
+
+		public bool TryGetSlopeMask(out UnityEngine.LayerMask value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMask component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(UnityEngine.LayerMask);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeMask(UnityEngine.LayerMask value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMask() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeJumpForce SlopeJumpForceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeJumpForce>();
@@ -273,23 +268,292 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeJumpForce() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMask SlopeMaskC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMask>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMinAngle SlopeMinAngleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMinAngle>();
 
-		public UnityEngine.LayerMask SlopeMask => SlopeMaskC.Value;
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlopeMinAngle => SlopeMinAngleC.Value;
 
-		public bool TryGetSlopeMask(out UnityEngine.LayerMask value)
+		public bool TryGetSlopeMinAngle(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMask component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMinAngle component);
 			if (result)
 				value = component.Value;
 			else
-				value = default(UnityEngine.LayerMask);
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
 			return result;
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeMask(UnityEngine.LayerMask value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeMinAngle()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMask() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMinAngle() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeMinAngle(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMinAngle() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMaxAngle SlopeMaxAngleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMaxAngle>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlopeMaxAngle => SlopeMaxAngleC.Value;
+
+		public bool TryGetSlopeMaxAngle(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMaxAngle component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeMaxAngle()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMaxAngle() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeMaxAngle(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMaxAngle() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeDownhillBaseForce SlopeDownhillBaseForceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeDownhillBaseForce>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlopeDownhillBaseForce => SlopeDownhillBaseForceC.Value;
+
+		public bool TryGetSlopeDownhillBaseForce(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeDownhillBaseForce component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeDownhillBaseForce()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeDownhillBaseForce() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeDownhillBaseForce(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeDownhillBaseForce() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeBoostMultiplier SlopeBoostMultiplierC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeBoostMultiplier>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlopeBoostMultiplier => SlopeBoostMultiplierC.Value;
+
+		public bool TryGetSlopeBoostMultiplier(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeBoostMultiplier component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeBoostMultiplier()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeBoostMultiplier() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeBoostMultiplier(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeBoostMultiplier() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMagnetForce SlopeMagnetForceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMagnetForce>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlopeMagnetForce => SlopeMagnetForceC.Value;
+
+		public bool TryGetSlopeMagnetForce(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMagnetForce component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeMagnetForce()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMagnetForce() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeMagnetForce(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMagnetForce() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMaxAccumSpeed SlopeMaxAccumSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMaxAccumSpeed>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlopeMaxAccumSpeed => SlopeMaxAccumSpeedC.Value;
+
+		public bool TryGetSlopeMaxAccumSpeed(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMaxAccumSpeed component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeMaxAccumSpeed()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMaxAccumSpeed() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeMaxAccumSpeed(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMaxAccumSpeed() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumGainRate SlopeAccumGainRateC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumGainRate>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlopeAccumGainRate => SlopeAccumGainRateC.Value;
+
+		public bool TryGetSlopeAccumGainRate(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumGainRate component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeAccumGainRate()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumGainRate() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeAccumGainRate(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumGainRate() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumDecayRate SlopeAccumDecayRateC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumDecayRate>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlopeAccumDecayRate => SlopeAccumDecayRateC.Value;
+
+		public bool TryGetSlopeAccumDecayRate(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumDecayRate component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeAccumDecayRate()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumDecayRate() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeAccumDecayRate(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAccumDecayRate() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeSlideOffDelay SlopeSlideOffDelayC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeSlideOffDelay>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlopeSlideOffDelay => SlopeSlideOffDelayC.Value;
+
+		public bool TryGetSlopeSlideOffDelay(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeSlideOffDelay component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeSlideOffDelay()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeSlideOffDelay() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeSlideOffDelay(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeSlideOffDelay() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMinEjectVelocity SlopeMinEjectVelocityC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMinEjectVelocity>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlopeMinEjectVelocity => SlopeMinEjectVelocityC.Value;
+
+		public bool TryGetSlopeMinEjectVelocity(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMinEjectVelocity component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeMinEjectVelocity()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMinEjectVelocity() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeMinEjectVelocity(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeMinEjectVelocity() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeEjectForceMultiplier SlopeEjectForceMultiplierC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeEjectForceMultiplier>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlopeEjectForceMultiplier => SlopeEjectForceMultiplierC.Value;
+
+		public bool TryGetSlopeEjectForceMultiplier(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeEjectForceMultiplier component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeEjectForceMultiplier()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeEjectForceMultiplier() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeEjectForceMultiplier(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeEjectForceMultiplier() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAutoSlidePush SlopeAutoSlidePushC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAutoSlidePush>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> SlopeAutoSlidePush => SlopeAutoSlidePushC.Value;
+
+		public bool TryGetSlopeAutoSlidePush(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAutoSlidePush component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeAutoSlidePush()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAutoSlidePush() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeAutoSlidePush(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature.SlopeAutoSlidePush() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.CanSlide CanSlideC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.CanSlide>();
