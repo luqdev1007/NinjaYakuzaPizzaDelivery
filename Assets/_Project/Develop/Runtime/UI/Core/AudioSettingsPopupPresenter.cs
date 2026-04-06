@@ -13,7 +13,6 @@ namespace Assets._Project.Develop.Runtime.UI.AudioSettingsPopup
         private bool _musicMuted;
         private bool _sfxMuted;
 
-        // Запоминаем значения до мута чтобы восстановить
         private float _masterBeforeMute = 1f;
         private float _musicBeforeMute = 1f;
         private float _sfxBeforeMute = 1f;
@@ -37,32 +36,27 @@ namespace Assets._Project.Develop.Runtime.UI.AudioSettingsPopup
             float musicVol = _audioService.GetMusicVolume();
             float sfxVol = _audioService.GetSFXVolume();
 
-            // Запоминаем значения до мута (на случай если уже замьючено)
-            _masterBeforeMute = masterVol > 0f ? masterVol : 1f;
-            _musicBeforeMute = musicVol > 0f ? musicVol : 1f;
-            _sfxBeforeMute = sfxVol > 0f ? sfxVol : 1f;
+            // Порог в 0.001f надежнее для float значений из миксера
+            _masterBeforeMute = masterVol > 0.001f ? masterVol : 1f;
+            _musicBeforeMute = musicVol > 0.001f ? musicVol : 1f;
+            _sfxBeforeMute = sfxVol > 0.001f ? sfxVol : 1f;
 
-            // Определяем состояние мута по текущему значению
-            _masterMuted = masterVol <= 0f;
-            _musicMuted = musicVol <= 0f;
-            _sfxMuted = sfxVol <= 0f;
+            _masterMuted = masterVol <= 0.001f;
+            _musicMuted = musicVol <= 0.001f;
+            _sfxMuted = sfxVol <= 0.001f;
 
-            // Выставляем слайдеры по реальным значениям
             _view.SetMasterSliderSilent(masterVol);
             _view.SetMusicSliderSilent(musicVol);
             _view.SetSFXSliderSilent(sfxVol);
 
-            // Подписываем слайдеры
             _view.MasterSlider.onValueChanged.AddListener(OnMasterSliderChanged);
             _view.MusicSlider.onValueChanged.AddListener(OnMusicSliderChanged);
             _view.SFXSlider.onValueChanged.AddListener(OnSFXSliderChanged);
 
-            // Подписываем тоглы
             _view.MasterToggle.onClick.AddListener(OnMasterToggleClicked);
             _view.MusicToggle.onClick.AddListener(OnMusicToggleClicked);
             _view.SFXToggle.onClick.AddListener(OnSFXToggleClicked);
 
-            // Иконки по реальному состоянию мута
             _view.SetMasterToggleIcon(_masterMuted);
             _view.SetMusicToggleIcon(_musicMuted);
             _view.SetSFXToggleIcon(_sfxMuted);
@@ -84,8 +78,7 @@ namespace Assets._Project.Develop.Runtime.UI.AudioSettingsPopup
         private void OnMasterSliderChanged(float value)
         {
             _audioService.SetMasterVolume(value);
-            // Если двигаем слайдер вручную — снимаем мут
-            if (_masterMuted && value > 0f)
+            if (_masterMuted && value > 0.001f)
             {
                 _masterMuted = false;
                 _view.SetMasterToggleIcon(false);
@@ -95,7 +88,7 @@ namespace Assets._Project.Develop.Runtime.UI.AudioSettingsPopup
         private void OnMusicSliderChanged(float value)
         {
             _audioService.SetMusicVolume(value);
-            if (_musicMuted && value > 0f)
+            if (_musicMuted && value > 0.001f)
             {
                 _musicMuted = false;
                 _view.SetMusicToggleIcon(false);
@@ -105,7 +98,7 @@ namespace Assets._Project.Develop.Runtime.UI.AudioSettingsPopup
         private void OnSFXSliderChanged(float value)
         {
             _audioService.SetSFXVolume(value);
-            if (_sfxMuted && value > 0f)
+            if (_sfxMuted && value > 0.001f)
             {
                 _sfxMuted = false;
                 _view.SetSFXToggleIcon(false);
@@ -117,7 +110,7 @@ namespace Assets._Project.Develop.Runtime.UI.AudioSettingsPopup
             _masterMuted = !_masterMuted;
             if (_masterMuted)
             {
-                _masterBeforeMute = _view.MasterSlider.value;
+                _masterBeforeMute = _view.MasterSlider.value > 0.001f ? _view.MasterSlider.value : 1f;
                 _audioService.SetMasterVolume(0f);
                 _view.SetMasterSliderSilent(0f);
             }
@@ -134,7 +127,7 @@ namespace Assets._Project.Develop.Runtime.UI.AudioSettingsPopup
             _musicMuted = !_musicMuted;
             if (_musicMuted)
             {
-                _musicBeforeMute = _view.MusicSlider.value;
+                _musicBeforeMute = _view.MusicSlider.value > 0.001f ? _view.MusicSlider.value : 1f;
                 _audioService.SetMusicVolume(0f);
                 _view.SetMusicSliderSilent(0f);
             }
@@ -151,7 +144,7 @@ namespace Assets._Project.Develop.Runtime.UI.AudioSettingsPopup
             _sfxMuted = !_sfxMuted;
             if (_sfxMuted)
             {
-                _sfxBeforeMute = _view.SFXSlider.value;
+                _sfxBeforeMute = _view.SFXSlider.value > 0.001f ? _view.SFXSlider.value : 1f;
                 _audioService.SetSFXVolume(0f);
                 _view.SetSFXSliderSilent(0f);
             }

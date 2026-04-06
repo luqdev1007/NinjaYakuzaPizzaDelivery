@@ -12,13 +12,15 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
         [SerializeField] private AudioSource _musicSourceB;
         [SerializeField] private AudioMixerGroup _musicGroup;
         [SerializeField] private AudioMixerGroup _sfxGroup;
+        [SerializeField] private AudioMixerGroup _uiGroup;
         [SerializeField] private int _maxSfxSources = 32;
         [SerializeField] private float _transitionDuration = 1.2f;
 
         private readonly List<AudioSource> _sfxPool = new List<AudioSource>();
         private AudioSource _activeMusicSource;
 
-        public AudioMixer MusicMixer => _musicGroup.audioMixer;
+        // Это свойство нужно для регистрации в DI
+        public AudioMixer MainMixer => _musicGroup.audioMixer;
 
         public event Action OnMusicEnded;
 
@@ -26,25 +28,23 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
 
         private void Update()
         {
-            if (_activeMusicSource.clip != null && !_activeMusicSource.isPlaying && _activeMusicSource.loop == false)
+            if (_activeMusicSource.clip != null && !_activeMusicSource.isPlaying && !_activeMusicSource.loop)
             {
-                _activeMusicSource.clip = null; // Чтобы не вызывать событие каждый кадр
+                _activeMusicSource.clip = null;
                 OnMusicEnded?.Invoke();
             }
         }
 
-        private Coroutine _musicFadeCoroutine;
-
         public void PlayMusic(AudioClip clip, float volume, bool loop = true)
         {
             if (_activeMusicSource.clip == clip) return;
-            AudioSource inactiveSource = (_activeMusicSource == _musicSourceA) ? _musicSourceB : _musicSourceA;
-
+            AudioSource target = (_activeMusicSource == _musicSourceA) ? _musicSourceB : _musicSourceA;
             if (_musicFadeCoroutine != null) StopCoroutine(_musicFadeCoroutine);
-            _musicFadeCoroutine = StartCoroutine(FadeMusic(inactiveSource, clip, volume, loop));
+            _musicFadeCoroutine = StartCoroutine(FadeMusic(target, clip, volume, loop));
         }
 
-        private IEnumerator FadeMusic(AudioSource newSource, AudioClip clip, float targetVolume, bool loop)
+        private Coroutine _musicFadeCoroutine;
+        private IEnumerator FadeMusic(AudioSource newSource, AudioClip clip, float targetVol, bool loop)
         {
             newSource.clip = clip;
             newSource.volume = 0;
@@ -52,73 +52,51 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
             newSource.outputAudioMixerGroup = _musicGroup;
             newSource.Play();
 
-            float startActiveVol = _activeMusicSource.volume;
+            float startVol = _activeMusicSource.volume;
             float timer = 0;
-
             while (timer < _transitionDuration)
             {
                 timer += Time.deltaTime;
                 float p = timer / _transitionDuration;
-                _activeMusicSource.volume = Mathf.Lerp(startActiveVol, 0, p);
-                newSource.volume = Mathf.Lerp(0, targetVolume, p);
+                _activeMusicSource.volume = Mathf.Lerp(startVol, 0, p);
+                newSource.volume = Mathf.Lerp(0, targetVol, p);
                 yield return null;
             }
-
             _activeMusicSource.Stop();
             _activeMusicSource = newSource;
         }
 
-        /// <summary>
-        /// Проигрывает SFX без возврата ссылки.
-        /// </summary>
-        public void PlaySfx(AudioClip clip, float volume, float pitch)
-        {
-            PlaySfxReturnSource(clip, volume, pitch);
-        }
+        public void PlaySfx(AudioClip clip, float vol, float pitch, bool isUi = false)
+            => PlaySfxReturnSource(clip, vol, pitch, isUi);
 
-        /// <summary>
-        /// Проигрывает SFX и возвращает AudioSource для дальнейшего контроля (например, для зацикливания или остановки).
-        /// </summary>
-        public AudioSource PlaySfxReturnSource(AudioClip clip, float volume, float pitch)
+        public AudioSource PlaySfxReturnSource(AudioClip clip, float vol, float pitch, bool isUi = false)
         {
             AudioSource source = GetFreeSource();
-
-            if (source == null)
-                return null;
+            if (source == null) return null;
 
             source.clip = clip;
-            source.volume = volume;
+            source.volume = vol;
             source.pitch = pitch;
-            source.outputAudioMixerGroup = _sfxGroup;
+            source.outputAudioMixerGroup = isUi ? _uiGroup : _sfxGroup;
             source.Play();
-
             return source;
         }
 
         private AudioSource GetFreeSource()
         {
-            // Ищем свободный источник в пуле
             for (int i = 0; i < _sfxPool.Count; i++)
-            {
-                if (!_sfxPool[i].isPlaying)
-                    return _sfxPool[i];
-            }
+                if (!_sfxPool[i].isPlaying) return _sfxPool[i];
 
-            // Если свободных нет и пул не переполнен — создаем новый
             if (_sfxPool.Count < _maxSfxSources)
             {
-                GameObject obj = new GameObject($"SFX_Source_{_sfxPool.Count}");
+                GameObject obj = new GameObject($"SFX_{_sfxPool.Count}");
                 obj.transform.SetParent(transform);
-                AudioSource newSource = obj.AddComponent<AudioSource>();
-
-                // Настройки по умолчанию для 2D звука
-                newSource.playOnAwake = false;
-                newSource.spatialBlend = 0f;
-
-                _sfxPool.Add(newSource);
-                return newSource;
+                AudioSource s = obj.AddComponent<AudioSource>();
+                s.playOnAwake = false;
+                s.spatialBlend = 0f;
+                _sfxPool.Add(s);
+                return s;
             }
-
             return null;
         }
     }

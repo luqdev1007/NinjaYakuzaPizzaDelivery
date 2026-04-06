@@ -17,7 +17,7 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
 
         private MusicPlaylist _currentPlaylist;
         private int _lastTrackIndex = -1;
-        private const float GlobalSfxCooldown = 0.05f;
+        private const float GlobalSfxCooldown = 0.04f;
 
         public AudioService(AudioConfig config, AudioManager manager, AudioMixer mixer)
         {
@@ -27,72 +27,54 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
             _manager.OnMusicEnded += PlayNextFromPlaylist;
         }
 
-        // Конвертация: слайдер 0..1 → децибелы -80..0
-        private float LinearToDb(float linear)
-            => linear <= 0f ? -80f : Mathf.Log10(linear) * 20f;
+        public float GetMasterVolume() => GetVolume("MasterVolume");
+        public float GetMusicVolume() => GetVolume("MusicVolume");
+        public float GetSFXVolume() => GetVolume("SFXVolume");
 
-        public void SetMasterVolume(float linear)
-            => _mixer.SetFloat("MasterVolume", LinearToDb(linear));
-
-        public void SetMusicVolume(float linear)
-            => _mixer.SetFloat("MusicVolume", LinearToDb(linear));
-
-        public void SetSFXVolume(float linear)
-            => _mixer.SetFloat("SFXVolume", LinearToDb(linear));
-
-        public float GetMasterVolume()
+        private float GetVolume(string parameter)
         {
-            _mixer.GetFloat("MasterVolume", out float db);
-            return Mathf.Pow(10f, db / 20f);
+            if (_mixer.GetFloat(parameter, out float db))
+            {
+                return DbToLinear(db);
+            }
+            return 1f;
         }
 
-        public float GetMusicVolume()
-        {
-            _mixer.GetFloat("MusicVolume", out float db);
-            return Mathf.Pow(10f, db / 20f);
-        }
 
-        public float GetSFXVolume()
-        {
-            _mixer.GetFloat("SFXVolume", out float db);
-            return Mathf.Pow(10f, db / 20f);
-        }
+        private float LinearToDb(float linear) => linear <= 0.0001f ? -80f : Mathf.Log10(linear) * 20f;
+        private float DbToLinear(float db) => Mathf.Pow(10f, db / 20f);
 
-        // --- МГНОВЕННЫЕ SFX (УДАРЫ, РЫВКИ) ---
+        // --- ГРОМКОСТЬ ---
+        public void SetMusicMuted(bool isMuted) => _mixer.SetFloat("MusicVolume", isMuted ? -80f : 0f);
 
-        /// <summary>
-        /// Автоматически находит количество вариаций в конфиге и играет рандомную.
-        /// Например, при префиксе "EnemyHit" найдет EnemyHit1, EnemyHit2 и т.д.
-        /// </summary>
-        public void PlaySfxByPrefixAuto(string prefix, float pitch)
+        public void SetVolume(string parameter, float linear) => _mixer.SetFloat(parameter, LinearToDb(linear));
+
+        public void SetMasterVolume(float v) => SetVolume("MasterVolume", v);
+        public void SetMusicVolume(float v) => SetVolume("MusicVolume", v);
+        public void SetSFXVolume(float v) => SetVolume("SFXVolume", v);
+        public void SetUIVolume(float v) => SetVolume("UIVolume", v);
+
+        // --- SFX ЛОГИКА ---
+
+        // ТОТ САМЫЙ МЕТОД ДЛЯ ПРОВЕРКИ ВАРИАЦИЙ
+        public int GetVariationCount(string prefix) => _config.GetVariationCount(prefix);
+
+        public void PlaySfxByPrefixAuto(string prefix, float pitch = 1f)
         {
             int count = _config.GetVariationCount(prefix);
-
-            if (count > 0)
-            {
-                int randomIndex = UnityEngine.Random.Range(1, count + 1);
-                PlaySfxDirect($"{prefix}{randomIndex}", pitch);
-            }
-            else
-            {
-                // Если вариаций с цифрами не найдено, пробуем проиграть как одиночный ID
-                PlaySfxDirect(prefix, pitch);
-            }
+            if (count > 0) PlaySfxDirect($"{prefix}{UnityEngine.Random.Range(1, count + 1)}", pitch);
+            else PlaySfxDirect(prefix, pitch);
         }
 
-        /// <summary>
-        /// Проигрывает вариацию в заданном диапазоне (для обратной совместимости).
-        /// </summary>
-        public void PlaySfxVariation(string prefix, int minIndex, int maxIndex, float pitch)
+        public void PlaySfxVariation(string prefix, int min, int max, float pitch = 1f)
         {
-            int randomIndex = UnityEngine.Random.Range(minIndex, maxIndex + 1);
-            PlaySfxDirect($"{prefix}{randomIndex}", pitch);
+            string id = $"{prefix}{UnityEngine.Random.Range(min, max + 1)}";
+            PlaySfxDirect(id, pitch);
         }
 
-        private void PlaySfxDirect(string id, float pitch)
+        public void PlaySfxDirect(string id, float pitch = 1f)
         {
             if (IsSpamming(id)) return;
-
             var data = _config.GetById(id);
             if (data != null)
             {
@@ -108,131 +90,56 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
             if (data == null) return;
 
             _lastPlayedTimes[category.ToString()] = Time.time;
-            float pitch = useRandomPitch ? data.BasePitch * Random.Range(0.9f, 1.1f) : data.BasePitch;
-            _manager.PlaySfx(data.Clip, data.Volume, pitch * multiplier);
+            float pitch = useRandomPitch ? data.BasePitch * UnityEngine.Random.Range(0.9f, 1.1f) : data.BasePitch;
+            _manager.PlaySfx(data.Clip, data.Volume, pitch * multiplier, category == AudioCategoryType.UI);
         }
 
-        // --- ЗАЦИКЛЕННЫЕ SFX (ГЛАЙД, СКОЛЬЖЕНИЕ ПО СТЕНЕ) ---
-
-        /// <summary>
-        /// Запускает зацикленный звук из вариаций. Возвращает ID для остановки или смены питча.
-        /// </summary>
-        public string PlaySfxVariationLoop(string prefix, int minIndex, int maxIndex, float volumeMultiplier = 1f)
+        // --- LOOP ---
+        public string PlaySfxVariationLoop(string prefix, int min, int max, float volMult = 1f)
         {
-            int randomIndex = UnityEngine.Random.Range(minIndex, maxIndex + 1);
-            string fullId = $"{prefix}{randomIndex}";
+            string id = $"{prefix}{UnityEngine.Random.Range(min, max + 1)}";
+            if (_activeLoops.ContainsKey(id)) return id;
 
-            if (_activeLoops.ContainsKey(fullId)) return fullId;
-
-            var data = _config.GetById(fullId);
+            var data = _config.GetById(id);
             if (data == null) return null;
 
-            AudioSource source = _manager.PlaySfxReturnSource(data.Clip, data.Volume * volumeMultiplier, data.BasePitch);
-            if (source != null)
-            {
-                source.loop = true;
-                _activeLoops[fullId] = source;
-                return fullId;
-            }
+            AudioSource source = _manager.PlaySfxReturnSource(data.Clip, data.Volume * volMult, data.BasePitch);
+            if (source != null) { source.loop = true; _activeLoops[id] = source; return id; }
             return null;
         }
 
-        /// <summary>
-        /// Динамически меняет питч у активного зацикленного звука (например, от скорости падения).
-        /// </summary>
         public void SetPitch(string loopId, float targetPitch)
         {
-            if (string.IsNullOrEmpty(loopId)) return;
-            if (_activeLoops.TryGetValue(loopId, out AudioSource source) && source != null)
-            {
-                source.pitch = targetPitch;
-            }
+            if (!string.IsNullOrEmpty(loopId) && _activeLoops.TryGetValue(loopId, out var source))
+                if (source != null) source.pitch = targetPitch;
         }
 
-        /// <summary>
-        /// Останавливает зацикленный звук по его ID.
-        /// </summary>
         public void StopSfx(string loopId)
         {
-            if (string.IsNullOrEmpty(loopId)) return;
-            if (_activeLoops.TryGetValue(loopId, out AudioSource source))
+            if (!string.IsNullOrEmpty(loopId) && _activeLoops.TryGetValue(loopId, out var s))
             {
-                if (source != null)
-                {
-                    source.Stop();
-                    source.loop = false;
-                }
+                if (s != null) { s.Stop(); s.loop = false; }
                 _activeLoops.Remove(loopId);
             }
         }
 
-        // --- МУЗЫКА И ПЛЕЙЛИСТЫ ---
-
-        public void StartPlaylist(string playlistId)
+        // --- МУЗЫКА ---
+        public void StartPlaylist(string id)
         {
-            var playlist = _config.GetPlaylist(playlistId);
-            if (playlist == null) return;
-
-            SetMusicMuted(false);
-            _currentPlaylist = playlist;
-            _lastTrackIndex = -1;
-            PlayNextFromPlaylist();
+            _currentPlaylist = _config.GetPlaylist(id);
+            if (_currentPlaylist != null) { _lastTrackIndex = -1; PlayNextFromPlaylist(); }
         }
 
         private void PlayNextFromPlaylist()
         {
             if (_currentPlaylist == null || _currentPlaylist.Tracks.Count == 0) return;
+            int idx = _currentPlaylist.Tracks.Count == 1 ? 0 : UnityEngine.Random.Range(0, _currentPlaylist.Tracks.Count);
+            if (idx == _lastTrackIndex && _currentPlaylist.Tracks.Count > 1) idx = (idx + 1) % _currentPlaylist.Tracks.Count;
 
-            int nextIndex;
-            if (_currentPlaylist.Tracks.Count == 1) nextIndex = 0;
-            else
-            {
-                do { nextIndex = Random.Range(0, _currentPlaylist.Tracks.Count); }
-                while (nextIndex == _lastTrackIndex);
-            }
-
-            _lastTrackIndex = nextIndex;
-            _manager.PlayMusic(_currentPlaylist.Tracks[nextIndex], _currentPlaylist.Volume, false);
+            _lastTrackIndex = idx;
+            _manager.PlayMusic(_currentPlaylist.Tracks[idx], _currentPlaylist.Volume, false);
         }
 
-        // --- УПРАВЛЕНИЕ МИКСЕРОМ ---
-
-        public void SetMusicMuted(bool isMuted, float duration = 0f, ICoroutinesPerformer performer = null)
-        {
-            float targetVolume = isMuted ? -15f : 0f;
-
-            if (duration > 0 && performer != null)
-                performer.StartPerform(FadeMixerGroup("MusicVolume", targetVolume, duration));
-            else
-                _mixer.SetFloat("MusicVolume", targetVolume);
-        }
-
-        public IEnumerator FadeMixerGroup(string parameterName, float targetDb, float duration)
-        {
-            _mixer.GetFloat(parameterName, out float startValue);
-            float timer = 0;
-
-            while (timer < duration)
-            {
-                timer += Time.deltaTime;
-                float newValue = Mathf.Lerp(startValue, targetDb, timer / duration);
-                _mixer.SetFloat(parameterName, newValue);
-                yield return null;
-            }
-            _mixer.SetFloat(parameterName, targetDb);
-        }
-
-        private bool IsSpamming(string id)
-        {
-            if (_lastPlayedTimes.TryGetValue(id, out float lastTime))
-                return (Time.time - lastTime) < GlobalSfxCooldown;
-            return false;
-        }
-
-        // Добавь это в AudioService.cs
-        public int GetVariationCount(string prefix)
-        {
-            return _config.GetVariationCount(prefix);
-        }
+        private bool IsSpamming(string id) => _lastPlayedTimes.TryGetValue(id, out float t) && (Time.time - t) < GlobalSfxCooldown;
     }
 }

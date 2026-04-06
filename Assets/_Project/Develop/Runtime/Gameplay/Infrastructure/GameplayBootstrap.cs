@@ -66,7 +66,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 // Плавно возвращаем музыку в норму за 1 секунду после рестарта
                 // Используем ICoroutinesPerformer из контейнера (или сам бутстрап через MonoBehaviour)
                 var performer = _container.Resolve<ICoroutinesPerformer>();
-                _audioService.SetMusicMuted(false, 1f, performer);
+                _audioService.SetMusicMuted(false);
             }
             else
             {
@@ -110,7 +110,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private void LateUpdate()
         {
             _cameraService?.Update(Time.deltaTime);
-            _screenPresenter?.LateUpdate();
         }
     }
 }

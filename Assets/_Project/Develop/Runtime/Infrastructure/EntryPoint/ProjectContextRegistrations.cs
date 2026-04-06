@@ -73,7 +73,7 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
 
             // Достаем миксер из менеджера (убедись, что в AudioManager.cs есть публичное поле Mixer 
             // или достань его через outputAudioMixerGroup.audioMixer)
-            var mixer = managerInstance.MusicMixer;
+            UnityEngine.Audio.AudioMixer mixer = managerInstance.MainMixer;
 
             return new AudioService(config, managerInstance, mixer);
         }

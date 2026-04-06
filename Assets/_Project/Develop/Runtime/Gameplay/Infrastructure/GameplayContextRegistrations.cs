@@ -32,8 +32,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _inputArgs = inputArgs;
 
             container.RegisterAsSingle(CreateGameplayUIRoot).NonLazy();
+
+            container.RegisterAsSingle(CreateGameplayPopupService).NonLazy();
+
             container.RegisterAsSingle(CreateGameplayScreenPresenter).NonLazy();
-            container.RegisterAsSingle(CreateGameplayPopupService);
+
             container.RegisterAsSingle(CreateGameplayPresentersFactory);
 
             container.RegisterAsSingle(CreateEntitiesFactory).NonLazy();

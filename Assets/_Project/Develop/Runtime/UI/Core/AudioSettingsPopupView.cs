@@ -11,20 +11,22 @@ namespace Assets._Project.Develop.Runtime.UI.AudioSettingsPopup
         [SerializeField] private Slider _masterSlider;
         [SerializeField] private Button _masterToggle;
         [SerializeField] private Image _masterToggleIcon;
+        [SerializeField] private Sprite _masterUnmutedIcon;
+        [SerializeField] private Sprite _masterMutedIcon;
 
         [Header("Music")]
         [SerializeField] private Slider _musicSlider;
         [SerializeField] private Button _musicToggle;
         [SerializeField] private Image _musicToggleIcon;
+        [SerializeField] private Sprite _musicUnmutedIcon;
+        [SerializeField] private Sprite _musicMutedIcon;
 
         [Header("SFX")]
         [SerializeField] private Slider _sfxSlider;
         [SerializeField] private Button _sfxToggle;
         [SerializeField] private Image _sfxToggleIcon;
-
-        [Header("Icons")]
-        [SerializeField] private Sprite _mutedIcon;
-        [SerializeField] private Sprite _unmutedIcon;
+        [SerializeField] private Sprite _sfxUnmutedIcon;
+        [SerializeField] private Sprite _sfxMutedIcon;
 
         public Slider MasterSlider => _masterSlider;
         public Slider MusicSlider => _musicSlider;
@@ -35,25 +37,17 @@ namespace Assets._Project.Develop.Runtime.UI.AudioSettingsPopup
         public Button SFXToggle => _sfxToggle;
 
         public void SetMasterToggleIcon(bool muted)
-            => _masterToggleIcon.sprite = muted ? _mutedIcon : _unmutedIcon;
+            => _masterToggleIcon.sprite = muted ? _masterMutedIcon : _masterUnmutedIcon;
 
         public void SetMusicToggleIcon(bool muted)
-            => _musicToggleIcon.sprite = muted ? _mutedIcon : _unmutedIcon;
+            => _musicToggleIcon.sprite = muted ? _musicMutedIcon : _musicUnmutedIcon;
 
         public void SetSFXToggleIcon(bool muted)
-            => _sfxToggleIcon.sprite = muted ? _mutedIcon : _unmutedIcon;
+            => _sfxToggleIcon.sprite = muted ? _sfxMutedIcon : _sfxUnmutedIcon;
 
-        // Двигаем слайдер без нотификации (чтоб не зациклить колбэки)
-        public void SetMasterSliderSilent(float value) => SetSliderSilent(_masterSlider, value);
-        public void SetMusicSliderSilent(float value) => SetSliderSilent(_musicSlider, value);
-        public void SetSFXSliderSilent(float value) => SetSliderSilent(_sfxSlider, value);
-
-        private void SetSliderSilent(Slider slider, float value)
-        {
-            slider.onValueChanged.RemoveAllListeners();
-            slider.value = value;
-            // listeners вернёт Presenter через Initialize
-        }
+        public void SetMasterSliderSilent(float value) => _masterSlider.SetValueWithoutNotify(value);
+        public void SetMusicSliderSilent(float value) => _musicSlider.SetValueWithoutNotify(value);
+        public void SetSFXSliderSilent(float value) => _sfxSlider.SetValueWithoutNotify(value);
 
         protected override void ModifyShowAnimation(Sequence animation)
         {

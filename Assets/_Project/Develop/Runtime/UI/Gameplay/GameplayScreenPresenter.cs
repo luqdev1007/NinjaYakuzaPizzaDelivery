@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay
 {
@@ -8,26 +9,23 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
     {
         private readonly GameplayScreenView _view;
         private readonly GameplayPresentersFactory _gameplayPresentersFactory;
-        private readonly PopupService _popupService;
-
-        private EntitiesHealthDisplayPresenter _entitiesHealthDisplayPresenter;
+        private readonly GameplayPopupService _popupService;
 
         private readonly List<IPresenter> _childPresenters = new();
 
         public GameplayScreenPresenter(
             GameplayScreenView view,
             GameplayPresentersFactory gmeplayPresentersFactory,
-            PopupService popupService)
+            GameplayPopupService gameplayPopupService)
         {
             _view = view;
             _gameplayPresentersFactory = gmeplayPresentersFactory;
-            _popupService = popupService;
+            _popupService = gameplayPopupService;
         }
 
         public void Initialize()
         {
-            CreateEntitiesHealthDisplay();
-
+            Debug.Log("GameplayScreenPresenter Initialized!");
             _view.OpenAudioSettingsButton.onClick.AddListener(OnOpenAudioSettingsButtonClicked);
 
             foreach (IPresenter presenter in _childPresenters)
@@ -48,19 +46,5 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
             _childPresenters.Clear();
         }
-
-        public void LateUpdate()
-        {
-            _entitiesHealthDisplayPresenter.LateUpdate();
-        }
-
-        private void CreateEntitiesHealthDisplay()
-        {
-            _entitiesHealthDisplayPresenter = _gameplayPresentersFactory
-                .CreateEntitiesHealthDisplayPresenter(_view.EntitiesHealthDisplay);
-
-            _childPresenters.Add(_entitiesHealthDisplayPresenter);
-        }
-    }
-    
+    } 
 }
