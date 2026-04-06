@@ -7,16 +7,18 @@ using System;
 using System.Collections;
 using UnityEngine;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
     public class MeleeAttackHitSystem : IInitializableSystem, IDisposableSystem
     {
+        private readonly ICoroutinesPerformer _coroutines;
+        private readonly CameraService _cameraService;
+
         private Entity _entity;
         private IDisposable _attackDelayEndDisposable;
-        private readonly ICoroutinesPerformer _coroutines;
 
-        // Кэшируем ссылки на компоненты для удобства доступа
         private ReactiveEvent _successfulHitEvent;
         private ReactiveVariable<float> _attackRange;
         private ReactiveVariable<float> _attackDamage;
@@ -29,16 +31,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private ReactiveVariable<Vector2> _groundBounceModifiers;
         private ReactiveVariable<Vector2> _airBounceModifiers;
 
-        public MeleeAttackHitSystem(ICoroutinesPerformer coroutines)
+        public MeleeAttackHitSystem(ICoroutinesPerformer coroutines, CameraService cameraService)
         {
             _coroutines = coroutines;
+            _cameraService = cameraService;
         }
 
         public void OnInit(Entity entity)
         {
             _entity = entity;
 
-            // Инициализируем ссылки из компонентов сущности
             _successfulHitEvent = _entity.SuccessfulHitEvent;
             _attackRange = _entity.AttackRange;
             _attackDamage = _entity.AttackDamage;
@@ -79,7 +81,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
             if (hitAny)
             {
+                // Эффекты обратной связи
                 _successfulHitEvent?.Invoke();
+
+                // Слэшер-эффекты камеры
+                _cameraService.Shake(0.4f);      // Легкая встряска
+                _cameraService.ZoomImpulse(0.6f); // Резкий наезд камеры
 
                 ApplyJuggle(dir);
                 ExtendInvulnerability();
@@ -103,8 +110,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private void ApplyJuggle(float direction)
         {
             float baseForce = _hitBounceForce.Value;
-
-            // Используем реактивные векторы из компонентов
             Vector2 modifiers = _entity.IsGrounded.Value
                 ? _groundBounceModifiers.Value
                 : _airBounceModifiers.Value;
@@ -131,10 +136,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         {
             float originalScale = Time.timeScale;
             Time.timeScale = _hitStopScale.Value;
-
-            // Используем Realtime, чтобы корутина не замерзла вместе с Time.timeScale
             yield return new WaitForSecondsRealtime(_hitStopDuration.Value);
-
             Time.timeScale = originalScale;
         }
 

@@ -7,6 +7,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
+using Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.HangWall;
@@ -88,6 +89,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddGroundMask(config.GroundMask)
 
                 // — драйв (баг-фича) —
+                .AddIsDriveActive(new ReactiveVariable<bool>(false))
+                .AddDriveAvailableJumps(new ReactiveVariable<int>(1))
+                .AddDriveDuration(new ReactiveVariable<float>(3))
 
                 // — движение —
                 .AddMoveDirection()
@@ -107,15 +111,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddDoubleJumpEvent()
 
                 // wall jump params
-                // В AddHeroComponents
-                .AddWallJumpLockTimer(new ReactiveVariable<float>(0f)) // Добавь этот компонент в Entity
-
+                .AddWallJumpLockTimer(new ReactiveVariable<float>(0f))
+                .AddIsWallJumping(new ReactiveVariable<bool>(false))
                 .AddWallJumpParams(
                     config.WallJump.VelocityYAbs,
                     config.WallJump.JumpForce,
                     config.WallJump.ControlLockDuration
                 )
-                .AddIsWallJumping(new ReactiveVariable<bool>(false))
 
                 // — рывок —
                 .AddIsDashing()
@@ -216,11 +218,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // лут
                 .AddCollectRange(new ReactiveVariable<float>(config.LootCollectRange))
-                /*
-                .AddContactCollidersBuffer(new Buffer<Collider2D>(64))
-                .AddContactEntitiesBuffer(new Buffer<Entity>(64))
-                .AddContactsDetectingMask(~0)
-                */
 
                 // — жизненный цикл —
                 .AddMaxHealth(new ReactiveVariable<float>(config.LifeCycle.MaxHealth))
@@ -260,6 +257,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new PlayerInputSystem(inputService))
                 .AddSystem(new GroundCheckSystem(coyoteTime: 0.1f))
 
+                // drive
+                .AddSystem(new DriveSystem(inputService))
+
                 // — движение —
                 .AddSystem(new RigidbodyMovementSystem(inputService))
                 .AddSystem(new JumpSystem(inputService, slopeSystem))
@@ -296,7 +296,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem())
                 .AddSystem(new AttackInvulnerabilitySystem())
-                .AddSystem(new MeleeAttackHitSystem(coroutinesPerformer))
+                .AddSystem(new MeleeAttackHitSystem(coroutinesPerformer, _cameraService))
 
                 // — урон / жизненный цикл —
                 .AddSystem(new ApplyDamageSystem())

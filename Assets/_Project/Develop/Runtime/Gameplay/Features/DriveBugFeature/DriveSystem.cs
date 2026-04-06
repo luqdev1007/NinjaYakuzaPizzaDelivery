@@ -37,7 +37,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
             _isGrounded = entity.IsGrounded;
 
             _driveDuration = entity.DriveDuration.Value;
-            _defaultGravity = 1f; // Можно также тянуть из entity.DefaultGravity, если есть
+            _defaultGravity = entity.Rigidbody.gravityScale;
         }
 
         public void OnUpdate(float deltaTime)
@@ -50,7 +50,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
             }
 
             // Проверка "зависания" гравитации через кэшированные состояния
-            if (_rigidbody.gravityScale < 0.1f && !_isDashing.Value && !_isThrowing.Value)
+            if (_rigidbody.gravityScale < 0.5f && !_isDashing.Value && !_isThrowing.Value) // GrapplySystem 0.5f
             {
                 if (_rigidbody.linearVelocity.magnitude > 8f)
                 {

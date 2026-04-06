@@ -10,9 +10,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
 
         private Vector3 _currentVelocity;
 
-        // Поля для эффекта тряски
+        // Поля для эффектов
         private float _shakeTimer;
         private float _shakeAmount;
+        private float _zoomImpulse; // Импульсный зум при ударе
 
         // --- НАСТРОЙКИ ЗУМА ---
         private const float MinSize = 7f;
@@ -61,21 +62,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
 
         public void Shake(float intensity)
         {
-            // Настраиваем силу (максимум 0.7 единиц смещения при интенсивности 1.0)
             _shakeAmount = intensity * 0.7f;
-            _shakeTimer = 0.2f; // Длительность эффекта в секундах
+            _shakeTimer = 0.2f;
+        }
+
+        public void ZoomImpulse(float intensity)
+        {
+            // Уменьшаем orthographicSize (приближаем), интенсивность 0.5-1.0 обычно достаточно
+            _zoomImpulse = intensity * 1.5f;
         }
 
         private Vector3 ApplyShake(Vector3 pos, float deltaTime)
         {
             if (_shakeTimer > 0)
             {
-                // Генерируем случайное смещение в круге
                 Vector2 randomOffset = Random.insideUnitCircle * _shakeAmount;
-
                 _shakeTimer -= deltaTime;
-
-                // Плавно уменьшаем силу тряски к концу таймера
                 _shakeAmount = Mathf.Lerp(_shakeAmount, 0, deltaTime * 5f);
 
                 return new Vector3(pos.x + randomOffset.x, pos.y + randomOffset.y, pos.z);
@@ -86,11 +88,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
 
         private void HandleDynamicZoom(float deltaTime)
         {
-            // Берем абсолютные значения скоростей по осям
             float speedX = Mathf.Abs(_currentVelocity.x);
             float speedY = Mathf.Abs(_currentVelocity.y);
 
-            // Вертикальный зум чуть более выражен (множитель 1.2)
             float verticalEmphasis = 1.2f;
             float effectiveSpeed = Mathf.Max(speedX, speedY * verticalEmphasis);
 
@@ -105,6 +105,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
                 float normalizedSpeed = Mathf.Clamp01((effectiveSpeed - MinVelocityThreshold) / (MaxVelocityForZoom - MinVelocityThreshold));
                 targetSize = Mathf.Lerp(MinSize, MaxSize, normalizedSpeed);
             }
+
+            // Применяем импульсный зум (вычитаем из целевого размера)
+            targetSize -= _zoomImpulse;
+
+            // Плавно возвращаем импульс к нулю (быстрее, чем основной зум)
+            _zoomImpulse = Mathf.Lerp(_zoomImpulse, 0, deltaTime * 10f);
 
             _camera.orthographicSize = Mathf.Lerp(_camera.orthographicSize, targetSize, deltaTime * ZoomSmoothness);
         }

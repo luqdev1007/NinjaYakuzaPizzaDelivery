@@ -37,6 +37,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         private bool _isPulling;
         private Vector2 _lastPullDirection;
 
+        public const float PullGravity = 0.2f; // config
+
         public GrappleSystem(
             IInputService input,
             ICoroutinesPerformer performer,
@@ -136,7 +138,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         private IEnumerator PullRoutine(Vector2 localOffset, Collider2D hit)
         {
-            _rigidbody.gravityScale = 0.2f;
+            _rigidbody.gravityScale = PullGravity;
 
             while (hit != null && hit.transform != null && _inputService.IsGrappleKeyHeld)
             {
