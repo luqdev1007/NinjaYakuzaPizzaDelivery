@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
@@ -9,8 +10,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
     public class DriveSystem : IInitializableSystem, IUpdatableSystem
     {
         private readonly IInputService _inputService;
+        private readonly CameraService _cameraService;
 
-        // Кэшированные ссылки на реактивные переменные
         private ReactiveVariable<bool> _isDriveActive;
         private ReactiveVariable<int> _driveJumps;
         private IReadOnlyVariable<bool> _isDashing;
@@ -18,41 +19,45 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
         private IReadOnlyVariable<bool> _isGrounded;
 
         private Rigidbody2D _rigidbody;
-        private float _driveDuration;
-        private float _timer;
         private float _defaultGravity;
 
-        public DriveSystem(IInputService inputService) => _inputService = inputService;
+        // --- ТАЙМЕР И НАСТРОЙКИ ---
+        private float _timer;
+        private const float MaxDriveDuration = 2.0f; // Максимальное время в полете (в реальных секундах)
+        private const float DriveTimeScale = 0.1f;    // Насколько сильно замедляем
+        private const float DriveZoomIntensity = 1.0f;
+
+        public DriveSystem(IInputService inputService, CameraService cameraService)
+        {
+            _inputService = inputService;
+            _cameraService = cameraService;
+        }
 
         public void OnInit(Entity entity)
         {
-            // Кэшируем компоненты/переменные один раз
             _rigidbody = entity.Rigidbody;
             _isDriveActive = entity.IsDriveActive;
             _driveJumps = entity.DriveAvailableJumps;
-
-            // Кэшируем переменные состояний других систем для быстрой проверки
             _isDashing = entity.IsDashing;
             _isThrowing = entity.IsThrowing;
             _isGrounded = entity.IsGrounded;
 
-            _driveDuration = entity.DriveDuration.Value;
             _defaultGravity = entity.Rigidbody.gravityScale;
         }
 
         public void OnUpdate(float deltaTime)
         {
-            // Используем только локальные закэшированные ссылки
             if (_isDriveActive.Value)
             {
-                UpdateDriveState(deltaTime);
+                // ВАЖНО: deltaTime здесь уже замедленный, поэтому таймер будет идти "медленно"
+                // Если нужно ограничение в реальных секундах, используй Time.unscaledDeltaTime
+                UpdateDriveState(Time.unscaledDeltaTime);
                 return;
             }
 
-            // Проверка "зависания" гравитации через кэшированные состояния
-            if (_rigidbody.gravityScale < 0.5f && !_isDashing.Value && !_isThrowing.Value) // GrapplySystem 0.5f
+            if (_rigidbody.gravityScale < 0.5f && !_isDashing.Value && !_isThrowing.Value)
             {
-                if (_rigidbody.linearVelocity.magnitude > 8f)
+                if (_rigidbody.linearVelocity.magnitude > 8f && !_isGrounded.Value)
                 {
                     ActivateDrive();
                 }
@@ -66,27 +71,37 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
         private void ActivateDrive()
         {
             _isDriveActive.Value = true;
-            _timer = _driveDuration;
+            _timer = MaxDriveDuration; // Сбрасываем таймер при входе
+
             _rigidbody.gravityScale = 0f;
+            _rigidbody.linearVelocity = Vector2.zero;
             _driveJumps.Value = 1;
 
-            Time.timeScale = 0.5f;
+            Time.timeScale = DriveTimeScale;
             Time.fixedDeltaTime = 0.02f * Time.timeScale;
+
+            _cameraService.ZoomImpulse(DriveZoomIntensity);
+            _cameraService.Shake(0.2f);
         }
 
-        private void UpdateDriveState(float deltaTime)
+        private void UpdateDriveState(float unscaledDeltaTime)
         {
-            _timer -= deltaTime;
+            _timer -= unscaledDeltaTime;
 
+            // Визуальный фидбек: можно слегка "потряхивать" зум чаще, когда время на исходе
+            if (Time.frameCount % 5 == 0)
+                _cameraService.ZoomImpulse(0.3f);
+
+            // 1. Выход по прыжку
             if (_inputService.IsJumpKeyPressed && _driveJumps.Value > 0)
             {
                 _driveJumps.Value--;
-                // Используем Rigidbody напрямую (он уже в кэше)
-                _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, 12f);
+                _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, 14f);
                 ExitDrive();
                 return;
             }
 
+            // 2. Авто-выход по таймеру или касанию земли
             if (_timer <= 0 || _isGrounded.Value)
             {
                 ExitDrive();
@@ -97,8 +112,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
         {
             _isDriveActive.Value = false;
             _rigidbody.gravityScale = _defaultGravity;
+
             Time.timeScale = 1f;
             Time.fixedDeltaTime = 0.02f;
+
+            _cameraService.Shake(0.15f);
         }
     }
 }

@@ -258,7 +258,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new GroundCheckSystem(coyoteTime: 0.1f))
 
                 // drive
-                .AddSystem(new DriveSystem(inputService))
+                .AddSystem(new DriveSystem(inputService, _cameraService))
 
                 // — движение —
                 .AddSystem(new RigidbodyMovementSystem(inputService))
