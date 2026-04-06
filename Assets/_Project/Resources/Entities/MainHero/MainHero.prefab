@@ -54872,10 +54872,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _lineRenderer: {fileID: 5669080116315496199}
   _ropeOrigin: {fileID: 1627724890756362828}
-  _precision: 20
-  _waveAmplitude: 0.5
-  _waveFrequency: 2
-  _straightenSpeed: 5
+  _precision: 50
+  _waveAmplitude: 2
+  _waveFrequency: 5
+  _straightenSpeed: 2
 --- !u!1 &3414043996500184739
 GameObject:
   m_ObjectHideFlags: 0

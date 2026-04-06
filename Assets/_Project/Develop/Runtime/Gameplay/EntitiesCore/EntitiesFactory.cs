@@ -262,7 +262,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // — движение —
                 .AddSystem(new RigidbodyMovementSystem(inputService))
-                .AddSystem(new JumpSystem(inputService, slopeSystem))
+                .AddSystem(new JumpSystem(inputService, slopeSystem, _cameraService))
                 .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.Attack.EnemyMask))
                 .AddSystem(new GlideSystem(inputService))
                 .AddSystem(new WallHangSystem(inputService, audioService))

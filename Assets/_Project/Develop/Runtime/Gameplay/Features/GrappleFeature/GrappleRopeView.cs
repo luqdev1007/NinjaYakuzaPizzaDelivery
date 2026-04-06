@@ -84,6 +84,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         private void DrawRope(Vector3 startPos, Vector3 endPos)
         {
+            // Рассчитываем направление перпендикулярное веревке для более естественного смещения
+            Vector3 direction = endPos - startPos;
+            Vector3 upDir = Vector3.Cross(direction, Vector3.forward).normalized;
+            if (upDir == Vector3.zero) upDir = Vector3.up;
+
             for (int i = 0; i < _precision; i++)
             {
                 float delta = (float)i / (_precision - 1);
@@ -91,9 +96,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
                 if (_animationTime < 1f)
                 {
-                    float wave = Mathf.Sin(delta * _waveFrequency * Mathf.PI) * _waveAmplitude;
-                    float multiplier = Mathf.Sin(delta * Mathf.PI) * (1f - _animationTime);
-                    pos += Vector3.up * wave * multiplier;
+                    // Используем Sin для мягкого затухания амплитуды к краям веревки
+                    float edgeFade = Mathf.Sin(delta * Mathf.PI);
+
+                    // Вычисляем волну (добавим Time.time для небольшого движения в полете)
+                    float wave = Mathf.Sin(delta * _waveFrequency * Mathf.PI + Time.time) * _waveAmplitude;
+
+                    // Усиливаем влияние анимации (используем квадратичное затухание для резкости)
+                    float multiplier = edgeFade * Mathf.Pow(1f - _animationTime, 2);
+
+                    // Смещаем позицию по перпендикуляру, а не просто вверх
+                    pos += upDir * wave * multiplier;
                 }
 
                 _lineRenderer.SetPosition(i, pos);

@@ -15,7 +15,7 @@ MonoBehaviour:
   <PrefabPath>k__BackingField: Entities/Projectiles/GrappleHook
   <ProjectileSpeed>k__BackingField: 60
   <MaxDistance>k__BackingField: 12
-  <MinDistance>k__BackingField: 1
+  <MinDistance>k__BackingField: 3
   <MaxCharges>k__BackingField: 100
   <HitMask>k__BackingField:
     serializedVersion: 2

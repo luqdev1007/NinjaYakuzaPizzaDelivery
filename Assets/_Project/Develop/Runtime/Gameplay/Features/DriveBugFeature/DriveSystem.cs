@@ -21,10 +21,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
         private Rigidbody2D _rigidbody;
         private float _defaultGravity;
 
-        // --- ТАЙМЕР И НАСТРОЙКИ ---
+        // Настройки таймера и эффектов
         private float _timer;
-        private const float MaxDriveDuration = 2.0f; // Максимальное время в полете (в реальных секундах)
-        private const float DriveTimeScale = 0.1f;    // Насколько сильно замедляем
+        private const float MaxDriveDuration = 2.0f; // 2 секунды реального времени
+        private const float DriveTimeScale = 0.1f;
         private const float DriveZoomIntensity = 1.0f;
 
         public DriveSystem(IInputService inputService, CameraService cameraService)
@@ -49,12 +49,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
         {
             if (_isDriveActive.Value)
             {
-                // ВАЖНО: deltaTime здесь уже замедленный, поэтому таймер будет идти "медленно"
-                // Если нужно ограничение в реальных секундах, используй Time.unscaledDeltaTime
                 UpdateDriveState(Time.unscaledDeltaTime);
                 return;
             }
 
+            // Условие входа
             if (_rigidbody.gravityScale < 0.5f && !_isDashing.Value && !_isThrowing.Value)
             {
                 if (_rigidbody.linearVelocity.magnitude > 8f && !_isGrounded.Value)
@@ -71,10 +70,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
         private void ActivateDrive()
         {
             _isDriveActive.Value = true;
-            _timer = MaxDriveDuration; // Сбрасываем таймер при входе
+            _timer = MaxDriveDuration;
 
             _rigidbody.gravityScale = 0f;
-            _rigidbody.linearVelocity = Vector2.zero;
+            _rigidbody.linearVelocity = Vector2.zero; // Замираем для прицеливания
             _driveJumps.Value = 1;
 
             Time.timeScale = DriveTimeScale;
@@ -88,20 +87,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
         {
             _timer -= unscaledDeltaTime;
 
-            // Визуальный фидбек: можно слегка "потряхивать" зум чаще, когда время на исходе
             if (Time.frameCount % 5 == 0)
                 _cameraService.ZoomImpulse(0.3f);
 
-            // 1. Выход по прыжку
+            // Прыжок обрабатывается в JumpSystem, здесь мы просто ловим момент для выхода
             if (_inputService.IsJumpKeyPressed && _driveJumps.Value > 0)
             {
-                _driveJumps.Value--;
-                _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, 14f);
+                // Мы не меняем velocity тут, это сделает JumpSystem
                 ExitDrive();
                 return;
             }
 
-            // 2. Авто-выход по таймеру или касанию земли
             if (_timer <= 0 || _isGrounded.Value)
             {
                 ExitDrive();
