@@ -10,7 +10,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
     {
         private const float MinSlopeAngle = 15f;
         private const float MaxSlopeAngle = 75f;
-        private const float DownhillAccelForce = 8f;
+        private const float DownhillAccelForce = 10f;
         private const float MaxAccumSpeed = 12f;
         private const float AccumGainRate = 4f;
         private const float MagnetForce = 15f;
