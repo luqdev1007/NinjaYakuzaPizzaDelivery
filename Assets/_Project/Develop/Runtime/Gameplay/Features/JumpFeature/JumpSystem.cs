@@ -101,12 +101,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
             float chargeRatio = _jumpChargeTime.Value > 0f ? _chargeTimer / _jumpChargeTime.Value : 1f;
             float verticalForce = Mathf.Lerp(_jumpForce.Value, _jumpForceMax.Value, chargeRatio);
 
-            // МОДИФИКАТОР ДРАЙВА
-            if (_isDriveActive.Value)
-            {
-                verticalForce *= 1.6f; // Усиливаем прыжок на 60%
-                _cameraService.Shake(0.3f); // Сочный удар по камере
-            }
+            // СОХРАНЯЕМ ФЛАГ ДРАЙВА ПЕРЕД ТЕМ КАК ОН ВЫКЛЮЧИТСЯ
+            bool wasInDrive = _isDriveActive.Value;
 
             if (_jumpsAvailable.Value < _maxJumps.Value)
                 _doubleJumpEvent.Invoke();
@@ -121,6 +117,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
             {
                 _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, 0f);
                 _rigidbody.AddForce(Vector2.up * verticalForce, ForceMode2D.Impulse);
+
+                // ДОПОЛНИТЕЛЬНЫЙ ПИНОК ПРИ ВЫХОДЕ ИЗ ДРАЙВА
+                if (wasInDrive)
+                {
+                    // Получаем направление от ввода игрока
+                    float horizontalInput = _inputService.MoveDirection.x;
+
+                    // Если игрок никуда не жмет, просто летим выше. 
+                    // Если жмет в сторону — летим по мощной диагонали.
+                    Vector2 extraBoost = new Vector2(horizontalInput * 17f, 15f);
+                    _rigidbody.AddForce(extraBoost, ForceMode2D.Impulse);
+
+                    _cameraService.Shake(0.4f);
+                    _cameraService.ZoomImpulse(1.2f);
+                }
             }
 
             _jumpsAvailable.Value--;

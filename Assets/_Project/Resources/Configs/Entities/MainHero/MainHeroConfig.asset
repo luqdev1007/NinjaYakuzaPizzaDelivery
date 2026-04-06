@@ -81,7 +81,7 @@ MonoBehaviour:
     <MinEjectVelocity>k__BackingField: 6
     <EjectForceMultiplier>k__BackingField: 0.8
     <AutoSlidePush>k__BackingField: 0.8
-    <JumpForce>k__BackingField: {x: 2, y: 10}
+    <JumpForce>k__BackingField: {x: 0.5, y: 15}
   _attack:
     <ProcessTime>k__BackingField: 0.2
     <DelayTime>k__BackingField: 0.1

@@ -15,6 +15,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
         private ReactiveVariable<bool> _isDriveActive;
         private ReactiveVariable<int> _driveJumps;
         private IReadOnlyVariable<bool> _isDashing;
+        private IReadOnlyVariable<bool> _isGliding;
         private IReadOnlyVariable<bool> _isThrowing;
         private IReadOnlyVariable<bool> _isGrounded;
 
@@ -23,7 +24,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
 
         // Настройки таймера и эффектов
         private float _timer;
-        private const float MaxDriveDuration = 2.0f; // 2 секунды реального времени
+        private const float MaxDriveDuration = 3.0f; // 3 секунды реального времени
         private const float DriveTimeScale = 0.1f;
         private const float DriveZoomIntensity = 1.0f;
 
@@ -39,6 +40,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
             _isDriveActive = entity.IsDriveActive;
             _driveJumps = entity.DriveAvailableJumps;
             _isDashing = entity.IsDashing;
+            _isGliding = entity.IsGliding;
             _isThrowing = entity.IsThrowing;
             _isGrounded = entity.IsGrounded;
 
@@ -54,7 +56,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
             }
 
             // Условие входа
-            if (_rigidbody.gravityScale < 0.5f && !_isDashing.Value && !_isThrowing.Value)
+            if (_rigidbody.gravityScale < 0.5f && !_isDashing.Value && !_isThrowing.Value && !_isGliding.Value)
             {
                 if (_rigidbody.linearVelocity.magnitude > 8f && !_isGrounded.Value)
                 {
@@ -90,10 +92,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
             if (Time.frameCount % 5 == 0)
                 _cameraService.ZoomImpulse(0.3f);
 
-            // Прыжок обрабатывается в JumpSystem, здесь мы просто ловим момент для выхода
+            // Если нажали прыжок — просто выходим. JumpSystem подхватит остальное.
             if (_inputService.IsJumpKeyPressed && _driveJumps.Value > 0)
             {
-                // Мы не меняем velocity тут, это сделает JumpSystem
                 ExitDrive();
                 return;
             }

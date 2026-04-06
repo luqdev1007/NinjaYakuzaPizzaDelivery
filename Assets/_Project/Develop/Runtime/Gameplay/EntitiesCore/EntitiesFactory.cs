@@ -257,9 +257,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new PlayerInputSystem(inputService))
                 .AddSystem(new GroundCheckSystem(coyoteTime: 0.1f))
 
-                // drive
-                .AddSystem(new DriveSystem(inputService, _cameraService))
-
                 // — движение —
                 .AddSystem(new RigidbodyMovementSystem(inputService))
                 .AddSystem(new JumpSystem(inputService, slopeSystem, _cameraService))
@@ -310,6 +307,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // лут
                 .AddSystem(new LootMagnetSystem(_collidersRegistryService))
                 .AddSystem(new LootDistanceCollectSystem(_entitiesLifeContext))
+
+                // drive (предпоследний)
+                .AddSystem(new DriveSystem(inputService, _cameraService))
 
                 // — последней всегда —
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
