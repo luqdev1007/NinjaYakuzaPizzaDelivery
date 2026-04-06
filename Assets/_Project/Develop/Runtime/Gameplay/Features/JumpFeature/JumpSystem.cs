@@ -2,7 +2,7 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature; // Добавлено
+using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using UnityEngine;
@@ -13,7 +13,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
     {
         private readonly IInputService _inputService;
         private readonly SlopeSystem _slopeSystem;
-        private readonly CameraService _cameraService; // Добавлено
+        private readonly CameraService _cameraService;
 
         private ReactiveEvent _doubleJumpEvent;
         private ReactiveEvent _jumpEvent;
@@ -21,7 +21,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
         private ICompositeCondition _canJump;
         private ReactiveVariable<bool> _isGrounded;
         private ReactiveVariable<bool> _isOnSlope;
-        private ReactiveVariable<bool> _isDriveActive; // Добавлено
+        private ReactiveVariable<bool> _isDriveActive;
         private ReactiveVariable<int> _jumpsAvailable;
         private ReactiveVariable<int> _maxJumps;
         private ReactiveVariable<float> _jumpForce;
@@ -49,12 +49,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
             _doubleJumpEvent = entity.DoubleJumpEvent;
             _jumpEvent = entity.JumpEvent;
             _slopeJumpForce = entity.SlopeJumpForce;
-
             _canJump = entity.CanJump;
             _isGrounded = entity.IsGrounded;
             _isOnSlope = entity.IsOnSlope;
-            _isDriveActive = entity.IsDriveActive; // Кэшируем состояние драйва
-
+            _isDriveActive = entity.IsDriveActive;
             _jumpsAvailable = entity.JumpsAvailable;
             _maxJumps = entity.MaxJumps;
             _jumpForce = entity.JumpForce;
@@ -66,19 +64,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
 
         public void OnUpdate(float deltaTime)
         {
+            // ЕСЛИ МЫ В ДРАЙВЕ - ЭТА СИСТЕМА НЕ ТРОГАЕТ ФИЗИКУ
+            if (_isDriveActive.Value) return;
+
             if (_isGrounded.Value || _isOnSlope.Value)
                 _jumpsAvailable.Value = _maxJumps.Value;
 
             if (_inputService.IsJumpKeyPressed) _jumpBufferTimer = JumpBufferTime;
             else _jumpBufferTimer -= deltaTime;
-
-            // Если мы в Драйве, зарядка не нужна — прыгаем мгновенно и мощно
-            if (_jumpBufferTimer > 0f && _isDriveActive.Value)
-            {
-                _jumpBufferTimer = 0f;
-                ExecuteJump();
-                return;
-            }
 
             if (_jumpBufferTimer > 0f && _canJump.Evaluate() && !_isCharging)
             {
@@ -98,11 +91,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
 
         private void ExecuteJump()
         {
-            float chargeRatio = _jumpChargeTime.Value > 0f ? _chargeTimer / _jumpChargeTime.Value : 1f;
+            float chargeRatio = _jumpChargeTime.Value > 0f ? _chargeTimer / _chargeTimer : 1f;
             float verticalForce = Mathf.Lerp(_jumpForce.Value, _jumpForceMax.Value, chargeRatio);
-
-            // СОХРАНЯЕМ ФЛАГ ДРАЙВА ПЕРЕД ТЕМ КАК ОН ВЫКЛЮЧИТСЯ
-            bool wasInDrive = _isDriveActive.Value;
 
             if (_jumpsAvailable.Value < _maxJumps.Value)
                 _doubleJumpEvent.Invoke();
@@ -117,21 +107,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
             {
                 _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, 0f);
                 _rigidbody.AddForce(Vector2.up * verticalForce, ForceMode2D.Impulse);
-
-                // ДОПОЛНИТЕЛЬНЫЙ ПИНОК ПРИ ВЫХОДЕ ИЗ ДРАЙВА
-                if (wasInDrive)
-                {
-                    // Получаем направление от ввода игрока
-                    float horizontalInput = _inputService.MoveDirection.x;
-
-                    // Если игрок никуда не жмет, просто летим выше. 
-                    // Если жмет в сторону — летим по мощной диагонали.
-                    Vector2 extraBoost = new Vector2(horizontalInput * 17f, 15f);
-                    _rigidbody.AddForce(extraBoost, ForceMode2D.Impulse);
-
-                    _cameraService.Shake(0.4f);
-                    _cameraService.ZoomImpulse(1.2f);
-                }
             }
 
             _jumpsAvailable.Value--;

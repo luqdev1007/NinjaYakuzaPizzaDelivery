@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
 {
+    // NOT WORK!
     public class DriveSystem : IInitializableSystem, IUpdatableSystem
     {
         private readonly IInputService _inputService;
@@ -22,9 +23,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
         private Rigidbody2D _rigidbody;
         private float _defaultGravity;
 
-        // Настройки таймера и эффектов
         private float _timer;
-        private const float MaxDriveDuration = 3.0f; // 3 секунды реального времени
+        private const float MaxDriveDuration = 3.0f;
         private const float DriveTimeScale = 0.1f;
         private const float DriveZoomIntensity = 1.0f;
 
@@ -43,7 +43,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
             _isGliding = entity.IsGliding;
             _isThrowing = entity.IsThrowing;
             _isGrounded = entity.IsGrounded;
-
             _defaultGravity = entity.Rigidbody.gravityScale;
         }
 
@@ -55,7 +54,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
                 return;
             }
 
-            // Условие входа
             if (_rigidbody.gravityScale < 0.5f && !_isDashing.Value && !_isThrowing.Value && !_isGliding.Value)
             {
                 if (_rigidbody.linearVelocity.magnitude > 8f && !_isGrounded.Value)
@@ -75,7 +73,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
             _timer = MaxDriveDuration;
 
             _rigidbody.gravityScale = 0f;
-            _rigidbody.linearVelocity = Vector2.zero; // Замираем для прицеливания
+            _rigidbody.linearVelocity = Vector2.zero;
             _driveJumps.Value = 1;
 
             Time.timeScale = DriveTimeScale;
@@ -92,10 +90,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
             if (Time.frameCount % 5 == 0)
                 _cameraService.ZoomImpulse(0.3f);
 
-            // Если нажали прыжок — просто выходим. JumpSystem подхватит остальное.
             if (_inputService.IsJumpKeyPressed && _driveJumps.Value > 0)
             {
-                ExitDrive();
+                _driveJumps.Value--;
+                ExecuteDriveJump(); // Придаем импульс прямо здесь
                 return;
             }
 
@@ -105,6 +103,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
             }
         }
 
+        private void ExecuteDriveJump()
+        {
+            // Рассчитываем направление вылета
+            float horizontalInput = _inputService.MoveDirection.x;
+
+            // Базовый мощный импульс: вверх + в сторону
+            Vector2 launchForce = new Vector2(horizontalInput * 18f, 16f);
+
+            // Сбрасываем скорость перед вылетом (на всякий случай)
+            _rigidbody.linearVelocity = Vector2.zero;
+
+            // Сначала выходим из драйва, чтобы вернулось время и гравитация
+            ExitDrive();
+
+            // ПРИКЛАДЫВАЕМ СИЛУ (теперь в нормальном времени)
+            _rigidbody.AddForce(launchForce, ForceMode2D.Impulse);
+
+            _cameraService.Shake(0.5f);
+            _cameraService.ZoomImpulse(1.4f);
+        }
+
         private void ExitDrive()
         {
             _isDriveActive.Value = false;
@@ -112,8 +131,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
 
             Time.timeScale = 1f;
             Time.fixedDeltaTime = 0.02f;
-
-            _cameraService.Shake(0.15f);
         }
     }
 }
