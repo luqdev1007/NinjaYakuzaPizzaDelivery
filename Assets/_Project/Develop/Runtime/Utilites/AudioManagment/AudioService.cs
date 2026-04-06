@@ -27,6 +27,37 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
             _manager.OnMusicEnded += PlayNextFromPlaylist;
         }
 
+        // Конвертация: слайдер 0..1 → децибелы -80..0
+        private float LinearToDb(float linear)
+            => linear <= 0f ? -80f : Mathf.Log10(linear) * 20f;
+
+        public void SetMasterVolume(float linear)
+            => _mixer.SetFloat("MasterVolume", LinearToDb(linear));
+
+        public void SetMusicVolume(float linear)
+            => _mixer.SetFloat("MusicVolume", LinearToDb(linear));
+
+        public void SetSFXVolume(float linear)
+            => _mixer.SetFloat("SFXVolume", LinearToDb(linear));
+
+        public float GetMasterVolume()
+        {
+            _mixer.GetFloat("MasterVolume", out float db);
+            return Mathf.Pow(10f, db / 20f);
+        }
+
+        public float GetMusicVolume()
+        {
+            _mixer.GetFloat("MusicVolume", out float db);
+            return Mathf.Pow(10f, db / 20f);
+        }
+
+        public float GetSFXVolume()
+        {
+            _mixer.GetFloat("SFXVolume", out float db);
+            return Mathf.Pow(10f, db / 20f);
+        }
+
         // --- МГНОВЕННЫЕ SFX (УДАРЫ, РЫВКИ) ---
 
         /// <summary>

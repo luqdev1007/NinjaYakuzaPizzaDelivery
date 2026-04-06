@@ -18,6 +18,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
         private ReactiveVariable<bool> _isGrounded;
         private ReactiveVariable<float> _lockTimer;
         private ReactiveVariable<Vector2> _moveDirection;
+        private ReactiveVariable<int> _jumpsAvailable;
+        private ReactiveVariable<int> _maxJumps;
 
         private WallJumpParams _params;
 
@@ -28,6 +30,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
             _rigidbody = entity.Rigidbody;
             _transform = entity.Transform;
             _groundMask = entity.GroundMask;
+
+            _jumpsAvailable = entity.JumpsAvailable;
+            _maxJumps = entity.MaxJumps;
 
             _isWallJumping = entity.IsWallJumping;
             _isGrounded = entity.IsGrounded;
@@ -79,6 +84,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
 
         private void PerformWallJump(int wallDir)
         {
+            // _jumpsAvailable.Value = _maxJumps.Value; // max
+            _jumpsAvailable.Value++; // +1
+
             // 1. Устанавливаем направление ВЗГЛЯДА в сторону отскока (от стены)
             // Это сработает в текущем кадре до того, как заблокируется canFlip
             _moveDirection.Value = new Vector2(-wallDir, _moveDirection.Value.y);

@@ -22,5 +22,7 @@
 
         public const string DialogDisplayView = nameof(DialogDisplayView);
         public const string HintView = nameof(HintView);
+
+        public const string AudioSettingsPopupView = nameof(AudioSettingsPopupView);
     }
 }

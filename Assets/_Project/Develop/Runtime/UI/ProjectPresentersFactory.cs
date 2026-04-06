@@ -4,12 +4,14 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+using Assets._Project.Develop.Runtime.UI.AudioSettingsPopup;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Core.ConfirmPopup;
 using Assets._Project.Develop.Runtime.UI.Dialog;
 using Assets._Project.Develop.Runtime.UI.LevelsMenuPopup;
 using Assets._Project.Develop.Runtime.UI.Wallet;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
@@ -60,6 +62,14 @@ namespace Assets._Project.Develop.Runtime.UI
                 currencyType, 
                 _container.Resolve<ConfigsProviderService>().GetConfig<CurrencyIconsConfig>(),
                 view);
+        }
+
+        public AudioSettingsPopupPresenter CreateAudioSettingsPopupPresenter(AudioSettingsPopupView view)
+        {
+            return new AudioSettingsPopupPresenter(
+                view,
+                _container.Resolve<AudioService>(),
+                _container.Resolve<ICoroutinesPerformer>());
         }
 
         public WalletPresenter CreateWalletPresenter(IconTextListView view)

@@ -42,14 +42,25 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             _view.StartGameButtonClicked += OnStartGameButtonClicked;
             _view.ResetStatsButtonClicked += OnResetStatsButtonClicked;
 
+            _view.OpenAudioSettingsButton.onClick.AddListener(OnOpenAudioSettingsButtonClicked);
+
             _walletPresenter = _presentersFactory.CreateWalletPresenter(_view.WalletView);
             _walletPresenter.Initialize();
+
+            // _disposables.Add(_walletPresenter);
+        }
+
+        private void OnOpenAudioSettingsButtonClicked()
+        {
+            _popupService.OpenAudioSettingsPopup();
         }
 
         public void Dispose()
         {
             _view.StartGameButtonClicked -= OnStartGameButtonClicked;
             _view.ResetStatsButtonClicked -= OnResetStatsButtonClicked;
+
+            _view.OpenAudioSettingsButton.onClick.RemoveListener(OnOpenAudioSettingsButtonClicked);
 
             _walletPresenter?.Dispose();
 

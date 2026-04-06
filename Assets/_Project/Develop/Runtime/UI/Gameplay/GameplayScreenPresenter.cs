@@ -8,6 +8,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
     {
         private readonly GameplayScreenView _view;
         private readonly GameplayPresentersFactory _gameplayPresentersFactory;
+        private readonly PopupService _popupService;
 
         private EntitiesHealthDisplayPresenter _entitiesHealthDisplayPresenter;
 
@@ -15,22 +16,33 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
         public GameplayScreenPresenter(
             GameplayScreenView view,
-            GameplayPresentersFactory gmeplayPresentersFactory)
+            GameplayPresentersFactory gmeplayPresentersFactory,
+            PopupService popupService)
         {
             _view = view;
             _gameplayPresentersFactory = gmeplayPresentersFactory;
+            _popupService = popupService;
         }
 
         public void Initialize()
         {
             CreateEntitiesHealthDisplay();
 
+            _view.OpenAudioSettingsButton.onClick.AddListener(OnOpenAudioSettingsButtonClicked);
+
             foreach (IPresenter presenter in _childPresenters)
                 presenter.Initialize();
         }
 
+        private void OnOpenAudioSettingsButtonClicked()
+        {
+            _popupService.OpenAudioSettingsPopup();
+        }
+
         public void Dispose()
         {
+            _view.OpenAudioSettingsButton.onClick.RemoveListener(OnOpenAudioSettingsButtonClicked);
+
             foreach (IPresenter presenter in _childPresenters)
                 presenter.Dispose();
 

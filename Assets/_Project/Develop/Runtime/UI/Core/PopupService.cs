@@ -1,4 +1,5 @@
-﻿using Assets._Project.Develop.Runtime.UI.Core.ConfirmPopup;
+﻿using Assets._Project.Develop.Runtime.UI.AudioSettingsPopup;
+using Assets._Project.Develop.Runtime.UI.Core.ConfirmPopup;
 using Assets._Project.Develop.Runtime.UI.LevelsMenuPopup;
 using System;
 using System.Collections.Generic;
@@ -91,6 +92,14 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             popup.Show();
 
             popup.CloseRequest += ClosePopup;
+        }
+
+        public AudioSettingsPopupPresenter OpenAudioSettingsPopup()
+        {
+            var view = ViewsFactory.Create<AudioSettingsPopupView>(ViewIDs.AudioSettingsPopupView, PopupLayer);
+            var popup = _presentersFactory.CreateAudioSettingsPopupPresenter(view);
+            OnPopupCreated(popup, view);
+            return popup;
         }
 
         private class PopupInfo

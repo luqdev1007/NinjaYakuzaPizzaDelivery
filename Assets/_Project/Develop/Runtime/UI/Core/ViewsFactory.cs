@@ -31,6 +31,8 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             {ViewIDs.DialogDisplayView, "UI/Dialog/DialogDisplayView" },
 
             {ViewIDs.HintView, "UI/Hint/HintView" },
+
+            { ViewIDs.AudioSettingsPopupView, "UI/Common/AudioSettingsPopupView" },
         };
 
         public ViewsFactory(ResourcesAssetsLoader resourcesAssetsLoader)

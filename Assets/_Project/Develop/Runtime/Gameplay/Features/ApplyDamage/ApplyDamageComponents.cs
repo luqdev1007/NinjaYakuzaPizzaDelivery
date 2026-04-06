@@ -1,7 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
 {
@@ -30,13 +29,4 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
     {
         public ICompositeCondition Value;
     }
-}
-
-public enum DamageType { General, Cut, Blunt, Electric, Grapple }
-
-public struct DamageData
-{
-    public float Amount;
-    public Vector2 SourcePosition;
-    public DamageType Type; // Добавляем тип
 }
