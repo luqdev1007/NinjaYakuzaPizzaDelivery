@@ -648,25 +648,44 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         }
 
         // PROJECTILES
-        public Entity CreateChargedSlashProjectile(Transform parent, float damage)
+        public Entity CreateChargedSlashProjectile(Transform parent, float damage, Vector2 direction, Entity owner)
         {
             Entity entity = CreateEmpty();
 
             MonoEntity mono = _monoEntitiesFactory.Create(entity, parent, "Entities/Projectiles/ChargedSlashProjectile");
+
+            ParticleSystem slashEffectPS = mono.transform.GetComponentInChildren<ParticleSystem>();
+
+            Vector3 localScale = parent.parent.localScale;
+            localScale.y = 1.5f;
+            localScale.x *= -1;
+            slashEffectPS.transform.localScale = localScale;
+
             mono.transform.SetParent(null);
+
+            float speed = Mathf.Abs(owner.Rigidbody.linearVelocityX) * 2;
+            speed = Mathf.Max(20, speed);
 
             entity
                 .AddAutoDeleteCurrentTime(new ReactiveVariable<float>(3f))
                 .AddAutoDeleteInitialTime(new ReactiveVariable<float>(3f))
 
-                .AddMoveDirection(new ReactiveVariable<Vector2>(mono.transform.right))
+                .AddMoveDirection(new ReactiveVariable<Vector2>(direction))
                 .AddIsMoving()
-                .AddMoveSpeed(new ReactiveVariable<float>(10))
+                .AddMoveSpeed(new ReactiveVariable<float>(speed))
 
                 .AddContactCollidersBuffer(new Buffer<Collider2D>(64))
                 .AddContactEntitiesBuffer(new Buffer<Entity>(64))
                 .AddBodyContactDamage(new ReactiveVariable<float>(damage))
                 .AddContactsDetectingMask(LayersAPI.LayerMaskEnemies)
+
+                /*
+                .AddTeam(owner.Team)
+
+                .AddDeathMask(LayersAPI.LayerMaskEnemies)
+                .AddIsTouchDeathMask()
+                .AddIsTouchAnotherTeam()
+                */
                 ;
 
             ICompositeCondition canMove = new CompositeCondition()

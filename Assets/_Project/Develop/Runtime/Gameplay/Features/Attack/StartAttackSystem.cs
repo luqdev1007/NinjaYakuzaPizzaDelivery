@@ -15,6 +15,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private ReactiveVariable<bool> _inAttackProcess;
         private ICompositeCondition _canStartAttack;
         private Transform _shootPoint;
+        private Entity _entity;
 
         // Поля для логики зажима
         private float _chargeTimer;
@@ -29,6 +30,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         public void OnInit(Entity entity)
         {
+            _entity = entity;
+
             _startAttackEvent = entity.StartAttackEvent;
             _inAttackProcess = entity.InAttackProcess;
             _canStartAttack = entity.CanStartAttack;
@@ -92,7 +95,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             // Если для слэша тоже нужна анимация взмаха мечом, 
             _startAttackEvent.Invoke();
 
-            _entitiesFactory.CreateChargedSlashProjectile(_shootPoint, damage: 10f);
+            _entitiesFactory.CreateChargedSlashProjectile(
+                _shootPoint, 
+                damage: _entity.AttackDamage.Value * 5, 
+                direction: _shootPoint.parent.localScale.x > 0? Vector2.right : Vector2.left,
+                _entity);
         }
     }
 }
