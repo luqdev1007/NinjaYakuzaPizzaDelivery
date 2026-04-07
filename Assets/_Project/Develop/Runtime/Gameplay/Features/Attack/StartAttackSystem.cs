@@ -93,6 +93,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             Debug.Log("<color=#FFD700><b>[ATTACK]</b></color> Слэш атака (Charged)");
 
             // Если для слэша тоже нужна анимация взмаха мечом, 
+            _inAttackProcess.Value = true;
             _startAttackEvent.Invoke();
 
             _entitiesFactory.CreateChargedSlashProjectile(
