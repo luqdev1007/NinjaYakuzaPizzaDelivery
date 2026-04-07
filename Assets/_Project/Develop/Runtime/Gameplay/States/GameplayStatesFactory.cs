@@ -51,7 +51,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         public StageProcessState CreateStageProcessState()
         {
-            return new StageProcessState(_container.Resolve<StageProviderService>(), _container.Resolve<LevelProgressService>());
+            return new StageProcessState(
+                _container.Resolve<StageProviderService>(), 
+                _container.Resolve<LevelProgressService>(),
+                _container.Resolve<CameraService>(),
+                _container.Resolve<FinalPointTriggerService>()
+                );
         }
 
         public WinState CreateWinState(GameplayInputArgs inputArgs)

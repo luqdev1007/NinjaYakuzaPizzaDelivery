@@ -64,12 +64,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             if (_inputArgs != null && _inputArgs.IsRestart)
             {
-                // Если это рестарт — скипаем всё нафиг
                 SkipIntro();
             }
             else
             {
-                // Первый вход — играем кино
                 _isIntroFinished = false;
                 _dialogFinished = _levelConfig.PreparationDialog == null;
                 _coroutines.StartPerform(ShowFinishIntro());
@@ -80,7 +78,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         {
             _cameraService.SetBehaviour(_panBehaviour);
 
-            // Сразу ставим камеру на финальную точку (или куда нужно)
             Vector3 targetPos = _finalPoint.FinalPointPosition;
             targetPos.z = -10f;
             Camera.main.transform.position = targetPos;
@@ -93,9 +90,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         private IEnumerator ShowFinishIntro()
         {
-            _cameraService.SetBehaviour(_panBehaviour);
-            yield return null;
+            // 1. Даем команду камере лететь к финишу с зумом 14 (чтобы увидеть масштаб)
+            _cameraService.ShowTargetTemporarily(_finalPoint.FinalPointPosition, 14f);
 
+            // 2. Параллельно может идти диалог
             if (_levelConfig.PreparationDialog != null)
             {
                 _activeDialog = _popupService.OpenDialog(_levelConfig.PreparationDialog, () =>
@@ -105,23 +103,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 });
             }
 
-            Vector3 targetPos = _finalPoint.FinalPointPosition;
-            targetPos.z = -10f;
-
-            float duration = 2f;
-            float elapsed = 0f;
-            Vector3 startPos = Camera.main.transform.position;
-
-            while (elapsed < duration)
-            {
-                elapsed += Time.deltaTime;
-                float t = Mathf.SmoothStep(0, 1, elapsed / duration);
-                Camera.main.transform.position = Vector3.Lerp(startPos, targetPos, t);
-                yield return null;
-            }
-
-            yield return new WaitForSeconds(0.8f);
+            // Ждем, пока камера долетит и диалог кончится
+            yield return new WaitForSeconds(2.5f);
             yield return new WaitUntil(() => _dialogFinished);
+
+            // 3. Возвращаем камеру в режим свободного панорамирования (PrepState это любит)
+            _cameraService.StopShowingTarget();
+            _cameraService.SetBehaviour(_panBehaviour);
 
             ShowHint();
             _isIntroFinished = true;

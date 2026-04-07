@@ -6,19 +6,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
     {
         private readonly Camera _camera;
         private ICameraBehaviour _currentBehaviour;
+        private ICameraBehaviour _backupBehaviour; // Для возврата к преследованию героя
         private Bounds? _levelBounds;
 
         private Vector3 _currentVelocity;
+        private float? _zoomOverride; // Принудительный зум (например, для показа цели)
 
         // Поля для эффектов
         private float _shakeTimer;
         private float _shakeAmount;
-        private float _zoomImpulse; // Импульсный зум при ударе
+        private float _zoomImpulse;
 
         // --- НАСТРОЙКИ ЗУМА ---
         private const float MinSize = 7f;
         private const float MaxSize = 12.5f;
         private const float ZoomSmoothness = 3f;
+        private const float OverrideZoomSmoothness = 5f; // Чтобы к цели зумилось быстрее
 
         // --- ПОРОГИ (DEADZONES) ---
         private const float MinVelocityThreshold = 3f;
@@ -34,16 +37,42 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
         public void SetBehaviour(ICameraBehaviour behaviour) => _currentBehaviour = behaviour;
         public void SetConstraints(Bounds bounds) => _levelBounds = bounds;
 
+        /// <summary>
+        /// Временно переключает камеру на точку (например, финиш) с заданным зумом.
+        /// </summary>
+        public void ShowTargetTemporarily(Vector3 targetPos, float zoomSize = 12f)
+        {
+            if (_currentBehaviour is PointLookBehaviour) return;
+
+            _backupBehaviour = _currentBehaviour;
+            _zoomOverride = zoomSize;
+            SetBehaviour(new PointLookBehaviour(targetPos, 0.6f));
+        }
+
+        /// <summary>
+        /// Возвращает камеру к предыдущему поведению (обычно к герою).
+        /// </summary>
+        public void StopShowingTarget()
+        {
+            if (_backupBehaviour != null)
+            {
+                SetBehaviour(_backupBehaviour);
+                _backupBehaviour = null;
+                _zoomOverride = null;
+            }
+        }
+
         public void Update(float deltaTime)
         {
             if (_currentBehaviour == null || deltaTime <= 0) return;
 
             Vector3 previousPos = _camera.transform.position;
 
-            // 1. Движение камеры к цели
+            // 1. Движение камеры к цели (через текущий Behaviour)
             Vector3 targetPos = _currentBehaviour.Update(previousPos, deltaTime);
 
-            // 2. Ограничение позиции границами уровня
+            // 2. Ограничение позиции границами уровня (только если мы не в свободном полете интро, 
+            // но обычно Clamp нужен всегда)
             if (_levelBounds.HasValue)
                 targetPos = ClampPosition(targetPos);
 
@@ -53,10 +82,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
             // 4. Применение позиции
             _camera.transform.position = targetPos;
 
-            // 5. Расчет чистой скорости для эффектов
+            // 5. Расчет чистой скорости для эффектов зума
             _currentVelocity = (targetPos - previousPos) / deltaTime;
 
-            // 6. Эффект динамического зума
+            // 6. Эффект динамического или принудительного зума
             HandleDynamicZoom(deltaTime);
         }
 
@@ -68,7 +97,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
 
         public void ZoomImpulse(float intensity)
         {
-            // Уменьшаем orthographicSize (приближаем), интенсивность 0.5-1.0 обычно достаточно
             _zoomImpulse = intensity * 1.5f;
         }
 
@@ -88,31 +116,38 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
 
         private void HandleDynamicZoom(float deltaTime)
         {
-            float speedX = Mathf.Abs(_currentVelocity.x);
-            float speedY = Mathf.Abs(_currentVelocity.y);
-
-            float verticalEmphasis = 1.2f;
-            float effectiveSpeed = Mathf.Max(speedX, speedY * verticalEmphasis);
-
             float targetSize;
 
-            if (effectiveSpeed < MinVelocityThreshold)
+            if (_zoomOverride.HasValue)
             {
-                targetSize = MinSize;
+                // Приоритет 1: Принудительный зум (кнопка Т или кат-сцена)
+                targetSize = _zoomOverride.Value;
             }
             else
             {
-                float normalizedSpeed = Mathf.Clamp01((effectiveSpeed - MinVelocityThreshold) / (MaxVelocityForZoom - MinVelocityThreshold));
-                targetSize = Mathf.Lerp(MinSize, MaxSize, normalizedSpeed);
+                // Приоритет 2: Динамический зум от скорости персонажа
+                float speedX = Mathf.Abs(_currentVelocity.x);
+                float speedY = Mathf.Abs(_currentVelocity.y);
+                float effectiveSpeed = Mathf.Max(speedX, speedY * 1.2f);
+
+                if (effectiveSpeed < MinVelocityThreshold)
+                {
+                    targetSize = MinSize;
+                }
+                else
+                {
+                    float normalizedSpeed = Mathf.Clamp01((effectiveSpeed - MinVelocityThreshold) / (MaxVelocityForZoom - MinVelocityThreshold));
+                    targetSize = Mathf.Lerp(MinSize, MaxSize, normalizedSpeed);
+                }
             }
 
-            // Применяем импульсный зум (вычитаем из целевого размера)
+            // Наложение импульса (зум-всплеск при ударе)
             targetSize -= _zoomImpulse;
-
-            // Плавно возвращаем импульс к нулю (быстрее, чем основной зум)
             _zoomImpulse = Mathf.Lerp(_zoomImpulse, 0, deltaTime * 10f);
 
-            _camera.orthographicSize = Mathf.Lerp(_camera.orthographicSize, targetSize, deltaTime * ZoomSmoothness);
+            // Плавное применение размера. Если есть override, используем более быструю доводку.
+            float smoothness = _zoomOverride.HasValue ? OverrideZoomSmoothness : ZoomSmoothness;
+            _camera.orthographicSize = Mathf.Lerp(_camera.orthographicSize, targetSize, deltaTime * smoothness);
         }
 
         private Vector3 ClampPosition(Vector3 pos)
@@ -126,9 +161,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
             float minY = b.min.y + camHeight;
             float maxY = b.max.y - camHeight;
 
+            // Если камера шире уровня — центрируем по X
             if (minX > maxX) pos.x = b.center.x;
             else pos.x = Mathf.Clamp(pos.x, minX, maxX);
 
+            // Если камера выше уровня — центрируем по Y
             if (minY > maxY) pos.y = b.center.y;
             else pos.y = Mathf.Clamp(pos.y, minY, maxY);
 
