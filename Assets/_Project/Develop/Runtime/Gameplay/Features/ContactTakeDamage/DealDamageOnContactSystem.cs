@@ -19,6 +19,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage
         public void OnInit(Entity entity)
         {
             _entity = entity;
+
             _contacts = entity.ContactEntitiesBuffer;
             _damage = entity.BodyContactDamage;
 

@@ -56,7 +56,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             rb.linearVelocity = new Vector2(Random.Range(-2f, 2f), Random.Range(3f, 5f));
             rb.angularVelocity = Random.Range(-360f, 360f);
 
-            slice.GetComponent<SpriteRenderer>().DOFade(0, 2f).OnComplete(() => Destroy(slice));
+            slice.transform.DOScale(0, 2f).OnComplete(() => Destroy(slice));
 
             _cheeseDripEffect.Play();
         }

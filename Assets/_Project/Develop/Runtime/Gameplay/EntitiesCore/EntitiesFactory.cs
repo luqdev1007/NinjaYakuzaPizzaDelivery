@@ -32,8 +32,11 @@ using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using Assets._Project.Develop.Runtime.Utilites.Timer;
+using System;
 using System.ComponentModel;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 {
@@ -287,7 +290,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // — атака —
                 .AddSystem(new AttackCancelSystem())
-                .AddSystem(new StartAttackSystem(inputService))
+                .AddSystem(new StartAttackSystem(inputService, this))
                 .AddSystem(new AttackProcessTimerSystem())
                 .AddSystem(new AttackDelayEndTriggerSystem())
                 .AddSystem(new EndAttackSystem())
@@ -641,6 +644,56 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
 
             _entitiesLifeContext.Add(entity);
+            return entity;
+        }
+
+        // PROJECTILES
+        public Entity CreateChargedSlashProjectile(Transform parent, float damage)
+        {
+            Entity entity = CreateEmpty();
+
+            MonoEntity mono = _monoEntitiesFactory.Create(entity, parent, "Entities/Projectiles/ChargedSlashProjectile");
+            mono.transform.SetParent(null);
+
+            entity
+                .AddAutoDeleteCurrentTime(new ReactiveVariable<float>(3f))
+                .AddAutoDeleteInitialTime(new ReactiveVariable<float>(3f))
+
+                .AddMoveDirection(new ReactiveVariable<Vector2>(mono.transform.right))
+                .AddIsMoving()
+                .AddMoveSpeed(new ReactiveVariable<float>(10))
+
+                .AddContactCollidersBuffer(new Buffer<Collider2D>(64))
+                .AddContactEntitiesBuffer(new Buffer<Entity>(64))
+                .AddBodyContactDamage(new ReactiveVariable<float>(damage))
+                .AddContactsDetectingMask(LayersAPI.LayerMaskEnemies)
+                ;
+
+            ICompositeCondition canMove = new CompositeCondition()
+                .Add(new FuncCondition(() => true))
+                ;
+
+            ICompositeCondition mustSelfRelease = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.AutoDeleteCurrentTime.Value <= 0))
+                ;
+
+            entity
+                .AddCanMove(canMove)
+                .AddMustSelfRelease(mustSelfRelease);
+
+            entity
+                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
+                .AddSystem(new BodyContactDetectingSystem())
+                .AddSystem(new DealDamageOnContactSystem())
+
+                .AddSystem(new TransformMovementSystem())
+                .AddSystem(new AutoDeleteTimerSystem())
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
+
+            _entitiesLifeContext.Add(entity);
+
+            Debug.Log("Created, timer: " + entity.AutoDeleteCurrentTime.Value);
+
             return entity;
         }
     }
