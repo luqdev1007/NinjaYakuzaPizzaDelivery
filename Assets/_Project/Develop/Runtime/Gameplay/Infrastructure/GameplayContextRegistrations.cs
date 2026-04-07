@@ -5,6 +5,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
+using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
@@ -71,6 +72,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             container.RegisterAsSingle(CreateLootFactory);
             container.RegisterAsSingle(CreateDropLootService);
+
+
+            container.RegisterAsSingle(CreateInGameTimerFeatureService);
+        }
+
+        private static InGameTimerFeatureService CreateInGameTimerFeatureService(DIContainer container)
+        {
+            return new InGameTimerFeatureService();
         }
 
         private static DropLootService CreateDropLootService(DIContainer container)

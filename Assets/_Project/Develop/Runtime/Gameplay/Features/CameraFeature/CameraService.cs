@@ -171,5 +171,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
 
             return pos;
         }
+
+        public void SetZoom(float size)
+        {
+            // Если камера ортографическая
+            _camera.orthographicSize = size;
+            // Если перспективная, то меняем fieldOfView
+            // _camera.fieldOfView = size; 
+        }
     }
 }

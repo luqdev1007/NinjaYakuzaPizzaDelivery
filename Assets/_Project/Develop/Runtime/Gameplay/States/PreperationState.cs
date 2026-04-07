@@ -156,7 +156,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             Entity hero = _mainHeroFactory.Create(_levelConfig.StartPlayerPosition);
             _stageProvider.StartCurrent();
+
+            // 1. Сначала принудительно выключаем временный показ цели, если он завис
+            _cameraService.StopShowingTarget();
+
+            // 2. Устанавливаем слежку за героем
             _cameraService.SetBehaviour(new FollowBehaviour(hero.Transform, new Vector3(0, 2, -10)));
+
+            // 3. ВОЗВРАЩАЕМ ЗУМ. 
+            // Если в CameraService есть метод ResetZoom() — используй его.
+            // Если нет, можно сделать прямо через Camera.main или прокинуть значение в сервис.
+            // Предположим, стандартный зум у тебя 7f:
+            _cameraService.SetZoom(10f);
         }
     }
 }

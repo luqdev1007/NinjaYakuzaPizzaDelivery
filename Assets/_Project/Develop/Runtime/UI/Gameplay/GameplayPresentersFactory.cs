@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.Configs.Dialog;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
@@ -10,9 +11,11 @@ using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Hints;
 using Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
+using Assets._Project.Develop.Runtime.UI.Gameplay.Timers;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
+using Assets._Project.Develop.Runtime.Utilites.Timer;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay
 {
@@ -78,12 +81,22 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
                 );
         }
 
+        public InGameTimerPresenter CreateTimerPresenter(InGameTimerView view, float targetTime)
+        {
+            TimerService timerService = _container.Resolve<TimerServiceFactory>().Create(targetTime);
+
+            return new InGameTimerPresenter(view, timerService, _container.Resolve<InGameTimerFeatureService>(), targetTime);
+        }
+
         public GameplayScreenPresenter CreateGameplayScreen(GameplayScreenView view)
         {
+            LevelConfig levelConfig = _container.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>().GetBy(_inputArgs.LevelNumber);
+
             return new GameplayScreenPresenter(
                 view, 
                 _container.Resolve<GameplayPresentersFactory>(),
-                _container.Resolve<GameplayPopupService>()
+                _container.Resolve<GameplayPopupService>(),
+                levelConfig
                 );
         }
 

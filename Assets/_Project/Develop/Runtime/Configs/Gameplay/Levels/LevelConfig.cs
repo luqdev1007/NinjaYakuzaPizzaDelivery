@@ -11,6 +11,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Levels
         [SerializeField] private List<StageConfig> _stageConfigs;
         [SerializeField] private DialogConfig _configPrepDialog;
 
+        [field: SerializeField] public float TargetTime { get; private set; }
         [field: SerializeField] public string LevelName { get; private set; }
         [field: SerializeField] public int LevelNumber { get; private set; }
         [field: SerializeField] public Sprite LevelIcon { get; private set; }

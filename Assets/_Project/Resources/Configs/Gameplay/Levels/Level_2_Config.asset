@@ -15,6 +15,7 @@ MonoBehaviour:
   _stageConfigs:
   - {fileID: 11400000, guid: ad2ebdc480afcce4ab663bc95bc4f0f9, type: 2}
   _configPrepDialog: {fileID: 11400000, guid: 943bcf7fb606f51469786c299cc45e0c, type: 2}
+  <TargetTime>k__BackingField: 30
   <LevelName>k__BackingField: 2
   <LevelNumber>k__BackingField: 2
   <LevelIcon>k__BackingField: {fileID: 21300000, guid: ccda1e9d0a91445b08abb3958530382a, type: 3}
