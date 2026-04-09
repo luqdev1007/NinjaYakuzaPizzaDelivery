@@ -35,7 +35,8 @@ namespace Assets._Project.Develop.Runtime.Utilites.SceneManagement
             "You miss 100% of the pizzas you don't bake. — Michael Scott",
             "A real ninja never quits. Unless his shift is over",
             "Is a pepperoni slice a deadly shuriken? Only if you believe in yourself",
-            "Business is like a katana. If you hold it by the wrong end, you’re gonna have a bad day"
+            "Business is like a katana. If you hold it by the wrong end, you’re gonna have a bad day",
+            "You can grapple your own slash projectile or ride it and jump it! have fun!"
         };
 
         public SceneSwitcherService(

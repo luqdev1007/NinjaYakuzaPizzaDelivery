@@ -155,6 +155,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // — планирование —
                 .AddIsGliding()
+                .AddGlideCounterMultiplier(new ReactiveVariable<float>(config.Glide.CounterForceMultiplier))
                 .AddGlideHorizontalDrag(new ReactiveVariable<float>(config.Glide.HorizontalDrag))
                 .AddGlideMaxFallSpeed(new ReactiveVariable<float>(config.Glide.MaxFallSpeed))
                 .AddGlideSpeedDamping(new ReactiveVariable<float>(config.Glide.SpeedDamping))

@@ -9,6 +9,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         public ICompositeCondition Value;
     }
 
+    public class GlideCounterMultiplier : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+
     public class IsGliding : IEntityComponent
     {
         public ReactiveVariable<bool> Value;

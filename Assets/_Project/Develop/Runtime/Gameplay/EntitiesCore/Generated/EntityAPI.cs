@@ -2682,6 +2682,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.CanGlide() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideCounterMultiplier GlideCounterMultiplierC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideCounterMultiplier>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> GlideCounterMultiplier => GlideCounterMultiplierC.Value;
+
+		public bool TryGetGlideCounterMultiplier(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideCounterMultiplier component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideCounterMultiplier()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideCounterMultiplier() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideCounterMultiplier(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideCounterMultiplier() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.IsGliding IsGlidingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.IsGliding>();
 
 		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsGliding => IsGlidingC.Value;
