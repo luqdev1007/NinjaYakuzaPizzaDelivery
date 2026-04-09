@@ -1,11 +1,10 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
-using Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
-    public class CometRecoverySystem : IUpdatableSystem
+    public class CometRecoverySystem : IInitializableSystem, IUpdatableSystem
     {
         private Entity _entity;
 
@@ -13,24 +12,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         public void OnUpdate(float deltaTime)
         {
-            CometDashStateComponent state = _entity.CometDashStateC; ; // _entity.CometDashState;
+            var state = _entity.CometDashStateC;
 
-            // 1. Уменьшаем таймер кулдауна
+            // 1. Если таймер активен — уменьшаем его
             if (state.CooldownTimer.Value > 0)
             {
                 state.CooldownTimer.Value -= deltaTime;
-                return; // Пока висит КД, заряды не регеним
+                return;
             }
 
-            // 2. Если кулдаун вышел, а зарядов меньше макса — регеним по одному
-            if (state.CurrentCharges.Value < state.MaxCharges)
+            // 2. Если время вышло, начинаем восстановление
+            // Восстанавливаем множитель до 1.0 (можно сделать плавно через deltaTime)
+            if (state.CurrentMultiplier.Value < 1f)
             {
-                state.CurrentCharges.Value = state.MaxCharges;
+                // Либо мгновенно: state.CurrentMultiplier.Value = 1f;
+                // Либо плавно (например, за 1 секунду):
+                state.CurrentMultiplier.Value = Mathf.MoveTowards(state.CurrentMultiplier.Value, 1f, deltaTime);
+            }
 
-                // Сбрасываем множитель в исходное состояние (1.0)
-                state.CurrentMultiplier.Value = 1f;
-
-                Debug.Log("<color=green>[COMET]</color> Charges Restored!");
+            // 3. Восстанавливаем заряды рывка (Comet Dash)
+            if (state.CurrentCharges.Value < state.Config.MaxCharges)
+            {
+                state.CurrentCharges.Value = state.Config.MaxCharges;
+                Debug.Log("<color=green>[COMET]</color> Charges Restored");
             }
         }
     }

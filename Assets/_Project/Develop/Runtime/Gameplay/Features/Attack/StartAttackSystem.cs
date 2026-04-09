@@ -120,23 +120,39 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private void ExecuteChargedAttack()
         {
-            // Здесь будет спавн прожектайла слэша, а пока просто лог
+            var state = _entity.CometDashStateC;
+
+            // Блокируем атаку, если кулдаун еще не прошел
+            if (state.CooldownTimer.Value > 0)
+            {
+                Debug.Log("<color=red>[ATTACK]</color> Слэш на перезарядке!");
+                return;
+            }
+
             Debug.Log("<color=#FFD700><b>[ATTACK]</b></color> Слэш атака (Charged)");
 
-            // Если для слэша тоже нужна анимация взмаха мечом, 
             _inAttackProcess.Value = true;
             _startAttackEvent.Invoke();
 
-            // experiment
-            _entity.Rigidbody.linearVelocity = Vector2.zero;
-            _entity.Rigidbody.AddForce(Vector2.up * 15f, ForceMode2D.Impulse);
-            // experiment
-
-            _entitiesFactory.CreateChargedSlashProjectile(
-                _shootPoint, 
-                damage: _entity.AttackDamage.Value * 5, 
-                direction: _shootPoint.parent.localScale.x > 0? Vector2.right : Vector2.left,
+            // Спавним снаряд
+            var projectile = _entitiesFactory.CreateChargedSlashProjectile(
+                _shootPoint,
+                damage: _entity.AttackDamage.Value * 5 * state.CurrentMultiplier.Value,
+                direction: _shootPoint.parent.localScale.x > 0 ? Vector2.right : Vector2.left,
                 _entity);
+
+            // Применяем текущий коэффициент к силе подброса
+            float jumpForce = projectile.MoveSpeed.Value * state.CurrentMultiplier.Value;
+            // _entity.Rigidbody.linearVelocity = Vector2.zero;
+            _entity.Rigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+
+            // Уменьшаем множитель для следующего раза
+            state.CurrentMultiplier.Value *= state.Config.MultiplierDegradation;
+
+            // Устанавливаем кулдаун. Чем ниже упал множитель, тем дольше ждать (штраф за спам)
+            state.CooldownTimer.Value = state.Config.BaseCooldown;
+
+            // state.CurrentCharges.Value--;
         }
     }
 }

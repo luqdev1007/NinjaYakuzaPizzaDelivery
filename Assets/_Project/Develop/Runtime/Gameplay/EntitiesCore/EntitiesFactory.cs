@@ -87,6 +87,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
         private void AddHeroComponents(Entity entity, MainHeroConfig config)
         {
+            var cometConfig = new CometDashData
+            {
+                MaxCharges = 3,
+                MultiplierDegradation = 0.9f,
+                BaseCooldown = 0.1f,
+                OverheatCooldown = 6.0f
+            };
+
             entity
                 // — общее —
                 .AddMinFallVelocityForAction(new ReactiveVariable<float>(config.MinFallVelocityForAction))
@@ -136,15 +144,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddAirDashVerticalBoost(new ReactiveVariable<float>(config.Dash.VerticalBoost))
                 .AddDashDamage(new ReactiveVariable<float>(config.Dash.Damage))
                 .AddDashHitboxSize(new ReactiveVariable<Vector2>(config.Dash.HitboxSize))
+                // В EntitiesFactory
 
                 .AddCometDashState(
-                    3,                                   // MaxCharges (int)
-                    new ReactiveVariable<int>(3),        // CurrentCharges (ReactiveVariable<int>)
-                    new ReactiveVariable<float>(1f),     // CurrentMultiplier (ReactiveVariable<float>)
-                    0.6f,                                // MultiplierDegradation (float) - поставил 0.6 для теста
-                    2f,                                  // BaseCooldown (float)
-                    8f,                                  // OverheatCooldown (float)
-                    new ReactiveVariable<float>(0f)      // CooldownTimer (ReactiveVariable<float>)
+                    cometConfig,
+                    new ReactiveVariable<int>(3),
+                    new ReactiveVariable<float>(1f),
+                    new ReactiveVariable<float>(0f)
                 )
 
                 // — планирование —
@@ -282,6 +288,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new SlideSystem(inputService, coroutinesPerformer, slopeSystem))
                 .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask, _cameraService))
                 .AddSystem(slopeSystem)
+                .AddSystem(new CometRecoverySystem())
 
                 // — броски (Хук отдельно на ПКМ) —
                 .AddSystem(new GrappleSystem(
@@ -676,9 +683,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             mono.transform.SetParent(null);
 
-            float minSpeed = 30;
+            float minSpeed = 20;
             float impulseSpeed = Mathf.Abs(owner.Rigidbody.linearVelocityX) * 2;
-            impulseSpeed = Mathf.Max(minSpeed, impulseSpeed);
+            impulseSpeed = minSpeed; //  Mathf.Max(minSpeed, impulseSpeed);
 
             entity
                 .AddAutoDeleteCurrentTime(new ReactiveVariable<float>(3f))

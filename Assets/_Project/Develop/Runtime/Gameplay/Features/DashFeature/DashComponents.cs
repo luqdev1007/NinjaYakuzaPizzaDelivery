@@ -5,14 +5,25 @@ using UnityEngine;
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 {
     // Компонент для Героя
+    public struct CometDashData
+    {
+        public int MaxCharges;
+        public float MultiplierDegradation;
+        public float BaseCooldown;
+        public float OverheatCooldown;
+
+        // В структурах удобно держать только чистые данные (float, int, Vector2)
+        // ReactiveVariable лучше оставить в самом классе компонента для удобства подписки
+    }
+
     public class CometDashStateComponent : IEntityComponent
     {
-        public int MaxCharges = 3;
+        // Группируем конфиг
+        public CometDashData Config;
+
+        // Состояние (оставляем реактивным для UI/Систем)
         public ReactiveVariable<int> CurrentCharges;
-        public ReactiveVariable<float> CurrentMultiplier; // Изначально 1.0
-        public float MultiplierDegradation = 0.6f; // Коэффициент затухания
-        public float BaseCooldown = 2f;
-        public float OverheatCooldown = 8f;
+        public ReactiveVariable<float> CurrentMultiplier;
         public ReactiveVariable<float> CooldownTimer;
     }
 

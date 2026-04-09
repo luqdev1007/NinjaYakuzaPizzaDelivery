@@ -2972,9 +2972,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.CometDashStateComponent CometDashStateC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.CometDashStateComponent>();
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCometDashState(System.Int32 maxCharges,Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> currentCharges,Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> currentMultiplier,System.Single multiplierDegradation,System.Single baseCooldown,System.Single overheatCooldown,Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> cooldownTimer)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCometDashState(Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.CometDashData config,Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> currentCharges,Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> currentMultiplier,Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> cooldownTimer)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.CometDashStateComponent() {MaxCharges = maxCharges, CurrentCharges = currentCharges, CurrentMultiplier = currentMultiplier, MultiplierDegradation = multiplierDegradation, BaseCooldown = baseCooldown, OverheatCooldown = overheatCooldown, CooldownTimer = cooldownTimer}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.CometDashStateComponent() {Config = config, CurrentCharges = currentCharges, CurrentMultiplier = currentMultiplier, CooldownTimer = cooldownTimer}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.ChargedSlashProjectileTag ChargedSlashProjectileTagC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.ChargedSlashProjectileTag>();
