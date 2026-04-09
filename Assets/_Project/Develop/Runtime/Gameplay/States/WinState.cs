@@ -52,7 +52,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             Debug.Log("VICTORY!");
 
-            // Обращаемся к AudioService через твой DI (нужно добавить в конструктор)
             _audioService.SetMusicMuted(true);
 
             int reward = _configsProviderService.GetConfig<GameRewardsConfig>().RewardForWin;

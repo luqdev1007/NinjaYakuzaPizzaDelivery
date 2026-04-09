@@ -127,6 +127,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             _inAttackProcess.Value = true;
             _startAttackEvent.Invoke();
 
+            // experiment
+            _entity.Rigidbody.linearVelocity = Vector2.zero;
+            _entity.Rigidbody.AddForce(Vector2.up * 1.5f, ForceMode2D.Impulse);
+            // experiment
+
             _entitiesFactory.CreateChargedSlashProjectile(
                 _shootPoint, 
                 damage: _entity.AttackDamage.Value * 5, 

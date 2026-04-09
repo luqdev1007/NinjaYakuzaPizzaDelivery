@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Wallet;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.DataProviders;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,8 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
         private readonly ProjectPresentersFactory _presentersFactory;
 
         private WalletPresenter _walletPresenter;
+        private ICoroutinesPerformer _coroutinesPerformer;
+
         private List<IDisposable> _disposables = new();
 
         public MainMenuScreenPresenter(
@@ -27,13 +30,15 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             MainMenuPopupService mainMenuPopupService,
             ConfigsProviderService configsProviderService,
             PlayerDataProvider playerDataProvider,
-            ProjectPresentersFactory presentersFactory)
+            ProjectPresentersFactory presentersFactory,
+            ICoroutinesPerformer coroutinesPerformer)
         {
             _view = view;
             _mainMenupopupService = mainMenuPopupService;
             _configsProviderService = configsProviderService;
             _playerDataProvider = playerDataProvider;
             _presentersFactory = presentersFactory;
+            _coroutinesPerformer = coroutinesPerformer;
         }
 
         public void Initialize()
@@ -85,6 +90,7 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
         private void ResetStats()
         {
             _playerDataProvider.Reset();
+            _coroutinesPerformer.StartPerform(_playerDataProvider.SaveAsync());
         }
     }
 }

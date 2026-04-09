@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.Configs.Dialog;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
+using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
@@ -87,14 +88,20 @@ namespace Assets._Project.Develop.Runtime.UI
             return new ConfirmPopupPresenter(view, _container.Resolve<ICoroutinesPerformer>(), onConfirmButtonClicked, header);
         }
 
-        internal GameSettingsPopupPresenter CreateGameSettingsPopupPresenter(GameSettingsPopupView view, PopupService popupService)
+        public GameSettingsPopupPresenter CreateGameSettingsPopupPresenter(GameSettingsPopupView view, PopupService popupService)
         {
             return new GameSettingsPopupPresenter(
                 view,
                 _container.Resolve<ICoroutinesPerformer>(),
                 popupService,
-                _container.Resolve<SceneSwitcherService>()
+                _container.Resolve<SceneSwitcherService>(),
+                _container.Resolve<IInputService>()
                 );
+        }
+
+        public KeyBindingsSettingsPopupPresenter CreateKeyBindingsPopupPresenter(KeyBindingsSettingsPopupView view)
+        {
+            return new KeyBindingsSettingsPopupPresenter(view, _container.Resolve<ICoroutinesPerformer>());
         }
     }
 }

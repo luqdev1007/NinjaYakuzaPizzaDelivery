@@ -52,7 +52,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             container.RegisterAsSingle(CreateAIBrainContext);
 
-            container.RegisterAsSingle<IInputService>(CreateDesktopInput);
+
 
             container.RegisterAsSingle(CreateMainHeroFactory);
             container.RegisterAsSingle(CreateEnemiesFactory);
@@ -160,10 +160,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new EnemiesFactory(container);
         }
 
-        private static DesktopInput CreateDesktopInput(DIContainer container)
-        {
-            return new DesktopInput();
-        }
+
 
         private static AIBrainsContext CreateAIBrainContext(DIContainer container)
         {

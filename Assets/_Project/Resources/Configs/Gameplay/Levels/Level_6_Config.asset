@@ -16,8 +16,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ad2ebdc480afcce4ab663bc95bc4f0f9, type: 2}
   _configPrepDialog: {fileID: 11400000, guid: 943bcf7fb606f51469786c299cc45e0c, type: 2}
   <TargetTime>k__BackingField: 30
-  <LevelName>k__BackingField: 1
-  <LevelNumber>k__BackingField: 1
+  <LevelName>k__BackingField: 6
+  <LevelNumber>k__BackingField: 6
   <LevelIcon>k__BackingField: {fileID: 21300000, guid: ccda1e9d0a91445b08abb3958530382a, type: 3}
   <FinalPointPosition>k__BackingField: {x: 128.76, y: 4.76, z: 0}
   <StartPlayerPosition>k__BackingField: {x: -48.269997, y: -5.9, z: 0}

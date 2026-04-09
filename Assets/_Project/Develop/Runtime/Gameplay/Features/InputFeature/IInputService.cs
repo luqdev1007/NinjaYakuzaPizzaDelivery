@@ -30,5 +30,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
         Vector2 MoveDirection { get; }
         bool IsJumpKeyPressed { get; }
         bool IsAttackKeyPressed { get; }
+        bool IsRestartKeyPressed { get; }
     }
 }

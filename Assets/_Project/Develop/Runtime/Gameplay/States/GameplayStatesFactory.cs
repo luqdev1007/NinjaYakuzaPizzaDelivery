@@ -58,7 +58,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<LevelProgressService>(),
                 _container.Resolve<CameraService>(),
                 _container.Resolve<FinalPointTriggerService>(),
-                _container.Resolve<InGameTimerFeatureService>()
+                _container.Resolve<InGameTimerFeatureService>(),
+                _container.Resolve<IInputService>(),
+                _container.Resolve<ICoroutinesPerformer>(),
+                _container.Resolve<SceneSwitcherService>(),
+                _inputArgs
                 );
         }
 

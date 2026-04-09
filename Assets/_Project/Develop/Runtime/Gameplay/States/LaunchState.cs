@@ -7,7 +7,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
     {
         private float _elapsed;
 
-        public LaunchState(float duration)
+        public LaunchState(float duration = 0)
         {
             Duration = duration;
         }
@@ -26,10 +26,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         public void Update(float deltaTime)
         {
-            _elapsed += deltaTime;
+            Debug.Log("Press any key to start timer");
 
-            if (_elapsed >= Duration)
+            if (Input.anyKeyDown)
+            {
                 IsFinished = true;
+            }
         }
 
 

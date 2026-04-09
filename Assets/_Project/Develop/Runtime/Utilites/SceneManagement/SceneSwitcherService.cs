@@ -16,14 +16,26 @@ namespace Assets._Project.Develop.Runtime.Utilites.SceneManagement
         private readonly SceneLoaderService _sceneLoaderService;
         private readonly ILoadingScreen _loadingScreen;
         private readonly DIContainer _projectContainer;
-        private readonly ICoroutinesPerformer _coroutines; // Наш исполнитель корутин
+        private readonly ICoroutinesPerformer _coroutines; 
 
         private DIContainer _currentSceneContainer;
 
         private readonly List<string> _loadingHints = new List<string>
         {
-            "3.50$ vashno",
-            "Cake is a lie, but Pizza is real.",
+            "A $3.50 tip is a great start for a novice ninja",
+            "The cake is a lie, but the pizza is real",
+            "Beware of spooky red ghosts",
+            "Short or long click near any wall to hang on it",
+            "Hold the jump key to control your jump height",
+            "You have double jumps! They refresh once you touch the ground",
+            "Slopes are perfect for sliding",
+            "Dashing makes you invulnerable for a few seconds",
+            "I’m not superstitious, but I am a little stitious about delivery times",
+            "I want customers to be afraid of how much they love my pizza",
+            "You miss 100% of the pizzas you don't bake. — Michael Scott",
+            "A real ninja never quits. Unless his shift is over",
+            "Is a pepperoni slice a deadly shuriken? Only if you believe in yourself",
+            "Business is like a katana. If you hold it by the wrong end, you’re gonna have a bad day"
         };
 
         public SceneSwitcherService(
@@ -102,7 +114,7 @@ namespace Assets._Project.Develop.Runtime.Utilites.SceneManagement
                 string randomHint = _loadingHints[Random.Range(0, _loadingHints.Count)];
                 screen.SetHint(randomHint);
 
-                yield return new WaitForSeconds(3f);
+                yield return new WaitForSeconds(3f + randomHint.Length * 0.05f);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
 using Assets._Project.Develop.Runtime.Meta.Features.Stats;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
@@ -58,6 +59,13 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             container.RegisterAsSingle(CreateLevelsProgressionService).NonLazy();
 
             container.RegisterAsSingle(CreateAudioService);
+
+            container.RegisterAsSingle<IInputService>(CreateDesktopInput);
+        }
+
+        private static DesktopInput CreateDesktopInput(DIContainer container)
+        {
+            return new DesktopInput();
         }
 
         private static AudioService CreateAudioService(DIContainer container)

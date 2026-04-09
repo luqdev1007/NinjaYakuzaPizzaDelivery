@@ -665,8 +665,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             mono.transform.SetParent(null);
 
-            float speed = Mathf.Abs(owner.Rigidbody.linearVelocityX) * 2;
-            speed = Mathf.Max(20, speed);
+            float minSpeed = 30;
+            float impulseSpeed = Mathf.Abs(owner.Rigidbody.linearVelocityX) * 2;
+            impulseSpeed = Mathf.Max(minSpeed, impulseSpeed);
 
             entity
                 .AddAutoDeleteCurrentTime(new ReactiveVariable<float>(3f))
@@ -674,7 +675,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 .AddMoveDirection(new ReactiveVariable<Vector2>(direction))
                 .AddIsMoving()
-                .AddMoveSpeed(new ReactiveVariable<float>(speed))
+                .AddMoveSpeed(new ReactiveVariable<float>(impulseSpeed))
 
                 .AddContactCollidersBuffer(new Buffer<Collider2D>(64))
                 .AddContactEntitiesBuffer(new Buffer<Entity>(64))

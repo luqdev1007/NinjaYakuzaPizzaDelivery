@@ -25,6 +25,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
         public bool IsJumpKeyPressed => IsEnabled && Input.GetKeyDown(KeyCode.Space);
 
         public bool IsAttackKeyPressed => IsEnabled && Input.GetKeyDown(KeyCode.Mouse0);
+        public bool IsRestartKeyPressed => IsEnabled && Input.GetKeyDown(KeyCode.R);
         public bool IsAttackKeyHeld => IsEnabled && Input.GetKey(KeyCode.Mouse0);
         public bool IsAttackKeyReleased => IsEnabled && Input.GetKeyUp(KeyCode.Mouse0);
 

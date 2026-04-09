@@ -37,6 +37,8 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             { ViewIDs.GameSettingsPopupView, "UI/GameSettings/GameSettingsPopupView" },
             { ViewIDs.GraphicSettingsPopupView, "UI/GameSettings/GraphicSettingsPopupView" },
             { ViewIDs.LanguageSettingsPopupView, "UI/GameSettings/LanguageSettingsPopupView" },
+
+            { ViewIDs.KeyBindingsSettingsPopupView, "UI/KeyBindings/KeyBindingsSettingsPopupView" },
         };
 
         public ViewsFactory(ResourcesAssetsLoader resourcesAssetsLoader)

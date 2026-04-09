@@ -1,8 +1,6 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
-using Assets._Project.Develop.Runtime.Meta.Features.Stats;
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
-using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.DataProviders;
 
 namespace Assets._Project.Develop.Runtime.UI.MainMenu
@@ -23,7 +21,8 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
                 _container.Resolve<MainMenuPopupService>(),
                 _container.Resolve<ConfigsProviderService>(),
                 _container.Resolve<PlayerDataProvider>(),
-                _container.Resolve<ProjectPresentersFactory>()
+                _container.Resolve<ProjectPresentersFactory>(),
+                _container.Resolve<ICoroutinesPerformer>()
                 );
         } 
     }

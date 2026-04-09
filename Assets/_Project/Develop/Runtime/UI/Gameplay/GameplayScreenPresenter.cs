@@ -1,6 +1,10 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Timers;
+using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +17,10 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         private readonly GameplayPopupService _popupService;
 
         private LevelConfig _levelConfig;
+        private GameplayInputArgs _inputArgs;
+
+        private readonly SceneSwitcherService _sceneSwitcherService;
+        private readonly ICoroutinesPerformer _coroutinesPerformer;
 
         private readonly List<IPresenter> _childPresenters = new();
 
@@ -20,12 +28,18 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             GameplayScreenView view,
             GameplayPresentersFactory gmeplayPresentersFactory,
             GameplayPopupService gameplayPopupService,
-            LevelConfig levelConfig)
+            LevelConfig levelConfig,
+            SceneSwitcherService sceneSwitcherService,
+            ICoroutinesPerformer coroutinesPerformer,
+            GameplayInputArgs inputArgs)
         {
             _view = view;
             _gameplayPresentersFactory = gmeplayPresentersFactory;
             _popupService = gameplayPopupService;
             _levelConfig = levelConfig;
+            _sceneSwitcherService = sceneSwitcherService;
+            _coroutinesPerformer = coroutinesPerformer;
+            _inputArgs = inputArgs;
         }
 
         public void Initialize()
@@ -33,11 +47,18 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             Debug.Log("GameplayScreenPresenter Initialized!");
             _view.OpenGameSettingsButton.onClick.AddListener(OnOpenGameSettingsButtonClicked);
 
+            _view.RestartButton.onClick.AddListener(OnRestartButtonClicked);
+
             InGameTimerPresenter timerPresenter = _gameplayPresentersFactory.CreateTimerPresenter(_view.TimerView, _levelConfig.TargetTime);
             _childPresenters.Add(timerPresenter);
 
             foreach (IPresenter presenter in _childPresenters)
                 presenter.Initialize();
+        }
+
+        private void OnRestartButtonClicked()
+        {
+            _coroutinesPerformer.StartPerform(_sceneSwitcherService.ProcessingSwitchTo(Scenes.Gameplay, _inputArgs));
         }
 
         private void OnOpenGameSettingsButtonClicked()
@@ -48,6 +69,9 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         public void Dispose()
         {
             _view.OpenGameSettingsButton.onClick.RemoveListener(OnOpenGameSettingsButtonClicked);
+
+            _view.RestartButton.onClick.RemoveListener(OnRestartButtonClicked);
+
 
             foreach (IPresenter presenter in _childPresenters)
                 presenter.Dispose();

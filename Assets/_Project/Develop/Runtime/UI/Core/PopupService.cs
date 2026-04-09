@@ -114,6 +114,16 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             return popup;
         }
 
+        public KeyBindingsSettingsPopupPresenter OpenKeyBindingsSettingsPopup()
+        {
+            var view = ViewsFactory.Create<KeyBindingsSettingsPopupView>(ViewIDs.KeyBindingsSettingsPopupView, PopupLayer);
+            var popup = _presentersFactory.CreateKeyBindingsPopupPresenter(view);
+
+            OnPopupCreated(popup, view);
+
+            return popup;
+        }
+
         private class PopupInfo
         {
             public PopupInfo(PopupViewBase view, Action closeCallback)

@@ -28,5 +28,6 @@
         public const string GraphicSettingsPopupView = nameof(GraphicSettingsPopupView);
         public const string LanguageSettingsPopupView = nameof(LanguageSettingsPopupView);
 
+        public const string KeyBindingsSettingsPopupView = nameof(KeyBindingsSettingsPopupView);
     }
 }

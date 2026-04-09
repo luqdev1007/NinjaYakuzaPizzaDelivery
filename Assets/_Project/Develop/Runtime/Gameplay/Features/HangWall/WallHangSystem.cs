@@ -69,6 +69,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
             }
 
             // Если нажали атаку И рядом стена — ПРИОРИТЕТ вису, никакой зарядки слэша
+            // click short and click long to activate
             if (_inputService.IsAttackKeyHeld && _canWallHang.Evaluate())
             {
                 TryStartWallHang();

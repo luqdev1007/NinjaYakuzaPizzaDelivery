@@ -1,9 +1,11 @@
 ﻿using Assets._Project.Develop.Runtime.UI.Core;
 using DG.Tweening;
 using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace Assets._Project.Develop.Runtime.UI.LevelsMenuPopup
 {
@@ -13,6 +15,8 @@ namespace Assets._Project.Develop.Runtime.UI.LevelsMenuPopup
 
         [SerializeField] private Image _background;
         [SerializeField] private TMP_Text _levelNameText;
+        [SerializeField] private TMP_Text _levelCostText;
+        [SerializeField] private TMP_Text _descriptionText;
         [SerializeField] private Button _button;
 
         private void OnEnable()
@@ -25,10 +29,32 @@ namespace Assets._Project.Develop.Runtime.UI.LevelsMenuPopup
             _button.onClick.RemoveListener(OnButtonClicked);
         }
 
-        public void Init(string levelName, Sprite levelIcon)
+        public void Init(string levelName, Sprite levelIcon, int levelNumber)
         {
-            // _levelNameText.text = levelName;
+            _levelNameText.text = levelNumber.ToString();
             _background.sprite = levelIcon;
+            _levelCostText.text = $"{levelNumber * Random.Range(50, 200)}";
+
+            _descriptionText.text = ScrambleAndShorten(_descriptionText.text);
+        }
+
+        private string ScrambleAndShorten(string original)
+        {
+            if (string.IsNullOrEmpty(original)) return original;
+
+            int targetLength = Mathf.RoundToInt(original.Length * Random.Range(0.4f, 0.8f));
+
+            char[] chars = original.ToCharArray();
+
+            for (int i = chars.Length - 1; i > 0; i--)
+            {
+                int j = Random.Range(0, i + 1);
+                var temp = chars[i];
+                chars[i] = chars[j];
+                chars[j] = temp;
+            }
+
+            return new string(chars, 0, targetLength).Trim();
         }
 
         private void OnDestroy()

@@ -96,7 +96,10 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
                 view, 
                 _container.Resolve<GameplayPresentersFactory>(),
                 _container.Resolve<GameplayPopupService>(),
-                levelConfig
+                levelConfig,
+                _container.Resolve<SceneSwitcherService>(),
+                _container.Resolve<ICoroutinesPerformer>(),
+                _inputArgs
                 );
         }
 

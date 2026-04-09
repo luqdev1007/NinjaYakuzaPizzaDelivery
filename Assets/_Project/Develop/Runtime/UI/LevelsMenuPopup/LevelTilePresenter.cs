@@ -35,7 +35,7 @@ namespace Assets._Project.Develop.Runtime.UI.LevelsMenuPopup
 
         public void Initialize()
         {
-            _view.Init(_config.LevelName, _config.LevelIcon);
+            _view.Init(_config.LevelName, _config.LevelIcon, _config.LevelNumber);
 
             if (_levelsService.CanPlay(_config.LevelNumber))
             {
