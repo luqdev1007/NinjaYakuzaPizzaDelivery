@@ -48,6 +48,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         private readonly CollidersRegistryService _collidersRegistryService;
         private readonly AudioService _audioService;
         private readonly LootTableConfig _lootTableConfig;
+        private readonly ICoroutinesPerformer _coroutinesPerformer;
 
         private readonly CameraService _cameraService;
 
@@ -59,6 +60,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory = container.Resolve<MonoEntitiesFactory>();
             _collidersRegistryService = container.Resolve<CollidersRegistryService>();
             _audioService = container.Resolve<AudioService>();
+            _coroutinesPerformer = container.Resolve<ICoroutinesPerformer>();
 
             _cameraService = _container.Resolve<CameraService>();
 
@@ -290,7 +292,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // — атака —
                 .AddSystem(new AttackCancelSystem())
-                .AddSystem(new StartAttackSystem(inputService, this))
+                .AddSystem(new StartAttackSystem(inputService, this, _coroutinesPerformer))
                 .AddSystem(new AttackProcessTimerSystem())
                 .AddSystem(new AttackDelayEndTriggerSystem())
                 .AddSystem(new EndAttackSystem())

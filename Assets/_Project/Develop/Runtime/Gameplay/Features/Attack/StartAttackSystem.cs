@@ -2,7 +2,10 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
+using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
@@ -11,6 +14,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
     {
         private readonly IInputService _inputService;
         private readonly EntitiesFactory _entitiesFactory;
+        private readonly ICoroutinesPerformer _coroutinesPerformer;
         private ReactiveEvent _startAttackEvent;
         private ReactiveVariable<bool> _inAttackProcess;
         private ICompositeCondition _canStartAttack;
@@ -22,10 +26,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private bool _isCharging;
         private const float ChargeThreshold = 0.2f;
 
-        public StartAttackSystem(IInputService inputService, EntitiesFactory entitiesFactory)
+        public StartAttackSystem(IInputService inputService, EntitiesFactory entitiesFactory, ICoroutinesPerformer coroutinesPerformer)
         {
             _inputService = inputService;
             _entitiesFactory = entitiesFactory;
+            _coroutinesPerformer = coroutinesPerformer;
         }
 
         public void OnInit(Entity entity)
@@ -96,6 +101,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             _inAttackProcess.Value = true;
             _startAttackEvent.Invoke();
             Debug.Log("<color=white>[ATTACK]</color> Normal Attack");
+
+            // Рандомим двойную атаку (например, шанс 70%)
+            if (Random.Range(1, 101) <= 70)
+            {
+                // Используем встроенный в Unity или твой самописный таймер для задержки
+                // Чтобы вторая тычка вылетела через 0.1 - 0.2 сек
+                _coroutinesPerformer.StartPerform(DoubleAttackRoutine());
+            }
+        }
+
+        private IEnumerator DoubleAttackRoutine()
+        {
+            yield return new WaitForSeconds(0.1f);
+            _startAttackEvent.Invoke();
+            Debug.Log("<color=cyan>[ATTACK]</color> DOUBLE PROC!");
         }
 
         private void ExecuteChargedAttack()

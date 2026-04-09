@@ -86,7 +86,7 @@ MonoBehaviour:
     <ProcessTime>k__BackingField: 0.2
     <DelayTime>k__BackingField: 0.1
     <Cooldown>k__BackingField: 0.05
-    <InstantDamage>k__BackingField: 4
+    <InstantDamage>k__BackingField: 5
     <Range>k__BackingField: 2
     <EnemyMask>k__BackingField:
       serializedVersion: 2
