@@ -120,7 +120,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         private void ShowHint()
         {
-            string hintMessage = "Press 'F' to Begin\nUse WASD and LShift to free fly camera";
+            string hintMessage = "Press 'T' to Begin\nUse WASD and LShift to free fly camera";
             _hintPopup = _popupService.OpenHint(hintMessage);
         }
 
@@ -135,7 +135,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             float y = Input.GetAxisRaw("Vertical");
             _panBehaviour.SetInput(new Vector2(x, y));
 
-            if (Input.GetKeyDown(KeyCode.F) && _dialogFinished)
+            if (Input.GetKeyDown(KeyCode.T) && _dialogFinished)
             {
                 if (_hintPopup != null)
                 {
