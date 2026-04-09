@@ -14,27 +14,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         {
             var state = _entity.CometDashStateC;
 
-            // 1. Если таймер активен — уменьшаем его
+            // 1. Пока идет кулдаун (Base или Overheat), ресурсы не восстанавливаются
             if (state.CooldownTimer.Value > 0)
             {
                 state.CooldownTimer.Value -= deltaTime;
                 return;
             }
 
-            // 2. Если время вышло, начинаем восстановление
-            // Восстанавливаем множитель до 1.0 (можно сделать плавно через deltaTime)
-            if (state.CurrentMultiplier.Value < 1f)
-            {
-                // Либо мгновенно: state.CurrentMultiplier.Value = 1f;
-                // Либо плавно (например, за 1 секунду):
-                state.CurrentMultiplier.Value = Mathf.MoveTowards(state.CurrentMultiplier.Value, 1f, deltaTime);
-            }
-
-            // 3. Восстанавливаем заряды рывка (Comet Dash)
+            // 2. Если кулдаун закончился, проверяем, нужно ли восстановить заряды
             if (state.CurrentCharges.Value < state.Config.MaxCharges)
             {
                 state.CurrentCharges.Value = state.Config.MaxCharges;
-                Debug.Log("<color=green>[COMET]</color> Charges Restored");
+                // При восстановлении зарядов сбрасываем множитель в 1.0 мгновенно
+                state.CurrentMultiplier.Value = 1f;
+                Debug.Log("<color=green>[COMET]</color> Resources Fully Recovered");
+            }
+
+            // 3. Дополнительная страховка множителя (если заряды полные, но множитель почему-то нет)
+            if (state.CurrentCharges.Value == state.Config.MaxCharges && state.CurrentMultiplier.Value < 1f)
+            {
+                state.CurrentMultiplier.Value = 1f;
             }
         }
     }

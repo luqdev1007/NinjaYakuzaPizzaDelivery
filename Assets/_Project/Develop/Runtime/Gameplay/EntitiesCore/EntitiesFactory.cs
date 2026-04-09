@@ -91,7 +91,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             {
                 MaxCharges = 3,
                 MultiplierDegradation = 0.9f,
-                BaseCooldown = 0.1f,
+                BaseCooldown = 1f,
                 OverheatCooldown = 6.0f
             };
 
