@@ -9971,6 +9971,8 @@ GameObject:
   - component: {fileID: 5491385347171446839}
   - component: {fileID: 7699728010092511293}
   - component: {fileID: 6651445124149865953}
+  - component: {fileID: 5704786545896902949}
+  - component: {fileID: 6289625187462635186}
   m_Layer: 14
   m_Name: ChargedSlashProjectile
   m_TagString: Untagged
@@ -10091,3 +10093,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _colliders:
   - {fileID: 5491385347171446839}
+--- !u!50 &5704786545896902949
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6150063750928528722}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 1
+  m_Constraints: 0
+--- !u!114 &6289625187462635186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6150063750928528722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c36bf89d394c0249860f0f1687d6338, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

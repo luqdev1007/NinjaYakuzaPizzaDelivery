@@ -729,7 +729,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new BodyContactDetectingSystem())
                 .AddSystem(new DealDamageOnContactSystem())
 
-                .AddSystem(new TransformMovementSystem())
+                .AddSystem(new SimpleRigidbodyMovementSystem())
                 .AddSystem(new AutoDeleteTimerSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
 
