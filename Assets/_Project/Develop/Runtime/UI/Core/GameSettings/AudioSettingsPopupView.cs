@@ -1,9 +1,8 @@
 ﻿using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
-using Assets._Project.Develop.Runtime.UI.Core;
 
-namespace Assets._Project.Develop.Runtime.UI.AudioSettingsPopup
+namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
 {
     public class AudioSettingsPopupView : PopupViewBase
     {

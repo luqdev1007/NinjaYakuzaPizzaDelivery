@@ -62,11 +62,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
             if (_isWallHanging.Value)
             {
                 UpdateWallHang(deltaTime);
+
+                // Если во время виса мы всё-таки решили ударить (например, нажали кнопку еще раз)
+                // Но обычно в платформерах атаку на стене запрещают или делают её особенной.
                 return;
             }
 
+            // Если нажали атаку И рядом стена — ПРИОРИТЕТ вису, никакой зарядки слэша
             if (_inputService.IsAttackKeyHeld && _canWallHang.Evaluate())
+            {
                 TryStartWallHang();
+            }
         }
 
         private void TryStartWallHang()

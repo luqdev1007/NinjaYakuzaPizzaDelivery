@@ -41,9 +41,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         public void OnUpdate(float deltaTime)
         {
+            // 0. Если мы уже висим на стене — игнорируем логику атаки/зарядки
+            if (_entity.IsWallHanging.Value)
+            {
+                _isCharging = false;
+                return;
+            }
+
             // 1. Начало нажатия
+            // Добавляем проверку: НЕ начинаем зарядку, если прямо сейчас можем зацепиться за стену
             if (_inputService.IsAttackKeyPressed && _canStartAttack.Evaluate() && !_inAttackProcess.Value)
             {
+                // Если WallHangSystem разрешает вис, то атаку не копим
+                if (_entity.CanWallHang.Evaluate()) return;
+
                 _isCharging = true;
                 _chargeTimer = 0f;
             }

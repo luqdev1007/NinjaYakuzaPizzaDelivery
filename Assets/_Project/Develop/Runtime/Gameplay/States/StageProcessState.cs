@@ -39,6 +39,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             // Даем команду сервису-посреднику показать таймер
             // Презентер поймает это событие и сам запустит анимацию/отсчет
             _timerFeature.Show();
+
+            _cameraService.StopShowingTarget();
+            _cameraService.SetZoom(10f);
         }
 
         public void Update(float deltaTime)
@@ -55,7 +58,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             if (Input.GetKeyDown(KeyCode.T))
             {
                 // Отдаляем камеру к финишу (зум 11)
-                _cameraService.ShowTargetTemporarily(_finalPoint.FinalPointPosition, 11f);
+                _cameraService.ShowTargetTemporarily(_finalPoint.FinalPointPosition, 14f);
             }
 
             if (Input.GetKeyUp(KeyCode.T))
@@ -79,6 +82,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             // На всякий случай сбрасываем камеру, чтобы зум не залип при переходе в Win/Defeat
             _cameraService.StopShowingTarget();
+
+            // Сбрасываем зум к стандартному игровому значению
             _cameraService.SetZoom(10f);
         }
     }

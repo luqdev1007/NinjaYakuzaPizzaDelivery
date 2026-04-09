@@ -19,7 +19,7 @@ MonoBehaviour:
   <LevelName>k__BackingField: 1
   <LevelNumber>k__BackingField: 1
   <LevelIcon>k__BackingField: {fileID: 21300000, guid: ccda1e9d0a91445b08abb3958530382a, type: 3}
-  <FinalPointPosition>k__BackingField: {x: 93.8, y: 4.5, z: 0}
+  <FinalPointPosition>k__BackingField: {x: 128.76, y: 4.76, z: 0}
   <StartPlayerPosition>k__BackingField: {x: -48.269997, y: -5.9, z: 0}
   _enemySpawns:
   - {x: 27.450531, y: 2.2408419, z: 0}

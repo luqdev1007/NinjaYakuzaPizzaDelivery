@@ -1,5 +1,5 @@
-﻿using Assets._Project.Develop.Runtime.UI.AudioSettingsPopup;
-using Assets._Project.Develop.Runtime.UI.Core.ConfirmPopup;
+﻿using Assets._Project.Develop.Runtime.UI.Core.ConfirmPopup;
+using Assets._Project.Develop.Runtime.UI.Core.GameSettings;
 using Assets._Project.Develop.Runtime.UI.LevelsMenuPopup;
 using System;
 using System.Collections.Generic;
@@ -98,7 +98,19 @@ namespace Assets._Project.Develop.Runtime.UI.Core
         {
             var view = ViewsFactory.Create<AudioSettingsPopupView>(ViewIDs.AudioSettingsPopupView, PopupLayer);
             var popup = _presentersFactory.CreateAudioSettingsPopupPresenter(view);
+
             OnPopupCreated(popup, view);
+
+            return popup;
+        }
+        
+        public GameSettingsPopupPresenter OpenGameSettingsPopup()
+        {
+            var view = ViewsFactory.Create<GameSettingsPopupView>(ViewIDs.GameSettingsPopupView, PopupLayer);
+            var popup = _presentersFactory.CreateGameSettingsPopupPresenter(view, this);
+
+            OnPopupCreated(popup, view);
+
             return popup;
         }
 

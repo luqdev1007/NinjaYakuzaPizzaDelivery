@@ -24,5 +24,9 @@
         public const string HintView = nameof(HintView);
 
         public const string AudioSettingsPopupView = nameof(AudioSettingsPopupView);
+        public const string GameSettingsPopupView = nameof(GameSettingsPopupView);
+        public const string GraphicSettingsPopupView = nameof(GraphicSettingsPopupView);
+        public const string LanguageSettingsPopupView = nameof(LanguageSettingsPopupView);
+
     }
 }

@@ -32,7 +32,11 @@ namespace Assets._Project.Develop.Runtime.UI.Core
 
             {ViewIDs.HintView, "UI/Hint/HintView" },
 
-            { ViewIDs.AudioSettingsPopupView, "UI/Common/AudioSettingsPopupView" },
+            // game settings popup views
+            { ViewIDs.AudioSettingsPopupView, "UI/GameSettings/AudioSettingsPopupView" },
+            { ViewIDs.GameSettingsPopupView, "UI/GameSettings/GameSettingsPopupView" },
+            { ViewIDs.GraphicSettingsPopupView, "UI/GameSettings/GraphicSettingsPopupView" },
+            { ViewIDs.LanguageSettingsPopupView, "UI/GameSettings/LanguageSettingsPopupView" },
         };
 
         public ViewsFactory(ResourcesAssetsLoader resourcesAssetsLoader)

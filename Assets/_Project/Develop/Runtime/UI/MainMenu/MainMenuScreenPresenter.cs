@@ -6,14 +6,15 @@ using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.DataProviders;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.UI.MainMenu
 {
     public class MainMenuScreenPresenter : IPresenter
     {
         private readonly MainMenuScreenView _view;
-        private readonly MainMenuPopupService _popupService;
-        private readonly WalletService _wallet;
+        private readonly MainMenuPopupService _mainMenupopupService;
+
         private readonly ConfigsProviderService _configsProviderService;
         private readonly PlayerDataProvider _playerDataProvider;
         private readonly ProjectPresentersFactory _presentersFactory;
@@ -23,15 +24,13 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
 
         public MainMenuScreenPresenter(
             MainMenuScreenView view,
-            MainMenuPopupService popupService,
-            WalletService wallet,
+            MainMenuPopupService mainMenuPopupService,
             ConfigsProviderService configsProviderService,
             PlayerDataProvider playerDataProvider,
             ProjectPresentersFactory presentersFactory)
         {
             _view = view;
-            _popupService = popupService;
-            _wallet = wallet;
+            _mainMenupopupService = mainMenuPopupService;
             _configsProviderService = configsProviderService;
             _playerDataProvider = playerDataProvider;
             _presentersFactory = presentersFactory;
@@ -39,30 +38,24 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
 
         public void Initialize()
         {
-            _view.StartGameButtonClicked += OnStartGameButtonClicked;
-            _view.ResetStatsButtonClicked += OnResetStatsButtonClicked;
+            Debug.Log("Init main menu screen presenter");
+            _view.OpenOrdersButton.onClick.AddListener(OpenChooseOrderTiles);
 
-            _view.OpenAudioSettingsButton.onClick.AddListener(OnOpenAudioSettingsButtonClicked);
+            _view.ResetStatsButton.onClick.AddListener(OnResetStatsButtonClicked);
+            _view.OpenGameSettingsButton.onClick.AddListener(OnOpenGameSettingsButtonClicked);
 
             _walletPresenter = _presentersFactory.CreateWalletPresenter(_view.WalletView);
+            _disposables.Add(_walletPresenter);
+
             _walletPresenter.Initialize();
-
-            // _disposables.Add(_walletPresenter);
-        }
-
-        private void OnOpenAudioSettingsButtonClicked()
-        {
-            _popupService.OpenAudioSettingsPopup();
         }
 
         public void Dispose()
         {
-            _view.StartGameButtonClicked -= OnStartGameButtonClicked;
-            _view.ResetStatsButtonClicked -= OnResetStatsButtonClicked;
+            _view.OpenOrdersButton.onClick.RemoveListener(OpenChooseOrderTiles);
 
-            _view.OpenAudioSettingsButton.onClick.RemoveListener(OnOpenAudioSettingsButtonClicked);
-
-            _walletPresenter?.Dispose();
+            _view.ResetStatsButton.onClick.RemoveListener(OnResetStatsButtonClicked);
+            _view.OpenGameSettingsButton.onClick.RemoveListener(OnOpenGameSettingsButtonClicked);
 
             foreach (var disposable in _disposables)
                 disposable.Dispose();
@@ -70,16 +63,22 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             _disposables.Clear();
         }
 
-        private void OnStartGameButtonClicked()
+        private void OpenChooseOrderTiles()
         {
-            _popupService.OpenLevelsMenuPopup();
+            Debug.Log("Choose order");
+            _mainMenupopupService.OpenLevelsMenuPopup();
+        }
+
+        private void OnOpenGameSettingsButtonClicked()
+        {
+            _mainMenupopupService.OpenGameSettingsPopup();
         }
 
         private void OnResetStatsButtonClicked()
         {
             int baseGold = _configsProviderService.GetConfig<StartWalletConfig>().GetValueFor(CurrencyTypes.Gold);
 
-            _popupService.OpenConfirmPopup(ResetStats,
+            _mainMenupopupService.OpenConfirmPopup(ResetStats,
                 $"Reset stats?\nYou will start a new game with {baseGold} gold");
         }
 

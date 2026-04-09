@@ -1,9 +1,9 @@
-﻿using Assets._Project.Develop.Runtime.UI.Core;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
+﻿using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 
-namespace Assets._Project.Develop.Runtime.UI.AudioSettingsPopup
+namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
 {
+
     public class AudioSettingsPopupPresenter : PopupPresenterBase
     {
         private readonly AudioSettingsPopupView _view;

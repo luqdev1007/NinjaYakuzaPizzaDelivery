@@ -1,9 +1,6 @@
-﻿using Assets._Project.Develop.Infrastructure.DI;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.UI.Core;
-using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Timers;
-using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -34,7 +31,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         public void Initialize()
         {
             Debug.Log("GameplayScreenPresenter Initialized!");
-            _view.OpenAudioSettingsButton.onClick.AddListener(OnOpenAudioSettingsButtonClicked);
+            _view.OpenGameSettingsButton.onClick.AddListener(OnOpenGameSettingsButtonClicked);
 
             InGameTimerPresenter timerPresenter = _gameplayPresentersFactory.CreateTimerPresenter(_view.TimerView, _levelConfig.TargetTime);
             _childPresenters.Add(timerPresenter);
@@ -43,14 +40,14 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
                 presenter.Initialize();
         }
 
-        private void OnOpenAudioSettingsButtonClicked()
+        private void OnOpenGameSettingsButtonClicked()
         {
-            _popupService.OpenAudioSettingsPopup();
+            _popupService.OpenGameSettingsPopup();
         }
 
         public void Dispose()
         {
-            _view.OpenAudioSettingsButton.onClick.RemoveListener(OnOpenAudioSettingsButtonClicked);
+            _view.OpenGameSettingsButton.onClick.RemoveListener(OnOpenGameSettingsButtonClicked);
 
             foreach (IPresenter presenter in _childPresenters)
                 presenter.Dispose();
