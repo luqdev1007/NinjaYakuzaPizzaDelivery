@@ -5,6 +5,7 @@ using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using System;
 using UnityEditor;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
 {
@@ -98,11 +99,8 @@ namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
 
         private void HandleExitGame()
         {
-#if UNITY_EDITOR
-            EditorApplication.isPlaying = false;
-#else
+            Debug.Log("Exit");
             Application.Quit();
-#endif
         }
     }
 }

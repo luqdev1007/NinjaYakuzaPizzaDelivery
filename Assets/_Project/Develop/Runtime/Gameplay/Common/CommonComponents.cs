@@ -18,4 +18,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Common
     {
         public ReactiveVariable<bool> Value;
     }
+
+
 }

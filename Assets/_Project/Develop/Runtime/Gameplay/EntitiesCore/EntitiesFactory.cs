@@ -7,6 +7,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
+using Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
@@ -135,6 +136,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddAirDashVerticalBoost(new ReactiveVariable<float>(config.Dash.VerticalBoost))
                 .AddDashDamage(new ReactiveVariable<float>(config.Dash.Damage))
                 .AddDashHitboxSize(new ReactiveVariable<Vector2>(config.Dash.HitboxSize))
+
+                .AddCometDashState(
+                    3,                                   // MaxCharges (int)
+                    new ReactiveVariable<int>(3),        // CurrentCharges (ReactiveVariable<int>)
+                    new ReactiveVariable<float>(1f),     // CurrentMultiplier (ReactiveVariable<float>)
+                    0.6f,                                // MultiplierDegradation (float) - поставил 0.6 для теста
+                    2f,                                  // BaseCooldown (float)
+                    8f,                                  // OverheatCooldown (float)
+                    new ReactiveVariable<float>(0f)      // CooldownTimer (ReactiveVariable<float>)
+                )
 
                 // — планирование —
                 .AddIsGliding()
@@ -681,6 +692,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddContactEntitiesBuffer(new Buffer<Entity>(64))
                 .AddBodyContactDamage(new ReactiveVariable<float>(damage))
                 .AddContactsDetectingMask(LayersAPI.LayerMaskEnemies)
+
+                .AddChargedSlashProjectileTag()
 
                 /*
                 .AddTeam(owner.Team)

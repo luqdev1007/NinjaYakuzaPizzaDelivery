@@ -129,7 +129,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
             // experiment
             _entity.Rigidbody.linearVelocity = Vector2.zero;
-            _entity.Rigidbody.AddForce(Vector2.up * 1.5f, ForceMode2D.Impulse);
+            _entity.Rigidbody.AddForce(Vector2.up * 15f, ForceMode2D.Impulse);
             // experiment
 
             _entitiesFactory.CreateChargedSlashProjectile(
