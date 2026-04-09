@@ -26,6 +26,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
         private Transform _transform;
         private float _defaultGravityScale;
 
+        private float _wallCoyoteTimer;
+        private const float WallCoyoteTime = 0.15f;
+        private float _jumpBufferTimer;
+        private const float JumpBufferTime = 0.15f;
+
         public WallHangSystem(IInputService inputService, AudioService audioService)
         {
             _inputService = inputService;
@@ -40,14 +45,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
             _wallHangSlideSpeed = entity.WallHangSlideSpeed;
             _wallJumpForce = entity.WallJumpForce;
             _wallDirection = entity.WallDirection;
-            _jumpsAvailable = entity.MaxJumps; // Уточни, какую переменную используешь для прыжков
+            _jumpsAvailable = entity.MaxJumps;
             _maxJumps = entity.MaxJumps;
             _wallHangLayer = entity.WallHangLayer;
             _rigidbody = entity.Rigidbody;
             _transform = entity.Transform;
             _defaultGravityScale = _rigidbody.gravityScale;
 
-            // Если висим на стене, но игрок кидает хук — отменяем вис
             _isGrappleThrowing.Subscribe((_, isThrowing) =>
             {
                 if (isThrowing && _isWallHanging.Value)
@@ -59,34 +63,46 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
 
         public void OnUpdate(float deltaTime)
         {
+            UpdateTimers(deltaTime);
+
             if (_isWallHanging.Value)
             {
                 UpdateWallHang(deltaTime);
-
-                // Если во время виса мы всё-таки решили ударить (например, нажали кнопку еще раз)
-                // Но обычно в платформерах атаку на стене запрещают или делают её особенной.
                 return;
             }
 
-            // Если нажали атаку И рядом стена — ПРИОРИТЕТ вису, никакой зарядки слэша
-            // click short and click long to activate
             if (_inputService.IsAttackKeyHeld && _canWallHang.Evaluate())
             {
                 TryStartWallHang();
             }
+
+            if (_wallCoyoteTimer > 0 && _jumpBufferTimer > 0)
+            {
+                ExecuteWallJump();
+            }
+        }
+
+        private void UpdateTimers(float deltaTime)
+        {
+            if (_inputService.IsJumpKeyPressed)
+                _jumpBufferTimer = JumpBufferTime;
+            else
+                _jumpBufferTimer -= deltaTime;
+
+            if (_isWallHanging.Value)
+                _wallCoyoteTimer = WallCoyoteTime;
+            else
+                _wallCoyoteTimer -= deltaTime;
         }
 
         private void TryStartWallHang()
         {
             float direction = _transform.localScale.x > 0 ? 1f : -1f;
             Vector2 checkOrigin = (Vector2)_transform.position + Vector2.right * direction * 0.3f;
-
             Collider2D hit = Physics2D.OverlapCircle(checkOrigin, 0.15f, _wallHangLayer);
 
-            if (hit == null)
-                return;
+            if (hit == null) return;
 
-            // Просто включаем вис. GrappleSystem сам увидит это и отключится.
             _isWallHanging.Value = true;
             _wallDirection.Value = direction;
             _rigidbody.gravityScale = 0f;
@@ -100,7 +116,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
             Vector2 checkOrigin = (Vector2)_transform.position + Vector2.right * direction * 0.3f;
             Collider2D wallCheck = Physics2D.OverlapCircle(checkOrigin, 0.15f, _wallHangLayer);
 
-            if (wallCheck == null)
+            if (wallCheck == null || !_inputService.IsAttackKeyHeld)
             {
                 StopWallHang();
                 return;
@@ -108,24 +124,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
 
             _rigidbody.linearVelocity = new Vector2(0f, -_wallHangSlideSpeed.Value);
 
-            if (_inputService.IsJumpKeyPressed)
+            if (_jumpBufferTimer > 0)
             {
-                float bounceX = -_wallDirection.Value * _wallJumpForce.Value.x;
-                float bounceY = _wallJumpForce.Value.y;
-                _rigidbody.linearVelocity = new Vector2(bounceX, bounceY);
-                StopWallHang();
-                return;
+                ExecuteWallJump();
             }
+        }
 
-            if (!_inputService.IsAttackKeyHeld)
-                StopWallHang();
+        private void ExecuteWallJump()
+        {
+            float bounceX = -_wallDirection.Value * _wallJumpForce.Value.x;
+            float bounceY = _wallJumpForce.Value.y;
+            _rigidbody.linearVelocity = new Vector2(bounceX, bounceY);
+
+            _jumpBufferTimer = 0;
+            _wallCoyoteTimer = 0;
+            StopWallHang();
         }
 
         private void StopWallHang()
         {
             _isWallHanging.Value = false;
-
-            // Важно: возвращаем гравитацию, ТОЛЬКО если мы не прервали вис броском хука
             if (!_isGrappleThrowing.Value)
             {
                 _rigidbody.gravityScale = _defaultGravityScale;
