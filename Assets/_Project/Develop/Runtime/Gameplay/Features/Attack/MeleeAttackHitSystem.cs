@@ -8,6 +8,7 @@ using System.Collections;
 using UnityEngine;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
+using Object = UnityEngine.Object;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
@@ -76,6 +77,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
                 {
                     ApplyDamage(mono.LinkedEntity, hit.transform.position);
                     hitAny = true;
+                }
+
+                // test
+                if (hit.TryGetComponent(out Rigidbody2D rigidbody))
+                {                  
+                    Object.Destroy(rigidbody.gameObject);
                 }
             }
 
