@@ -35,6 +35,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         private Rigidbody2D _rigidbody;
         private IReadOnlyVariable<bool> _isGrounded;
         private IReadOnlyVariable<bool> _isMoving;
+
+        private IReadOnlyVariable<bool> _isOnSlope;
+        private IReadOnlyVariable<bool> _isDashing;
+        private IReadOnlyVariable<bool> _isSliding;
+
         private IDisposable _isMovingDisposable;
 
         private float _maxSpeed;
@@ -54,6 +59,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             _isGrounded = entity.IsGrounded;
             _isMoving = entity.IsMoving;
             _maxSpeed = entity.MoveSpeed.Value;
+
+            _isOnSlope = entity.IsOnSlope;
+            _isDashing = entity.IsDashing;
+            _isSliding = entity.IsSliding;
 
             _wasMoving = _isMoving.Value;
 
@@ -105,7 +114,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             }
 
             // Звук шагов
-            if (isRunning)
+            if (isRunning && _isDashing.Value == false && _isSliding.Value == false && _isOnSlope.Value == false)
             {
                 float currentMultiplier = Mathf.Lerp(1f, _maxSpeedMultiplier, speedRatio);
                 _footstepTimer -= Time.deltaTime * currentMultiplier;
