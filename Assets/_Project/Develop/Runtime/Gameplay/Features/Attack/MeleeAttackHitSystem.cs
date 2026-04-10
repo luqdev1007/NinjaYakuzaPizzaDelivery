@@ -101,7 +101,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
                 var damageData = new DamageData
                 {
                     Amount = _attackDamage.Value,
-                    SourcePosition = pos
+                    SourcePosition = pos,
+                    // Type = DamageType.General
                 };
                 target.TakeDamageRequest.Invoke(damageData);
             }

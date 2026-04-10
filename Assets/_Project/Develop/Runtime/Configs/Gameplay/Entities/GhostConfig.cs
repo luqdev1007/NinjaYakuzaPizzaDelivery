@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 {
@@ -21,5 +23,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [Header("Combat")]
         [field: SerializeField] public float ContactDamage { get; private set; } = 10f;
 
+        [Header("Loot")]
+        [field: SerializeField] public LootTableConfig LootTable { get; private set; }
     }
 }

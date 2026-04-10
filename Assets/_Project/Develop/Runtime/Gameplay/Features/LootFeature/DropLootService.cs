@@ -23,7 +23,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
             Vector3 spawnPosition = entity.Transform.position;
 
-            int count = Random.Range(10, 13);
+            int count = Random.Range(5, 30);
 
             for (int i = 0; i < count; i++)
             {

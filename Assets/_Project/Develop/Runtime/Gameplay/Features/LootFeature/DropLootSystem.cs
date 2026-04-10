@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Utilites.Reactive;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 {
+
     public class DropLootSystem : IInitializableSystem, IUpdatableSystem
     {
         private readonly DropLootService _dropLootService;

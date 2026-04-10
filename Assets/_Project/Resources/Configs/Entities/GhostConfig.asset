@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/Ghost
   <MovementSpeed>k__BackingField: 2
+  <LinearDrag>k__BackingField: 2
+  <AngularDrag>k__BackingField: 2
   <DirectionChangeCooldown>k__BackingField: 2
   <MaxHealth>k__BackingField: 10
   <DeathProcessTime>k__BackingField: 0.2
   <ContactDamage>k__BackingField: 1
+  <LootTable>k__BackingField: {fileID: 11400000, guid: 4a3df05932c729941a4368a00f4a6221, type: 2}

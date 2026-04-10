@@ -397,6 +397,22 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: ccb9a9b500d0f4f4cbad5859ae75568e, type: 3}
       Volume: 0.74
       BasePitch: 1.09
+    - Id: CoinCollect1
+      Clip: {fileID: 8300000, guid: b2bf5b781951e5d408532f8a8bf58d52, type: 3}
+      Volume: 0.74
+      BasePitch: 1.12
+    - Id: CoinCollect2
+      Clip: {fileID: 8300000, guid: bb377f3f60c16ce4ba1f961dd35e2c0b, type: 3}
+      Volume: 0.74
+      BasePitch: 1.24
+    - Id: CoinCollect3
+      Clip: {fileID: 8300000, guid: dd76f2a02fbd6674a83971d6b00e0a89, type: 3}
+      Volume: 0.74
+      BasePitch: 1.16
+    - Id: CoinCollect4
+      Clip: {fileID: 8300000, guid: e0bd7c4e437084b459cd680c3c479bc2, type: 3}
+      Volume: 0.74
+      BasePitch: 1.16
   _playlists:
   - Id: MainMenu
     Tracks:

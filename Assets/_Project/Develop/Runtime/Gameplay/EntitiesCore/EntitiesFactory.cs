@@ -605,18 +605,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new SleepTimerSystem())
                 ;
 
-            entity.AddLootIsDropped(new ReactiveVariable<bool>(false));
+            // LOOT
 
-            // Условие для срабатывания дропа: здоровье на нуле
+            entity
+                .AddLootIsDropped(new ReactiveVariable<bool>(false));
+
             ICompositeCondition canDropLoot = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
 
             entity.AddCanDropLoot(canDropLoot);
 
-            // Добавляем систему дропа (предварительно разрешив DropLootService из контейнера)
-            LootTableConfig lootTable = _lootTableConfig;
+            LootTableConfig lootTable = ghostConfig.LootTable;
 
             entity.AddSystem(new DropLootSystem(_container.Resolve<DropLootService>(), lootTable));
+            // LOOT
 
             return entity;
         }

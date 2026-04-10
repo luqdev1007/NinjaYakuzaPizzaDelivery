@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Loot
 {
     public abstract class LootConfig : ScriptableObject
     {
         [field: SerializeField] public string PrefabPath { get; private set; }
+        [field: SerializeField] public LootType LootType { get; private set; }
 
         [Header("Audio Settings")]
         [field: SerializeField] public string CollectSoundId { get; private set; } = "CoinCollect";
