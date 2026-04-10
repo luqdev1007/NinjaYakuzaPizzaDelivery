@@ -78,9 +78,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
                     ApplyDamage(mono.LinkedEntity, hit.transform.position);
                     hitAny = true;
                 }
-
                 // test
-                if (hit.TryGetComponent(out Rigidbody2D rigidbody))
+                else if (hit.TryGetComponent(out Rigidbody2D rigidbody))
                 {                  
                     Object.Destroy(rigidbody.gameObject);
                 }

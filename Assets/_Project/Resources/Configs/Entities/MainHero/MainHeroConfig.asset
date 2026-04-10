@@ -46,6 +46,7 @@ MonoBehaviour:
     <MinFallVelocity>k__BackingField: -3
     <SnapSpeed>k__BackingField: 50
     <SnapDuration>k__BackingField: 0.2
+    <CounterForceMultiplier>k__BackingField: 0.8
   _wallHang:
     <Layer>k__BackingField:
       serializedVersion: 2
@@ -90,7 +91,7 @@ MonoBehaviour:
     <Range>k__BackingField: 2
     <EnemyMask>k__BackingField:
       serializedVersion: 2
-      m_Bits: 512
+      m_Bits: 33280
     <InvulnerabilityDuration>k__BackingField: 0.3
     <HitBounceForce>k__BackingField: 14
     <GroundHitBounceModifiers>k__BackingField: {x: 0.7, y: 0.4}
