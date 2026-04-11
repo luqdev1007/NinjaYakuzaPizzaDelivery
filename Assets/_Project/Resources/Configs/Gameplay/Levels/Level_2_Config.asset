@@ -15,12 +15,12 @@ MonoBehaviour:
   _stageConfigs:
   - {fileID: 11400000, guid: ad2ebdc480afcce4ab663bc95bc4f0f9, type: 2}
   _configPrepDialog: {fileID: 11400000, guid: 943bcf7fb606f51469786c299cc45e0c, type: 2}
-  <TargetTime>k__BackingField: 30
+  <TargetTime>k__BackingField: 15
   <LevelName>k__BackingField: 2
   <LevelNumber>k__BackingField: 2
   <LevelIcon>k__BackingField: {fileID: 21300000, guid: ccda1e9d0a91445b08abb3958530382a, type: 3}
-  <FinalPointPosition>k__BackingField: {x: -57.3, y: -25.1, z: 0}
-  <StartPlayerPosition>k__BackingField: {x: -38.1, y: 9.2, z: 0}
+  <FinalPointPosition>k__BackingField: {x: 128.76, y: 4.76, z: 0}
+  <StartPlayerPosition>k__BackingField: {x: -48.269997, y: -5.9, z: 0}
   _enemySpawns:
   - {x: 27.450531, y: 2.2408419, z: 0}
   - {x: 22.3, y: 11.9, z: 0}
@@ -37,13 +37,3 @@ MonoBehaviour:
   - {x: -12.6, y: 17.9, z: 0}
   - {x: -26.8, y: 23, z: 0}
   - {x: -6.6, y: 30.6, z: 0}
-  - {x: 17.5, y: 3.4, z: 0}
-  - {x: 16.4, y: -4.7, z: 0}
-  - {x: -43.4, y: -5.6, z: 0}
-  - {x: -21, y: -23.6, z: 0}
-  - {x: -5.6, y: -21.5, z: 0}
-  - {x: 5.3, y: -24.9, z: 0}
-  - {x: 20.2, y: -21.8, z: 0}
-  - {x: 27.3, y: -24.2, z: 0}
-  - {x: -66.3, y: -23.4, z: 0}
-  - {x: 76.8, y: -16.4, z: 0}

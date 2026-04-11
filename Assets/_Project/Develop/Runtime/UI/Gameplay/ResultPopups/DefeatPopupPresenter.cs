@@ -1,4 +1,5 @@
-﻿using Assets._Project.Develop.Runtime.UI.Core;
+﻿using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 
@@ -12,17 +13,20 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
         private readonly SceneSwitcherService _sceneSwitcherService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly GameplayInputArgs _inputArgs;
+        private readonly WalletService _walletService;
 
         public DefeatPopupPresenter(
             ICoroutinesPerformer coroutinesPerformer,
             DefeatPopupView view,
             SceneSwitcherService sceneSwitcherService,
-            GameplayInputArgs inputArgs) : base(coroutinesPerformer)
+            GameplayInputArgs inputArgs,
+            WalletService walletService) : base(coroutinesPerformer)
         {
             _coroutinesPerformer = coroutinesPerformer;
             _view = view;
             _sceneSwitcherService = sceneSwitcherService;
             _inputArgs = inputArgs;
+            _walletService = walletService;
         }
 
         protected override PopupViewBase PopupView => _view;
@@ -30,6 +34,8 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
         public override void Initialize()
         {
             base.Initialize();
+
+            _walletService.RollbackSessionLoot();
 
             _view.SetTitle(TitleName);
 

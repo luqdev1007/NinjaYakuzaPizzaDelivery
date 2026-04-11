@@ -54,10 +54,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             _audioService.SetMusicMuted(true);
 
-            int reward = _configsProviderService.GetConfig<GameRewardsConfig>().RewardForWin;
-            _walletService.Add(CurrencyTypes.Coins, reward);
+            int rewardForLevel = _configsProviderService.GetConfig<GameRewardsConfig>().RewardForWin;
+            _walletService.Add(CurrencyTypes.Coins, rewardForLevel);
 
             _levelsProgressionService.AddLevelToCompleted(_gameplayInputArgs.LevelNumber);
+
+            _walletService.CommitSessionLoot();
 
             _coroutinesPerformer.StartPerform(_playerDataProvider.SaveAsync());
 

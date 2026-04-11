@@ -1,4 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.UI.MainMenu;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
@@ -17,21 +18,24 @@ namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
         private readonly PopupService _popupService;
         private readonly SceneSwitcherService _sceneSwitcherService;
         private readonly IInputService _input;
+        private readonly WalletService _walletService;
 
         protected override PopupViewBase PopupView => _view;
 
         public GameSettingsPopupPresenter
-            (GameSettingsPopupView view, 
+            (GameSettingsPopupView view,
             ICoroutinesPerformer coroutinesPerformer,
             PopupService popupService,
             SceneSwitcherService sceneSwitcherService,
-            IInputService input) : base(coroutinesPerformer)
+            IInputService input,
+            WalletService walletService) : base(coroutinesPerformer)
         {
             _view = view;
             _coroutinesPerformer = coroutinesPerformer;
             _popupService = popupService;
             _sceneSwitcherService = sceneSwitcherService;
             _input = input;
+            _walletService = walletService;
         }
 
         protected override void OnPreShow()
@@ -71,6 +75,7 @@ namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
 
         private void HandleExitToMainMenu()
         {
+            _walletService.RollbackSessionLoot();
             _coroutinesPerformer.StartPerform(_sceneSwitcherService.ProcessingSwitchTo(Scenes.MainMenu));
         }
 

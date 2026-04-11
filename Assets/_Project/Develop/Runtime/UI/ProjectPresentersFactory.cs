@@ -95,7 +95,8 @@ namespace Assets._Project.Develop.Runtime.UI
                 _container.Resolve<ICoroutinesPerformer>(),
                 popupService,
                 _container.Resolve<SceneSwitcherService>(),
-                _container.Resolve<IInputService>()
+                _container.Resolve<IInputService>(),
+                _container.Resolve<WalletService>()
                 );
         }
 

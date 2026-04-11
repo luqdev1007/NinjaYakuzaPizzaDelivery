@@ -80,7 +80,8 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
                 _container.Resolve<ICoroutinesPerformer>(),
                 view,
                 _container.Resolve<SceneSwitcherService>(),
-                _inputArgs
+                _inputArgs,
+                _container.Resolve<WalletService>()
                 );
         }
 
@@ -102,7 +103,8 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
                 levelConfig,
                 _container.Resolve<SceneSwitcherService>(),
                 _container.Resolve<ICoroutinesPerformer>(),
-                _inputArgs
+                _inputArgs,
+                _container.Resolve<WalletService>()
                 );
         }
 

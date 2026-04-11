@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Timers;
 using Assets._Project.Develop.Runtime.UI.Wallet;
@@ -19,6 +20,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
         private LevelConfig _levelConfig;
         private GameplayInputArgs _inputArgs;
+        private WalletService _walletService;
 
         private readonly SceneSwitcherService _sceneSwitcherService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
@@ -32,7 +34,8 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             LevelConfig levelConfig,
             SceneSwitcherService sceneSwitcherService,
             ICoroutinesPerformer coroutinesPerformer,
-            GameplayInputArgs inputArgs)
+            GameplayInputArgs inputArgs,
+            WalletService walletService)
         {
             _view = view;
             _gameplayPresentersFactory = gmeplayPresentersFactory;
@@ -41,6 +44,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             _sceneSwitcherService = sceneSwitcherService;
             _coroutinesPerformer = coroutinesPerformer;
             _inputArgs = inputArgs;
+            _walletService = walletService;
         }
 
         public void Initialize()
@@ -63,6 +67,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         private void OnRestartButtonClicked()
         {
             _coroutinesPerformer.StartPerform(_sceneSwitcherService.ProcessingSwitchTo(Scenes.Gameplay, _inputArgs));
+            _walletService.RollbackSessionLoot();
         }
 
         private void OnOpenGameSettingsButtonClicked()

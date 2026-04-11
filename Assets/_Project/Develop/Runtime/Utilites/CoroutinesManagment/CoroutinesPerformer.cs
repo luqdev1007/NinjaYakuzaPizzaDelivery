@@ -10,16 +10,6 @@ namespace Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment
             DontDestroyOnLoad(this);
         }
 
-        private void Update()
-        {
-            // kek
-
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                Application.Quit();
-            }
-        }
-
         public Coroutine StartPerform(IEnumerator coroutine)
             => StartCoroutine(coroutine);
 

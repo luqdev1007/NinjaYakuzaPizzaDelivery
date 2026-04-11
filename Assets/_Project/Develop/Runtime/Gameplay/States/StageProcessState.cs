@@ -68,11 +68,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _levelProgressService.Update(deltaTime);
 
             HandleCameraInput();
-
-            if (_inputService.IsRestartKeyPressed)
-            {
-                _coroutinesPerformer.StartPerform(_sceneSwitcherService.ProcessingSwitchTo(Scenes.Gameplay, _inputArgs));
-            }
         }
 
         private void HandleCameraInput()

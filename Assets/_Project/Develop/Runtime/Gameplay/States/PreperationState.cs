@@ -104,8 +104,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             }
 
             // Ждем, пока камера долетит и диалог кончится
-            // yield return new WaitForSeconds(2.5f);
-            yield return new WaitUntil(() => Vector2.Distance(Camera.main.transform.position, _finalPoint.FinalPointPosition) < 0.5f);
+
+            yield return new WaitForSeconds(2.5f);
+
             yield return new WaitUntil(() => _dialogFinished);
 
             // 3. Возвращаем камеру в режим свободного панорамирования (PrepState это любит)
