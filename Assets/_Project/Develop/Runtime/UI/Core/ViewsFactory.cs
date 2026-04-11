@@ -32,6 +32,8 @@ namespace Assets._Project.Develop.Runtime.UI.Core
 
             {ViewIDs.HintView, "UI/Hint/HintView" },
 
+            {ViewIDs.LootFeedbackView, "UI/Common/LootFeedbackView" },
+
             // game settings popup views
             { ViewIDs.AudioSettingsPopupView, "UI/GameSettings/AudioSettingsPopupView" },
             { ViewIDs.GameSettingsPopupView, "UI/GameSettings/GameSettingsPopupView" },

@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Timers;
+using Assets._Project.Develop.Runtime.UI.Wallet;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using System;
@@ -45,12 +46,15 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         public void Initialize()
         {
             Debug.Log("GameplayScreenPresenter Initialized!");
-            _view.OpenGameSettingsButton.onClick.AddListener(OnOpenGameSettingsButtonClicked);
 
+            _view.OpenGameSettingsButton.onClick.AddListener(OnOpenGameSettingsButtonClicked);
             _view.RestartButton.onClick.AddListener(OnRestartButtonClicked);
 
             InGameTimerPresenter timerPresenter = _gameplayPresentersFactory.CreateTimerPresenter(_view.TimerView, _levelConfig.TargetTime);
             _childPresenters.Add(timerPresenter);
+
+            GameplayWalletPresenter walletPresenter = _gameplayPresentersFactory.CteateGameplayWalletPresenter(_view.WalletView);
+            _childPresenters.Add(walletPresenter);
 
             foreach (IPresenter presenter in _childPresenters)
                 presenter.Initialize();

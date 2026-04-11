@@ -29,5 +29,8 @@
         public const string LanguageSettingsPopupView = nameof(LanguageSettingsPopupView);
 
         public const string KeyBindingsSettingsPopupView = nameof(KeyBindingsSettingsPopupView);
+
+
+        public const string LootFeedbackView = nameof(LootFeedbackView);
     }
 }

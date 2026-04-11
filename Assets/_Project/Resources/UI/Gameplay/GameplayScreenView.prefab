@@ -2813,6 +2813,7 @@ MonoBehaviour:
   <OpenGameSettingsButton>k__BackingField: {fileID: 2145366671635042048}
   <RestartButton>k__BackingField: {fileID: 5112450561681925462}
   <TimerView>k__BackingField: {fileID: 5230773600852701995}
+  <WalletView>k__BackingField: {fileID: 7185457071928832644}
 --- !u!1 &4481621203914918277
 GameObject:
   m_ObjectHideFlags: 0
@@ -5225,7 +5226,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1365164161329454442}
   - component: {fileID: 8296984942781219866}
-  - component: {fileID: 23700003380185898}
+  - component: {fileID: 7185457071928832644}
   m_Layer: 5
   m_Name: WalletView
   m_TagString: Untagged
@@ -5280,7 +5281,7 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &23700003380185898
+--- !u!114 &7185457071928832644
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5289,10 +5290,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 8435006829183514521}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd995c00dfd99c54eb93749c267e7c16, type: 3}
+  m_Script: {fileID: 11500000, guid: 8a42773f02815364b91716879779f693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _parent: {fileID: 1365164161329454442}
+  _currencyElements:
+  - Type: 0
+    Text: {fileID: 7233161029445564945}
+    Container: {fileID: 9078576048750307759}
+  - Type: 1
+    Text: {fileID: 6863045033263095604}
+    Container: {fileID: 404281684673563382}
 --- !u!1 &8551646145924935309
 GameObject:
   m_ObjectHideFlags: 0

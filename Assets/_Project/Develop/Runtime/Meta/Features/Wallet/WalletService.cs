@@ -12,6 +12,8 @@ namespace Assets._Project.Develop.Runtime.Meta.Features.Wallet
     {
         private readonly Dictionary<CurrencyTypes, ReactiveVariable<int>> _currencies;
 
+        public event Action<CurrencyTypes, int, int> OnCurrencyAdded;
+
         public WalletService(Dictionary<CurrencyTypes, 
             ReactiveVariable<int>> currencies,
             PlayerDataProvider playerDataProvider)
@@ -41,6 +43,8 @@ namespace Assets._Project.Develop.Runtime.Meta.Features.Wallet
                 throw new ArgumentOutOfRangeException("amount can't be less than zero");
 
             _currencies[type].Value += amount;
+
+            OnCurrencyAdded?.Invoke(type, amount, _currencies[type].Value);
         }
 
         public void Spend(CurrencyTypes type, int amount)

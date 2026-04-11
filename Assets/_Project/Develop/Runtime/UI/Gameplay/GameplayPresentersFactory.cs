@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Dialog;
@@ -12,10 +13,12 @@ using Assets._Project.Develop.Runtime.UI.Gameplay.Hints;
 using Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Timers;
+using Assets._Project.Develop.Runtime.UI.Wallet;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using Assets._Project.Develop.Runtime.Utilites.Timer;
+using System;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay
 {
@@ -109,6 +112,11 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
                 view,
                 _container.Resolve<StageProviderService>()
                 );
+        }
+
+        public GameplayWalletPresenter CteateGameplayWalletPresenter(WalletHUDView walletView)
+        {
+            return new GameplayWalletPresenter(_container.Resolve<WalletService>(), walletView);
         }
     }
 }
