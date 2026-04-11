@@ -317,7 +317,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem())
                 .AddSystem(new AttackInvulnerabilitySystem())
-                .AddSystem(new MeleeAttackHitSystem(coroutinesPerformer, _cameraService))
+
+                .AddSystem(new MeleeAttackHitSystem(
+                    coroutinesPerformer, 
+                    _cameraService, 
+                    _container.Resolve<DropLootService>(), 
+                    _container.Resolve<ConfigsProviderService>())
+                )
 
                 // — урон / жизненный цикл —
                 .AddSystem(new ApplyDamageSystem())
@@ -634,7 +640,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSpawnCurrentTime(new ReactiveVariable<float>(config.SpawnDuration))
                 .AddSpawnInitialTime(new ReactiveVariable<float>(config.SpawnDuration))
 
-                // Таймеры из конфига
                 .AddAutoDeleteCurrentTime(new ReactiveVariable<float>(config.LifeTime))
                 .AddAutoDeleteInitialTime(new ReactiveVariable<float>(config.LifeTime))
 
@@ -643,11 +648,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddIsCollected(new ReactiveVariable<bool>(false))
                 .AddCurrentTarget(new ReactiveVariable<Entity>(null));
 
-            // Условие движения (ждем конца спавна)
             ICompositeCondition moveCondition = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
-            // Умная логика уничтожения
             ICompositeCondition mustSelfRelease = new CompositeCondition(LogicOperations.Or)
                 .Add(new FuncCondition(() => entity.IsCollected.Value == true))
                 .Add(new CompositeCondition(LogicOperations.And)

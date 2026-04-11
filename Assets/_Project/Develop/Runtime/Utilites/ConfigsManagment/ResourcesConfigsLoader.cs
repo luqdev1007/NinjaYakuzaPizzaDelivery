@@ -28,7 +28,7 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
             { typeof(DialogConfig), "Configs/Dialogs/TutorialDialog" },
             { typeof(CharactersConfig), "Configs/Dialogs/CharactersConfig" },
             { typeof(AudioConfig), "Configs/Audio/AudioConfig" },
-            { typeof(LootTableConfig), "Configs/Gameplay/Loot/LootTable" }
+            { typeof(LootTableConfig), "Configs/Gameplay/Loot/MainLootTableConfig" }
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)

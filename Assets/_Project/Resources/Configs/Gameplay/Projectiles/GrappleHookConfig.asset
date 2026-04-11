@@ -19,7 +19,7 @@ MonoBehaviour:
   <MaxCharges>k__BackingField: 100
   <HitMask>k__BackingField:
     serializedVersion: 2
-    m_Bits: 18176
+    m_Bits: 50944
   <GrappleSpeed>k__BackingField: 50
   <ArriveDistance>k__BackingField: 1
   <ArrivalBounce>k__BackingField: 3

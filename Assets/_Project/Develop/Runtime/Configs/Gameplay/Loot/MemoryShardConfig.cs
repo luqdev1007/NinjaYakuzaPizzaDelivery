@@ -2,9 +2,8 @@
 
 namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Loot
 {
-    // Осколки памяти (валюта прокачки)
-    [CreateAssetMenu(menuName = "Configs/Gameplay/Loot/MemoryShard", fileName = "MemoryShardConfig")]
-    public class MemoryShardConfig : LootConfig
+    [CreateAssetMenu(menuName = "Configs/Gameplay/Loot/New Soul Shard Loot Config", fileName = "SoulShardLootConfig")]
+    public class SoulShardLootConfig : LootConfig
     {
         [field: SerializeField] public float ExperienceAmount { get; private set; }
     }

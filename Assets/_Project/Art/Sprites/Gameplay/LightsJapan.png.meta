@@ -360,7 +360,16 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      LightsJapan_0: -1390615438748924299
+      LightsJapan_1: -1742489820883775640
+      LightsJapan_2: 1497529299566524908
+      LightsJapan_3: 8348144425643815849
+      LightsJapan_4: 6749209371589421978
+      LightsJapan_5: -3440970895568603045
+      LightsJapan_6: -448804586297248281
+      LightsJapan_7: 5374895206975995524
+      LightsJapan_8: 1404518470012982647
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

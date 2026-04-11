@@ -81,7 +81,7 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
 
         private void OnResetStatsButtonClicked()
         {
-            int baseGold = _configsProviderService.GetConfig<StartWalletConfig>().GetValueFor(CurrencyTypes.Gold);
+            int baseGold = _configsProviderService.GetConfig<StartWalletConfig>().GetValueFor(CurrencyTypes.Coins);
 
             _mainMenupopupService.OpenConfirmPopup(ResetStats,
                 $"Reset stats?\nYou will start a new game with {baseGold} gold");

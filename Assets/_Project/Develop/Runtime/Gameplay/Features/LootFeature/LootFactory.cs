@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using System;
@@ -13,36 +14,37 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
     {
         private readonly EntitiesFactory _entityFactory;
         private readonly AudioService _audioService;
+        private readonly WalletService _walletService;
 
         public LootFactory(DIContainer container)
         {
             _entityFactory = container.Resolve<EntitiesFactory>();
             _audioService = container.Resolve<AudioService>();
+            _walletService = container.Resolve<WalletService>();
         }
 
         public Entity Create(LootConfig config, Vector3 position)
         {
-            // 1. Создаем базовую сущность
+            // 1. Создаем базовую сущность через общую фабрику
             Entity loot = _entityFactory.CreatePullable(config, position);
             loot.AddLootTag();
 
-            // 2. Генерируем случайный множитель (от 0.5 до 3.0)
-            // Он определит и размер, и количество награды
+            // 2. Генерируем множитель для вариативности (размер и ценность)
             float randomMultiplier = Random.Range(0.5f, 3f);
 
-            // 3. Инициализируем компоненты (опыт с учетом множителя)
+            // 3. Настраиваем компоненты данных (Coins или Experience)
             SetupLootComponents(loot, config, randomMultiplier);
 
-            // 4. Подписываемся на сбор
+            // 4. Подписываемся на событие сбора
             loot.IsCollected.Subscribe((oldValue, isCollected) =>
             {
                 if (isCollected)
                 {
-                    OnLootCollected(config, randomMultiplier);
+                    HandleLootCollection(loot, config, randomMultiplier);
                 }
             });
 
-            // 5. Визуальный масштаб и импульс разлета
+            // 5. Визуал и физический импульс
             ApplyPhysicsAndVisuals(loot, config, randomMultiplier);
 
             return loot;
@@ -50,38 +52,57 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         private void SetupLootComponents(Entity loot, LootConfig config, float multiplier)
         {
-            switch (config)
+            // Расширяемый switch под разные конфиги лута
+            if (config is SoulShardLootConfig soulShardLootConfig)
             {
-                case MemoryShardConfig memoryShardConfig:
-                    // Начисляем опыт: база * рандомный множитель
-                    float finalExp = memoryShardConfig.ExperienceAmount * multiplier;
-                    loot.AddExperienceValue(new ReactiveVariable<float>(finalExp));
-                    break;
-
-                default:
-                    throw new ArgumentException($"Not support {config.GetType()} type config");
+                float finalExp = soulShardLootConfig.ExperienceAmount * multiplier;
+                loot.AddExperienceValue(new ReactiveVariable<float>(finalExp));
             }
+            else if (config is CoinLootConfig coinConfig) // Если добавишь такой конфиг
+            {
+                int finalCoins = Mathf.RoundToInt(coinConfig.BaseAmount * multiplier);
+                loot.AddCoins(new ReactiveVariable<int>(finalCoins));
+            }
+            // Можно добавить другие типы (чертежи и т.д.)
         }
 
-        private void OnLootCollected(LootConfig config, float multiplier)
+        private void HandleLootCollection(Entity loot, LootConfig config, float multiplier)
         {
-            // Чем больше объект (multiplier выше), тем ниже будет Pitch (звук "тяжелее")
-            // Настраиваем диапазон питча: мелкие (0.5) будут ~1.3, крупные (3.0) будут ~0.7
-            float basePitch = 1f;
-            float pitchShift = Mathf.Lerp(1.3f, 0.7f, (multiplier - 0.5f) / 2.5f);
+            // 1. Определяем количество награды из компонентов сущности
+            int amountToAdd = 0;
 
-            // Добавляем еще капельку рандома для естественности
-            float finalPitch = (basePitch * pitchShift) + Random.Range(-0.05f, 0.05f);
+            if (loot.HasComponent<ExperienceValue>())
+                amountToAdd = Mathf.RoundToInt(loot.ExperienceValue.Value);
+            else if (loot.HasComponent<Coins>())
+                amountToAdd = loot.Coins.Value;
+
+            // 2. Начисляем в глобальный кошелек (через маппинг типов)
+            CurrencyTypes currencyType = MapLootToCurrency(config.LootType);
+            _walletService.Add(currencyType, amountToAdd);
+
+            // 3. Отыгрываем звук с динамическим питчем
+            PlayCollectSound(config, multiplier);
+
+            // Тут можно будет вызвать событие для UI-эффектов (полет иконок)
+        }
+
+        private void PlayCollectSound(LootConfig config, float multiplier)
+        {
+            // Мелкий лут — высокий звук, крупный — низкий/тяжелый
+            float pitchShift = Mathf.Lerp(1.3f, 0.7f, (multiplier - 0.5f) / 2.5f);
+            float finalPitch = pitchShift + Random.Range(-0.05f, 0.05f);
 
             _audioService.PlaySfxByPrefixAuto(config.CollectSoundId, finalPitch);
         }
 
         private void ApplyPhysicsAndVisuals(Entity loot, LootConfig config, float multiplier)
         {
-            // Устанавливаем скейл согласно множителю
+            // Масштабируем визуальную часть
             loot.Transform.localScale *= multiplier;
 
             Rigidbody2D rb = loot.Rigidbody;
+
+            // На время разлета выключаем триггер, чтобы он мог сталкиваться с окружением
             if (loot.BodyCollider != null)
                 loot.BodyCollider.isTrigger = false;
 
@@ -93,10 +114,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
                 float forceX = Random.Range(config.LaunchForceX.x, config.LaunchForceX.y);
                 float forceY = Random.Range(config.LaunchForceY.x, config.LaunchForceY.y);
 
-                // Можно слегка усилить толчок для крупных объектов, чтобы они не падали камнем
+                // Чуть больше массы тяжелым объектам для честного импульса
                 float massWeight = Mathf.Lerp(1f, 1.5f, (multiplier - 0.5f) / 2.5f);
                 rb.AddForce(new Vector2(forceX, forceY) * massWeight, ForceMode2D.Impulse);
             }
+        }
+
+        private CurrencyTypes MapLootToCurrency(LootType lootType)
+        {
+            // Маппинг твоего Enum лута на Enum кошелька
+            return lootType switch
+            {
+                LootType.SoulShard => CurrencyTypes.SoulShard, // Твои "Осколки памяти"
+                LootType.Coin => CurrencyTypes.Coins,
+                _ => CurrencyTypes.Coins // Дефолт
+            };
         }
     }
 }

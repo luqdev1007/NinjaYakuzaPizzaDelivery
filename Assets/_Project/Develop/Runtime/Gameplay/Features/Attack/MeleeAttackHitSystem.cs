@@ -9,6 +9,9 @@ using UnityEngine;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Object = UnityEngine.Object;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
+using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
@@ -16,7 +19,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
     {
         private readonly ICoroutinesPerformer _coroutines;
         private readonly CameraService _cameraService;
-
+        private readonly DropLootService _dropLootService;
+        private readonly ConfigsProviderService _configsProviderService;
         private Entity _entity;
         private IDisposable _attackDelayEndDisposable;
 
@@ -32,10 +36,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private ReactiveVariable<Vector2> _groundBounceModifiers;
         private ReactiveVariable<Vector2> _airBounceModifiers;
 
-        public MeleeAttackHitSystem(ICoroutinesPerformer coroutines, CameraService cameraService)
+        public MeleeAttackHitSystem(ICoroutinesPerformer coroutines, 
+            CameraService cameraService, 
+            DropLootService dropLootService,
+            ConfigsProviderService configsProviderService)
         {
             _coroutines = coroutines;
             _cameraService = cameraService;
+            _dropLootService = dropLootService;
+            _configsProviderService = configsProviderService;
         }
 
         public void OnInit(Entity entity)
@@ -79,9 +88,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
                     hitAny = true;
                 }
                 // test
-                else if (hit.TryGetComponent(out Rigidbody2D rigidbody))
-                {                  
-                    Object.Destroy(rigidbody.gameObject);
+                else
+                {
+                    LootTableConfig mainLootTableConfig = _configsProviderService.GetConfig<LootTableConfig>();
+                    _dropLootService.DropLootFor(_entity, mainLootTableConfig);
+                    Object.Destroy(hit.gameObject);
                 }
             }
 

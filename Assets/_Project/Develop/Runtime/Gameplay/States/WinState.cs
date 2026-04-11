@@ -55,7 +55,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _audioService.SetMusicMuted(true);
 
             int reward = _configsProviderService.GetConfig<GameRewardsConfig>().RewardForWin;
-            _walletService.Add(CurrencyTypes.Gold, reward);
+            _walletService.Add(CurrencyTypes.Coins, reward);
 
             _levelsProgressionService.AddLevelToCompleted(_gameplayInputArgs.LevelNumber);
 

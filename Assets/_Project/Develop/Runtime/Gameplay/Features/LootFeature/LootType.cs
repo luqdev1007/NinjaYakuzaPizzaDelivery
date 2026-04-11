@@ -2,7 +2,7 @@
 {
     public enum LootType
     {
-        ExpOrb,      // Осколки памяти
+        SoulShard,      // Осколки памяти
         Coin,        // Золото
         Blueprint,   // Чертеж
         ProjectileCharge, // Заряды

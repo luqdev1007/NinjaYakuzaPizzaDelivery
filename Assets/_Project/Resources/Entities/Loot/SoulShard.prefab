@@ -5493,7 +5493,7 @@ GameObject:
   - component: {fileID: 5013237154390771107}
   - component: {fileID: 2063614661504897782}
   m_Layer: 13
-  m_Name: SimpleOrb
+  m_Name: SoulShard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

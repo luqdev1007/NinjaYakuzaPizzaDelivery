@@ -2,7 +2,7 @@
 {
     public enum CurrencyTypes
     {
-        Gold = 0,
-        Diamond = 1,
+        Coins = 0,
+        SoulShard = 1,
     }
 }
