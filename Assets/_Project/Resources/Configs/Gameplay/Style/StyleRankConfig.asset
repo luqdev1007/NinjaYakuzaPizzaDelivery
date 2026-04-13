@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c6ed01811dfdaf4fb6b52873de890d1, type: 3}
+  m_Name: StyleRankConfig
+  m_EditorClassIdentifier: 
+  GlobalDecayMultiplier: 2
+  Ranks:
+  - Letter: F
+    SubRanks:
+    - Prefix: xrslf
+      Threshold: 0
+      Multiplier: 1
+    - Prefix: vvv
+      Threshold: 50
+      Multiplier: 1.1
+    DecayRate: 5
+  - Letter: "\u0421"
+    SubRanks:
+    - Prefix: ewl
+      Threshold: 150
+      Multiplier: 2.1
+    - Prefix: 3
+      Threshold: 250
+      Multiplier: 2.2
+    DecayRate: 10
+  - Letter: A
+    SubRanks:
+    - Prefix: w-e-s-o-m-e
+      Threshold: 400
+      Multiplier: 3.1
+    - Prefix: +
+      Threshold: 600
+      Multiplier: 3.2
+    DecayRate: 20
+  - Letter: S
+    SubRanks:
+    - Prefix: ++
+      Threshold: 1000
+      Multiplier: 5.1
+    - Prefix: uper
+      Threshold: 1500
+      Multiplier: 5.2
+    - Prefix: uper smokin' sexy
+      Threshold: 2500
+      Multiplier: 10
+    DecayRate: 40

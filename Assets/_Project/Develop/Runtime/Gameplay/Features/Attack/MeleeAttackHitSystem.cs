@@ -12,6 +12,7 @@ using Object = UnityEngine.Object;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
@@ -21,6 +22,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private readonly CameraService _cameraService;
         private readonly DropLootService _dropLootService;
         private readonly ConfigsProviderService _configsProviderService;
+
+        private readonly AudioService _audioService;
+
+
+
         private Entity _entity;
         private IDisposable _attackDelayEndDisposable;
 
@@ -36,15 +42,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private ReactiveVariable<Vector2> _groundBounceModifiers;
         private ReactiveVariable<Vector2> _airBounceModifiers;
 
-        public MeleeAttackHitSystem(ICoroutinesPerformer coroutines, 
-            CameraService cameraService, 
+        public MeleeAttackHitSystem(ICoroutinesPerformer coroutines,
+            CameraService cameraService,
             DropLootService dropLootService,
-            ConfigsProviderService configsProviderService)
+            ConfigsProviderService configsProviderService,
+            AudioService audioService)
         {
             _coroutines = coroutines;
             _cameraService = cameraService;
             _dropLootService = dropLootService;
             _configsProviderService = configsProviderService;
+            _audioService = audioService;
         }
 
         public void OnInit(Entity entity)
@@ -90,6 +98,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
                 // test
                 else
                 {
+                    _audioService.PlaySfxByPrefixAuto("Box_Hit", UnityEngine.Random.Range(0.8f, 1.2f));
                     LootTableConfig mainLootTableConfig = _configsProviderService.GetConfig<LootTableConfig>();
                     _dropLootService.DropLootFor(_entity, mainLootTableConfig);
                     Object.Destroy(hit.gameObject);

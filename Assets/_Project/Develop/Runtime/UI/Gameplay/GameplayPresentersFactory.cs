@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
@@ -12,6 +13,7 @@ using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Hints;
 using Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
+using Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Timers;
 using Assets._Project.Develop.Runtime.UI.Wallet;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
@@ -33,9 +35,20 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             _inputArgs = inputArgs;
         }
 
+        public RankStylePresenter CreateStylePresenter(RankStyleView view)
+        {
+            return new RankStylePresenter(view, _container.Resolve<StyleService>());
+        }
+
         public DialogPresenter CreateDialogPresenter(DialogDisplayView view, DialogConfig config)
         {
-            return new DialogPresenter(view, _container.Resolve<ICoroutinesPerformer>(), config, _container.Resolve<ConfigsProviderService>().GetConfig<CharactersConfig>());
+            return new DialogPresenter(
+                view, 
+                _container.Resolve<ICoroutinesPerformer>(), 
+                config, 
+                _container.Resolve<ConfigsProviderService>().GetConfig<CharactersConfig>(),
+                _container.Resolve<GameplayUIRoot>()
+                );
         }
 
         public HintPresenter CreateHintPresenter(HintView view, string message)

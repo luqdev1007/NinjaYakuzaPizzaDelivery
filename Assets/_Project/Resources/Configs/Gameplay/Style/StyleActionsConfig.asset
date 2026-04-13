@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2361df59a2f7aa946bac4a7b36945df7, type: 3}
+  m_Name: StyleActionsConfig
+  m_EditorClassIdentifier: 
+  KillBasePoints: 100
+  DamagePointMultiplier: 2
+  FreshnessBonus: 1.5
+  UpwardAccelerationPoints: 5
+  DashPoints: 10
+  CoinCollectPoints: 5
+  MemoryFragmentPoints: 5
+  RanksToDropOnDamage: 2
+  <LootPickupPoints>k__BackingField: 2

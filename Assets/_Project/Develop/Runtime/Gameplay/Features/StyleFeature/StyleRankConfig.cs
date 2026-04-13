@@ -8,7 +8,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
     public class StyleRankConfig : ScriptableObject
     {
         [Header("Settings")]
-        public float GlobalDecayMultiplier = 1f; // Общая скорость затухания
+        [Tooltip("Общая скорость затухания очков стиля")]
+        public float GlobalDecayMultiplier = 1f;
 
         [Header("Ranks")]
         public List<MainRankEntry> Ranks;
@@ -17,18 +18,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
     [Serializable]
     public class MainRankEntry
     {
-        public string Letter; // F, C, B, A, S
+        [Tooltip("Буквенное обозначение ранга: F, C, B, A, S")]
+        public string Letter;
+
         public List<SubRankEntry> SubRanks;
 
-        // Как быстро сгорают очки именно на этом ранге
+        [Tooltip("Скорость сгорания очков именно на этом ранге")]
         public float DecayRate = 10f;
     }
 
     [Serializable]
     public class SubRankEntry
     {
-        public string Prefix;    // "xurslf", "oo1", "mokin'"
-        public float Threshold;  // Сколько очков нужно набрать для этого под-ранга
-        public float Multiplier; // x1.5, x2.0 и т.д.
+        [Tooltip("Префикс для отображения: xurslf, oo1, mokin'")]
+        public string Prefix;
+
+        [Tooltip("Порог очков для перехода на этот под-ранг")]
+        public float Threshold;
+
+        [Tooltip("Множитель очков (x1.5, x2.0 и т.д.)")]
+        public float Multiplier;
     }
 }

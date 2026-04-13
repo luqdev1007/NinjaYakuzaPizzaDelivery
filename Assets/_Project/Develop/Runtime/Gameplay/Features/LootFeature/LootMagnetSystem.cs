@@ -18,6 +18,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         private Entity _lootMagnetOwner;
         private ReactiveVariable<float> _collectRange;
+        private ReactiveEvent<LootType> _lootPickedEvent;
         private Transform _transform;
 
         public void OnInit(Entity entity)
@@ -25,6 +26,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             _lootMagnetOwner = entity;
             _collectRange = entity.CollectRange;
             _transform = entity.Transform;
+            _lootPickedEvent = entity.LootPickedEvent;
         }
 
         public void OnUpdate(float deltaTime)
@@ -52,6 +54,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
             if (rb != null)
                 rb.simulated = false;
+
+            _lootPickedEvent?.Invoke(LootType.Coin); // ? rework
         }
     }
 }

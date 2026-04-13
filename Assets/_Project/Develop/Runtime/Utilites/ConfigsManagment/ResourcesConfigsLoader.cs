@@ -2,8 +2,10 @@ using Assets._Project.Develop.Runtime.Configs.Dialog;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Style;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Utilites.AssetsManagment;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement; // Добавил пространство имен
 using System;
@@ -28,7 +30,11 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
             { typeof(DialogConfig), "Configs/Dialogs/TutorialDialog" },
             { typeof(CharactersConfig), "Configs/Dialogs/CharactersConfig" },
             { typeof(AudioConfig), "Configs/Audio/AudioConfig" },
-            { typeof(LootTableConfig), "Configs/Gameplay/Loot/MainLootTableConfig" }
+
+            { typeof(LootTableConfig), "Configs/Gameplay/Loot/MainLootTableConfig" },
+
+            { typeof(StyleRankConfig), "Configs/Gameplay/Style/StyleRankConfig" },
+            { typeof(StyleActionsConfig), "Configs/Gameplay/Style/StyleActionsConfig" },
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)

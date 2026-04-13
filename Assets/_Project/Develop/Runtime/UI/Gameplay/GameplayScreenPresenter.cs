@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Timers;
 using Assets._Project.Develop.Runtime.UI.Wallet;
+using Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay; // Добавлено
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using System;
@@ -54,11 +55,17 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             _view.OpenGameSettingsButton.onClick.AddListener(OnOpenGameSettingsButtonClicked);
             _view.RestartButton.onClick.AddListener(OnRestartButtonClicked);
 
+            // Таймер
             InGameTimerPresenter timerPresenter = _gameplayPresentersFactory.CreateTimerPresenter(_view.TimerView, _levelConfig.TargetTime);
             _childPresenters.Add(timerPresenter);
 
+            // Кошелек
             GameplayWalletPresenter walletPresenter = _gameplayPresentersFactory.CteateGameplayWalletPresenter(_view.WalletView);
             _childPresenters.Add(walletPresenter);
+
+            // --- Система Стиля ---
+            RankStylePresenter stylePresenter = _gameplayPresentersFactory.CreateStylePresenter(_view.StyleView);
+            _childPresenters.Add(stylePresenter);
 
             foreach (IPresenter presenter in _childPresenters)
                 presenter.Initialize();
@@ -78,14 +85,12 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         public void Dispose()
         {
             _view.OpenGameSettingsButton.onClick.RemoveListener(OnOpenGameSettingsButtonClicked);
-
             _view.RestartButton.onClick.RemoveListener(OnRestartButtonClicked);
-
 
             foreach (IPresenter presenter in _childPresenters)
                 presenter.Dispose();
 
             _childPresenters.Clear();
         }
-    } 
+    }
 }

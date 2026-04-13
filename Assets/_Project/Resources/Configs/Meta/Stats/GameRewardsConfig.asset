@@ -12,6 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02d3769c65061d0478ea66b848f6bcd8, type: 3}
   m_Name: GameRewardsConfig
   m_EditorClassIdentifier: 
-  <RewardForWin>k__BackingField: 10
-  <PenaltyForLose>k__BackingField: 5
-  <ResetCost>k__BackingField: 20
+  <RewardForWin>k__BackingField: 33
+  <PenaltyForLose>k__BackingField: 66

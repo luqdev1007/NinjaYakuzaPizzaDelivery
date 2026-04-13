@@ -24,6 +24,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature;
 using Assets._Project.Develop.Runtime.Utilites;
@@ -241,6 +242,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // лут
                 .AddCollectRange(new ReactiveVariable<float>(config.LootCollectRange))
+                .AddLootPickedEvent(new ReactiveEvent<LootType>())
 
                 // — жизненный цикл —
                 .AddMaxHealth(new ReactiveVariable<float>(config.LifeCycle.MaxHealth))
@@ -322,7 +324,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                     coroutinesPerformer, 
                     _cameraService, 
                     _container.Resolve<DropLootService>(), 
-                    _container.Resolve<ConfigsProviderService>())
+                    _container.Resolve<ConfigsProviderService>(),
+                    _container.Resolve<AudioService>())
                 )
 
                 // — урон / жизненный цикл —
@@ -340,6 +343,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // drive (предпоследний)
                 .AddSystem(new DriveSystem(inputService, _cameraService))
+
+                // hero style system
+                .AddSystem(new HeroStyleSystem(
+                    _container.Resolve<StyleEvaluator>(),
+                    _container.Resolve<StyleService>()))
 
                 // — последней всегда —
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))

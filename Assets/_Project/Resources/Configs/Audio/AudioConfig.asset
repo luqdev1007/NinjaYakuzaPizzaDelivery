@@ -101,6 +101,18 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: 28abdc561bf432546a792ff88b2dbb58, type: 3}
       Volume: 0.85
       BasePitch: 0.62
+    - Id: Box_Hit1
+      Clip: {fileID: 8300000, guid: b5e00228b58124d47bdcba5b19d2116f, type: 3}
+      Volume: 0.85
+      BasePitch: 0.62
+    - Id: Box_Hit2
+      Clip: {fileID: 8300000, guid: 394e11ca03494d448926e2ad1f911fb9, type: 3}
+      Volume: 0.85
+      BasePitch: 0.62
+    - Id: Box_Hit3
+      Clip: {fileID: 8300000, guid: 7ae6145e60248cb4887907d3ee6c44f7, type: 3}
+      Volume: 0.85
+      BasePitch: 0.62
   - Type: 5
     Clips:
     - Id: GhostHit1

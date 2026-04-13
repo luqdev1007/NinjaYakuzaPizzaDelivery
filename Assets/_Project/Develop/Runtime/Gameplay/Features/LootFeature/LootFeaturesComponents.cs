@@ -5,6 +5,11 @@ using System.Collections.Generic;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 {
+    public class LootPickedEvent : IEntityComponent
+    {
+        public ReactiveEvent<LootType> Value;
+    }
+
     public class CollectRange : IEntityComponent
     {
         public ReactiveVariable<float> Value;

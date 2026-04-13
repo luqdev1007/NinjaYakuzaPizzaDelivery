@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.UI.TextFeatures; // Подключили утилиту
 using System;
 using UnityEngine;
+using Assets._Project.Develop.Runtime.UI.Gameplay;
 
 namespace Assets._Project.Develop.Runtime.UI.Dialog
 {
@@ -14,6 +15,8 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         private readonly DialogDisplayView _view;
         private readonly DialogConfig _config;
         private readonly CharactersConfig _charactersConfig;
+
+        private readonly GameplayUIRoot _gameplayUIRoot;
 
         private int _currentLineIndex = -1;
         private bool _isTyping;
@@ -31,11 +34,13 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             DialogDisplayView view,
             ICoroutinesPerformer coroutinesPerformer,
             DialogConfig config,
-            CharactersConfig charactersConfig) : base(coroutinesPerformer)
+            CharactersConfig charactersConfig,
+            GameplayUIRoot gameplayUIRoot) : base(coroutinesPerformer)
         {
             _view = view;
             _config = config;
             _charactersConfig = charactersConfig;
+            _gameplayUIRoot = gameplayUIRoot;
         }
 
         protected override PopupViewBase PopupView => _view;
@@ -45,6 +50,7 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             base.Initialize();
             _view.AppearanceFinished += OnAppearanceFinished;
             _view.ShowSkipHint();
+            _gameplayUIRoot.HUDLayer.gameObject.SetActive(false);
         }
 
         private void OnAppearanceFinished()
@@ -150,11 +156,13 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         private void EndDialog()
         {
             DialogEnded?.Invoke();
+            _gameplayUIRoot.HUDLayer.gameObject.SetActive(true);
             OnCloseRequest();
         }
 
         public override void Dispose()
         {
+            _gameplayUIRoot.HUDLayer.gameObject.SetActive(true);
             _view.AppearanceFinished -= OnAppearanceFinished;
             base.Dispose();
         }
