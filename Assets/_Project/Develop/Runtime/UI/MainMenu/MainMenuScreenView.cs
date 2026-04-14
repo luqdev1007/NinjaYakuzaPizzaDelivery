@@ -6,10 +6,13 @@ using UnityEngine.UI;
 
 public class MainMenuScreenView : MonoBehaviour, IView
 {
+    [field: SerializeField] public DojoView DojoView { get; private set; }
+    [field: SerializeField] public LeaderBoardView LeaderBoardView { get; private set; }
+
     [Header("Meta")]
     [field: SerializeField] public IconTextListView WalletView { get; private set; }
     [field: SerializeField] public Button ResetStatsButton { get; private set; }
-    [field: SerializeField] public DojoView DojoView { get; private set; }
+
 
     [Header("Side Utilities Buttons")]
     [field: SerializeField] public Button OpenGameSettingsButton { get; private set; }

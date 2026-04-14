@@ -53,6 +53,8 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
 
             _view.DojoView.ExitDojoButton.onClick.AddListener(OnExitDojoButtonClicked);
 
+            _view.OpenLeaderboardButton.onClick.AddListener(OnOpenLeaderboardButtonClicked);
+
             _walletPresenter = _presentersFactory.CreateWalletPresenter(_view.WalletView);
             _disposables.Add(_walletPresenter);
 
@@ -80,10 +82,17 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
 
             _view.DojoView.ExitDojoButton.onClick.RemoveListener(OnExitDojoButtonClicked);
 
+            _view.OpenLeaderboardButton.onClick.RemoveListener(OnOpenLeaderboardButtonClicked);
+
             foreach (var disposable in _disposables)
                 disposable.Dispose();
 
             _disposables.Clear();
+        }
+
+        private void OnOpenLeaderboardButtonClicked()
+        {
+            _view.LeaderBoardView.gameObject.SetActive(true);
         }
 
         private void OpenChooseOrderTiles()
