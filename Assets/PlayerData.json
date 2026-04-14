@@ -1,12 +1,16 @@
 {
   "WalletData": {
-    "Coins": 2217,
-    "SoulShard": 759
+    "Coins": 3041,
+    "SoulShard": 1026
   },
   "Wins": 0,
   "Losses": 0,
   "CompletedLevels": [
     1,
-    2
+    2,
+    3,
+    4,
+    5,
+    6
   ]
 }

@@ -1,5 +1,6 @@
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.UI.MainMenu;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,7 +8,7 @@ using UnityEngine.UI;
 public class MainMenuScreenView : MonoBehaviour, IView
 {
     [field: SerializeField] public DojoView DojoView { get; private set; }
-    [field: SerializeField] public LeaderBoardView LeaderBoardView { get; private set; }
+    [field: SerializeField] public LeaderboardView LeaderBoardView { get; private set; }
 
     [Header("Meta")]
     [field: SerializeField] public IconTextListView WalletView { get; private set; }
