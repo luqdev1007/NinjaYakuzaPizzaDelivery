@@ -100,9 +100,22 @@ namespace Assets._Project.Develop.Runtime.UI
                 );
         }
 
-        public KeyBindingsSettingsPopupPresenter CreateKeyBindingsPopupPresenter(KeyBindingsSettingsPopupView view)
+        public KeyBindingsSettingsPopupPresenter CreateKeyBindingsPopupPresenter(KeyBindingsSettingsPopupView view, PopupService popupService)
         {
-            return new KeyBindingsSettingsPopupPresenter(view, _container.Resolve<ICoroutinesPerformer>());
+            return new KeyBindingsSettingsPopupPresenter(view, 
+                _container.Resolve<ICoroutinesPerformer>(),
+                popupService
+                );
+        }
+
+        public LanguageSettingsPopupPresenter CreateLanguageSettingsPopupPresenter(LanguageSettingsPopupView view)
+        {
+            return new LanguageSettingsPopupPresenter(view, _container.Resolve<ICoroutinesPerformer>());
+        }
+
+        public GraphicSettingsPopupPresenter CreateGraphicSettingsPopupPresenter(GraphicSettingsPopupView view)
+        {
+            return new GraphicSettingsPopupPresenter(view, _container.Resolve<ICoroutinesPerformer>());
         }
     }
 }

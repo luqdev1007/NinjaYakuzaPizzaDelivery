@@ -57,10 +57,23 @@ namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
             _view.OpenAudioSettings.onClick.AddListener(OnOpenAudioSettingsButtonClicked);
             _view.OpenKeyBindingsSettings.onClick.AddListener(OnOpenKeyBindingsSettingsButtonClicked);
 
+            _view.OpenGraphicSettings.onClick.AddListener(OnOpenGraphicSettingsButtonClicked);
+            _view.OpenLanguageSettings.onClick.AddListener(OnOpenOpenLanguageSettingsButtonClicked);
+
             if (_popupService is MainMenuPopupService)
                 _view.ExitGameButton.onClick.AddListener(OnExitGameButtonClicked);
             else if (_popupService is GameplayPopupService)
                 _view.ExitGameButton.onClick.AddListener(OnExitToMainMenuGameButtonClicked);
+        }
+
+        private void OnOpenOpenLanguageSettingsButtonClicked()
+        {
+            _popupService.OpenLanguageSettingsPopup();
+        }
+
+        private void OnOpenGraphicSettingsButtonClicked()
+        {
+            _popupService.OpenGraphicSettingsPopup();
         }
 
         private void OnOpenKeyBindingsSettingsButtonClicked()

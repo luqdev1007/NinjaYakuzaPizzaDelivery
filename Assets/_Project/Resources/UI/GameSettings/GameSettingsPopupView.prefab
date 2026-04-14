@@ -893,7 +893,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8275911894826623712}
   m_Layer: 5
-  m_Name: ResolutionSettings
+  m_Name: GraphicSettings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -933,7 +933,7 @@ GameObject:
   - component: {fileID: 2595574105755852720}
   - component: {fileID: 1825805698129506158}
   m_Layer: 5
-  m_Name: Button
+  m_Name: OpenLanguageSettingsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1189,7 +1189,7 @@ GameObject:
   - component: {fileID: 8614996114124135626}
   - component: {fileID: 721965295621828240}
   m_Layer: 5
-  m_Name: KeyBindingsButton
+  m_Name: OpenKeyBindingsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1826,7 +1826,7 @@ GameObject:
   - component: {fileID: 5371730822223875173}
   - component: {fileID: 2586803366231170144}
   m_Layer: 5
-  m_Name: Button
+  m_Name: OpenSoundSettingsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2002,6 +2002,8 @@ MonoBehaviour:
   _anticlicker: {fileID: 1368346806505097100}
   _animationType: 1
   <OpenAudioSettings>k__BackingField: {fileID: 2586803366231170144}
+  <OpenGraphicSettings>k__BackingField: {fileID: 2041179113049549761}
+  <OpenLanguageSettings>k__BackingField: {fileID: 1825805698129506158}
   <OpenKeyBindingsSettings>k__BackingField: {fileID: 721965295621828240}
   <ExitGameButton>k__BackingField: {fileID: 2810147453253754903}
 --- !u!1 &8888729328615689436
@@ -2092,7 +2094,7 @@ GameObject:
   - component: {fileID: 7645765869608317339}
   - component: {fileID: 2041179113049549761}
   m_Layer: 5
-  m_Name: Button
+  m_Name: OpenGraphicSettingsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

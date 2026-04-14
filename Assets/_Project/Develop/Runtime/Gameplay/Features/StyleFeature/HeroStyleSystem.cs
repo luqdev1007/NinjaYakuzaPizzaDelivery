@@ -2,7 +2,6 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using System;
 using System.Collections.Generic;
-using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
 {

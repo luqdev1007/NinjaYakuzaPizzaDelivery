@@ -29,6 +29,18 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
 
         public void SetPoints(float points)
         {
+            bool shouldBeVisible = points > 0.01f;
+
+            if (shouldBeVisible != _isPointsVisible)
+            {
+                _isPointsVisible = shouldBeVisible;
+                _pointsCanvasGroup.DOKill(); // Убиваем старый фейд
+                _pointsCanvasGroup.DOFade(shouldBeVisible ? 1f : 0f, 0.4f);
+
+                // Если скрываем, можно еще и букву чуть притушить (опционально)
+                _rankLetterText.transform.parent.gameObject.SetActive(true); // Убедись, что сам объект не выключен
+            }
+
             // Управление видимостью
             if (points > 0.1f && !_isPointsVisible)
             {

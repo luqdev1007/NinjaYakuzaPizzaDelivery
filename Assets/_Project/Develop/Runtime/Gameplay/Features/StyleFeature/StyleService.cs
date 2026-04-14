@@ -77,6 +77,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
 
         private void UpdateRank()
         {
+            // Берем САМЫЙ ПЕРВЫЙ ранг и подранг из конфига как дефолт
+            // Чтобы даже при 0 очков у нас была буква "F"
             string bestLetter = _rankConfig.Ranks[0].Letter;
             string bestPrefix = _rankConfig.Ranks[0].SubRanks[0].Prefix;
 
@@ -84,6 +86,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
             {
                 foreach (var subRank in rankEntry.SubRanks)
                 {
+                    // Используем >=, чтобы при равенстве порогу (включая 0) ранг находился
                     if (_currentPoints.Value >= subRank.Threshold)
                     {
                         bestLetter = rankEntry.Letter;
@@ -91,11 +94,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
                     }
                     else
                     {
-                        break;
+                        // Как только нашли порог, который выше наших очков — выходим
+                        goto Assign;
                     }
                 }
             }
 
+        Assign:
             _currentLetter.Value = bestLetter;
             _currentPrefix.Value = bestPrefix;
         }

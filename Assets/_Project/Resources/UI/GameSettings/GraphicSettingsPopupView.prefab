@@ -5635,7 +5635,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 6700309575497465351}
   m_Template: {fileID: 5336931644459088937}
   m_CaptionText: {fileID: 7173568627472851057}
@@ -6407,7 +6407,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 8482115150068899570}
   m_Template: {fileID: 834911712853219435}
   m_CaptionText: {fileID: 8994642425862044469}
@@ -7378,7 +7378,20 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3477522501150088663}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 73699528337465524}
+        m_TargetAssemblyTypeName: Assets._Project.Develop.Runtime.UI.Core.PopupViewBase,
+          Assembly-CSharp
+        m_MethodName: OnCloseButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6356427532877135365
 GameObject:
   m_ObjectHideFlags: 0

@@ -117,12 +117,33 @@ namespace Assets._Project.Develop.Runtime.UI.Core
         public KeyBindingsSettingsPopupPresenter OpenKeyBindingsSettingsPopup()
         {
             var view = ViewsFactory.Create<KeyBindingsSettingsPopupView>(ViewIDs.KeyBindingsSettingsPopupView, PopupLayer);
-            var popup = _presentersFactory.CreateKeyBindingsPopupPresenter(view);
+            var popup = _presentersFactory.CreateKeyBindingsPopupPresenter(view, this);
 
             OnPopupCreated(popup, view);
 
             return popup;
         }
+
+        public LanguageSettingsPopupPresenter OpenLanguageSettingsPopup()
+        {
+            var view = ViewsFactory.Create<LanguageSettingsPopupView>(ViewIDs.LanguageSettingsPopupView, PopupLayer);
+            var popup = _presentersFactory.CreateLanguageSettingsPopupPresenter(view);
+
+            OnPopupCreated(popup, view);
+
+            return popup;
+        }
+
+        public GraphicSettingsPopupPresenter OpenGraphicSettingsPopup()
+        {
+            var view = ViewsFactory.Create<GraphicSettingsPopupView>(ViewIDs.GraphicSettingsPopupView, PopupLayer);
+            var popup = _presentersFactory.CreateGraphicSettingsPopupPresenter(view);
+
+            OnPopupCreated(popup, view);
+
+            return popup;
+        }
+
 
         private class PopupInfo
         {

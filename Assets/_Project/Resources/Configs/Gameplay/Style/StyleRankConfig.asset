@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c6ed01811dfdaf4fb6b52873de890d1, type: 3}
   m_Name: StyleRankConfig
   m_EditorClassIdentifier: 
-  GlobalDecayMultiplier: 2
+  GlobalDecayMultiplier: 10
   Ranks:
   - Letter: F
     SubRanks:
@@ -23,12 +23,12 @@ MonoBehaviour:
       Threshold: 50
       Multiplier: 1.1
     DecayRate: 5
-  - Letter: "\u0421"
+  - Letter: C
     SubRanks:
     - Prefix: ewl
       Threshold: 150
       Multiplier: 2.1
-    - Prefix: 3
+    - Prefix: 415
       Threshold: 250
       Multiplier: 2.2
     DecayRate: 10

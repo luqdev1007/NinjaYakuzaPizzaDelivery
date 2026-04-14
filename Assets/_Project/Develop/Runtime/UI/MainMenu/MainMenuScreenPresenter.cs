@@ -49,10 +49,24 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             _view.ResetStatsButton.onClick.AddListener(OnResetStatsButtonClicked);
             _view.OpenGameSettingsButton.onClick.AddListener(OnOpenGameSettingsButtonClicked);
 
+            _view.OpenDojoButton.onClick.AddListener(OnOpenDojoButtonClicked);
+
+            _view.DojoView.ExitDojoButton.onClick.AddListener(OnExitDojoButtonClicked);
+
             _walletPresenter = _presentersFactory.CreateWalletPresenter(_view.WalletView);
             _disposables.Add(_walletPresenter);
 
             _walletPresenter.Initialize();
+        }
+
+        private void OnOpenDojoButtonClicked()
+        {
+            _view.DojoView.gameObject.SetActive(true);
+        }
+
+        private void OnExitDojoButtonClicked()
+        {
+            _view.DojoView.gameObject.SetActive(false);
         }
 
         public void Dispose()
@@ -61,6 +75,10 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
 
             _view.ResetStatsButton.onClick.RemoveListener(OnResetStatsButtonClicked);
             _view.OpenGameSettingsButton.onClick.RemoveListener(OnOpenGameSettingsButtonClicked);
+
+            _view.OpenDojoButton.onClick.RemoveListener(OnOpenDojoButtonClicked);
+
+            _view.DojoView.ExitDojoButton.onClick.RemoveListener(OnExitDojoButtonClicked);
 
             foreach (var disposable in _disposables)
                 disposable.Dispose();

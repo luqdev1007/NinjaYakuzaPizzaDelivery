@@ -1,7 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Style;
 using System;
 using System.Collections.Generic;
-using Unity.Android.Gradle.Manifest;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
 {
