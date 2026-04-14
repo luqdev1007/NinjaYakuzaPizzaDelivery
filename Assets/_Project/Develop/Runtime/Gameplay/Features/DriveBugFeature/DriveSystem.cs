@@ -44,6 +44,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature
             _isThrowing = entity.IsThrowing;
             _isGrounded = entity.IsGrounded;
             _defaultGravity = entity.Rigidbody.gravityScale;
+
+            Debug.Log("Drive system: hero rezko herovo i on center scene + velocity nedeakvat check");
         }
 
         public void OnUpdate(float deltaTime)

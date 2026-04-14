@@ -9,6 +9,11 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
+using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilites;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
@@ -18,6 +23,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private readonly IInputService _inputService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly LayerMask _enemyMask;
+
+        private LayerMask _hitMask;
 
         private ICompositeCondition _canDash;
         private ReactiveVariable<bool> _isDashing;
@@ -39,13 +46,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private float _dashBufferTimer;
         private bool _isCharging;
 
+        private readonly AudioService _audioService;
+        private readonly ConfigsProviderService _configsProviderService;
+        private readonly DropLootService _dropLootService;
+
+
         private const float DashBufferTime = 0.15f;
 
-        public DashSystem(IInputService inputService, ICoroutinesPerformer coroutinesPerformer, LayerMask enemyMask)
+        public DashSystem(IInputService inputService, ICoroutinesPerformer coroutinesPerformer, LayerMask enemyMask, AudioService audioService, ConfigsProviderService configsProviderService, DropLootService dropLootService)
         {
             _inputService = inputService;
             _coroutinesPerformer = coroutinesPerformer;
             _enemyMask = enemyMask;
+            _audioService = audioService;
+            _configsProviderService = configsProviderService;
+            _dropLootService = dropLootService;
         }
 
         public void OnInit(Entity entity)
@@ -65,6 +80,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             _dashHitboxSize = entity.DashHitboxSize;
             _rigidbody = entity.Rigidbody;
             _transform = entity.Transform;
+
+            _hitMask = _enemyMask | LayersAPI.LayerMaskProps;
         }
 
         public void OnUpdate(float deltaTime)
@@ -122,6 +139,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private IEnumerator DashCoroutine(float force, float direction, bool inAir)
         {
+            // В начале DashCoroutine
+            Physics2D.IgnoreLayerCollision(LayersAPI.LayerCharacters, LayersAPI.LayerEnemies, true);
+
+
+
             float elapsed = 0f;
             float duration = _dashDuration.Value;
             float gravityScale = _rigidbody.gravityScale;
@@ -156,6 +178,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             _rigidbody.linearVelocity = new Vector2(direction * 2f, _rigidbody.linearVelocity.y);
             _rigidbody.gravityScale = gravityScale;
             _isDashing.Value = false;
+
+            // В конце DashCoroutine
+            Physics2D.IgnoreLayerCollision(LayersAPI.LayerCharacters, LayersAPI.LayerEnemies, false);
         }
 
         private void ApplyDashDamage(HashSet<Entity> hitEntities, bool inAir, Vector2 lastPosition)
@@ -163,7 +188,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             Vector2 currentPos = (Vector2)_transform.position;
             float direction = Mathf.Sign(_transform.localScale.x);
 
-            // Смещаем центр хитбокса немного вперед относительно спрайта персонажа
             Vector2 hitboxOffset = new Vector2(direction * (_dashHitboxSize.Value.x * 0.4f), 0f);
             Vector2 origin = lastPosition + hitboxOffset;
             Vector2 target = currentPos + hitboxOffset;
@@ -171,38 +195,55 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             float distance = Vector2.Distance(origin, target);
             Vector2 castDir = distance > 0.001f ? (target - origin).normalized : Vector2.right * direction;
 
-            // BoxCast рисует "коридор" между кадрами, чтобы никто не проскочил
-            RaycastHit2D[] hits = Physics2D.BoxCastAll(
-                origin,
-                _dashHitboxSize.Value,
-                0f,
-                castDir,
-                distance,
-                _enemyMask
-            );
+            // Используем обновленную _hitMask (враги + пропсы)
+            RaycastHit2D[] hits = Physics2D.BoxCastAll(origin, _dashHitboxSize.Value, 0f, castDir, distance, _hitMask);
 
             foreach (var hit in hits)
             {
                 if (hit.collider == null) continue;
 
+                // ПРОВЕРКА НА ПРОПСЫ (Коробки и т.д.) через слой
+                if (hit.collider.gameObject.layer == LayersAPI.LayerProps)
+                {
+                    HandlePropDestruction(hit.collider.gameObject);
+                    continue;
+                }
+
+                // ПРОВЕРКА НА ВРАГОВ (Entities)
                 var mono = hit.collider.GetComponentInParent<MonoEntity>();
                 if (mono == null) continue;
 
                 Entity targetEntity = mono.LinkedEntity;
-
-                // Проверяем, не били ли мы уже эту сущность за один текущий рывок
                 if (targetEntity == null || hitEntities.Contains(targetEntity)) continue;
 
                 hitEntities.Add(targetEntity);
+                DealDamageToEntity(targetEntity, currentPos, inAir);
+            }
+        }
 
-                float damage = _dashDamage.Value;
-                if (inAir) damage *= _airDashMultiplier.Value;
+        private void HandlePropDestruction(GameObject prop)
+        {
+            _audioService.PlaySfxByPrefixAuto("Box_Hit", UnityEngine.Random.Range(0.8f, 1.2f));
 
-                if (targetEntity.HasComponent<TakeDamageRequest>())
-                {
-                    var damageData = new DamageData { Amount = damage, SourcePosition = currentPos, Type = DamageType.Cut };
-                    targetEntity.TakeDamageRequest.Invoke(damageData);
-                }
+            LootTableConfig mainLootTableConfig = _configsProviderService.GetConfig<LootTableConfig>();
+            _dropLootService.DropLootFor(_entity, mainLootTableConfig);
+
+            // Используем Destroy на самом родителе, если скрипт висит выше
+            Object.Destroy(prop);
+        }
+
+        private void DealDamageToEntity(Entity targetEntity, Vector2 currentPos, bool inAir)
+        {
+            float damage = _dashDamage.Value;
+            if (inAir) damage *= _airDashMultiplier.Value;
+
+            if (targetEntity.HasComponent<TakeDamageRequest>())
+            {
+                var damageData = new DamageData { Amount = damage, SourcePosition = currentPos, Type = DamageType.Cut };
+                targetEntity.TakeDamageRequest.Invoke(damageData);
+
+                // Опционально: добавь звук удара по врагу
+                _audioService.PlaySfxByPrefixAuto("Hit_Enemy", 1f);
             }
         }
     }

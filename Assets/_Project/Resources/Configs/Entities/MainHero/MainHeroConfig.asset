@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: MainHeroConfig
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/MainHero/MainHero
-  <LootCollectRange>k__BackingField: 3
+  <LootCollectRange>k__BackingField: 4
   <MinFallVelocityForAction>k__BackingField: -2
   <GroundMask>k__BackingField:
     serializedVersion: 2
-    m_Bits: 19712
+    m_Bits: 52480
   _movement:
     <MoveSpeed>k__BackingField: 12
     <MoveSpeedMin>k__BackingField: 8

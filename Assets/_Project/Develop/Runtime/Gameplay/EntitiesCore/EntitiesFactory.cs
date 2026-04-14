@@ -261,8 +261,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             IInputService inputService = _container.Resolve<IInputService>();
             ICoroutinesPerformer coroutinesPerformer = _container.Resolve<ICoroutinesPerformer>();
             AudioService audioService = _container.Resolve<AudioService>();
+            DropLootService dropLootService = _container.Resolve<DropLootService>();
+            ConfigsProviderService configsProviderService = _container.Resolve<ConfigsProviderService>();
 
-            ThrowableBehaviourFactory throwableBehaviourFactory = new ThrowableBehaviourFactory(coroutinesPerformer, audioService);
+            ThrowableBehaviourFactory throwableBehaviourFactory = new ThrowableBehaviourFactory(
+                coroutinesPerformer, 
+                audioService, 
+                dropLootService, 
+                configsProviderService);
+
             SlopeSystem slopeSystem = new SlopeSystem();
 
             ThrowableConfig[] consumables = new ThrowableConfig[]
@@ -280,11 +287,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // — движение —
                 .AddSystem(new RigidbodyMovementSystem(inputService))
                 .AddSystem(new JumpSystem(inputService, slopeSystem, _cameraService))
-                .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.Attack.EnemyMask))
+
+                .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.Attack.EnemyMask, 
+                    _audioService, 
+                    _container.Resolve<ConfigsProviderService>(),
+                    _container.Resolve<DropLootService>()))
+
                 .AddSystem(new GlideSystem(inputService))
                 .AddSystem(new WallHangSystem(inputService, audioService))
                 .AddSystem(new SlideSystem(inputService, coroutinesPerformer, slopeSystem))
-                .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask, _cameraService))
+
+                .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask, _cameraService,
+                    _audioService,
+                    _container.Resolve<ConfigsProviderService>(),
+                    _container.Resolve<DropLootService>()))
+
                 .AddSystem(slopeSystem)
                 .AddSystem(new CometRecoverySystem())
 

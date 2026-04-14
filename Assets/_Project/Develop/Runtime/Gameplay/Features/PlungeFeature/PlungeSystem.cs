@@ -1,10 +1,14 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
+using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using UnityEngine;
 
@@ -14,7 +18,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
     {
         private readonly IInputService _inputService;
         private readonly LayerMask _enemyMask;
-
+        private Entity _entity;
         private ICompositeCondition _canPlunge;
         private ReactiveVariable<bool> _isPlunging;
         private ReactiveVariable<bool> _isGrounded;
@@ -29,6 +33,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         // Таймер для расчета прогресса падения
         private float _currentFlightTime;
 
+        // services
+        private readonly AudioService _audioService;
+        private readonly ConfigsProviderService _configsProviderService;
+        private readonly DropLootService _dropLootService;
+
         // Константы баланса
         private const float FlightCheckWidth = 1.5f;
         private const float FlightCheckHeight = 1.0f;
@@ -41,15 +50,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private readonly CameraService _cameraService;
 
-        public PlungeSystem(IInputService inputService, LayerMask enemyMask, CameraService cameraService)
+        public PlungeSystem(IInputService inputService, LayerMask enemyMask, CameraService cameraService, AudioService audioService, ConfigsProviderService configsProviderService, DropLootService dropLootService)
         {
             _inputService = inputService;
             _enemyMask = enemyMask;
             _cameraService = cameraService;
+            _audioService = audioService;
+            _configsProviderService = configsProviderService;
+            _dropLootService = dropLootService;
         }
 
         public void OnInit(Entity entity)
         {
+            _entity = entity;
             _canPlunge = entity.CanPlunge;
             _isPlunging = entity.IsPlunging;
             _isGrounded = entity.IsGrounded;
@@ -176,6 +189,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
                         SourcePosition = _transform.position
                     });
                 }
+            }
+            // test
+            else
+            {
+                _audioService.PlaySfxByPrefixAuto("Box_Hit", UnityEngine.Random.Range(0.8f, 1.2f));
+                LootTableConfig mainLootTableConfig = _configsProviderService.GetConfig<LootTableConfig>();
+                _dropLootService.DropLootFor(_entity, mainLootTableConfig);
+                Object.Destroy(hit.gameObject);
             }
         }
 

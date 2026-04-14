@@ -6,24 +6,38 @@ using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement; // Добавлено
 using System.Collections;
 using UnityEngine;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
+using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilites;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 {
     public class ShurikenProjectile : ThrowableProjectile
     {
         private readonly ShurikenConfig _config;
-        private readonly AudioService _audioService; // Добавлено
+
+        private readonly AudioService _audioService;
+        private readonly ConfigsProviderService _configsProviderService;
+        private readonly DropLootService _dropLootService;
+
         private bool _isStuck;
 
         // Скорость вращения (градусы в секунду)
         private const float RotationSpeed = 360 * 5f;
 
         // Обновленный конструктор с AudioService
-        public ShurikenProjectile(ShurikenConfig config, ICoroutinesPerformer coroutinesPerformer, AudioService audioService)
+        public ShurikenProjectile(ShurikenConfig config, ICoroutinesPerformer coroutinesPerformer,
+            AudioService audioService, 
+            ConfigsProviderService configsProviderService, 
+            DropLootService dropLootService)
             : base(config, coroutinesPerformer)
         {
             _config = config;
             _audioService = audioService;
+            _configsProviderService = configsProviderService;
+            _dropLootService = dropLootService;
         }
 
         protected override void OnHitAtPoint(Vector2 point, Collider2D hit)
@@ -50,6 +64,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                 }
 
                 Destroy(); // Мясо — уничтожаем сразу
+            }
+            // test
+            else if (hit.gameObject.layer == LayersAPI.LayerProps)
+            {
+                _audioService.PlaySfxByPrefixAuto("Box_Hit", UnityEngine.Random.Range(0.8f, 1.2f));
+                LootTableConfig mainLootTableConfig = _configsProviderService.GetConfig<LootTableConfig>();
+                _dropLootService.DropLootFor(hit.transform.position, mainLootTableConfig);
+                Object.Destroy(hit.gameObject);
             }
             else
             {
