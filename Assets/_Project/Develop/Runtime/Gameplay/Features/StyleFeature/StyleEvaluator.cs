@@ -6,13 +6,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
 {
     public class StyleEvaluator : IDisposable
     {
-        private readonly StyleService _styleService;
+        private readonly RankStyleService _styleService;
         private readonly StyleActionsConfig _config;
         private readonly List<string> _usedActionsHistory = new();
 
         private const int MaxHistorySize = 3;
 
-        public StyleEvaluator(StyleService styleService, StyleActionsConfig config)
+        public StyleEvaluator(RankStyleService styleService, StyleActionsConfig config)
         {
             _styleService = styleService;
             _config = config;

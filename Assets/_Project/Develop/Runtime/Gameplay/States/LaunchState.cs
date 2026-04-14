@@ -28,7 +28,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         {
             Debug.Log("Press any key to start timer");
 
-            if (Input.anyKeyDown)
+            if (Input.GetKeyDown(KeyCode.Escape) == false && (Input.GetKeyDown(KeyCode.R) == false && Input.anyKeyDown))
             {
                 IsFinished = true;
             }

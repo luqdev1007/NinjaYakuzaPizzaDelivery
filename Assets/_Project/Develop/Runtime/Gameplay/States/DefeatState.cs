@@ -24,7 +24,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             base.Enter();
 
             // Не забудь добавить AudioService в зависимости конструктора
-            _audioService.SetMusicMuted(true);
+            // _audioService.SetMusicMuted(true);
 
             _gameplayPopupService.OpenDefeatPopup();
         }

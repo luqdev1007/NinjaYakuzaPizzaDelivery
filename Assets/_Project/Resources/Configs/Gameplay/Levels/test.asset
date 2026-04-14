@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ea55c19b01a54a848aae2bcf831dfbb8, type: 3}
-  m_Name: Level_2_Config
+  m_Name: test
   m_EditorClassIdentifier: 
   _stageConfigs:
-  - {fileID: 11400000, guid: ad2ebdc480afcce4ab663bc95bc4f0f9, type: 2}
+  - {fileID: 11400000, guid: 753cfd7f50dd6444e9f929292a4c54d1, type: 2}
   _configPrepDialog: {fileID: 11400000, guid: 943bcf7fb606f51469786c299cc45e0c, type: 2}
   <TargetTime>k__BackingField: 36
   <LevelName>k__BackingField: Down'n'Up
   <LevelNumber>k__BackingField: 2
   <LevelIcon>k__BackingField: {fileID: 21300000, guid: ccda1e9d0a91445b08abb3958530382a, type: 3}
-  <FinalPointPosition>k__BackingField: {x: 40, y: 252.5, z: 0}
+  <FinalPointPosition>k__BackingField: {x: 40, y: 253, z: 0}
   <StartPlayerPosition>k__BackingField: {x: -60, y: 253, z: 0}
   <LevelPrefab>k__BackingField: {fileID: 1283193550102093999, guid: 8e5a1df5907ca6a4f88a905ff7060110, type: 3}
   _enemySpawns:
@@ -77,7 +77,3 @@ MonoBehaviour:
   - {x: -30.8, y: 231.7, z: 0}
   - {x: -42.3, y: 242, z: 0}
   - {x: 1.9265685, y: 108.60717, z: 0}
-  - {x: -45, y: 45, z: 0}
-  - {x: 45, y: 45, z: 0}
-  - {x: 41, y: 42, z: 0}
-  - {x: 66, y: 34, z: 0}

@@ -52,7 +52,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             Debug.Log("VICTORY!");
 
-            _audioService.SetMusicMuted(true);
+            // _audioService.SetMusicMuted(true);
 
             int rewardForLevel = _configsProviderService.GetConfig<GameRewardsConfig>().RewardForWin;
             _walletService.Add(CurrencyTypes.Coins, rewardForLevel);

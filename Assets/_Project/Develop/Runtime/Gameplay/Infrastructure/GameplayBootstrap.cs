@@ -50,7 +50,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _cameraService = _container.Resolve<CameraService>();
             _audioService = _container.Resolve<AudioService>();
 
+            // init level
+            
+            LevelConfig levelConfig = _container.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>().GetBy(_inputArgs.LevelNumber);
+            
+            Vector3 camPosition = levelConfig.StartPlayerPosition;
+            camPosition.z = -10;
+            Camera.main.transform.position = camPosition;
+
+            GameObject levelHolder = GameObject.FindWithTag("LevelHolder");
+
+            Instantiate(levelConfig.LevelPrefab, levelHolder.transform);
+
             GameObject boundsObj = GameObject.FindWithTag("LevelBounds");
+
             if (boundsObj != null && boundsObj.TryGetComponent<Collider2D>(out var col))
                 _cameraService.SetConstraints(col.bounds);
 
@@ -61,7 +74,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         public override void Run()
         {
-            _audioService.SetMusicMuted(false);
+            // _audioService.SetMusicMuted(false);
 
             if (_inputArgs.IsRestart == false)
                 _audioService.StartPlaylist("Gameplay");

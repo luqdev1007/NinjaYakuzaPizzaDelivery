@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
 {
-    public class StyleService
+    public class RankStyleService
     {
         private readonly StyleRankConfig _rankConfig;
         private readonly StyleActionsConfig _actionsConfig;
@@ -18,7 +18,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
         public IReadOnlyVariable<string> CurrentLetter => _currentLetter;
         public IReadOnlyVariable<string> CurrentPrefix => _currentPrefix;
 
-        public StyleService(StyleRankConfig rankConfig, StyleActionsConfig actionsConfig)
+        public RankStyleService(StyleRankConfig rankConfig, StyleActionsConfig actionsConfig)
         {
             _rankConfig = rankConfig;
             _actionsConfig = actionsConfig;
@@ -142,6 +142,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
                 subRanks.AddRange(rank.SubRanks);
             }
             return subRanks;
+        }
+
+        public void Deactivate()
+        {
+            _currentPoints.Value = 0f;
+            _lastGainTime = 0f;
+            UpdateRank();
         }
     }
 }

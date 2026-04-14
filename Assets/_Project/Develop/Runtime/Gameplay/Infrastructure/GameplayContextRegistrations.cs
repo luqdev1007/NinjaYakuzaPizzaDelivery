@@ -82,10 +82,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateStyleEvaluator);
         }
 
-        private static StyleService CreateStyleService(DIContainer container)
+        private static RankStyleService CreateStyleService(DIContainer container)
         {
             var configProvider = container.Resolve<ConfigsProviderService>();
-            return new StyleService(
+            return new RankStyleService(
                 configProvider.GetConfig<StyleRankConfig>(),
                 configProvider.GetConfig<StyleActionsConfig>()
             );
@@ -94,7 +94,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private static StyleEvaluator CreateStyleEvaluator(DIContainer container)
         {
             return new StyleEvaluator(
-                container.Resolve<StyleService>(),
+                container.Resolve<RankStyleService>(),
                 container.Resolve<ConfigsProviderService>().GetConfig<StyleActionsConfig>()
             );
         }
@@ -116,7 +116,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         private static CameraService CreateCameraService(DIContainer container)
         {
-            return new CameraService(Camera.main);
+            CameraService camService = new CameraService(Camera.main);
+
+            return camService;
         }
 
         private static LevelProgressService CreateLevelProgressService(DIContainer container)

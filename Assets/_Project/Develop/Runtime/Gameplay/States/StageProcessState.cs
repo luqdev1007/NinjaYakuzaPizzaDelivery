@@ -2,6 +2,8 @@
 using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
+using Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using Assets._Project.Develop.Runtime.Utilites.StateMachineCore;
@@ -22,6 +24,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         private GameplayInputArgs _inputArgs;
 
+        private readonly RankStyleService _rankStyleService;
+
         public StageProcessState(
             StageProviderService stageProviderService,
             LevelProgressService levelProgressService,
@@ -31,7 +35,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             IInputService inputService,
             ICoroutinesPerformer coroutinesPerformer,
             SceneSwitcherService sceneSwitcherService,
-            GameplayInputArgs inputArgs)
+            GameplayInputArgs inputArgs,
+            RankStyleService rankStyleService)
         {
             _stageProviderService = stageProviderService;
             _levelProgressService = levelProgressService;
@@ -43,6 +48,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _sceneSwitcherService = sceneSwitcherService;
 
             _inputArgs = inputArgs;
+
+            _rankStyleService = rankStyleService;
         }
 
         public override void Enter()
@@ -97,6 +104,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             // Даем команду скрыть таймер
             _timerFeature.Hide();
+
+            // спрятать и деактивировать набор стилей
+            _rankStyleService.Deactivate();
 
             // На всякий случай сбрасываем камеру, чтобы зум не залип при переходе в Win/Defeat
             _cameraService.StopShowingTarget();

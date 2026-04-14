@@ -5,11 +5,13 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
+using Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Timers;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
@@ -62,7 +64,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<IInputService>(),
                 _container.Resolve<ICoroutinesPerformer>(),
                 _container.Resolve<SceneSwitcherService>(),
-                _inputArgs
+                _inputArgs,
+                _container.Resolve<RankStyleService>()
                 );
         }
 

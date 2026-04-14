@@ -42,7 +42,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
         /// </summary>
         public void ShowTargetTemporarily(Vector3 targetPos, float zoomSize = 12f)
         {
-            if (_currentBehaviour is PointLookBehaviour) return;
+            if (_currentBehaviour is PointLookBehaviour) 
+                return;
 
             _backupBehaviour = _currentBehaviour;
             _zoomOverride = zoomSize;
@@ -64,7 +65,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
 
         public void Update(float deltaTime)
         {
-            if (_currentBehaviour == null || deltaTime <= 0) return;
+            if (_currentBehaviour == null || deltaTime <= 0) 
+                return;
 
             Vector3 previousPos = _camera.transform.position;
 
@@ -114,21 +116,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
             return pos;
         }
 
+        // В начало класса добавь переменную
+        private Rigidbody2D _heroRigidbody;
+
+        // Добавь метод для установки цели (или передавай в конструктор)
+        public void SetHeroRigidbody(Rigidbody2D rb) => _heroRigidbody = rb;
+
         private void HandleDynamicZoom(float deltaTime)
         {
             float targetSize;
 
             if (_zoomOverride.HasValue)
             {
-                // Приоритет 1: Принудительный зум (кнопка Т или кат-сцена)
                 targetSize = _zoomOverride.Value;
             }
-            else
+            else if (_heroRigidbody != null) // Считаем зум от героя
             {
-                // Приоритет 2: Динамический зум от скорости персонажа
-                float speedX = Mathf.Abs(_currentVelocity.x);
-                float speedY = Mathf.Abs(_currentVelocity.y);
-                float effectiveSpeed = Mathf.Max(speedX, speedY * 1.2f);
+                // Берем абсолютные значения скорости героя
+                float speedX = Mathf.Abs(_heroRigidbody.linearVelocity.x);
+                float speedY = Mathf.Abs(_heroRigidbody.linearVelocity.y);
+
+                // Для Y при пикировании даем чуть больше веса, чтобы камера отдалялась сильнее
+                float effectiveSpeed = Mathf.Max(speedX, speedY * 1.1f);
 
                 if (effectiveSpeed < MinVelocityThreshold)
                 {
@@ -136,16 +145,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
                 }
                 else
                 {
+                    // Используем MaxVelocityForZoom, чтобы ограничить отдаление
                     float normalizedSpeed = Mathf.Clamp01((effectiveSpeed - MinVelocityThreshold) / (MaxVelocityForZoom - MinVelocityThreshold));
                     targetSize = Mathf.Lerp(MinSize, MaxSize, normalizedSpeed);
                 }
             }
+            else
+            {
+                targetSize = MinSize;
+            }
 
-            // Наложение импульса (зум-всплеск при ударе)
+            // Твой старый код импульса и плавности...
             targetSize -= _zoomImpulse;
             _zoomImpulse = Mathf.Lerp(_zoomImpulse, 0, deltaTime * 10f);
 
-            // Плавное применение размера. Если есть override, используем более быструю доводку.
             float smoothness = _zoomOverride.HasValue ? OverrideZoomSmoothness : ZoomSmoothness;
             _camera.orthographicSize = Mathf.Lerp(_camera.orthographicSize, targetSize, deltaTime * smoothness);
         }

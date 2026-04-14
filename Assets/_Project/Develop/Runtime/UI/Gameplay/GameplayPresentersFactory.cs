@@ -37,7 +37,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
         public RankStylePresenter CreateStylePresenter(RankStyleView view)
         {
-            return new RankStylePresenter(view, _container.Resolve<StyleService>());
+            return new RankStylePresenter(view, _container.Resolve<RankStyleService>());
         }
 
         public DialogPresenter CreateDialogPresenter(DialogDisplayView view, DialogConfig config)

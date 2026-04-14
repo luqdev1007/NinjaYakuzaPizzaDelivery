@@ -359,7 +359,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // hero style system
                 .AddSystem(new HeroStyleSystem(
                     _container.Resolve<StyleEvaluator>(),
-                    _container.Resolve<StyleService>()))
+                    _container.Resolve<RankStyleService>()))
 
                 // — последней всегда —
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))

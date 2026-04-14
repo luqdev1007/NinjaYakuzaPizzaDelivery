@@ -8,10 +8,10 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
     public class RankStylePresenter : IPresenter
     {
         private readonly RankStyleView _view;
-        private readonly StyleService _styleService;
+        private readonly RankStyleService _styleService;
         private readonly List<IDisposable> _disposables = new();
 
-        public RankStylePresenter(RankStyleView view, StyleService styleService)
+        public RankStylePresenter(RankStyleView view, RankStyleService styleService)
         {
             _view = view;
             _styleService = styleService;

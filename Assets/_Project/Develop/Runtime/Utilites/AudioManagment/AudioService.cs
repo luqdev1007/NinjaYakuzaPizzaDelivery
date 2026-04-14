@@ -45,7 +45,7 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
         private float DbToLinear(float db) => Mathf.Pow(10f, db / 20f);
 
         // --- ГРОМКОСТЬ ---
-        public void SetMusicMuted(bool isMuted) => _mixer.SetFloat("MusicVolume", isMuted ? -80f : 0f);
+        // public void SetMusicMuted(bool isMuted) => _mixer.SetFloat("MusicVolume", isMuted ? -80f : 0f);
 
         public void SetVolume(string parameter, float linear) => _mixer.SetFloat(parameter, LinearToDb(linear));
 

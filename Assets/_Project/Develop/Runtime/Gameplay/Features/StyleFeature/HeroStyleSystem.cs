@@ -8,12 +8,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
     public class HeroStyleSystem : IInitializableSystem, IUpdatableSystem, IDisposableSystem
     {
         private readonly StyleEvaluator _evaluator;
-        private readonly StyleService _service;
+        private readonly RankStyleService _service;
 
         private Entity _entity;
         private readonly List<IDisposable> _disposables = new();
 
-        public HeroStyleSystem(StyleEvaluator evaluator, StyleService service)
+        public HeroStyleSystem(StyleEvaluator evaluator, RankStyleService service)
         {
             _evaluator = evaluator;
             _service = service;
