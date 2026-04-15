@@ -22,6 +22,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         private ReactiveVariable<float> _glideSnapSpeed;
         private ReactiveVariable<float> _glideSnapDuration;
         private ReactiveVariable<float> _glideCounterMultiplier;
+
+        // Добавляем ссылку на прыжки
+        private ReactiveVariable<int> _jumpsAvailable;
+
         private Rigidbody2D _rigidbody;
 
         private float _defaultGravityScale;
@@ -45,43 +49,46 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
             _glideBounceForce = entity.GlideBounceForce;
             _glideSnapSpeed = entity.GlideSnapSpeed;
             _glideSnapDuration = entity.GlideSnapDuration;
-            _glideCounterMultiplier = entity.GlideCounterMultiplier; // Добавь в Entity
+            _glideCounterMultiplier = entity.GlideCounterMultiplier;
             _rigidbody = entity.Rigidbody;
             _canGlide = entity.CanGlide;
             _glideHorizontalDrag = entity.GlideHorizontalDrag;
+
+            // Инициализируем прыжки
+            _jumpsAvailable = entity.JumpsAvailable;
+
             _defaultGravityScale = _rigidbody.gravityScale;
         }
 
         public void OnUpdate(float deltaTime)
         {
-            if (_isGrounded.Value)
+            // ЛОГИКА ВОССТАНОВЛЕНИЯ: 
+            // Если мы на земле ИЛИ если у нас есть доступные прыжки (например, получили бонус в воздухе)
+            // мы позволяем снова использовать парашют.
+            if (_isGrounded.Value || _jumpsAvailable.Value > 0)
             {
                 _glideUsed = false;
+            }
+
+            if (_isGrounded.Value)
+            {
                 _holdTimer = 0f;
-
-                if (_isGliding.Value)
-                    StopGlide(applyBounce: false);
-
+                if (_isGliding.Value) StopGlide(applyBounce: false);
                 return;
             }
 
             if (_isGliding.Value)
             {
                 ApplyGlideDamping(deltaTime);
-
-                if (_inputService.IsJumpKeyPressed)
-                    StopGlide(applyBounce: true);
-
+                if (_inputService.IsJumpKeyPressed) StopGlide(applyBounce: true);
                 return;
             }
 
             bool isFallingFastEnough = _rigidbody.linearVelocity.y < _minFallVelocity.Value;
 
-            // Буфер инпута: начинаем считать зажатие, даже если еще не летим вниз достаточно быстро
             if (_inputService.IsJumpKeyHeld && !_glideUsed && _canGlide.Evaluate())
             {
                 _holdTimer += deltaTime;
-
                 if (_holdTimer >= GlideHoldThreshold && isFallingFastEnough)
                 {
                     StartGlide();
@@ -101,7 +108,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
             _glideTimer = 0f;
             _rigidbody.gravityScale = 0f;
 
-            // Логика "Одергивания": применяем импульс вверх против текущего падения
             float currentVerticalVelocity = _rigidbody.linearVelocity.y;
             float counterForce = Mathf.Abs(currentVerticalVelocity) * _glideCounterMultiplier.Value;
 
