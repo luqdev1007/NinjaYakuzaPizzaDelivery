@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _stageConfigs:
   - {fileID: 11400000, guid: ad2ebdc480afcce4ab663bc95bc4f0f9, type: 2}
-  _configPrepDialog: {fileID: 11400000, guid: 943bcf7fb606f51469786c299cc45e0c, type: 2}
+  _configPrepDialog: {fileID: 11400000, guid: 19d0927d263c7754ea6e40426bb6d869, type: 2}
   <TargetTime>k__BackingField: 30
   <LevelName>k__BackingField: Village Again
   <LevelNumber>k__BackingField: 3

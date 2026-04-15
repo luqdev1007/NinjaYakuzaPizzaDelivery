@@ -1,109 +1,75 @@
-using System.Collections.Generic;
 using UnityEngine;
 using Cainos.Common;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 
 namespace Cainos.PixelArtPlatformer_VillageProps
 {
     public class BoundingPlatform : MonoBehaviour
     {
-        public Transform platform;
-
+        public float pushDistance = 2.0f;
         public float waitTime = 1.0f;
-        public float retrieveSpeed = 1.0f;
-        public float pushSpeed = 10.0f;
+        public float pushForce = 20.0f;
 
-        private float platformYPosDown;
-        private float platformYPosUp;
-        private float platformYPos;
+        private Rigidbody2D rb;
+        private Vector2 startPos;
+
+        private float targetOffset;
         private float waitTimer;
-        private State curState = State.Down;
-
-        private Vector3 platformPrevPos;
-        private Vector2 platformVel;
+        private bool movingUp = true;
 
         private SecondOrderDynamics secondOrderDynamics = new SecondOrderDynamics(4.0f, 0.5f, -0.3f);
 
-        private List<Rigidbody2D> onPlatformRigidbodies;
-
-        private void Push()
-        {
-            foreach ( Rigidbody2D rb2d in onPlatformRigidbodies)
-            {
-                rb2d.linearVelocity += pushSpeed * Vector2.up;
-            }
-            onPlatformRigidbodies.Clear();
-        }
-
         private void Start()
         {
-            platformYPosDown = platform.transform.localPosition.y;
-            platformYPosUp = 0.0f;
-            onPlatformRigidbodies = new List<Rigidbody2D>();
-
-            platformPrevPos = platform.transform.position;
-
-            secondOrderDynamics.Reset(platformYPosDown);
+            rb = GetComponent<Rigidbody2D>();
+            startPos = rb.position;
+            secondOrderDynamics.Reset(0.0f);
         }
 
         private void FixedUpdate()
         {
-            platformVel = (platform.transform.position - platformPrevPos) / Time.fixedDeltaTime;
-            platformPrevPos = platform.transform.position;
-
             waitTimer += Time.fixedDeltaTime;
-            if ( waitTimer > waitTime )
-            {
-                //to up
-                if (curState == State.Down)
-                {
-                    waitTimer = 0.0f;
-                    curState = State.Up;
-                    platformYPos = platformYPosUp;
 
-                    Push();
-                }
-                //to down
-                else
+            if (waitTimer > waitTime)
+            {
+                if (movingUp)
                 {
-                    if (platformYPos > platformYPosDown)
-                    {
-                        platformYPos -= retrieveSpeed * Time.fixedDeltaTime;
-                    }
-                    else
+                    targetOffset = pushDistance;
+                    if (Mathf.Abs(targetOffset - secondOrderDynamics.Update(targetOffset, Time.fixedDeltaTime)) < 0.1f)
                     {
                         waitTimer = 0.0f;
-                        platformYPos = platformYPosDown;
-                        curState = State.Down;
+                        movingUp = false;
+                    }
+                }
+                else
+                {
+                    targetOffset = 0.0f;
+                    if (Mathf.Abs(secondOrderDynamics.Update(targetOffset, Time.fixedDeltaTime)) < 0.1f)
+                    {
+                        waitTimer = 0.0f;
+                        movingUp = true;
                     }
                 }
             }
 
-            platform.transform.localPosition = Vector3.up * secondOrderDynamics.Update(platformYPos, Time.fixedDeltaTime);
+            float currentOffset = secondOrderDynamics.Update(targetOffset, Time.fixedDeltaTime);
+            Vector2 nextPos = startPos + (Vector2)transform.up * currentOffset;
+            rb.MovePosition(nextPos);
         }
 
-        private void OnTriggerEnter2D(Collider2D collision)
+        private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.attachedRigidbody && collision.attachedRigidbody.bodyType == RigidbodyType2D.Dynamic)
+            MonoEntity entity = collision.gameObject.GetComponentInParent<MonoEntity>();
+
+            if (entity != null)
             {
-                if (onPlatformRigidbodies.Contains(collision.attachedRigidbody)) return;
-
-                onPlatformRigidbodies.Add(collision.attachedRigidbody);
+                Rigidbody2D otherRb = entity.GetComponent<Rigidbody2D>();
+                if (otherRb != null)
+                {
+                    Vector2 force = transform.up * pushForce;
+                    otherRb.AddForce(force, ForceMode2D.Impulse);
+                }
             }
-        }
-
-        private void OnTriggerExit2D(Collider2D collision)
-        {
-            if (collision.attachedRigidbody && collision.attachedRigidbody.bodyType == RigidbodyType2D.Dynamic)
-            {
-                if (onPlatformRigidbodies.Contains(collision.attachedRigidbody) == false) return;
-                onPlatformRigidbodies.Remove(collision.attachedRigidbody);
-            }
-        }
-
-        public enum State
-        {
-            Up,
-            Down
         }
     }
 }
