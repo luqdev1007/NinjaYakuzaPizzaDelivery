@@ -27,6 +27,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.WindFeature;
 using Assets._Project.Develop.Runtime.Utilites;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
@@ -283,6 +284,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new SpawnProcessTimerSystem())
                 .AddSystem(new PlayerInputSystem(inputService))
                 .AddSystem(new GroundCheckSystem(coyoteTime: 0.1f))
+
+                // new
+                .AddSystem(new WindSystem())
 
                 // — движение —
                 .AddSystem(new RigidbodyMovementSystem(inputService))
