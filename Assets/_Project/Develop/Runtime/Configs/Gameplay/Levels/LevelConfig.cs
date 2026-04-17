@@ -19,33 +19,69 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Levels
         [field: SerializeField] public Vector3 StartPlayerPosition { get; private set; }
         [field: SerializeField] public GameObject LevelPrefab { get; private set; }
 
-        // Новый список для точек спавна
+        [Header("Spawn Points")]
         [SerializeField] private List<Vector3> _enemySpawns = new List<Vector3>();
         public IReadOnlyList<Vector3> EnemySpawns => _enemySpawns;
+
+        [SerializeField] private List<Vector3> _secretChestSpawns = new List<Vector3>();
+        public IReadOnlyList<Vector3> SecretChestSpawns => _secretChestSpawns;
 
         public IReadOnlyList<StageConfig> StageConfigs => _stageConfigs;
         public DialogConfig PreparationDialog => _configPrepDialog;
 
-
-        // Метод для заполнения (вызывается из редактора)
         public void FillSpawnersFromScene()
         {
             _enemySpawns.Clear();
-            // Находим все объекты
             GameObject[] spawners = GameObject.FindGameObjectsWithTag("Spawner");
 
             foreach (var spawner in spawners)
             {
-                // Записываем ИМЕННО world position
                 _enemySpawns.Add(spawner.transform.position);
             }
 
-            // Обязательно для ScriptableObject!
+            MarkDirty();
+            Debug.Log($"[LevelConfig] Сохранено {spawners.Length} врагов.");
+        }
+
+        public void FillSecretChestsFromScene()
+        {
+            _secretChestSpawns.Clear();
+            GameObject[] chests = GameObject.FindGameObjectsWithTag("SecretChest");
+
+            foreach (var chest in chests)
+            {
+                _secretChestSpawns.Add(chest.transform.position);
+            }
+
+            MarkDirty();
+            Debug.Log($"[LevelConfig] Сохранено {chests.Length} сундуков.");
+        }
+
+        public void FillStartAndFinishPoints()
+        {
+            GameObject startPoint = GameObject.FindWithTag("StartPoint");
+            GameObject finishPoint = GameObject.FindWithTag("FinishPoint");
+
+            if (startPoint != null)
+                StartPlayerPosition = startPoint.transform.position;
+            else
+                Debug.LogWarning("[LevelConfig] Объект с тегом 'StartPoint' не найден!");
+
+            if (finishPoint != null)
+                FinalPointPosition = finishPoint.transform.position;
+            else
+                Debug.LogWarning("[LevelConfig] Объект с тегом 'FinishPoint' не найден!");
+
+            MarkDirty();
+            Debug.Log("[LevelConfig] Точки старта и финиша обновлены.");
+        }
+
+        private void MarkDirty()
+        {
 #if UNITY_EDITOR
             UnityEditor.EditorUtility.SetDirty(this);
-            UnityEditor.AssetDatabase.SaveAssets(); // Принудительное сохранение на диск
+            UnityEditor.AssetDatabase.SaveAssets();
 #endif
-            Debug.Log($"[LevelConfig] Успешно сохранено {spawners.Length} точек.");
         }
     }
 }

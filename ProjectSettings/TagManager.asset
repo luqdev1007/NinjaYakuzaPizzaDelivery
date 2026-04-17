@@ -8,6 +8,9 @@ TagManager:
   - Spawner
   - Enemy
   - LevelHolder
+  - SecretChest
+  - StartPoint
+  - FinishPoint
   layers:
   - Default
   - TransparentFX

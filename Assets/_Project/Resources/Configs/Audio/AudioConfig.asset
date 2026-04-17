@@ -113,6 +113,10 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: 7ae6145e60248cb4887907d3ee6c44f7, type: 3}
       Volume: 0.85
       BasePitch: 0.62
+    - Id: SecretChestHit1
+      Clip: {fileID: 8300000, guid: 4dea6785786f24a4a85bbb719722cba6, type: 3}
+      Volume: 1
+      BasePitch: 1
   - Type: 5
     Clips:
     - Id: GhostHit1
@@ -425,6 +429,10 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: e0bd7c4e437084b459cd680c3c479bc2, type: 3}
       Volume: 0.74
       BasePitch: 1.16
+    - Id: SecretLootCollect1
+      Clip: {fileID: 8300000, guid: 3a4a16a5b192765489a595d347a6bd48, type: 3}
+      Volume: 1
+      BasePitch: 1
   _playlists:
   - Id: MainMenu
     Tracks:

@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2361df59a2f7aa946bac4a7b36945df7, type: 3}
   m_Name: StyleActionsConfig
   m_EditorClassIdentifier: 
-  KillBasePoints: 100
-  DamagePointMultiplier: 2
-  FreshnessBonus: 1.5
-  UpwardAccelerationPoints: 5
+  KillBasePoints: 250
+  DamagePointMultiplier: 10
+  FreshnessBonus: 2
+  UpwardAccelerationPoints: 10
   DashPoints: 10
-  CoinCollectPoints: 5
-  MemoryFragmentPoints: 5
+  CoinCollectPoints: 1
+  MemoryFragmentPoints: 2
   RanksToDropOnDamage: 2
   <LootPickupPoints>k__BackingField: 2

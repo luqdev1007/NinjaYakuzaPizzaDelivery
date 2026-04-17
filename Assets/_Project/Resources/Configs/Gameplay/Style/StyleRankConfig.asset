@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c6ed01811dfdaf4fb6b52873de890d1, type: 3}
   m_Name: StyleRankConfig
   m_EditorClassIdentifier: 
-  GlobalDecayMultiplier: 10
+  GlobalDecayMultiplier: 20
   Ranks:
   - Letter: F
     SubRanks:
@@ -52,4 +52,4 @@ MonoBehaviour:
     - Prefix: uper smokin' sexy
       Threshold: 2500
       Multiplier: 10
-    DecayRate: 40
+    DecayRate: 50

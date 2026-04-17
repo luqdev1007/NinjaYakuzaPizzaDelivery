@@ -14,33 +14,62 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _stageConfigs:
   - {fileID: 11400000, guid: ad2ebdc480afcce4ab663bc95bc4f0f9, type: 2}
-  _configPrepDialog: {fileID: 11400000, guid: 19d0927d263c7754ea6e40426bb6d869, type: 2}
-  <TargetTime>k__BackingField: 30
-  <LevelName>k__BackingField: Village Again
+  _configPrepDialog: {fileID: 11400000, guid: 307a0436d3020614ea0631dfb549a123, type: 2}
+  <TargetTime>k__BackingField: 47
+  <LevelName>k__BackingField: Light My Fire
   <LevelNumber>k__BackingField: 3
   <LevelIcon>k__BackingField: {fileID: 21300000, guid: ccda1e9d0a91445b08abb3958530382a, type: 3}
-  <FinalPointPosition>k__BackingField: {x: -60, y: -25, z: 0}
-  <StartPlayerPosition>k__BackingField: {x: 54, y: 65, z: 0}
-  <LevelPrefab>k__BackingField: {fileID: 165720231378724792, guid: 8988d1c7a35590c439f87e63ab8fc695, type: 3}
+  <FinalPointPosition>k__BackingField: {x: 393, y: -110.5, z: 0}
+  <StartPlayerPosition>k__BackingField: {x: -113, y: -10, z: 0}
+  <LevelPrefab>k__BackingField: {fileID: 8924945163862081062, guid: 7f08ca4b705083944815e6b9a2e21a82, type: 3}
   _enemySpawns:
-  - {x: 27.450531, y: 2.2408419, z: 0}
-  - {x: 22.3, y: 11.9, z: 0}
-  - {x: 51.2, y: 8.4, z: 0}
-  - {x: 70.96, y: -2.26, z: 0}
-  - {x: 100.3, y: 4.4, z: 0}
-  - {x: -54.9, y: -1.9, z: 0}
-  - {x: -48.7, y: 1.4, z: 0}
-  - {x: -23.4, y: -3.9, z: 0}
-  - {x: -12.9, y: 2.2, z: 0}
-  - {x: -5.3, y: 9.5, z: 0}
-  - {x: -5.3, y: 9.5, z: 0}
-  - {x: -6.6, y: 30.6, z: 0}
-  - {x: 16.4, y: -4.7, z: 0}
-  - {x: -21, y: -23.6, z: 0}
-  - {x: 5.3, y: -24.9, z: 0}
-  - {x: 20.2, y: -21.8, z: 0}
-  - {x: 76.8, y: -16.4, z: 0}
-  - {x: -38, y: -3, z: 0}
-  - {x: -36, y: -3, z: 0}
-  - {x: -34, y: -3, z: 0}
-  - {x: -32, y: -3, z: 0}
+  - {x: -99, y: -15, z: 0}
+  - {x: -115.5, y: -18.5, z: 0}
+  - {x: -79, y: -15, z: 0}
+  - {x: -47.5, y: -16, z: 0}
+  - {x: -26, y: -19, z: 0}
+  - {x: 1, y: -16.5, z: 0}
+  - {x: 65, y: -2.5, z: 0}
+  - {x: 23.5, y: -49.5, z: 0}
+  - {x: 114.5, y: -48.5, z: 0}
+  - {x: 167.5, y: 3, z: 0}
+  - {x: 235.5, y: -59.5, z: 0}
+  - {x: 259.5, y: 6.5, z: 0}
+  - {x: 174, y: -81.5, z: 0}
+  - {x: 49.5, y: -94.5, z: 0}
+  - {x: -78, y: -78.5, z: 0}
+  - {x: -92.5, y: -119, z: 0}
+  - {x: -11, y: -130, z: 0}
+  - {x: -14.5, y: -88, z: 0}
+  - {x: 21.5, y: -114.5, z: 0}
+  - {x: 149, y: -130, z: 0}
+  - {x: 111.5, y: -100.5, z: 0}
+  - {x: 158.5, y: -58.5, z: 0}
+  - {x: 89.5, y: -41, z: 0}
+  - {x: 211, y: -36.5, z: 0}
+  - {x: 114, y: -6, z: 0}
+  - {x: 135, y: -80.5, z: 0}
+  - {x: 17.5, y: -83.5, z: 0}
+  - {x: -52, y: -73.5, z: 0}
+  - {x: -51, y: -111, z: 0}
+  - {x: -64.8, y: -139.2, z: 0}
+  - {x: -17.2, y: -107.2, z: 0}
+  - {x: 58.199997, y: -127.2, z: 0}
+  - {x: 90.2, y: -84.2, z: 0}
+  - {x: 143.2, y: -28.699997, z: 0}
+  - {x: 63.8, y: -44.1, z: 0}
+  - {x: 205.7, y: -75.7, z: 0}
+  - {x: 186.2, y: -112.2, z: 0}
+  - {x: 65.2, y: -71.7, z: 0}
+  - {x: 169.7, y: -28.699997, z: 0}
+  - {x: 213.7, y: 0.80000305, z: 0}
+  - {x: 289.7, y: -58.699997, z: 0}
+  - {x: 238.20001, y: -107.2, z: 0}
+  - {x: 264.7, y: -133.7, z: 0}
+  - {x: 285.7, y: -103.2, z: 0}
+  - {x: 213.20001, y: -137.2, z: 0}
+  - {x: 268.2, y: -79.2, z: 0}
+  - {x: 268.2, y: -79.2, z: 0}
+  _secretChestSpawns:
+  - {x: 137, y: 44, z: 0}
+  - {x: 265.5, y: 72, z: 0}

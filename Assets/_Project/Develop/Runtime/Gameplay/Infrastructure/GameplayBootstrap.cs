@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 {
@@ -50,48 +51,63 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _cameraService = _container.Resolve<CameraService>();
             _audioService = _container.Resolve<AudioService>();
 
-            // init level
-            
-            LevelConfig levelConfig = _container.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>().GetBy(_inputArgs.LevelNumber);
-            
+            // Получаем конфиг уровня один раз
+            LevelConfig levelConfig = _container.Resolve<ConfigsProviderService>()
+                .GetConfig<LevelsListConfig>()
+                .GetBy(_inputArgs.LevelNumber);
+
+            // Настройка камеры
             Vector3 camPosition = levelConfig.StartPlayerPosition;
             camPosition.z = -10;
             Camera.main.transform.position = camPosition;
 
+            // Спавн геометрии уровня
             GameObject levelHolder = GameObject.FindWithTag("LevelHolder");
-
             Instantiate(levelConfig.LevelPrefab, levelHolder.transform);
 
+            // Настройка границ камеры
             GameObject boundsObj = GameObject.FindWithTag("LevelBounds");
-
             if (boundsObj != null && boundsObj.TryGetComponent<Collider2D>(out var col))
                 _cameraService.SetConstraints(col.bounds);
 
-            CreateEnemiesOnLevel();
+            // Спавн всех сущностей
+            CreateEnemiesOnLevel(levelConfig);
+            CreateSecretChestsOnLevel(levelConfig);
 
             yield break;
         }
 
+        private void CreateEnemiesOnLevel(LevelConfig levelConfig)
+        {
+            IReadOnlyList<Vector3> spawnPoints = levelConfig.EnemySpawns;
+            GhostConfig config = _container.Resolve<ConfigsProviderService>().GetConfig<GhostConfig>();
+            EnemiesFactory enemiesFactory = _container.Resolve<EnemiesFactory>();
+
+            foreach (Vector3 spawnPoint in spawnPoints)
+                enemiesFactory.Create(spawnPoint, config);
+        }
+
+        private void CreateSecretChestsOnLevel(LevelConfig levelConfig)
+        {
+            IReadOnlyList<Vector3> chestPoints = levelConfig.SecretChestSpawns;
+
+            LootTableConfig secretLootTable = _container.Resolve<ConfigsProviderService>()
+                .GetConfig<LootTableConfig>();
+
+            EntitiesFactory entitiesFactory = _container.Resolve<EntitiesFactory>();
+
+            foreach (Vector3 spawnPoint in chestPoints)
+            {
+                entitiesFactory.CreateChest(spawnPoint, secretLootTable);
+            }
+        }
+
         public override void Run()
         {
-            // _audioService.SetMusicMuted(false);
-
             if (_inputArgs.IsRestart == false)
                 _audioService.StartPlaylist("Gameplay");
 
             _gameplayStatesContext.Run();
-        }
-
-        private void CreateEnemiesOnLevel()
-        {
-            IReadOnlyList<Vector3> spawnPoints = _container.Resolve<ConfigsProviderService>()
-                .GetConfig<LevelsListConfig>()
-                .GetBy(_inputArgs.LevelNumber).EnemySpawns;
-
-            GhostConfig config = _container.Resolve<ConfigsProviderService>().GetConfig<GhostConfig>();
-
-            foreach (Vector3 spawnPoint in spawnPoints)
-                _container.Resolve<EnemiesFactory>().Create(spawnPoint, config);
         }
 
         private void Update()
@@ -100,6 +116,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _entitiesLifeContext?.Update(Time.deltaTime);
             _gameplayStatesContext?.Update(Time.deltaTime);
 
+            // Читы для тестов магнита
             if (Input.GetKeyDown(KeyCode.P))
             {
                 _container.Resolve<MainHeroHolderService>().MainHero.CollectRange.Value = 100;

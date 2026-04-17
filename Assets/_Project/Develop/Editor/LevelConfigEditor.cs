@@ -9,17 +9,35 @@ namespace Assets._Project.Develop.Editor.Configs
     {
         public override void OnInspectorGUI()
         {
-            // Рисуем стандартный инспектор
             DrawDefaultInspector();
 
             LevelConfig config = (LevelConfig)target;
 
             GUILayout.Space(15);
-            GUI.backgroundColor = Color.cyan;
 
-            if (GUILayout.Button("Collect Spawners from Scene", GUILayout.Height(30)))
+            // Кнопка для старта и финиша
+            GUI.backgroundColor = Color.yellow;
+            if (GUILayout.Button("Collect Start & Finish Points", GUILayout.Height(30)))
+            {
+                config.FillStartAndFinishPoints();
+            }
+
+            GUILayout.Space(5);
+
+            // Кнопка для врагов
+            GUI.backgroundColor = Color.cyan;
+            if (GUILayout.Button("Collect Enemy Spawners", GUILayout.Height(30)))
             {
                 config.FillSpawnersFromScene();
+            }
+
+            GUILayout.Space(5);
+
+            // Кнопка для секретных сундуков
+            GUI.backgroundColor = Color.green;
+            if (GUILayout.Button("Collect Secret Chests", GUILayout.Height(30)))
+            {
+                config.FillSecretChestsFromScene();
             }
 
             GUI.backgroundColor = Color.white;

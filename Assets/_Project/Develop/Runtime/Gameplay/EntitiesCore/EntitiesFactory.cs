@@ -697,6 +697,38 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             return entity;
         }
 
+        public Entity CreateChest(Vector3 position, LootTableConfig lootTable)
+        {
+            Entity entity = CreateEmpty();
+            _monoEntitiesFactory.Create(entity, position, "Entities/Loot/SecretChest");
+
+            entity.AddAudio(_audioService);
+
+            entity
+                .AddCurrentHealth(new ReactiveVariable<float>(1f)) 
+                .AddDamageCooldown(new ReactiveVariable<float>(0.5f))
+                .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
+                .AddTakeDamageRequest(new ReactiveEvent<DamageData>())
+                .AddTakeDamageEvent(new ReactiveEvent<DamageData>())
+                .AddLootIsDropped(new ReactiveVariable<bool>(false));
+
+            ICompositeCondition canDropLoot = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
+
+            ICompositeCondition canApplyDamage = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.CurrentHealth.Value > 0));
+
+            entity.AddCanDropLoot(canDropLoot);
+            entity.AddCanApplyDamage(canApplyDamage);
+
+            entity
+                .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new DropLootSystem(_container.Resolve<DropLootService>(), lootTable));
+
+            _entitiesLifeContext.Add(entity);
+            return entity;
+        }
+
         // PROJECTILES
         public Entity CreateChargedSlashProjectile(Transform parent, float damage, Vector2 direction, Entity owner)
         {

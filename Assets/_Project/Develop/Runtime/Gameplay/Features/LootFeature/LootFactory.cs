@@ -25,17 +25,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         public Entity Create(LootConfig config, Vector3 position)
         {
-            // 1. Создаем базовую сущность через общую фабрику
             Entity loot = _entityFactory.CreatePullable(config, position);
             loot.AddLootTag();
 
-            // 2. Генерируем множитель для вариативности (размер и ценность)
             float randomMultiplier = Random.Range(0.5f, 3f);
 
-            // 3. Настраиваем компоненты данных (Coins или Experience)
             SetupLootComponents(loot, config, randomMultiplier);
 
-            // 4. Подписываемся на событие сбора
             loot.IsCollected.Subscribe((oldValue, isCollected) =>
             {
                 if (isCollected)
@@ -44,7 +40,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
                 }
             });
 
-            // 5. Визуал и физический импульс
             ApplyPhysicsAndVisuals(loot, config, randomMultiplier);
 
             return loot;
@@ -52,18 +47,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         private void SetupLootComponents(Entity loot, LootConfig config, float multiplier)
         {
-            // Расширяемый switch под разные конфиги лута
             if (config is SoulShardLootConfig soulShardLootConfig)
             {
                 float finalExp = soulShardLootConfig.ExperienceAmount * multiplier;
                 loot.AddExperienceValue(new ReactiveVariable<float>(finalExp));
             }
-            else if (config is CoinLootConfig coinConfig) // Если добавишь такой конфиг
+            else if (config is CoinLootConfig coinConfig)
             {
                 int finalCoins = Mathf.RoundToInt(coinConfig.BaseAmount * multiplier);
                 loot.AddCoins(new ReactiveVariable<int>(finalCoins));
             }
-            // Можно добавить другие типы (чертежи и т.д.)
         }
 
         private void HandleLootCollection(Entity loot, LootConfig config, float multiplier)

@@ -36,17 +36,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         public void OnUpdate(float deltaTime)
         {
-            // Если нельзя двигаться или цель потеряна — сбрасываем прогресс
             if (_canMove.Evaluate() == false || _currentTarget.Value == null)
             {
                 _elapsedTime = 0;
                 return;
             }
 
-            // Запоминаем точку старта в момент захвата целью
             if (_elapsedTime == 0)
             {
                 _startPosition = _transform.position;
+
+                // ВАЖНО: Выключаем физику, чтобы она не дергала объект во время Lerp
+                if (_transform.TryGetComponent<Rigidbody2D>(out var rb))
+                {
+                    rb.simulated = false;
+                }
             }
 
             _elapsedTime += deltaTime;
