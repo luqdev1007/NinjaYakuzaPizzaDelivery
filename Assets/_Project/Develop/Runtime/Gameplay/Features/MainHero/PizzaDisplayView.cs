@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay
 {
@@ -11,6 +12,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         [SerializeField] private List<GameObject> _pizzaSlices;
         [SerializeField] private ParticleSystem _cheeseDripEffect;
         [SerializeField] private Rigidbody2D _rigidbody;
+        [SerializeField] private LivesCountView _livesUI;
 
         private int _currentVisibleSlices;
         private Entity _linkedEntity;
@@ -59,6 +61,8 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             slice.transform.DOScale(0, 2f).OnComplete(() => Destroy(slice));
 
             _cheeseDripEffect.Play();
+
+            _livesUI.Show(_currentVisibleSlices - 1);
         }
 
         internal void Initialize(Entity entity)
