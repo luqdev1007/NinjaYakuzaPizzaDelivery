@@ -118,6 +118,8 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Inventory
 
         public override void Cleanup(Entity entity)
         {
+            if (this == null) return;
+
             base.Cleanup(entity);
             foreach (var sub in _chargeSubscriptions) sub.Dispose();
             _fadeSequence?.Kill();

@@ -83,7 +83,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             if (Input.GetKeyDown(KeyCode.T))
             {
                 // Отдаляем камеру к финишу (зум 11)
-                _cameraService.ShowTargetTemporarily(_finalPoint.FinalPointPosition, 14f);
+                _cameraService.ShowTargetTemporarily(_finalPoint.FinalPointPosition, 11f);
             }
 
             if (Input.GetKeyUp(KeyCode.T))
@@ -92,7 +92,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _cameraService.StopShowingTarget();
 
                 // Сбрасываем зум к стандартному игровому значению
-                _cameraService.SetZoom(10f);
+                _cameraService.SetZoom(6f);
             }
         }
 
@@ -112,7 +112,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _cameraService.StopShowingTarget();
 
             // Сбрасываем зум к стандартному игровому значению
-            _cameraService.SetZoom(10f);
+            _cameraService.SetZoom(6f);
         }
     }
 }

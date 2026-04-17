@@ -717,7 +717,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
 
             ICompositeCondition canApplyDamage = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.CurrentHealth.Value > 0));
+                .Add(new FuncCondition(() => entity.LootIsDropped.Value == false));
 
             entity.AddCanDropLoot(canDropLoot);
             entity.AddCanApplyDamage(canApplyDamage);

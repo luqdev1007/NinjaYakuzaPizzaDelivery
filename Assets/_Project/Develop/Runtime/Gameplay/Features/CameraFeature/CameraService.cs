@@ -18,14 +18,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
         private float _zoomImpulse;
 
         // --- НАСТРОЙКИ ЗУМА ---
-        private const float MinSize = 5f;
+        private const float MinSize = 6f;
         private const float MaxSize = 20f;
-        private const float ZoomSmoothness = 3f;
+        private const float ZoomSmoothness = 2f;
         private const float OverrideZoomSmoothness = 5f; // Чтобы к цели зумилось быстрее
 
         // --- ПОРОГИ (DEADZONES) ---
-        private const float MinVelocityThreshold = 4f;
-        private const float MaxVelocityForZoom = 22f;
+        private const float MinVelocityThreshold = 8f;
+        private const float MaxVelocityForZoom = 20f;
 
         public ICameraBehaviour CurrentBehaviour => _currentBehaviour;
 
