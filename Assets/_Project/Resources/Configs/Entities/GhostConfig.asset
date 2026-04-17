@@ -20,4 +20,4 @@ MonoBehaviour:
   <MaxHealth>k__BackingField: 10
   <DeathProcessTime>k__BackingField: 0.2
   <ContactDamage>k__BackingField: 1
-  <LootTable>k__BackingField: {fileID: 11400000, guid: 4a3df05932c729941a4368a00f4a6221, type: 2}
+  <LootTable>k__BackingField: {fileID: 11400000, guid: a54cc7243b8c3744991f591301f01020, type: 2}

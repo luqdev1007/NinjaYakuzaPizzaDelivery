@@ -44,11 +44,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         private readonly EntitiesLifeContext _entitiesLifeContext;
         private readonly MonoEntitiesFactory _monoEntitiesFactory;
         private readonly CollidersRegistryService _collidersRegistryService;
-        private readonly AudioService _audioService;
-        private readonly LootTableConfig _lootTableConfig;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
+        private readonly AudioService _audioService;
 
         private readonly CameraService _cameraService;
+
+        private readonly MasterLootProviderConfig _masterLootProviderConfig;
 
         public EntitiesFactory(DIContainer container)
         {
@@ -62,7 +63,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             _cameraService = _container.Resolve<CameraService>();
 
-            _lootTableConfig = container.Resolve<ConfigsProviderService>().GetConfig<LootTableConfig>();
+            _masterLootProviderConfig = container.Resolve<ConfigsProviderService>().GetConfig<MasterLootProviderConfig>();
         }
 
 

@@ -142,8 +142,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             // В начале DashCoroutine
             Physics2D.IgnoreLayerCollision(LayersAPI.LayerCharacters, LayersAPI.LayerEnemies, true);
 
-
-
             float elapsed = 0f;
             float duration = _dashDuration.Value;
             float gravityScale = _rigidbody.gravityScale;
@@ -225,10 +223,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         {
             _audioService.PlaySfxByPrefixAuto("Box_Hit", UnityEngine.Random.Range(0.8f, 1.2f));
 
-            LootTableConfig mainLootTableConfig = _configsProviderService.GetConfig<LootTableConfig>();
-            _dropLootService.DropLootFor(_entity, mainLootTableConfig);
+            // ИСПРАВЛЕНО: Берем через провайдер
+            var lootProvider = _configsProviderService.GetConfig<MasterLootProviderConfig>();
 
-            // Используем Destroy на самом родителе, если скрипт висит выше
+            // Спавним лут в позиции пропса, а не игрока (_entity)
+            _dropLootService.DropLootFor(prop.transform.position, lootProvider.PropsLoot);
+
             Object.Destroy(prop);
         }
 

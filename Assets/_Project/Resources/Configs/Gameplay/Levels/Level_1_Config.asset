@@ -19,7 +19,7 @@ MonoBehaviour:
   <LevelName>k__BackingField: Tutorial Village
   <LevelNumber>k__BackingField: 1
   <LevelIcon>k__BackingField: {fileID: 21300000, guid: ccda1e9d0a91445b08abb3958530382a, type: 3}
-  <FinalPointPosition>k__BackingField: {x: 90, y: 10, z: 0}
+  <FinalPointPosition>k__BackingField: {x: 90, y: 11, z: 0}
   <StartPlayerPosition>k__BackingField: {x: -83.5, y: -1, z: 0}
   <LevelPrefab>k__BackingField: {fileID: 3215380827292991448, guid: 8988d1c7a35590c439f87e63ab8fc695, type: 3}
   _enemySpawns:

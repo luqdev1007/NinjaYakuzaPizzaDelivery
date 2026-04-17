@@ -1,6 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
-using System;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -15,56 +15,56 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             _lootFactory = lootFactory;
         }
 
+        public void DropLootFor(Entity entity, LootTableConfig lootTable)
+        {
+            if (lootTable == null) return;
+            DropLootInternal(entity.Transform.position, lootTable);
+        }
+
         public void DropLootFor(Vector3 spawnPosition, LootTableConfig lootTable)
         {
-            if (lootTable == null)
+            if (lootTable == null) return;
+            DropLootInternal(spawnPosition, lootTable);
+        }
+
+        private void DropLootInternal(Vector3 position, LootTableConfig lootTable)
+        {
+            // 1. Определяем общее кол-во предметов, которые вылетят
+            int attempts = Random.Range(lootTable.TotalDropCount.x, lootTable.TotalDropCount.y + 1);
+
+            for (int i = 0; i < attempts; i++)
             {
-                Debug.Log("No loot table");
-                return;
-            }
+                LootDropEntry entry = GetRandomEntry(lootTable);
 
-            int count = Random.Range(5, 30);
+                if (entry == null || entry.Config == null) continue;
 
-            for (int i = 0; i < count; i++)
-            {
-                var config = lootTable.PossibleLoot[Random.Range(0, lootTable.PossibleLoot.Count)]; // рандом лута
+                // 2. Для каждого выбранного типа определяем, сколько штук заспавнить (например, 3 монетки сразу)
+                int count = Random.Range(entry.CountRange.x, entry.CountRange.y + 1);
 
-                if (config == null || string.IsNullOrEmpty(config.PrefabPath))
+                for (int j = 0; j < count; j++)
                 {
-                    Debug.LogWarning("DropLootService: Попытка заспавнить пустой лут из таблицы!");
-                    continue;
+                    Vector3 offset = new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(-0.3f, 0.3f), 0);
+                    _lootFactory.Create(entry.Config, position + offset);
                 }
-
-                Vector3 offset = new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), 0);
-                _lootFactory.Create(config, spawnPosition + offset);
             }
         }
 
-        public void DropLootFor(Entity entity, LootTableConfig lootTable)
+        private LootDropEntry GetRandomEntry(LootTableConfig lootTable)
         {
-            if (lootTable == null)
+            if (lootTable.LootEntries == null || lootTable.LootEntries.Count == 0) return null;
+
+            int totalWeight = lootTable.LootEntries.Sum(e => e.Weight);
+            int randomValue = Random.Range(0, totalWeight);
+            int currentWeight = 0;
+
+            foreach (var entry in lootTable.LootEntries)
             {
-                Debug.Log("No loot table");
-                return;
+                currentWeight += entry.Weight;
+                if (randomValue < currentWeight)
+                    return entry;
             }
 
-            Vector3 spawnPosition = entity.Transform.position;
-
-            int count = Random.Range(5, 30);
-
-            for (int i = 0; i < count; i++)
-            {
-                var config = lootTable.PossibleLoot[Random.Range(0, lootTable.PossibleLoot.Count)]; // рандом лута
-
-                if (config == null || string.IsNullOrEmpty(config.PrefabPath))
-                {
-                    Debug.LogWarning("DropLootService: Попытка заспавнить пустой лут из таблицы!");
-                    continue;
-                }
-
-                Vector3 offset = new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), 0);
-                _lootFactory.Create(config, spawnPosition + offset);
-            }
+            return lootTable.LootEntries[0];
         }
     }
 }

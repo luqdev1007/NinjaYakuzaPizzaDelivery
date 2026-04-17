@@ -99,9 +99,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
                 else
                 {
                     _audioService.PlaySfxByPrefixAuto("Box_Hit", UnityEngine.Random.Range(0.8f, 1.2f));
-                    LootTableConfig mainLootTableConfig = _configsProviderService.GetConfig<LootTableConfig>();
-                    _dropLootService.DropLootFor(_entity, mainLootTableConfig);
+                    MasterLootProviderConfig lootProvider = _configsProviderService.GetConfig<MasterLootProviderConfig>();
+                    _dropLootService.DropLootFor(hit.transform.position, lootProvider.PropsLoot);
                     Object.Destroy(hit.gameObject);
+                    // hitAny = true; // tryaska
                 }
             }
 

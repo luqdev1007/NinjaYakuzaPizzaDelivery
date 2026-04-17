@@ -90,12 +90,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         private void ApplyPhysicsAndVisuals(Entity loot, LootConfig config, float multiplier)
         {
-            // Масштабируем визуальную часть
-            loot.Transform.localScale *= multiplier;
+            // Проверяем, является ли конфиг мета-лутом (секретным)
+            // Если это НЕ секретный лут, применяем множитель скейла
+            if (config is not MetaLootConfig)
+            {
+                loot.Transform.localScale *= multiplier;
+            }
+            else
+            {
+                // Для секретного лута можно принудительно поставить 1, 
+                // чтобы он всегда выглядел как задумано в префабе
+                loot.Transform.localScale = Vector3.one;
+            }
 
             Rigidbody2D rb = loot.Rigidbody;
 
-            // На время разлета выключаем триггер, чтобы он мог сталкиваться с окружением
             if (loot.BodyCollider != null)
                 loot.BodyCollider.isTrigger = false;
 
@@ -107,8 +116,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
                 float forceX = Random.Range(config.LaunchForceX.x, config.LaunchForceX.y);
                 float forceY = Random.Range(config.LaunchForceY.x, config.LaunchForceY.y);
 
-                // Чуть больше массы тяжелым объектам для честного импульса
-                float massWeight = Mathf.Lerp(1f, 1.5f, (multiplier - 0.5f) / 2.5f);
+                // Для секретного лута тоже можно убрать влияние множителя на физику, 
+                // чтобы он вылетал предсказуемо
+                float finalMultiplier = (config is MetaLootConfig) ? 1f : multiplier;
+                float massWeight = Mathf.Lerp(1f, 1.5f, (finalMultiplier - 0.5f) / 2.5f);
+
                 rb.AddForce(new Vector2(forceX, forceY) * massWeight, ForceMode2D.Impulse);
             }
         }

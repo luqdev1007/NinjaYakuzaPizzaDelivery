@@ -69,8 +69,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             else if (hit.gameObject.layer == LayersAPI.LayerProps)
             {
                 _audioService.PlaySfxByPrefixAuto("Box_Hit", UnityEngine.Random.Range(0.8f, 1.2f));
-                LootTableConfig mainLootTableConfig = _configsProviderService.GetConfig<LootTableConfig>();
-                _dropLootService.DropLootFor(hit.transform.position, mainLootTableConfig);
+
+                // ИСПРАВЛЕНО: Мастер-провайдер
+                var lootProvider = _configsProviderService.GetConfig<MasterLootProviderConfig>();
+                _dropLootService.DropLootFor(hit.transform.position, lootProvider.PropsLoot);
+
                 Object.Destroy(hit.gameObject);
             }
             else

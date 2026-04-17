@@ -6,7 +6,7 @@ using UnityEngine;
 public class SecretChestAnimatedView : EntityView
 {
     [SerializeField] private Animator _animator;
-    [SerializeField] private string _openAnimName = "Open";
+    [SerializeField] private string _openAnimName = "IsOpened";
 
     private IDisposable _healthDisposable;
 
@@ -23,7 +23,7 @@ public class SecretChestAnimatedView : EntityView
 
     private void OpenChest()
     {
-        _animator.SetTrigger(_openAnimName);
+        _animator.SetBool(_openAnimName, true);
         // звук открытия через AudioService
     }
 

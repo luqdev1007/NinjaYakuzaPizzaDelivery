@@ -10,7 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a63faa1ee5488b34c83b9812e2718d35, type: 3}
-  m_Name: GhostLootTable1
+  m_Name: ChestsLootTable
   m_EditorClassIdentifier: 
-  _possibleLoot:
-  - {fileID: 11400000, guid: 29e08276416407548991bb062299d26e, type: 2}
+  _totalDropCount: {x: 1, y: 1}
+  _lootEntries:
+  - <Config>k__BackingField: {fileID: 11400000, guid: 9dda264460c55a74291d1ce5178c346a, type: 2}
+    <Weight>k__BackingField: 100
+    <CountRange>k__BackingField: {x: 1, y: 1}

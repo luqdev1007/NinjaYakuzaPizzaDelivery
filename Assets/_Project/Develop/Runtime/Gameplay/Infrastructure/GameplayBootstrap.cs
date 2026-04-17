@@ -15,7 +15,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 
@@ -51,10 +50,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _cameraService = _container.Resolve<CameraService>();
             _audioService = _container.Resolve<AudioService>();
 
-            // Получаем конфиг уровня один раз
-            LevelConfig levelConfig = _container.Resolve<ConfigsProviderService>()
-                .GetConfig<LevelsListConfig>()
-                .GetBy(_inputArgs.LevelNumber);
+            // Получаем конфиги
+            var configsProvider = _container.Resolve<ConfigsProviderService>();
+            LevelConfig levelConfig = configsProvider.GetConfig<LevelsListConfig>().GetBy(_inputArgs.LevelNumber);
+
+            // Получаем наш новый мастер-провайдер лута
+            MasterLootProviderConfig lootProvider = configsProvider.GetConfig<MasterLootProviderConfig>();
 
             // Настройка камеры
             Vector3 camPosition = levelConfig.StartPlayerPosition;
@@ -70,35 +71,38 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             if (boundsObj != null && boundsObj.TryGetComponent<Collider2D>(out var col))
                 _cameraService.SetConstraints(col.bounds);
 
-            // Спавн всех сущностей
-            CreateEnemiesOnLevel(levelConfig);
-            CreateSecretChestsOnLevel(levelConfig);
+            // Спавн всех сущностей с передачей соответствующих таблиц лута
+            CreateEnemiesOnLevel(levelConfig, lootProvider.EnemyLoot);
+            CreateSecretChestsOnLevel(levelConfig, lootProvider.ChestLoot);
 
             yield break;
         }
 
-        private void CreateEnemiesOnLevel(LevelConfig levelConfig)
+        private void CreateEnemiesOnLevel(LevelConfig levelConfig, LootTableConfig enemyLoot)
         {
             IReadOnlyList<Vector3> spawnPoints = levelConfig.EnemySpawns;
             GhostConfig config = _container.Resolve<ConfigsProviderService>().GetConfig<GhostConfig>();
             EnemiesFactory enemiesFactory = _container.Resolve<EnemiesFactory>();
 
             foreach (Vector3 spawnPoint in spawnPoints)
+            {
+                // Если ты обновил метод Create, чтобы он принимал таблицу лута:
+                // enemiesFactory.Create(spawnPoint, config, enemyLoot);
+
+                // Если пока нет, оставляем так (но лучше прокидывать таблицу)
                 enemiesFactory.Create(spawnPoint, config);
+            }
         }
 
-        private void CreateSecretChestsOnLevel(LevelConfig levelConfig)
+        private void CreateSecretChestsOnLevel(LevelConfig levelConfig, LootTableConfig chestLoot)
         {
             IReadOnlyList<Vector3> chestPoints = levelConfig.SecretChestSpawns;
-
-            LootTableConfig secretLootTable = _container.Resolve<ConfigsProviderService>()
-                .GetConfig<LootTableConfig>();
-
             EntitiesFactory entitiesFactory = _container.Resolve<EntitiesFactory>();
 
             foreach (Vector3 spawnPoint in chestPoints)
             {
-                entitiesFactory.CreateChest(spawnPoint, secretLootTable);
+                // Создаем сундук, передавая конкретно таблицу для сундуков
+                entitiesFactory.CreateChest(spawnPoint, chestLoot);
             }
         }
 
@@ -116,16 +120,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _entitiesLifeContext?.Update(Time.deltaTime);
             _gameplayStatesContext?.Update(Time.deltaTime);
 
-            // Читы для тестов магнита
             if (Input.GetKeyDown(KeyCode.P))
-            {
                 _container.Resolve<MainHeroHolderService>().MainHero.CollectRange.Value = 100;
-            }
 
             if (Input.GetKeyDown(KeyCode.O))
-            {
                 _container.Resolve<MainHeroHolderService>().MainHero.CollectRange.Value = 5;
-            }
         }
 
         private void LateUpdate()

@@ -31,7 +31,8 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
             { typeof(CharactersConfig), "Configs/Dialogs/CharactersConfig" },
             { typeof(AudioConfig), "Configs/Audio/AudioConfig" },
 
-            { typeof(LootTableConfig), "Configs/Gameplay/Loot/MainLootTableConfig" },
+            // loot
+            { typeof(MasterLootProviderConfig), "Configs/Gameplay/Loot/MasterLootProvider" },
 
             { typeof(StyleRankConfig), "Configs/Gameplay/Style/StyleRankConfig" },
             { typeof(StyleActionsConfig), "Configs/Gameplay/Style/StyleActionsConfig" },
