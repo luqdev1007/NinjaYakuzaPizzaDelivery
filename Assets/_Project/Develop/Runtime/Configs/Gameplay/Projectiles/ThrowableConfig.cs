@@ -10,5 +10,6 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles
         [field: SerializeField] public float MinDistance { get; private set; } = 2f;
         [field: SerializeField] public int MaxCharges { get; private set; } = 3;
         [field: SerializeField] public LayerMask HitMask { get; private set; }
+        [field: SerializeField] public Sprite Icon { get; private set; }
     }
 }

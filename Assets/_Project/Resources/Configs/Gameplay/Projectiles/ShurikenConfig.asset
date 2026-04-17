@@ -20,5 +20,6 @@ MonoBehaviour:
   <HitMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 36608
+  <Icon>k__BackingField: {fileID: 21300000, guid: 5a5954d8f87079c45a43726108fa322b, type: 3}
   <Damage>k__BackingField: 2
   <PierceCount>k__BackingField: 3
