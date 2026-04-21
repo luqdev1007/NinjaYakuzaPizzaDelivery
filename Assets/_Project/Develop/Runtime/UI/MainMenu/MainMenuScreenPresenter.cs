@@ -55,10 +55,24 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
 
             _view.OpenLeaderboardButton.onClick.AddListener(OnOpenLeaderboardButtonClicked);
 
+            _view.OpenShopButton.onClick.AddListener(OnOpenShopButtonClicked);
+
+            _view.OpenExtrasButton.onClick.AddListener(OnOpenExtrasButtonClicked);
+
             _walletPresenter = _presentersFactory.CreateWalletPresenter(_view.WalletView);
             _disposables.Add(_walletPresenter);
 
             _walletPresenter.Initialize();
+        }
+
+        private void OnOpenExtrasButtonClicked()
+        {
+            _view.ExtrasView.gameObject.SetActive(true);
+        }
+
+        private void OnOpenShopButtonClicked()
+        {
+            _view.ShopView.gameObject.SetActive(true);
         }
 
         private void OnOpenDojoButtonClicked()
@@ -76,6 +90,7 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             _view.OpenOrdersButton.onClick.RemoveListener(OpenChooseOrderTiles);
 
             _view.ResetStatsButton.onClick.RemoveListener(OnResetStatsButtonClicked);
+
             _view.OpenGameSettingsButton.onClick.RemoveListener(OnOpenGameSettingsButtonClicked);
 
             _view.OpenDojoButton.onClick.RemoveListener(OnOpenDojoButtonClicked);
@@ -83,6 +98,10 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             _view.DojoView.ExitDojoButton.onClick.RemoveListener(OnExitDojoButtonClicked);
 
             _view.OpenLeaderboardButton.onClick.RemoveListener(OnOpenLeaderboardButtonClicked);
+
+            _view.OpenShopButton.onClick.RemoveListener(OnOpenShopButtonClicked);
+
+            _view.OpenExtrasButton.onClick.RemoveListener(OnOpenExtrasButtonClicked);
 
             foreach (var disposable in _disposables)
                 disposable.Dispose();

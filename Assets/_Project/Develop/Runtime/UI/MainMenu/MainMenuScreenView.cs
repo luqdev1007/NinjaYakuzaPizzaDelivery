@@ -9,6 +9,8 @@ public class MainMenuScreenView : MonoBehaviour, IView
 {
     [field: SerializeField] public DojoView DojoView { get; private set; }
     [field: SerializeField] public LeaderboardView LeaderBoardView { get; private set; }
+    [field: SerializeField] public ShopView ShopView { get; private set; }
+    [field: SerializeField] public ExtrasView ExtrasView { get; private set; }
 
     [Header("Meta")]
     [field: SerializeField] public IconTextListView WalletView { get; private set; }
