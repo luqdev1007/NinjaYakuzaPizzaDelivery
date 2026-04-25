@@ -36,6 +36,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
 
         public void Cleanup(Entity entity)
         {
+            if (this == null) 
+                return;
+
             EntityView[] views = GetComponentsInChildren<EntityView>();
 
             if (views != null)
