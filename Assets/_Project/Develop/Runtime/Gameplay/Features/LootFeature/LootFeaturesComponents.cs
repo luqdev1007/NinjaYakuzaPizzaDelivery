@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 {
+    public class IsSecretChest : IEntityComponent { }
+
     public class LootPickedEvent : IEntityComponent
     {
         public ReactiveEvent<LootType> Value;

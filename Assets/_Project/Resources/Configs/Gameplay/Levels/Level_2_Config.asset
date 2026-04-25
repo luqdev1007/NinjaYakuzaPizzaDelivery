@@ -22,6 +22,7 @@ MonoBehaviour:
   <FinalPointPosition>k__BackingField: {x: 7, y: 259, z: 0}
   <StartPlayerPosition>k__BackingField: {x: -110, y: 260, z: 0}
   <LevelPrefab>k__BackingField: {fileID: 3048164097277077460, guid: 8e5a1df5907ca6a4f88a905ff7060110, type: 3}
+  <StyleStarThreshold>k__BackingField: 1000
   _enemySpawns:
   - {x: -75, y: -0.5, z: 0}
   - {x: -67.5, y: -4, z: 0}

@@ -11,15 +11,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
     {
         private readonly DropLootService _dropLootService;
         private readonly LootTableConfig _lootTable;
+        private readonly SecretChestCollectService _secretChestCollectService;
 
         private ICompositeCondition _dropLootCondition;
         private ReactiveVariable<bool> _lootIsDropped;
         private Entity _entity;
 
-        public DropLootSystem(DropLootService dropLootService, LootTableConfig lootTable)
+        public DropLootSystem(
+            DropLootService dropLootService,
+            LootTableConfig lootTable,
+            SecretChestCollectService secretChestCollectService)
         {
             _dropLootService = dropLootService;
             _lootTable = lootTable;
+            _secretChestCollectService = secretChestCollectService;
         }
 
         public void OnInit(Entity entity)
@@ -31,11 +36,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         public void OnUpdate(float deltaTime)
         {
-            // Если HP <= 0 и мы еще не спавнили лут для этой сущности
             if (_lootIsDropped.Value == false && _dropLootCondition.Evaluate())
             {
                 _dropLootService.DropLootFor(_entity, _lootTable);
                 _lootIsDropped.Value = true;
+
+                if (_entity.Transform)
+                {
+                    _secretChestCollectService.RegisterChestCollected();
+                }
             }
         }
     }

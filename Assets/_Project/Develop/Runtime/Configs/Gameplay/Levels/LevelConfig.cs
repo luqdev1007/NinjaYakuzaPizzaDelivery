@@ -18,6 +18,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Levels
         [field: SerializeField] public Vector3 FinalPointPosition { get; private set; }
         [field: SerializeField] public Vector3 StartPlayerPosition { get; private set; }
         [field: SerializeField] public GameObject LevelPrefab { get; private set; }
+        [field: SerializeField] public float StyleStarThreshold { get; private set; }
 
         [Header("Spawn Points")]
         [SerializeField] private List<Vector3> _enemySpawns = new List<Vector3>();

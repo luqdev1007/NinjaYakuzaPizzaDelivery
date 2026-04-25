@@ -1364,6 +1364,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.AudioComponent() {Service = service}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.IsSecretChest IsSecretChestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.IsSecretChest>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsSecretChest()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.IsSecretChest() ); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootPickedEvent LootPickedEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootPickedEvent>();
 
 		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootType> LootPickedEvent => LootPickedEventC.Value;

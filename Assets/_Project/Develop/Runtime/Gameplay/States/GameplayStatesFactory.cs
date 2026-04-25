@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
@@ -55,6 +56,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         public StageProcessState CreateStageProcessState()
         {
+            LevelConfig levelConfig = _container.Resolve<ConfigsProviderService>()
+                .GetConfig<LevelsListConfig>()
+                .GetBy(_inputArgs.LevelNumber);
+
             return new StageProcessState(
                 _container.Resolve<StageProviderService>(), 
                 _container.Resolve<LevelProgressService>(),
@@ -65,7 +70,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<ICoroutinesPerformer>(),
                 _container.Resolve<SceneSwitcherService>(),
                 _inputArgs,
-                _container.Resolve<RankStyleService>()
+                _container.Resolve<RankStyleService>(),
+                _container.Resolve<SecretChestCollectService>(),
+                levelConfig
                 );
         }
 

@@ -14,9 +14,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
         private readonly ReactiveVariable<string> _currentLetter = new("F");
         private readonly ReactiveVariable<string> _currentPrefix = new("");
 
+        // Поля для хранения максимумов за уровень
+        private float _maxPoints;
+        private string _maxLetter = "F";
+
         public IReadOnlyVariable<float> CurrentPoints => _currentPoints;
         public IReadOnlyVariable<string> CurrentLetter => _currentLetter;
         public IReadOnlyVariable<string> CurrentPrefix => _currentPrefix;
+
+        // Публичные свойства для получения рекордов в конце уровня
+        public float MaxPoints => _maxPoints;
+        public string MaxLetter => _maxLetter;
 
         public RankStyleService(StyleRankConfig rankConfig, StyleActionsConfig actionsConfig)
         {
@@ -25,16 +33,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
         }
 
         private float _lastGainTime;
-        private const float DecayDelay = 3f; // Задержка перед началом падения очков
+        private const float DecayDelay = 3f;
 
         public void AddPoints(float amount)
         {
             if (amount <= 0) return;
 
-            _lastGainTime = Time.time; // Запоминаем время последнего получения очков
+            _lastGainTime = Time.time;
 
             float multiplier = GetCurrentMultiplier();
             _currentPoints.Value += amount * multiplier;
+
+            // Запоминаем максимальное количество очков
+            if (_currentPoints.Value > _maxPoints)
+            {
+                _maxPoints = _currentPoints.Value;
+            }
 
             UpdateRank();
         }
@@ -62,10 +76,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
 
         public void UpdateDecay(float deltaTime)
         {
-            if (Time.time - _lastGainTime < DecayDelay) 
+            if (Time.time - _lastGainTime < DecayDelay)
                 return;
 
-            if (_currentPoints.Value <= 0) 
+            if (_currentPoints.Value <= 0)
                 return;
 
             float decayRate = GetCurrentDecayRate();
@@ -77,8 +91,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
 
         private void UpdateRank()
         {
-            // Берем САМЫЙ ПЕРВЫЙ ранг и подранг из конфига как дефолт
-            // Чтобы даже при 0 очков у нас была буква "F"
             string bestLetter = _rankConfig.Ranks[0].Letter;
             string bestPrefix = _rankConfig.Ranks[0].SubRanks[0].Prefix;
 
@@ -86,7 +98,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
             {
                 foreach (var subRank in rankEntry.SubRanks)
                 {
-                    // Используем >=, чтобы при равенстве порогу (включая 0) ранг находился
                     if (_currentPoints.Value >= subRank.Threshold)
                     {
                         bestLetter = rankEntry.Letter;
@@ -94,7 +105,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
                     }
                     else
                     {
-                        // Как только нашли порог, который выше наших очков — выходим
                         goto Assign;
                     }
                 }
@@ -103,6 +113,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
         Assign:
             _currentLetter.Value = bestLetter;
             _currentPrefix.Value = bestPrefix;
+
+            // Обновляем максимальный достигнутый ранг (букву)
+            UpdateMaxLetter(bestLetter);
+        }
+
+        private void UpdateMaxLetter(string currentLetter)
+        {
+            // Находим индекс текущего и максимального ранга в конфиге, чтобы сравнить их
+            int currentIndex = _rankConfig.Ranks.FindIndex(r => r.Letter == currentLetter);
+            int maxIndex = _rankConfig.Ranks.FindIndex(r => r.Letter == _maxLetter);
+
+            if (currentIndex > maxIndex)
+            {
+                _maxLetter = currentLetter;
+            }
         }
 
         private float GetCurrentMultiplier()
@@ -147,10 +172,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
         public void Deactivate()
         {
             _currentPoints.Value = 0f;
+            _maxPoints = 0f;
+            _maxLetter = "F";
             _lastGainTime = 0f;
             UpdateRank();
         }
     }
 }
-
-

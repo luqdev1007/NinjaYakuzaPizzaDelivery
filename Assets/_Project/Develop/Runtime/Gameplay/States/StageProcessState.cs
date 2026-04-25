@@ -1,9 +1,10 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
+﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
-using Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using Assets._Project.Develop.Runtime.Utilites.StateMachineCore;
@@ -25,6 +26,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private GameplayInputArgs _inputArgs;
 
         private readonly RankStyleService _rankStyleService;
+        private readonly SecretChestCollectService _secretChestService;
+        private readonly LevelConfig _levelConfig;
 
         public StageProcessState(
             StageProviderService stageProviderService,
@@ -36,7 +39,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             ICoroutinesPerformer coroutinesPerformer,
             SceneSwitcherService sceneSwitcherService,
             GameplayInputArgs inputArgs,
-            RankStyleService rankStyleService)
+            RankStyleService rankStyleService,
+            SecretChestCollectService secretChestService,
+            LevelConfig levelConfig)
         {
             _stageProviderService = stageProviderService;
             _levelProgressService = levelProgressService;
@@ -46,22 +51,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _inputService = inputService;
             _coroutinesPerformer = coroutinesPerformer;
             _sceneSwitcherService = sceneSwitcherService;
-
             _inputArgs = inputArgs;
-
             _rankStyleService = rankStyleService;
+            _secretChestService = secretChestService;
+            _levelConfig = levelConfig;
         }
 
         public override void Enter()
         {
             base.Enter();
 
-            // Переключаем стейдж и запускаем его логику
+            _rankStyleService.Deactivate();
+            _secretChestService.Initialize(_levelConfig.SecretChestSpawns.Count);
+
             _stageProviderService.SwitchToNext();
             _stageProviderService.StartCurrent();
 
-            // Даем команду сервису-посреднику показать таймер
-            // Презентер поймает это событие и сам запустит анимацию/отсчет
             _timerFeature.Show();
             _inputService.IsEnabled = true;
 
@@ -73,26 +78,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         {
             _stageProviderService.UpdateCurrent(deltaTime);
             _levelProgressService.Update(deltaTime);
-
+            _timerFeature.Update(deltaTime);
             HandleCameraInput();
         }
 
         private void HandleCameraInput()
         {
-            // Логика "Где мой заказ?!"
             if (Input.GetKeyDown(KeyCode.T))
-            {
-                // Отдаляем камеру к финишу (зум 11)
                 _cameraService.ShowTargetTemporarily(_finalPoint.FinalPointPosition, 11f);
-            }
 
             if (Input.GetKeyUp(KeyCode.T))
             {
-                // Возвращаем слежку за героем
                 _cameraService.StopShowingTarget();
-
-                // Сбрасываем зум к стандартному игровому значению
-                _cameraService.SetZoom(6f);
+                _cameraService.SetZoom(8f);
             }
         }
 
@@ -101,18 +99,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             base.Exit();
 
             _stageProviderService.CleanupCurrent();
-
-            // Даем команду скрыть таймер
             _timerFeature.Hide();
 
-            // спрятать и деактивировать набор стилей
-            _rankStyleService.Deactivate();
-
-            // На всякий случай сбрасываем камеру, чтобы зум не залип при переходе в Win/Defeat
             _cameraService.StopShowingTarget();
-
-            // Сбрасываем зум к стандартному игровому значению
-            _cameraService.SetZoom(6f);
+            _cameraService.SetZoom(8f);
         }
     }
 }

@@ -8,6 +8,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LevelResultsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
@@ -79,7 +80,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateInGameTimerFeatureService);
 
             container.RegisterAsSingle(CreateStyleService);
+
             container.RegisterAsSingle(CreateStyleEvaluator);
+
+            container.RegisterAsSingle(CreateSecretChestCollectService);
+
+            container.RegisterAsSingle(CreateLevelResultService);
+        }
+
+        private static LevelResultService CreateLevelResultService(DIContainer container)
+        {
+            return new LevelResultService(
+                container.Resolve<RankStyleService>(), 
+                container.Resolve<SecretChestCollectService>()
+                );
+        }
+
+        private static SecretChestCollectService CreateSecretChestCollectService(DIContainer container)
+        {
+            return new SecretChestCollectService();
         }
 
         private static RankStyleService CreateStyleService(DIContainer container)

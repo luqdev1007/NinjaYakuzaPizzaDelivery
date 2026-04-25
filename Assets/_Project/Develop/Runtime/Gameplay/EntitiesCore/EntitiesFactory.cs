@@ -648,7 +648,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             LootTableConfig lootTable = ghostConfig.LootTable;
 
-            entity.AddSystem(new DropLootSystem(_container.Resolve<DropLootService>(), lootTable));
+            entity.AddSystem(new DropLootSystem(
+                _container.Resolve<DropLootService>(), 
+                lootTable,
+                _container.Resolve<SecretChestCollectService>()));
             // LOOT
 
             return entity;
@@ -719,12 +722,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canApplyDamage = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.LootIsDropped.Value == false));
 
+            ICompositeCondition mustSelfRelease = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.LootIsDropped.Value == true));
+
+            entity.AddMustSelfRelease(mustSelfRelease);
+
             entity.AddCanDropLoot(canDropLoot);
             entity.AddCanApplyDamage(canApplyDamage);
 
+            entity.AddIsSecretChest();
+
             entity
                 .AddSystem(new ApplyDamageSystem())
-                .AddSystem(new DropLootSystem(_container.Resolve<DropLootService>(), lootTable));
+
+                .AddSystem(new DropLootSystem(
+                    _container.Resolve<DropLootService>(), 
+                    lootTable, 
+                    _container.Resolve<SecretChestCollectService>()))
+                
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
+                ;
 
             _entitiesLifeContext.Add(entity);
             return entity;

@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Configs.Dialog;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LevelResultsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
@@ -80,10 +81,17 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
         public WinPopupPresenter CreateWinPopupPresenter(WinPopupView view)
         {
+            LevelConfig levelConfig = _container.Resolve<ConfigsProviderService>()
+                .GetConfig<LevelsListConfig>()
+                .GetBy(_inputArgs.LevelNumber);
+
             return new WinPopupPresenter(
                 _container.Resolve<ICoroutinesPerformer>(),
                 view,
-                _container.Resolve<SceneSwitcherService>()
+                _container.Resolve<SceneSwitcherService>(),
+                _container.Resolve<LevelResultService>(),
+                levelConfig,
+                _container.Resolve<InGameTimerFeatureService>()
                 );
         }
 
