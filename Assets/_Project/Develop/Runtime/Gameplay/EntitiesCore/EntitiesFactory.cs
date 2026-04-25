@@ -45,310 +45,37 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         public Entity CreateHero(Vector3 position, MaiHeroConfig config)
         {
             Entity entity = CreateEmpty();
+
             _monoEntitiesFactory.Create(entity, position, config.PrefabPath);
 
-            AddHeroComponents(entity, config);
-            AddHeroConditions(entity, config);
-            AddHeroSystems(entity, config);
-
-            return entity;
-        }
-
-        private void AddHeroComponents(Entity entity, MaiHeroConfig config)
-        {
+            // components
             entity
-                // — общее —
-                .AddMinFallVelocityForAction(new ReactiveVariable<float>(config.MinFallVelocityForAction))
-                .AddIsGrounded()
-                .AddGroundMask(config.GroundMask)
-
-                // — движение —
-                .AddMoveDirection()
-                .AddMoveSpeed(new ReactiveVariable<float>(config.Movement.MoveSpeed))
-                .AddMoveSpeedMin(new ReactiveVariable<float>(config.Movement.MoveSpeedMin))
-                .AddAcceleration(new ReactiveVariable<float>(config.Movement.Acceleration))
-                .AddDeceleration(new ReactiveVariable<float>(config.Movement.Deceleration))
+                // movement
+                .AddMoveSpeed(new ReactiveVariable<float>(config.MoveSpeed))
+                .AddMoveSpeedMin(new ReactiveVariable<float>(config.MoveSpeedMin))
+                .AddAcceleration(new ReactiveVariable<float>(config.Acceleration))
+                .AddDeceleration(new ReactiveVariable<float>(config.Deceleration))
                 .AddIsMoving()
 
-                // — прыжок —
-                .AddJumpForce(new ReactiveVariable<float>(config.Jump.JumpForce))
-                .AddJumpForceMax(new ReactiveVariable<float>(config.Jump.JumpForceMax))
-                .AddJumpChargeTime(new ReactiveVariable<float>(config.Jump.JumpChargeTime))
-                .AddJumpsAvailable(new ReactiveVariable<int>(config.Jump.MaxJumps))
-                .AddMaxJumps(new ReactiveVariable<int>(config.Jump.MaxJumps))
-                .AddJumpEvent()
-                .AddDoubleJumpEvent()
-
-                // — рывок —
-                .AddIsDashing()
-                .AddDashForceMin(new ReactiveVariable<float>(config.Dash.ForceMin))
-                .AddDashForceMax(new ReactiveVariable<float>(config.Dash.ForceMax))
-                .AddDashChargeTime(new ReactiveVariable<float>(config.Dash.ChargeTime))
-                .AddDashCooldown(new ReactiveVariable<float>(config.Dash.Cooldown))
-                .AddDashDuration(new ReactiveVariable<float>(config.Dash.Duration))
-                .AddAirDashMultiplier(new ReactiveVariable<float>(config.Dash.AirMultiplier))
-                .AddAirDashVerticalBoost(new ReactiveVariable<float>(config.Dash.VerticalBoost))
-                .AddDashDamage(new ReactiveVariable<float>(config.Dash.Damage))
-                .AddDashHitboxSize(new ReactiveVariable<Vector2>(config.Dash.HitboxSize))
-
-                // — планирование —
-                .AddIsGliding()
-                .AddGlideHorizontalDrag(new ReactiveVariable<float>(config.Glide.HorizontalDrag))
-                .AddGlideMaxFallSpeed(new ReactiveVariable<float>(config.Glide.MaxFallSpeed))
-                .AddGlideSpeedDamping(new ReactiveVariable<float>(config.Glide.SpeedDamping))
-                .AddGlideBounceForce(new ReactiveVariable<float>(config.Glide.BounceForce))
-                .AddGlideSnapSpeed(new ReactiveVariable<float>(config.Glide.SnapSpeed))
-                .AddGlideSnapDuration(new ReactiveVariable<float>(config.Glide.SnapDuration))
-
-                // — атака —
-                .AddStartAttackRequest()
-                .AddStartAttackEvent()
-                .AddEndAttackEvent()
-                .AddInAttackProcess()
-                .AddAttackProcessInitialTime(new ReactiveVariable<float>(config.Attack.ProcessTime))
-                .AddAttackProcessCurrentTime()
-                .AddAttackDelayTime(new ReactiveVariable<float>(config.Attack.DelayTime))
-                .AddAttackDelayEndEvent()
-                .AddInstantAttackDamage(new ReactiveVariable<float>(config.Attack.InstantDamage))
-                .AddAttackCanceledEvent()
-                .AddAttackCooldownInitialTime(new ReactiveVariable<float>(config.Attack.Cooldown))
-                .AddAttackCooldownCurrentTime()
-                .AddInAttackCooldown()
-                .AddAttackRange(new ReactiveVariable<float>(config.Attack.Range))
-
-                // — броски —
-                .AddIsThrowing()
-                .AddIsGrappling()
-                .AddCurrentThrowableIndex(new ReactiveVariable<int>(0))
-                .AddGrappleCharges(new ReactiveVariable<int>(config.Throwables.GrappleConfig.MaxCharges))
-                .AddShurikenCharges(new ReactiveVariable<int>(config.Throwables.ShurikenConfig.MaxCharges))
-                .AddSleepDartCharges(new ReactiveVariable<int>(config.Throwables.SleepDartConfig.MaxCharges))
-
-                // — вис на стене —
-                .AddIsWallHanging()
-                .AddWallHangLayer(config.WallHang.Layer)
-                .AddWallHangSlideSpeed(new ReactiveVariable<float>(config.WallHang.SlideSpeed))
-                .AddWallJumpForce(new ReactiveVariable<Vector2>(config.WallHang.JumpForce))
-                .AddWallDirection()
-
-                // — слайд —
-                .AddIsSliding()
-                .AddSlideDuration(new ReactiveVariable<float>(config.Slide.Duration))
-                .AddSlideSpeed(new ReactiveVariable<float>(config.Slide.Speed))
-
-                // — пике —
-                .AddIsPlunging()
-                .AddPlungeSpeed(new ReactiveVariable<float>(config.Plunge.Speed))
-                .AddPlungeAOERadius(new ReactiveVariable<float>(config.Plunge.AOERadius))
-                .AddPlungeAOEDamage(new ReactiveVariable<float>(config.Plunge.AOEDamage))
-                .AddPlungeKnockbackForce(new ReactiveVariable<float>(config.Plunge.KnockbackForce))
-
-                // — наклонные поверхности —
-                .AddIsOnSlope()
-                .AddSlopeBoostMultiplier(new ReactiveVariable<float>(config.Slope.BoostMultiplier))
-                .AddSlopeJumpForce(new ReactiveVariable<Vector2>(config.Slope.JumpForce))
-                .AddSlopeMask(config.Slope.Mask)
-
-                // — жизненный цикл —
-                .AddMaxHealth(new ReactiveVariable<float>(config.LifeCycle.MaxHealth))
-                .AddCurrentHealth(new ReactiveVariable<float>(config.LifeCycle.MaxHealth))
-                .AddIsDead()
-                .AddInDeathProcess()
-                .AddDeathProcessInitialTime(new ReactiveVariable<float>(config.LifeCycle.DeathProcessTime))
-                .AddDeathProcessCurrentTime()
-                .AddTakeDamageRequest()
-                .AddTakeDamageEvent()
-                .AddSpawnInitialTime(new ReactiveVariable<float>(config.LifeCycle.SpawnProcessTime))
-                .AddSpawnCurrentTime()
-                .AddInSpawnProcess()
+                // jump
                 ;
-        }
 
-        private void AddHeroConditions(Entity entity, MaiHeroConfig config)
-        {
-            // — движение —
-            ICompositeCondition canMove = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
-                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
-                .Add(new FuncCondition(() => entity.IsOnSlope.Value == false))
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
+            // conditions
 
-            // — прыжок —
-            ICompositeCondition canJump = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-                .Add(new FuncCondition(() => entity.JumpsAvailable.Value > 0));
+            // move condition
+            ICompositeCondition canMove = new CompositeCondition().Add(new FuncCondition(() => true));
+            entity.AddCanMove(canMove);
 
-            // — рывок —
-            ICompositeCondition canDash = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
-                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
-                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-                .Add(new FuncCondition(() =>
-                    entity.IsGrounded.Value ||
-                    entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value));
+            // jump condition
+            ICompositeCondition canJump = new CompositeCondition().Add(new FuncCondition(() => true));
 
-            // — планирование —
-            ICompositeCondition canGlide = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
-                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-                .Add(new FuncCondition(() => entity.IsThrowing.Value == false))
-                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
-            // — атака —
-            ICompositeCondition canStartAttack = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
-                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
-                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-                .Add(new FuncCondition(() => entity.InAttackProcess.Value == false))
-                .Add(new FuncCondition(() => entity.InAttackCooldown.Value == false))
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
-
-            ICompositeCondition mustCancelAttack = new CompositeCondition(LogicOperations.Or)
-                .Add(new FuncCondition(() => entity.IsDead.Value == true))
-                .Add(new FuncCondition(() => entity.IsGrappling.Value == true))
-                .Add(new FuncCondition(() => entity.IsWallHanging.Value == true))
-                .Add(new FuncCondition(() => entity.IsPlunging.Value == true));
-
-            // — броски —
-            ICompositeCondition canGrapple = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.IsThrowing.Value == false))
-                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
-
-            // — вис на стене —
-            ICompositeCondition canWallHang = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
-                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-                .Add(new FuncCondition(() => entity.InAttackProcess.Value == true))
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
-
-            // — слайд —
-            ICompositeCondition canSlide = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
-                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
-                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-                .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
-
-            // — пике —
-            ICompositeCondition canPlunge = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
-                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
-                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-                .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
-
-            // — жизненный цикл —
-            ICompositeCondition mustDie = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
-
-            ICompositeCondition mustSelfRelease = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == true))
-                .Add(new FuncCondition(() => entity.InDeathProcess.Value == false));
-
-            ICompositeCondition canApplyDamage = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
-
+            // systems
             entity
-                .AddCanMove(canMove)
-                .AddCanJump(canJump)
-                .AddCanDash(canDash)
-                .AddCanGlide(canGlide)
-                .AddCanStartAttack(canStartAttack)
-                .AddMustCancelAttack(mustCancelAttack)
-                .AddCanGrapple(canGrapple)
-                .AddCanWallHang(canWallHang)
-                .AddCanSlide(canSlide)
-                .AddCanPlunge(canPlunge)
-                .AddMustDie(mustDie)
-                .AddMustSelfRelease(mustSelfRelease)
-                .AddCanApplyDamage(canApplyDamage)
-                ;
-        }
+                .AddSystem(new RigidbodyMovementSystem(_container.Resolve<IInputService>()))
+            ;
 
-        private void AddHeroSystems(Entity entity, MaiHeroConfig config)
-        {
-            IInputService inputService = _container.Resolve<IInputService>();
-            ICoroutinesPerformer coroutinesPerformer = _container.Resolve<ICoroutinesPerformer>();
-
-            ThrowableBehaviourFactory throwableBehaviourFactory = new ThrowableBehaviourFactory(coroutinesPerformer);
-
-            entity
-                // — инициализация —
-                .AddSystem(new SpawnProcessTimerSystem())
-                .AddSystem(new PlayerInputSystem(inputService))
-                .AddSystem(new GroundCheckSystem(coyoteTime: 0.1f))
-
-                // — движение —
-                .AddSystem(new RigidbodyMovementSystem(inputService))
-                .AddSystem(new JumpSystem(inputService))
-                .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.Attack.EnemyMask))
-                .AddSystem(new GlideSystem(inputService))
-                .AddSystem(new WallHangSystem(inputService))
-                .AddSystem(new SlideSystem(inputService, coroutinesPerformer))
-                .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask))
-                .AddSystem(new SlopeSystem(inputService, coroutinesPerformer))
-
-                // — броски —
-                .AddSystem(new ThrowableSystem(
-                    inputService,
-                    coroutinesPerformer,
-                    new ThrowableConfig[] 
-                    { 
-                        config.Throwables.GrappleConfig, 
-                        config.Throwables.ShurikenConfig, 
-                        config.Throwables.SleepDartConfig 
-                    },
-                    throwableBehaviourFactory))
-
-                // — атака —
-                .AddSystem(new AttackCancelSystem())
-                .AddSystem(new StartAttackSystem(inputService))
-                .AddSystem(new AttackProcessTimerSystem())
-                .AddSystem(new AttackDelayEndTriggerSystem())
-                .AddSystem(new EndAttackSystem())
-                .AddSystem(new AttackCooldownTimerSystem())
-                .AddSystem(new MeleeAttackHitSystem(config.Attack.EnemyMask, config.Attack.HitBounceForce))
-
-                // — урон / жизненный цикл —
-                .AddSystem(new ApplyDamageSystem())
-                .AddSystem(new DeathSystem())
-                .AddSystem(new DeathProcessTimerSystem())
-                .AddSystem(new DisableCollidersOnDeathSystem())
-
-                // — визуал —
-                .AddSystem(new FlipDirectionSystem())
-
-                // — последней всегда —
-                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
-                ;
+            return entity;
         }
 
         // ─── OTHER ──────────────────────────────────────────────────────────

@@ -35,13 +35,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 
             Entity entity = _entitiesFactory.CreateHero(at, config);
 
-            entity
-                .AddIsMainHero()
-                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
-
-            // entity.AddCurrentTarget();
-            // _brainsFactory.CreateMainHeroBrain(entity, new NearestDamagableTargetSelector(entity));
-
             _entitiesLifeContext.Add(entity);
 
             return entity;

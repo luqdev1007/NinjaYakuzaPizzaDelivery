@@ -4,7 +4,11 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 {
-    public class DashForceMin : IEntityComponent { public ReactiveVariable<float> Value; }
+    public class DashForceMin : IEntityComponent 
+    {
+        public ReactiveVariable<float> Value;
+    }
+
     public class DashForceMax : IEntityComponent { public ReactiveVariable<float> Value; }
     public class DashChargeTime : IEntityComponent { public ReactiveVariable<float> Value; }
     public class DashCooldown : IEntityComponent { public ReactiveVariable<float> Value; }
