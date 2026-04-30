@@ -126,9 +126,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddWallJumpLockTimer(new ReactiveVariable<float>(0f))
                 .AddIsWallJumping(new ReactiveVariable<bool>(false))
                 .AddWallJumpParams(
-                    config.WallJump.VelocityYAbs,
-                    config.WallJump.JumpForce,
-                    config.WallJump.ControlLockDuration
+                    config.Wall.VelocityYAbs,
+                    config.Wall.JumpForce,
+                    config.Wall.ControlLockDuration
                 )
 
                 // — рывок —
@@ -142,7 +142,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddAirDashVerticalBoost(new ReactiveVariable<float>(config.Dash.VerticalBoost))
                 .AddDashDamage(new ReactiveVariable<float>(config.Dash.Damage))
                 .AddDashHitboxSize(new ReactiveVariable<Vector2>(config.Dash.HitboxSize))
-                // В EntitiesFactory
 
                 .AddCometDashState(
                     cometConfig,
@@ -161,33 +160,33 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddGlideSnapSpeed(new ReactiveVariable<float>(config.Glide.SnapSpeed))
                 .AddGlideSnapDuration(new ReactiveVariable<float>(config.Glide.SnapDuration))
 
-                // — атака (ОБНОВЛЕНО) —
+                // — атака —
                 .AddSuccessfulHitEvent()
                 .AddStartAttackRequest()
                 .AddStartAttackEvent()
                 .AddEndAttackEvent()
                 .AddInAttackProcess()
-                .AddAttackProcessInitialTime(new ReactiveVariable<float>(config.Attack.ProcessTime))
+                .AddAttackProcessInitialTime(new ReactiveVariable<float>(config.Combat.ProcessTime))
                 .AddAttackProcessCurrentTime()
-                .AddAttackDelayTime(new ReactiveVariable<float>(config.Attack.DelayTime))
+                .AddAttackDelayTime(new ReactiveVariable<float>(config.Combat.DelayTime))
                 .AddAttackDelayEndEvent()
-                .AddInstantAttackDamage(new ReactiveVariable<float>(config.Attack.InstantDamage))
-                .AddAttackDamage(new ReactiveVariable<float>(config.Attack.InstantDamage))
+                .AddInstantAttackDamage(new ReactiveVariable<float>(config.Combat.Damage))
+                .AddAttackDamage(new ReactiveVariable<float>(config.Combat.Damage))
                 .AddAttackCanceledEvent()
-                .AddAttackCooldownInitialTime(new ReactiveVariable<float>(config.Attack.Cooldown))
+                .AddAttackCooldownInitialTime(new ReactiveVariable<float>(config.Combat.Cooldown))
                 .AddAttackCooldownCurrentTime()
                 .AddInAttackCooldown()
-                .AddAttackRange(new ReactiveVariable<float>(config.Attack.Range))
-                .AddAttackEnemyMask(new ReactiveVariable<LayerMask>(config.Attack.EnemyMask))
+                .AddAttackRange(new ReactiveVariable<float>(config.Combat.Range))
+                .AddAttackEnemyMask(new ReactiveVariable<LayerMask>(config.Combat.EnemyMask))
 
                 // Новые параметры сочности и физики из конфига
-                .AddAttackHitStopScale(new ReactiveVariable<float>(config.Attack.HitStopScale))
-                .AddAttackHitStopDuration(new ReactiveVariable<float>(config.Attack.HitStopDuration))
-                .AddAttackHitBounceForce(new ReactiveVariable<float>(config.Attack.HitBounceForce))
-                .AddGroundHitBounceModifiers(new ReactiveVariable<Vector2>(config.Attack.GroundHitBounceModifiers))
-                .AddAirHitBounceModifiers(new ReactiveVariable<Vector2>(config.Attack.AirHitBounceModifiers))
+                .AddAttackHitStopScale(new ReactiveVariable<float>(config.Combat.HitStopScale))
+                .AddAttackHitStopDuration(new ReactiveVariable<float>(config.Combat.HitStopDuration))
+                .AddAttackHitBounceForce(new ReactiveVariable<float>(config.Combat.HitBounceForce))
+                .AddGroundHitBounceModifiers(new ReactiveVariable<Vector2>(config.Combat.GroundHitBounceModifiers))
+                .AddAirHitBounceModifiers(new ReactiveVariable<Vector2>(config.Combat.AirHitBounceModifiers))
 
-                .AddAttackInvulnerabilityDuration(new ReactiveVariable<float>(config.Attack.InvulnerabilityDuration))
+                .AddAttackInvulnerabilityDuration(new ReactiveVariable<float>(config.Combat.InvulnerabilityDuration))
                 .AddAttackInvulnerabilityTimer()
                 .AddIsAttackInvulnerable(new ReactiveVariable<bool>(false))
 
@@ -202,9 +201,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // — вис на стене —
                 .AddIsWallHanging()
-                .AddWallHangLayer(config.WallHang.Layer)
-                .AddWallHangSlideSpeed(new ReactiveVariable<float>(config.WallHang.SlideSpeed))
-                .AddWallJumpForce(new ReactiveVariable<Vector2>(config.WallHang.JumpForce))
+                .AddWallHangLayer(config.Wall.WallLayer)
+                .AddWallHangSlideSpeed(new ReactiveVariable<float>(config.Wall.SlideSpeed))
+                .AddWallJumpForce(new ReactiveVariable<Vector2>(config.Wall.JumpForce))
                 .AddWallDirection()
 
                 // — слайд —
@@ -214,16 +213,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // — пике —
                 .AddIsPlunging()
-                .AddPlungeSpeed(new ReactiveVariable<float>(config.Plunge.Speed))
-                .AddPlungeAOERadius(new ReactiveVariable<float>(config.Plunge.AOERadius))
-                .AddPlungeAOEDamage(new ReactiveVariable<float>(config.Plunge.AOEDamage))
-                .AddPlungeKnockbackForce(new ReactiveVariable<float>(config.Plunge.KnockbackForce))
+                .AddPlungeSpeed(new ReactiveVariable<float>(config.Combat.PlungeSpeed))
+                .AddPlungeAOERadius(new ReactiveVariable<float>(config.Combat.PlungeRadius))
+                .AddPlungeAOEDamage(new ReactiveVariable<float>(config.Combat.PlungeDamage))
+                .AddPlungeKnockbackForce(new ReactiveVariable<float>(config.Combat.PlungeKnockbackForce))
 
                 // — наклонные поверхности —
                 .AddIsOnSlope()
-                .AddSlopeMask(config.Slope.Mask)
-                .AddSlopeMinAngle(new ReactiveVariable<float>(config.Slope.MinAngle))
-                .AddSlopeMaxAngle(new ReactiveVariable<float>(config.Slope.MaxAngle))
+                .AddSlopeMask(config.Movement.SlopeMask)
+                .AddSlopeMinAngle(new ReactiveVariable<float>(config.Movement.MinSlopeAngle))
+                .AddSlopeMaxAngle(new ReactiveVariable<float>(config.Movement.MaxSlopeAngle))
                 .AddSlopeDownhillBaseForce(new ReactiveVariable<float>(config.Slope.DownhillBaseForce))
                 .AddSlopeBoostMultiplier(new ReactiveVariable<float>(config.Slope.BoostMultiplier))
                 .AddSlopeMagnetForce(new ReactiveVariable<float>(config.Slope.MagnetForce))
@@ -293,7 +292,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new RigidbodyMovementSystem(inputService))
                 .AddSystem(new JumpSystem(inputService, slopeSystem, _cameraService))
 
-                .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.Attack.EnemyMask, 
+                .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.Combat.EnemyMask, 
                     _audioService, 
                     _container.Resolve<ConfigsProviderService>(),
                     _container.Resolve<DropLootService>()))
@@ -302,7 +301,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new WallHangSystem(inputService, audioService))
                 .AddSystem(new SlideSystem(inputService, coroutinesPerformer, slopeSystem))
 
-                .AddSystem(new PlungeSystem(inputService, config.Attack.EnemyMask, _cameraService,
+                .AddSystem(new PlungeSystem(inputService, config.Combat.EnemyMask, _cameraService,
                     _audioService,
                     _container.Resolve<ConfigsProviderService>(),
                     _container.Resolve<DropLootService>()))

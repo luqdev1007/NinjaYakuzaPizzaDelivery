@@ -1,21 +1,21 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Services; 
 using System;
 
 public class StagesFactory
 {
     private readonly DIContainer _container;
-    private readonly LevelConfig _levelConfig; // добавь поле
+    private readonly ILevelStaticDataService _levelData;
 
-    public StagesFactory(DIContainer container, LevelConfig levelConfig)
+    public StagesFactory(DIContainer container, ILevelStaticDataService levelData)
     {
         _container = container;
-        _levelConfig = levelConfig;
+        _levelData = levelData;
     }
 
     public IStage Create(StageConfig stageConfig)
@@ -33,7 +33,7 @@ public class StagesFactory
                     _container.Resolve<FinalPointTriggerService>(),
                     _container.Resolve<LevelProgressService>(),
                     _container.Resolve<MainHeroHolderService>(),
-                    _levelConfig.FinalPointPosition); // берём отсюда
+                    _levelData.Config.FinalPointPosition); // Тянем позицию из сервиса
 
             default:
                 throw new ArgumentException(

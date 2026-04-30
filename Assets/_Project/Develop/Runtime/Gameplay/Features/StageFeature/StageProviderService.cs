@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using Assets._Project.Develop.Runtime.Gameplay.Services; // Новый сервис
 using System;
 using UnityEngine;
 
@@ -10,35 +11,31 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
         private ReactiveVariable<int> _currentStageNumber = new();
         private ReactiveVariable<StageResults> _currentStageResult = new();
 
-        private LevelConfig _levelConfig;
-        private StagesFactory _stagesFactory;
+        private readonly ILevelStaticDataService _levelData;
+        private readonly StagesFactory _stagesFactory;
 
         private IStage _currentStage;
-
         private IDisposable _stageEndedDisposable;
 
         public StageProviderService(
-            LevelConfig levelConfig, 
+            ILevelStaticDataService levelData,
             StagesFactory stagesFactory)
         {
-            _levelConfig = levelConfig;
+            _levelData = levelData;
             _stagesFactory = stagesFactory;
         }
 
         public IReadOnlyVariable<int> CurrentStageNumber => _currentStageNumber;
         public IReadOnlyVariable<StageResults> CurrentStageResult => _currentStageResult;
 
-        public int StagesCount => _levelConfig.StageConfigs.Count;
+        public int StagesCount => _levelData.Config.StageConfigs.Count;
 
         public bool HasNextStage() => CurrentStageNumber.Value < StagesCount;
 
         public void SwitchToNext()
         {
-            // Проверка: есть ли вообще следующий стейдж
             if (HasNextStage() == false)
             {
-                // Вместо ошибки просто логируем или выходим, 
-                // так как это может быть последний стейдж уровня
                 Debug.Log("No more stages to switch to.");
                 return;
             }
@@ -49,28 +46,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
             _currentStageNumber.Value++;
             _currentStageResult.Value = StageResults.Uncompleted;
 
-            _currentStage = _stagesFactory.Create(_levelConfig.StageConfigs[_currentStageNumber.Value - 1]);
+            // Берем конфиг из обновляемого сервиса данных
+            var nextConfig = _levelData.Config.StageConfigs[_currentStageNumber.Value - 1];
+            _currentStage = _stagesFactory.Create(nextConfig);
         }
 
         private void OnStageCompleted()
         {
             _currentStageResult.Value = StageResults.Completed;
-
-            // Если это был последний стейдж, не пытаемся переключаться дальше автоматически
-            if (HasNextStage())
-            {
-                // SwitchToNext(); // Если у тебя логика автоматического перехода
-            }
         }
 
         public void PrepareFirstStage()
         {
-            if (_currentStage != null) 
+            if (_currentStage != null)
                 return;
 
             _currentStageNumber.Value = 1;
             _currentStageResult.Value = StageResults.Uncompleted;
-            _currentStage = _stagesFactory.Create(_levelConfig.StageConfigs[0]);
+
+            _currentStage = _stagesFactory.Create(_levelData.Config.StageConfigs[0]);
 
             _currentStage.Start();
         }
@@ -82,7 +76,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
         }
 
         public void UpdateCurrent(float deltaTime) => _currentStage.Update(deltaTime);
-        
+
         public void CleanupCurrent() => _currentStage.Cleanup();
 
         public void Dispose()
@@ -90,6 +84,5 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
             _currentStage?.Dispose();
             _stageEndedDisposable?.Dispose();
         }
-
     }
 }

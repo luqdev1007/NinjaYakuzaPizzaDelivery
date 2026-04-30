@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adf204f35ec46a743915c25b76fd3cd1, type: 3}
+  m_Name: CombatAbilityConfig
+  m_EditorClassIdentifier: 
+  <AbilityName>k__BackingField: Combat
+  <IsEnabledByDefault>k__BackingField: 1
+  <Damage>k__BackingField: 3
+  <Range>k__BackingField: 1.5
+  <Cooldown>k__BackingField: 0.15
+  <ProcessTime>k__BackingField: 0.2
+  <DelayTime>k__BackingField: 0.1
+  <EnemyMask>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 33280
+  <HitStopScale>k__BackingField: 0.05
+  <HitStopDuration>k__BackingField: 0.15
+  <HitBounceForce>k__BackingField: 10
+  <GroundHitBounceModifiers>k__BackingField: {x: 1, y: 1}
+  <AirHitBounceModifiers>k__BackingField: {x: 2, y: 2}
+  <InvulnerabilityDuration>k__BackingField: 0.25
+  <PlungeSpeed>k__BackingField: 25
+  <PlungeRadius>k__BackingField: 3
+  <PlungeDamage>k__BackingField: 10
+  <PlungeKnockbackForce>k__BackingField: 15
