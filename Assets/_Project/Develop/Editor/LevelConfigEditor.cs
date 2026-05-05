@@ -1,9 +1,8 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
-using Assets._Project.Develop.Runtime.Utilites;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets._Project.Develop.Editor
+namespace Assets._Project.Develop.Editor.Configs
 {
     [CustomEditor(typeof(LevelConfig))]
     public class LevelConfigEditor : UnityEditor.Editor
@@ -14,12 +13,31 @@ namespace Assets._Project.Develop.Editor
 
             LevelConfig config = (LevelConfig)target;
 
-            GUILayout.Space(20);
-            GUI.backgroundColor = Color.cyan;
+            GUILayout.Space(15);
 
-            if (GUILayout.Button("BAKE LEVEL DATA", GUILayout.Height(40)))
+            // Кнопка для старта и финиша
+            GUI.backgroundColor = Color.yellow;
+            if (GUILayout.Button("Collect Start & Finish Points", GUILayout.Height(30)))
             {
-                LevelBaker.Bake(config);
+                config.FillStartAndFinishPoints();
+            }
+
+            GUILayout.Space(5);
+
+            // Кнопка для врагов
+            GUI.backgroundColor = Color.cyan;
+            if (GUILayout.Button("Collect Enemy Spawners", GUILayout.Height(30)))
+            {
+                config.FillSpawnersFromScene();
+            }
+
+            GUILayout.Space(5);
+
+            // Кнопка для секретных сундуков
+            GUI.backgroundColor = Color.green;
+            if (GUILayout.Button("Collect Secret Chests", GUILayout.Height(30)))
+            {
+                config.FillSecretChestsFromScene();
             }
 
             GUI.backgroundColor = Color.white;

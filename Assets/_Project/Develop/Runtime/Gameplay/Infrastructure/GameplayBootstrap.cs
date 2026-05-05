@@ -11,7 +11,6 @@ using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
-using Assets._Project.Develop.Runtime.Gameplay.Services;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,14 +24,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
     {
         private DIContainer _container;
         private GameplayInputArgs _inputArgs;
-
         private GameplayStatesContext _gameplayStatesContext;
         private GameplayScreenPresenter _screenPresenter;
         private EntitiesLifeContext _entitiesLifeContext;
         private CameraService _cameraService;
         private AIBrainsContext _brainsContext;
         private AudioService _audioService;
-        private MainHeroHolderService _heroHolderService;
 
         public override void ProcessRegistrations(DIContainer container, IInputSceneArgs sceneArgs = null)
         {
@@ -41,9 +38,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 throw new ArgumentException($"{nameof(sceneArgs)} is not match with {typeof(GameplayInputArgs)} type");
 
             _inputArgs = gameplayInputArgs;
-
-            _container.RegisterAsSingle<ILevelStaticDataService>(c => new LevelStaticDataService());
-
             GameplayContextRegistrations.Process(_container, _inputArgs);
         }
 
@@ -55,27 +49,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _gameplayStatesContext = _container.Resolve<GameplayStatesContext>();
             _cameraService = _container.Resolve<CameraService>();
             _audioService = _container.Resolve<AudioService>();
-            _heroHolderService = _container.Resolve<MainHeroHolderService>();
 
+            // Получаем конфиги
             var configsProvider = _container.Resolve<ConfigsProviderService>();
             LevelConfig levelConfig = configsProvider.GetConfig<LevelsListConfig>().GetBy(_inputArgs.LevelNumber);
 
-            _container.Resolve<ILevelStaticDataService>().Initialize(levelConfig);
-
+            // Получаем наш новый мастер-провайдер лута
             MasterLootProviderConfig lootProvider = configsProvider.GetConfig<MasterLootProviderConfig>();
 
+            // Настройка камеры
             Vector3 camPosition = levelConfig.StartPlayerPosition;
             camPosition.z = -10;
             Camera.main.transform.position = camPosition;
 
+            // Спавн геометрии уровня
             GameObject levelHolder = GameObject.FindWithTag("LevelHolder");
-            if (levelHolder != null)
-                Instantiate(levelConfig.LevelPrefab, levelHolder.transform);
+            Instantiate(levelConfig.LevelPrefab, levelHolder.transform);
 
+            // Настройка границ камеры
             GameObject boundsObj = GameObject.FindWithTag("LevelBounds");
             if (boundsObj != null && boundsObj.TryGetComponent<Collider2D>(out var col))
                 _cameraService.SetConstraints(col.bounds);
 
+            // Спавн всех сущностей с передачей соответствующих таблиц лута
             CreateEnemiesOnLevel(levelConfig, lootProvider.EnemyLoot);
             CreateSecretChestsOnLevel(levelConfig, lootProvider.ChestLoot);
 
@@ -90,6 +86,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             foreach (Vector3 spawnPoint in spawnPoints)
             {
+                // Если ты обновил метод Create, чтобы он принимал таблицу лута:
+                // enemiesFactory.Create(spawnPoint, config, enemyLoot);
+
+                // Если пока нет, оставляем так (но лучше прокидывать таблицу)
                 enemiesFactory.Create(spawnPoint, config);
             }
         }
@@ -101,6 +101,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             foreach (Vector3 spawnPoint in chestPoints)
             {
+                // Создаем сундук, передавая конкретно таблицу для сундуков
                 entitiesFactory.CreateChest(spawnPoint, chestLoot);
             }
         }
@@ -115,25 +116,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         private void Update()
         {
-            float deltaTime = Time.deltaTime;
-
-            _brainsContext?.Update(deltaTime);
-            _entitiesLifeContext?.Update(deltaTime);
-            _gameplayStatesContext?.Update(deltaTime);
-
-            HandleDebugInput();
-        }
-
-        private void HandleDebugInput()
-        {
-            if (_heroHolderService?.MainHero == null) 
-                return;
+            _brainsContext?.Update(Time.deltaTime);
+            _entitiesLifeContext?.Update(Time.deltaTime);
+            _gameplayStatesContext?.Update(Time.deltaTime);
 
             if (Input.GetKeyDown(KeyCode.P))
-                _heroHolderService.MainHero.CollectRange.Value = 100;
+                _container.Resolve<MainHeroHolderService>().MainHero.CollectRange.Value = 100;
 
             if (Input.GetKeyDown(KeyCode.O))
-                _heroHolderService.MainHero.CollectRange.Value = 5;
+                _container.Resolve<MainHeroHolderService>().MainHero.CollectRange.Value = 5;
         }
 
         private void LateUpdate()

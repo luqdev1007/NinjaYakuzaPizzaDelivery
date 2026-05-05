@@ -1,18 +1,42 @@
-using Assets._Project.Develop.Runtime.Configs;
+using Assets._Project.Develop.Runtime.Configs.Dialog;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Style;
+using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
+using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Utilites.AssetsManagment;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement; // Добавил пространство имен
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
 {
     public class ResourcesConfigsLoader : IConfigLoader
     {
-        private const string MainConfigPath = "Configs/AllConfigs";
-
         private readonly ResourcesAssetsLoader _resources;
+
+        private readonly Dictionary<Type, string> _configsResourcesPath = new()
+        {
+            { typeof(StartWalletConfig), "Configs/Meta/Wallet/StartWalletConfig" },
+            { typeof(CurrencyIconsConfig), "Configs/Meta/Wallet/CurrencyIconsConfig" },
+            { typeof(GameRewardsConfig), "Configs/Meta/Stats/GameRewardsConfig" },
+            { typeof(LevelsListConfig), "Configs/Gameplay/Levels/LevelsListConfig" },
+            { typeof(MainHeroConfig), "Configs/Entities/MainHero/MainHeroConfig" },
+            { typeof(GhostConfig), "Configs/Entities/GhostConfig" },
+            { typeof(DialogConfig), "Configs/Dialogs/TutorialDialog" },
+            { typeof(CharactersConfig), "Configs/Dialogs/CharactersConfig" },
+            { typeof(AudioConfig), "Configs/Audio/AudioConfig" },
+
+            // loot
+            { typeof(MasterLootProviderConfig), "Configs/Gameplay/Loot/MasterLootProvider" },
+
+            { typeof(StyleRankConfig), "Configs/Gameplay/Style/StyleRankConfig" },
+            { typeof(StyleActionsConfig), "Configs/Gameplay/Style/StyleActionsConfig" },
+        };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)
         {
@@ -21,37 +45,17 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
 
         public IEnumerator LoadAsync(Action<Dictionary<Type, object>> onConfigsLoaded)
         {
-            AllConfigs allConfigs = _resources.Load<AllConfigs>(MainConfigPath);
-
-            if (allConfigs == null)
-            {
-                Debug.LogError($"[ConfigsLoader] Не удалось загрузить AllConfigs по пути: {MainConfigPath}");
-                onConfigsLoaded?.Invoke(new Dictionary<Type, object>());
-                yield break;
-            }
-
             Dictionary<Type, object> loadedConfigs = new();
 
-            PropertyInfo[] properties = typeof(AllConfigs).GetProperties(
-                BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-
-            foreach (PropertyInfo property in properties)
+            foreach (KeyValuePair<Type, string> configsResourcesPath in _configsResourcesPath)
             {
-                object value = property.GetValue(allConfigs);
+                ScriptableObject config = _resources.Load<ScriptableObject>(configsResourcesPath.Value);
+                loadedConfigs.Add(configsResourcesPath.Key, config);
 
-                if (value != null)
-                {
-                    loadedConfigs.Add(property.PropertyType, value);
-                }
-                else
-                {
-                    Debug.LogWarning($"[ConfigsLoader] Свойство {property.Name} в AllConfigs не заполнено (null)!");
-                }
+                yield return null;
             }
 
             onConfigsLoaded?.Invoke(loadedConfigs);
-
-            yield break;
         }
     }
 }
