@@ -518,7 +518,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         public Entity CreateContactTrigger(Vector3 position)
         {
             Entity entity = CreateEmpty();
-            _monoEntitiesFactory.Create(entity, position, "Entities/ContactTrigger");
+            _monoEntitiesFactory.Create(entity, position, "Entities/Common/FinalPointTrigger");
 
             entity
                 .AddContactsDetectingMask(LayersAPI.LayerMaskCharacters)

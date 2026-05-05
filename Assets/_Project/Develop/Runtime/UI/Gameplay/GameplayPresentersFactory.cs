@@ -13,7 +13,6 @@ using Assets._Project.Develop.Runtime.UI.Dialog;
 using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Hints;
 using Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups;
-using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Timers;
 using Assets._Project.Develop.Runtime.UI.Wallet;
@@ -21,7 +20,6 @@ using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using Assets._Project.Develop.Runtime.Utilites.Timer;
-using System;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay
 {
@@ -55,13 +53,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         public HintPresenter CreateHintPresenter(HintView view, string message)
         {
             return new HintPresenter(view, _container.Resolve<ICoroutinesPerformer>(), message);
-        }
-
-        public LevelProgressPresenter CreateLevelProgressPresenter(BarWithText view)
-        {
-            return new LevelProgressPresenter(
-                view,
-                _container.Resolve<LevelProgressService>());
         }
 
         public EntitiesHealthDisplayPresenter CreateEntitiesHealthDisplayPresenter(EntitiesHealthDisplay view)
@@ -126,14 +117,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
                 _container.Resolve<ICoroutinesPerformer>(),
                 _inputArgs,
                 _container.Resolve<WalletService>()
-                );
-        }
-
-        public StagePresenter CreateStagePresenter(IconTextView view)
-        {
-            return new StagePresenter(
-                view,
-                _container.Resolve<StageProviderService>()
                 );
         }
 

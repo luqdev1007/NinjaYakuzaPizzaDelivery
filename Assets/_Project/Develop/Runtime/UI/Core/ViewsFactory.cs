@@ -12,35 +12,35 @@ namespace Assets._Project.Develop.Runtime.UI.Core
 
         private readonly Dictionary<string, string> _viewIDToResourcesPath = new Dictionary<string, string>()
         {
-            {ViewIDs.CurrencyView, "UI/Wallet/CurrencyView" },
-            {ViewIDs.MainMenuScreenView, "UI/MainMenu/MainMenuScreenView" },
-            {ViewIDs.GameplayScreenView, "UI/Gameplay/GameplayScreenView" },
-
+            // Common
             {ViewIDs.ConfirmPopupView, "UI/Common/ConfirmPopupView" },
-            {ViewIDs.LevelsMenuPopup, "UI/LevelsMenuPopup/LevelsMenuPopup" },
-            {ViewIDs.LevelTile, "UI/LevelsMenuPopup/LevelTile" },
 
-            {ViewIDs.WinPopupView, "UI/Gameplay/ResultPopups/WinPopupView" },
+            // Meta
+            {ViewIDs.CurrencyView, "UI/Meta/Wallet/CurrencyView" },
+
+            // Gameplay
             {ViewIDs.DefeatPopupView, "UI/Gameplay/ResultPopups/DefeatPopupView" },
+            {ViewIDs.WinPopupView, "UI/Gameplay/ResultPopups/WinPopupView" },
+            {ViewIDs.DialogDisplayView, "UI/Gameplay/Dialog/DialogDisplayView" },
+            {ViewIDs.GameplayScreenView, "UI/Gameplay/GameplayScreenView" },
+            {ViewIDs.HintView, "UI/Gameplay/Hint/HintView" },
 
-            {ViewIDs.SimpleHealthBar, "UI/Gameplay/HealthBars/SimpleHealthBar" },
-            {ViewIDs.MainHeroHealthBar, "UI/Gameplay/HealthBars/MainHeroHealthBar" },
+            // Main Menu
+            {ViewIDs.MainMenuScreenView, "UI/MainMenu/MainMenuScreenView" },
+            {ViewIDs.LevelsMenuPopup, "UI/MainMenu/LevelsMenuPopup" },
+            {ViewIDs.LevelTile, "UI/MainMenu/LevelTile" },
 
-            {ViewIDs.LevelProgressView, "UI/Gameplay/LevelProgress/LevelProgressView" },
-
-            {ViewIDs.DialogDisplayView, "UI/Dialog/DialogDisplayView" },
-
-            {ViewIDs.HintView, "UI/Hint/HintView" },
-
-            {ViewIDs.LootFeedbackView, "UI/Common/LootFeedbackView" },
-
-            // game settings popup views
+            // Game Settings
             { ViewIDs.AudioSettingsPopupView, "UI/GameSettings/AudioSettingsPopupView" },
             { ViewIDs.GameSettingsPopupView, "UI/GameSettings/GameSettingsPopupView" },
             { ViewIDs.GraphicSettingsPopupView, "UI/GameSettings/GraphicSettingsPopupView" },
             { ViewIDs.LanguageSettingsPopupView, "UI/GameSettings/LanguageSettingsPopupView" },
-
-            { ViewIDs.KeyBindingsSettingsPopupView, "UI/KeyBindings/KeyBindingsSettingsPopupView" },
+            { ViewIDs.KeyBindingsSettingsPopupView, "UI/GameSettings/KeyBindingsSettingsPopupView" },
+            
+            // not used
+            {ViewIDs.LootFeedbackView, "UI/Common/LootFeedbackView" },
+            {ViewIDs.SimpleHealthBar, "UI/Gameplay/HealthBars/SimpleHealthBar" },
+            {ViewIDs.MainHeroHealthBar, "UI/Gameplay/HealthBars/MainHeroHealthBar" },
         };
 
         public ViewsFactory(ResourcesAssetsLoader resourcesAssetsLoader)

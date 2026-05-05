@@ -26,7 +26,7 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
             { typeof(GameRewardsConfig), "Configs/Meta/Stats/GameRewardsConfig" },
             { typeof(LevelsListConfig), "Configs/Gameplay/Levels/LevelsListConfig" },
             { typeof(MainHeroConfig), "Configs/Entities/MainHero/MainHeroConfig" },
-            { typeof(GhostConfig), "Configs/Entities/GhostConfig" },
+            { typeof(GhostConfig), "Configs/Entities/Enemies/GhostConfig" },
             { typeof(DialogConfig), "Configs/Dialogs/TutorialDialog" },
             { typeof(CharactersConfig), "Configs/Dialogs/CharactersConfig" },
             { typeof(AudioConfig), "Configs/Audio/AudioConfig" },

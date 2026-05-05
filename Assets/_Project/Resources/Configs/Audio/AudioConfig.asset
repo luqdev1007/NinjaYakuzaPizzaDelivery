@@ -430,7 +430,7 @@ MonoBehaviour:
       Volume: 0.74
       BasePitch: 1.16
     - Id: SecretLootCollect1
-      Clip: {fileID: 8300000, guid: 3a4a16a5b192765489a595d347a6bd48, type: 3}
+      Clip: {fileID: 8300000, guid: aaa344e3c40c58d4aacd790689001d2d, type: 3}
       Volume: 1
       BasePitch: 1
   _playlists:

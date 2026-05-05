@@ -17,7 +17,7 @@ MonoBehaviour:
   <MinFallVelocityForAction>k__BackingField: -2
   <GroundMask>k__BackingField:
     serializedVersion: 2
-    m_Bits: 52480
+    m_Bits: 36096
   _movement:
     <MoveSpeed>k__BackingField: 12
     <MoveSpeedMin>k__BackingField: 8
