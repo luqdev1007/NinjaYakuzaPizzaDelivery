@@ -1,38 +1,41 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
+using Assets._Project.Develop.Infrastructure.DI;
 using UnityEngine;
 using System;
 using DG.Tweening;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
 {
     public class ApplyDamageView : EntityView
     {
-        [Header("Damage VFX")]
-        [SerializeField] private ParticleSystem _applyDamageEffectPrefab;
-        [SerializeField] private Transform _effectSpawnPoint;
-        [SerializeField] private ParticleSystemStopAction _vfxStopAction;
+        [Header("VFX")]
+        [SerializeField] private ParticleSystem _damageVfxPrefab;
+        [SerializeField] private Transform _vfxSpawnPoint;
 
         [Header("Flash Effect")]
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [SerializeField] private Color _flashColor = Color.white;
         [SerializeField] private float _flashDuration = 0.1f;
 
-        [Header("Audio")]
-        [Tooltip("Для героя: MainHeroHit. Для призрака: GhostHit")]
-        [SerializeField] private string _damageSoundPrefix = "MainHeroHit";
-
         private AudioService _audioService;
-        private IDisposable _damageEventDisposable;
+        private IVfxPoolService _vfxPool;
+        private IDisposable _damageSub;
         private Color _originalColor;
+
+        private static readonly string HitSfxCut = "MainHeroHitShuriken";
+        private static readonly string HitSfxGeneric = "MainHeroHitGeneric";
+
+        protected override void OnDependencyResolve(DIContainer container)
+        {
+            _audioService = container.Resolve<AudioService>();
+            _vfxPool = container.Resolve<IVfxPoolService>();
+        }
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            // Получаем сервис аудио через компонент сущности
-            _audioService = entity.GetComponent<AudioComponent>().Service;
-            _damageEventDisposable = entity.TakeDamageEvent.Subscribe(OnDamaged);
+            _damageSub = entity.TakeDamageEvent.Subscribe(OnDamaged);
 
             if (_spriteRenderer != null)
                 _originalColor = _spriteRenderer.color;
@@ -41,29 +44,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
-            _damageEventDisposable?.Dispose();
-            if (_spriteRenderer != null) _spriteRenderer.DOKill();
+            _damageSub?.Dispose();
+
+            if (_spriteRenderer != null)
+                _spriteRenderer.DOKill();
         }
 
         private void OnDamaged(DamageData data)
         {
-            SpawnDamageParticles();
+            PlayVfx();
             PlayFlashEffect();
+            PlayHitSfx(data.Type);
+        }
 
-            // 1. Формируем специфический префикс (например, GhostHit + Shuriken)
-            string typeSuffix = data.Type == DamageType.Cut ? "Shuriken" : data.Type.ToString();
-            string specificPrefix = _damageSoundPrefix + typeSuffix;
-
-            // 2. Логика Fallback:
-            // Сначала ищем специфический звук (например, GhostHitShuriken1)
-            if (_audioService.GetVariationCount(specificPrefix) > 0)
+        private void PlayVfx()
+        {
+            if (_damageVfxPrefab != null && _vfxPool != null)
             {
-                _audioService.PlaySfxByPrefixAuto(specificPrefix, UnityEngine.Random.Range(0.9f, 1.1f));
-            }
-            // Если его нет, ищем базовый звук (например, GhostHit1, GhostHit2)
-            else if (_audioService.GetVariationCount(_damageSoundPrefix) > 0)
-            {
-                _audioService.PlaySfxByPrefixAuto(_damageSoundPrefix, UnityEngine.Random.Range(0.9f, 1.1f));
+                Vector3 pos = _vfxSpawnPoint != null ? _vfxSpawnPoint.position : transform.position;
+                _vfxPool.Spawn(_damageVfxPrefab, pos, Quaternion.identity);
             }
         }
 
@@ -73,21 +72,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
 
             _spriteRenderer.DOKill();
             _spriteRenderer.color = _originalColor;
-
             _spriteRenderer.DOColor(_flashColor, _flashDuration)
                 .SetLoops(2, LoopType.Yoyo)
                 .OnComplete(() => _spriteRenderer.color = _originalColor);
         }
 
-        private void SpawnDamageParticles()
+        private void PlayHitSfx(DamageType type)
         {
-            if (_applyDamageEffectPrefab == null) return;
+            if (_audioService == null) return;
 
-            Vector3 spawnPos = _effectSpawnPoint != null ? _effectSpawnPoint.position : transform.position;
-            ParticleSystem vfx = Instantiate(_applyDamageEffectPrefab, spawnPos, Quaternion.identity);
+            string sfxKey = type == DamageType.Cut ? HitSfxCut : HitSfxGeneric;
 
-            var main = vfx.main;
-            main.stopAction = _vfxStopAction;
+            _audioService.PlaySfxByPrefixAuto(sfxKey, UnityEngine.Random.Range(0.9f, 1.1f));
         }
     }
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using Assets._Project.Develop.Infrastructure.DI;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
@@ -14,19 +13,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
 
         [Header("VFX Components")]
         [SerializeField] private Animator _animator;
-        [SerializeField] private ParticleSystem _airParticlesPS;
+        [SerializeField] private ParticleSystem _airLines;
         [SerializeField] private Transform _viewContainer;
 
         [Header("Audio Settings")]
         [SerializeField] private string _startGlidePrefix = "GlideStart";
         [SerializeField] private string _loopGlidePrefix = "GlideLoop";
-        [SerializeField] private string _endGlidePrefix = "GlideStart"; // Используем тот же префикс для закрытия или замени на свой
+        [SerializeField] private string _endGlidePrefix = "GlideEnd";
 
         [Header("Pitch Settings")]
         [SerializeField] private float _minPitch = 0.9f;
         [SerializeField] private float _maxPitch = 1.3f;
-        [SerializeField] private float _minVelocityY = -15f; // Скорость быстрого падения
-        [SerializeField] private float _maxVelocityY = -2f;  // Скорость медленного парения
+        [SerializeField] private float _minVelocityY = -15f;
+        [SerializeField] private float _maxVelocityY = -2f;
 
         [Header("Sway Settings")]
         [SerializeField] private float _swayAngle = 5f;
@@ -34,29 +33,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         [SerializeField] private float _swayLerpSpeed = 5f;
 
         private AudioService _audioService;
-        private IReadOnlyVariable<bool> _isGliding;
         private Rigidbody2D _rigidbody;
-        private IDisposable _isGlidingDisposable;
+        private IDisposable _isGlidingSub;
 
         private string _activeLoopId;
         private bool _isCurrentlyGliding;
         private float _swayTimer;
 
-        private void OnValidate()
+        private void OnValidate() => _animator ??= GetComponent<Animator>();
+
+        protected override void OnDependencyResolve(DIContainer container)
         {
-            _animator ??= GetComponent<Animator>();
+            _audioService = container.Resolve<AudioService>();
         }
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _audioService = entity.GetComponent<AudioComponent>().Service;
+            _rigidbody = entity.Rigidbody;
 
-            _isGliding = entity.IsGliding;
-            _rigidbody = entity.Rigidbody; // Предполагается, что в Entity есть реактивная переменная VelocityY
+            _isGlidingSub = entity.IsGliding.Subscribe(OnIsGlidingChanged);
 
-            _isGlidingDisposable = _isGliding.Subscribe(OnIsGlidingChanged);
-
-            ApplyState(_isGliding.Value);
+            ApplyState(entity.IsGliding.Value);
         }
 
         private void Update()
@@ -78,10 +75,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
             if (_animator != null)
                 _animator.SetBool(IsGlidingKey, isGliding);
 
-            if (_airParticlesPS != null)
+            if (_airLines != null)
             {
-                if (isGliding) _airParticlesPS.Play();
-                else _airParticlesPS.Stop();
+                if (isGliding) _airLines.Play();
+                else _airLines.Stop();
             }
 
             HandleAudio(isGliding);
@@ -89,26 +86,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
 
         private void HandleAudio(bool isGliding)
         {
+            if (_audioService == null) return;
+
             string startPrefix = "AbilityImpact" + _startGlidePrefix;
             string loopPrefix = "AbilityImpact" + _loopGlidePrefix;
             string endPrefix = "AbilityImpact" + _endGlidePrefix;
 
             if (isGliding)
             {
-                // Звук открытия
                 _audioService.PlaySfxVariation(startPrefix, 1, 2, UnityEngine.Random.Range(0.95f, 1.05f));
-                // Запуск цикла
                 _activeLoopId = _audioService.PlaySfxVariationLoop(loopPrefix, 1, 3);
             }
             else
             {
-                // Если мы летели и перестали (сработал триггер выхода)
                 if (!string.IsNullOrEmpty(_activeLoopId))
                 {
                     _audioService.StopSfx(_activeLoopId);
                     _activeLoopId = null;
 
-                    // Звук закрытия/конца глайда
                     _audioService.PlaySfxVariation(endPrefix, 1, 2, UnityEngine.Random.Range(0.85f, 0.95f));
                 }
             }
@@ -116,14 +111,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
 
         private void UpdateLoopPitch()
         {
-            if (!_isCurrentlyGliding || string.IsNullOrEmpty(_activeLoopId)) return;
+            if (!_isCurrentlyGliding || string.IsNullOrEmpty(_activeLoopId) || _rigidbody == null)
+                return;
 
-            // Инвертируем VelocityY, так как падение — это отрицательные значения
-            // Используем InverseLerp для получения значения от 0 до 1 между мин и макс скоростью
             float t = Mathf.InverseLerp(_maxVelocityY, _minVelocityY, _rigidbody.linearVelocityY);
             float targetPitch = Mathf.Lerp(_minPitch, _maxPitch, t);
 
-            // Обновляем питч у конкретного запущенного loop-звука
             _audioService.SetPitch(_activeLoopId, targetPitch);
         }
 
@@ -148,10 +141,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
-            _isGlidingDisposable?.Dispose();
+            _isGlidingSub?.Dispose();
 
-            if (!string.IsNullOrEmpty(_activeLoopId))
+            if (!string.IsNullOrEmpty(_activeLoopId) && _audioService != null)
+            {
                 _audioService.StopSfx(_activeLoopId);
+                _activeLoopId = null;
+            }
         }
     }
 }

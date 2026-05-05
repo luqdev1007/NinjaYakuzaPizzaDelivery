@@ -1,8 +1,8 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+﻿using System;
+using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
-using System;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
@@ -16,7 +16,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
         [SerializeField] private Animator _animator;
 
         [Header("Audio Settings")]
-        [Tooltip("Префикс для поиска в конфиге (например, GhostDeath или MainHeroDeath)")]
         [SerializeField] private string _deathSoundPrefix = "MainHeroDeath";
 
         private AudioService _audioService;
@@ -24,20 +23,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 
         private void OnValidate() => _animator ??= GetComponent<Animator>();
 
+        protected override void OnDependencyResolve(DIContainer container)
+        {
+            _audioService = container.Resolve<AudioService>();
+        }
+
         protected override void OnEntityStartedWork(Entity entity)
         {
-            // Получаем сервис из компонента сущности
-            _audioService = entity.GetComponent<AudioComponent>().Service;
-
             _isDeadChangedDisposable = entity.IsDead.Subscribe(OnIsDeadChanged);
 
             if (entity.IsDead.Value)
-                UpdateIsDead(true, false); // Если уже мертв при старте, звук не играем
+                UpdateIsDead(true, false);
         }
 
         private void OnIsDeadChanged(bool old, bool isDead)
         {
-            UpdateIsDead(isDead, isDead); // Играем звук только если состояние сменилось на "мертв"
+            UpdateIsDead(isDead, isDead);
         }
 
         private void UpdateIsDead(bool value, bool playSound)
@@ -47,7 +48,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 
             if (playSound && !string.IsNullOrEmpty(_deathSoundPrefix))
             {
-                // Используем нашу автоматику для поиска вариаций (MainHeroDeath1, MainHeroDeath2...)
                 _audioService.PlaySfxByPrefixAuto(_deathSoundPrefix, UnityEngine.Random.Range(0.9f, 1.1f));
             }
         }

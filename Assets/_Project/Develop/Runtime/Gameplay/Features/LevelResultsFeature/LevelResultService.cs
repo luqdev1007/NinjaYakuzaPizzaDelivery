@@ -1,4 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 
@@ -18,25 +19,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelResultsFeature
 
     public class LevelResultService
     {
-        private readonly RankStyleService _styleService;
+        private readonly Entity _heroEntity;
         private readonly SecretChestCollectService _secretChestCollectService;
 
-        public LevelResultService(RankStyleService styleService, SecretChestCollectService secretChestCollectService)
+        public LevelResultService(Entity heroEntity, SecretChestCollectService secretChestCollectService)
         {
-            _styleService = styleService;
+            _heroEntity = heroEntity;
             _secretChestCollectService = secretChestCollectService;
         }
 
         public LevelResultReport CalculateResult(LevelConfig config, float timeSpent)
         {
+            float maxPoints = _heroEntity.GetComponent<MaxStylePoints>().Value;
+            StyleRankEnum maxRank = _heroEntity.GetComponent<MaxStyleRank>().Value;
+
             return new LevelResultReport
             {
                 FinalTime = timeSpent,
-                FinalStylePoints = _styleService.MaxPoints,
-                StyleLetter = _styleService.MaxLetter,
+                FinalStylePoints = maxPoints,
+                StyleLetter = maxRank.ToString(), 
 
                 TimeStarEarned = timeSpent <= config.TargetTime,
-                StyleStarEarned = _styleService.MaxPoints >= config.StyleStarThreshold,
+                StyleStarEarned = maxPoints >= config.StyleStarThreshold,
 
                 SecretStarEarned = _secretChestCollectService.AllChestsCollected(),
                 CollectedSecrets = _secretChestCollectService.CollectedCount,

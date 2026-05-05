@@ -8,8 +8,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
 {
     public class WallJumpSystem : IInitializableSystem, IUpdatableSystem
     {
-        private readonly IInputService _inputService;
-
         private Rigidbody2D _rigidbody;
         private Transform _transform;
         private LayerMask _groundMask;
@@ -19,14 +17,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
         private ReactiveVariable<float> _lockTimer;
         private ReactiveVariable<Vector2> _moveDirection;
         private ReactiveVariable<int> _jumpsAvailable;
+        private InputState _jumpInput;
 
         private WallJumpParams _params;
 
         private float _wallCoyoteTimer;
         private int _lastWallDir;
         private float _lastEntrySpeedX;
-
-        public WallJumpSystem(IInputService inputService) => _inputService = inputService;
+        private const float WallCheckDistance = 0.6f;
+        private const float CoyoteDuration = 0.15f;
+        private const float MaxVelocityMultiplier = 2.2f;
 
         public void OnInit(Entity entity)
         {
@@ -40,6 +40,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
             _lockTimer = entity.WallJumpLockTimer;
             _moveDirection = entity.MoveDirection;
 
+            _jumpInput = entity.JumpInput;
             _params = entity.GetComponent<WallJumpParams>();
         }
 
@@ -62,11 +63,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
             if (currentWallDir != 0)
             {
                 _lastWallDir = currentWallDir;
-                _wallCoyoteTimer = 0.15f;
+                _wallCoyoteTimer = CoyoteDuration;
 
-                if (Mathf.Abs(_rigidbody.linearVelocity.x) > 0.1f)
+                float currentAbsVelX = Mathf.Abs(_rigidbody.linearVelocity.x);
+                if (currentAbsVelX > 0.1f)
                 {
-                    _lastEntrySpeedX = Mathf.Abs(_rigidbody.linearVelocity.x);
+                    _lastEntrySpeedX = currentAbsVelX;
                 }
             }
             else if (_wallCoyoteTimer > 0)
@@ -74,22 +76,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
                 _wallCoyoteTimer -= deltaTime;
             }
 
-            if (_wallCoyoteTimer > 0)
+            if (_wallCoyoteTimer > 0 && _jumpInput.IsPressed.Value)
             {
-                if (_inputService.IsJumpKeyPressed)
-                {
-                    PerformWallJump(_lastWallDir);
-                }
+                PerformWallJump(_lastWallDir);
             }
         }
 
         private int GetWallDirection()
         {
-            float checkDist = 0.6f;
-
-            if (Physics2D.Raycast(_transform.position, Vector2.right, checkDist, _groundMask)) return 1;
-            if (Physics2D.Raycast(_transform.position, Vector2.left, checkDist, _groundMask)) return -1;
-
+            if (Physics2D.Raycast(_transform.position, Vector2.right, WallCheckDistance, _groundMask)) return 1;
+            if (Physics2D.Raycast(_transform.position, Vector2.left, WallCheckDistance, _groundMask)) return -1;
             return 0;
         }
 
@@ -98,18 +94,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
             _wallCoyoteTimer = 0;
             _jumpsAvailable.Value++;
 
-            _moveDirection.Value = new Vector2(-wallDir, _moveDirection.Value.y);
-
             float bounceForceX = Mathf.Max(_lastEntrySpeedX, _params.JumpForce.x);
+            float maxAllowedForceX = _params.JumpForce.x * MaxVelocityMultiplier;
+            bounceForceX = Mathf.Clamp(bounceForceX, _params.JumpForce.x, maxAllowedForceX);
 
-            Vector2 force = new Vector2(-wallDir * bounceForceX, _params.JumpForce.y);
-            _rigidbody.linearVelocity = force;
+            _moveDirection.Value = new Vector2(-wallDir, _moveDirection.Value.y);
+            _rigidbody.linearVelocity = new Vector2(-wallDir * bounceForceX, _params.JumpForce.y);
 
             _isWallJumping.Value = true;
-            _isWallJumping.Value = false;
-
             _lockTimer.Value = _params.ControlLockDuration;
-
             _lastEntrySpeedX = 0;
         }
     }

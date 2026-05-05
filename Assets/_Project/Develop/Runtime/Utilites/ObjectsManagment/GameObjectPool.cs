@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Utilites.ObjectsManagment
@@ -37,8 +36,15 @@ namespace Assets._Project.Develop.Runtime.Utilites.ObjectsManagment
 
         private GameObject CreateNew()
         {
-            GameObject obj = UnityEngine.Object.Instantiate(_prefab, _parent);
+            GameObject obj = Object.Instantiate(_prefab, _parent);
+
+            if (!obj.TryGetComponent<PoolableObject>(out var poolable))
+                poolable = obj.AddComponent<PoolableObject>();
+
+            poolable.Init(this); 
+
             obj.SetActive(false);
+
             return obj;
         }
     }

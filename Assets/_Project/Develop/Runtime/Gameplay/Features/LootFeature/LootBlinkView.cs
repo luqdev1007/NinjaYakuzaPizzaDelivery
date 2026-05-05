@@ -1,28 +1,25 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Loot
 {
     public class LootBlinkView : EntityView
     {
         [SerializeField] private SpriteRenderer[] _renderers;
         [SerializeField] private float _blinkThreshold = 1.5f;
 
-        private Entity _linkedEntity;
-        private IDisposable _autoDeleteCurrentTimeDisposable;
+        private IDisposable _timerDisposable;
         private bool _isBlinking;
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _linkedEntity = entity;
-            // Подписываемся на переменную .Value (если это ReactiveVariable)
-            _autoDeleteCurrentTimeDisposable = _linkedEntity.AutoDeleteCurrentTime.Subscribe(OnTimerChanged);
+            _timerDisposable = entity.AutoDeleteCurrentTime.Subscribe(OnTimerChanged);
         }
 
         private void OnTimerChanged(float oldValue, float currentTime)
         {
-            // Просто решаем: пора мигать или нет
             _isBlinking = currentTime <= _blinkThreshold && currentTime > 0;
 
             if (!_isBlinking)
@@ -35,7 +32,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
         {
             if (_isBlinking)
             {
-                // Теперь мигание максимально плавное, так как Update работает каждый кадр
                 float alpha = Mathf.Abs(Mathf.Sin(Time.time * 15f));
                 SetAlpha(alpha);
             }
@@ -56,16 +52,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
 
         public override void Cleanup(Entity entity)
         {
-            _isBlinking = false;
-            if (_autoDeleteCurrentTimeDisposable != null)
-            {
-                _autoDeleteCurrentTimeDisposable.Dispose();
-                _autoDeleteCurrentTimeDisposable = null;
-            }
-
-            ResetAlpha();
-            _linkedEntity = null;
             base.Cleanup(entity);
+
+            _isBlinking = false;
+            _timerDisposable?.Dispose();
+            ResetAlpha();
         }
     }
 }

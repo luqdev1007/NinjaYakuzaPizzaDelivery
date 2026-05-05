@@ -10,16 +10,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
         private Entity _entity;
         private IDisposable _eventSubscription;
 
-        // Константы для настройки баланса
-        private const float BaseKnockbackX = 3f;    // Минимальный толчок по X
-        private const float BaseKnockbackY = 2f;     // Минимальный подброс вверх
-        private const float DamageMultiplier = 1.2f; // На сколько умножаем каждый хитпоинт урона
-        private const float MaxForce = 60f;          // Ограничитель, чтобы при огромном уроне не улететь за карту
+        private const float MaxForceLimit = 60f;
 
         public void OnInit(Entity entity)
         {
             _entity = entity;
-            _eventSubscription = entity.TakeDamageEvent.Subscribe(OnTakeDamage);
+            _eventSubscription = _entity.TakeDamageEvent.Subscribe(OnTakeDamage);
         }
 
         private void OnTakeDamage(DamageData damage)
@@ -27,22 +23,31 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
             if (_entity.Rigidbody == null)
                 return;
 
-            // Определяем направление (противоположное взгляду)
-            float lookDirection = Mathf.Sign(_entity.Transform.localScale.x);
-            float pushDirectionX = -lookDirection;
+            float pushDirectionX;
 
-            // Рассчитываем силу на основе урона
-            // Итоговая сила = База + (Урон * Множитель)
-            float finalForceX = BaseKnockbackX + (damage.Amount * DamageMultiplier);
-            float finalForceY = BaseKnockbackY + (damage.Amount * 0.5f); // По Y добавляем чуть меньше, чтобы не подлетать до потолка
+            if (damage.SourcePosition != Vector2.zero)
+            {
+                pushDirectionX = damage.SourcePosition.x > _entity.Transform.position.x ? -1f : 1f;
+            }
+            else
+            {
+                pushDirectionX = -Mathf.Sign(_entity.Transform.localScale.x);
+            }
 
-            // Ограничиваем максимальный импульс
-            finalForceX = Mathf.Min(finalForceX, MaxForce);
+            float baseForceX = _entity.DamageKnockbackForceX.Value;
+            float baseForceY = _entity.DamageKnockbackForceY.Value;
+
+            float finalForceX = baseForceX + (damage.Amount * 1.2f);
+            float finalForceY = baseForceY + (damage.Amount * 0.5f);
+
+            finalForceX = Mathf.Min(finalForceX, MaxForceLimit);
 
             _entity.Rigidbody.linearVelocity = Vector2.zero;
 
             Vector2 impulse = new Vector2(pushDirectionX * finalForceX, finalForceY);
             _entity.Rigidbody.AddForce(impulse, ForceMode2D.Impulse);
+
+            Debug.Log($"[Knockback] Applied force: {impulse}. Damage source: {damage.SourcePosition}");
         }
 
         public void OnDispose() => _eventSubscription?.Dispose();

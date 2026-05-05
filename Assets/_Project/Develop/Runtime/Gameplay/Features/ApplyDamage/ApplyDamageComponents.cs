@@ -14,7 +14,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
         public ReactiveVariable<float> Value;
     }
 
-
     public class TakeDamageRequest : IEntityComponent
     {
         public ReactiveEvent<DamageData> Value;
@@ -28,5 +27,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
     public class CanApplyDamage : IEntityComponent
     {
         public ICompositeCondition Value;
+    }
+
+    public class DamageKnockbackForceX : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+    public class DamageKnockbackForceY : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
     }
 }

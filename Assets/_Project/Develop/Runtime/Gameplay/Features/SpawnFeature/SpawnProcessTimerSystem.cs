@@ -9,7 +9,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
     {
         private ReactiveVariable<float> _initialTime;
         private ReactiveVariable<float> _currentTime;
-
         private ReactiveVariable<bool> _inSpawnProcess;
 
         public void OnInit(Entity entity)

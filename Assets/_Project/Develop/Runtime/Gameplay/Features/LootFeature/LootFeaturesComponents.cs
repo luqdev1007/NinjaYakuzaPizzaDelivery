@@ -57,6 +57,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
         public ICompositeCondition Value;
     }
 
+    public class LootTypeNew : IEntityComponent
+    {
+        public ReactiveVariable<LootType> Value;
+    }
+
     // ??
     public class LootTag : IEntityComponent { }
     public class ExperienceValue : IEntityComponent { public ReactiveVariable<float> Value; }

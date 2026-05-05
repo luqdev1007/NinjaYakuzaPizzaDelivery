@@ -2,11 +2,10 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Utilites.ObjectsManagment;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Infrastructure.DI;
 using System;
-using System.Collections;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
+using DG.Tweening;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 {
@@ -21,7 +20,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
         [SerializeField] private string _hitPrefix = "EnemyHit";
 
         [Header("Afterimage (VFX)")]
-        [SerializeField] private GameObject _afterimagePrefab;
+        [SerializeField] private AfterimageInstance _afterimagePrefab; 
         [SerializeField, Min(0.01f)] private float _spawnInterval = 0.04f;
         [SerializeField, Min(0.1f)] private float _afterimageLifetime = 0.2f;
         [SerializeField] private Color _afterimageColor = new Color(0.5f, 0.7f, 1f, 0.8f);
@@ -34,64 +33,55 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
         private AudioService _audioService;
         private GameObjectPool _pool;
         private MaterialPropertyBlock _propertyBlock;
-        private Coroutine _flashCoroutine;
 
-        private IDisposable _dashDisposable;
-        private IDisposable _damageEventDisposable;
+        private IDisposable _dashSub;
+        private IDisposable _damageSub;
 
         private float _spawnTimer;
         private bool _isDashing;
+        private Color _originalColor = Color.white;
+
         private static readonly int ColorProperty = Shader.PropertyToID("_Color");
         private static readonly int IsDashingKey = Animator.StringToHash("IsDashing");
 
-        private void Awake()
+        private void Awake() => _propertyBlock = new MaterialPropertyBlock();
+
+        protected override void OnDependencyResolve(DIContainer container)
         {
-            _propertyBlock = new MaterialPropertyBlock();
+            _audioService = container.Resolve<AudioService>();
         }
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _audioService = entity.GetComponent<AudioComponent>().Service;
-            _pool = new GameObjectPool(_afterimagePrefab, null, _poolSize);
+            _pool = new GameObjectPool(_afterimagePrefab.gameObject, null, _poolSize);
 
-            // Основная подписка на рывок
-            _dashDisposable = entity.IsDashing.Subscribe((old, value) =>
+            _dashSub = entity.IsDashing.Subscribe(OnDashChanged);
+
+            _damageSub = entity.TakeDamageEvent.Subscribe(_ =>
             {
-                _isDashing = value;
-                _spawnTimer = 0f;
-
-                if (value)
-                {
-                    // Звук
-                    _audioService.PlaySfxByPrefixAuto(_dashSoundPrefix, UnityEngine.Random.Range(1.2f, 1.4f));
-
-                    // Анимация
-                    if (_animator) _animator.SetBool(IsDashingKey, true);
-
-                    // Вспышка
-                    if (_flashCoroutine != null) StopCoroutine(_flashCoroutine);
-                    _flashCoroutine = StartCoroutine(FlashCoroutine());
-                }
-                else
-                {
-                    if (_animator) _animator.SetBool(IsDashingKey, false);
-                }
+                if (_isDashing && _audioService != null)
+                    _audioService.PlaySfxByPrefixAuto(_hitPrefix, 1.4f);
             });
+        }
 
-            // Звук удара во время рывка
-            if (entity.HasComponent<TakeDamageRequest>())
+        private void OnDashChanged(bool old, bool current)
+        {
+            _isDashing = current;
+            _spawnTimer = 0f;
+
+            if (_animator) _animator.SetBool(IsDashingKey, current);
+
+            if (current)
             {
-                _damageEventDisposable = entity.TakeDamageEvent.Subscribe(_ =>
-                {
-                    if (_isDashing)
-                        _audioService.PlaySfxByPrefixAuto(_hitPrefix, 1.4f);
-                });
+                _audioService?.PlaySfxByPrefixAuto(_dashSoundPrefix, UnityEngine.Random.Range(1.2f, 1.4f));
+                PlayDashFlash();
             }
         }
 
         private void Update()
         {
-            if (!_isDashing) return;
+            if (!_isDashing)
+                return;
 
             _spawnTimer -= Time.deltaTime;
             if (_spawnTimer <= 0f)
@@ -103,7 +93,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 
         private void SpawnAfterimage()
         {
-            if (_spriteRenderer == null || _spriteRenderer.sprite == null) return;
+            if (_spriteRenderer == null || _spriteRenderer.sprite == null) 
+                return;
 
             GameObject obj = _pool.Get();
             if (obj.TryGetComponent<AfterimageInstance>(out var instance))
@@ -118,26 +109,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
             }
         }
 
-        private IEnumerator FlashCoroutine()
+        private void PlayDashFlash()
         {
-            float elapsed = 0f;
-            Color originalColor = Color.white; // Обычно спрайт по умолчанию белый под модификатором
+            if (_spriteRenderer == null) 
+                return;
 
-            while (elapsed < _flashDuration)
-            {
-                float t = elapsed / _flashDuration;
-                Color current = Color.Lerp(_flashColor, originalColor, t);
+            _spriteRenderer.DOKill();
 
-                SetSpriteColor(current);
-                elapsed += Time.deltaTime;
-                yield return null;
-            }
-            SetSpriteColor(originalColor);
+            float t = 0;
+            DOTween.To(() => t, x => t = x, 1f, _flashDuration)
+                .OnUpdate(() =>
+                {
+                    Color current = Color.Lerp(_flashColor, _originalColor, t);
+                    SetSpriteColor(current);
+                })
+                .OnComplete(() => SetSpriteColor(_originalColor));
         }
 
         private void SetSpriteColor(Color color)
         {
-            if (_spriteRenderer == null) return;
             _spriteRenderer.GetPropertyBlock(_propertyBlock);
             _propertyBlock.SetColor(ColorProperty, color);
             _spriteRenderer.SetPropertyBlock(_propertyBlock);
@@ -146,11 +136,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
-            _dashDisposable?.Dispose();
-            _damageEventDisposable?.Dispose();
+            _dashSub?.Dispose();
+            _damageSub?.Dispose();
+            _spriteRenderer?.DOKill();
 
-            if (_flashCoroutine != null) StopCoroutine(_flashCoroutine);
-            SetSpriteColor(Color.white);
+            SetSpriteColor(_originalColor);
         }
     }
 }

@@ -52,6 +52,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _releaseRequests.Clear();
         }
 
+        public void FixedUpdate(float deltaTime)
+        {
+            for (int i = _entities.Count - 1; i >= 0; i--)
+            {
+                if (_entities[i] == null) continue;
+
+                try
+                {
+                    _entities[i].OnFixedUpdate(deltaTime);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Entity [{i}] FixedUpdate crashed: {e.Message}");
+                }
+            }
+        }
+
         public void Release(Entity entity)
         {
             _releaseRequests.Add(entity);

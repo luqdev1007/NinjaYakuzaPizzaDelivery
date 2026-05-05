@@ -1,1 +1,8 @@
-﻿public enum DamageType { General, Cut, Blunt, Electric, Grapple }
+﻿public enum DamageType 
+{ 
+    General, 
+    Cut, 
+    Blunt, 
+    Electric, 
+    Grapple 
+}

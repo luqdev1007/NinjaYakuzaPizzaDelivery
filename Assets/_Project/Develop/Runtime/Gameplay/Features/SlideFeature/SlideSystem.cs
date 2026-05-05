@@ -1,7 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
@@ -12,21 +11,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 {
     public class SlideSystem : IInitializableSystem, IUpdatableSystem
     {
-        private const float SlopeSlideMaxDuration = 3f;
-        private const float GroundSlideDuration = 0.6f;
-        private const float SlopeDownForce = 20f;
-        private const float AutoSlidePush = 5f; // Сила начального толчка при стоянии на склоне
+        private const float GroundSlideDuration = 0.5f;
+        private const float SlideCooldown = 0.2f;
 
-        private readonly IInputService _inputService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
-        private readonly SlopeSystem _slopeSystem;
+
+        private ReactiveEvent _slideRequest;
 
         private ICompositeCondition _canSlide;
         private ReactiveVariable<bool> _isSliding;
         private ReactiveVariable<bool> _isGrounded;
-        private ReactiveVariable<bool> _isOnSlope;
         private ReactiveVariable<float> _slideSpeed;
-        private ReactiveVariable<float> _slopeAccumSpeed;
 
         private Rigidbody2D _rigidbody;
         private Transform _transform;
@@ -34,22 +29,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 
         private Vector2 _defaultColliderSize, _defaultColliderOffset;
         private Vector2 _slideColliderSize, _slideColliderOffset;
+        private float _cooldownTimer;
 
-        public SlideSystem(IInputService inputService, ICoroutinesPerformer coroutinesPerformer, SlopeSystem slopeSystem)
+        public SlideSystem(ICoroutinesPerformer coroutinesPerformer)
         {
-            _inputService = inputService;
             _coroutinesPerformer = coroutinesPerformer;
-            _slopeSystem = slopeSystem;
         }
 
         public void OnInit(Entity entity)
         {
+            _slideRequest = entity.SlideRequest;
+
             _canSlide = entity.CanSlide;
             _isSliding = entity.IsSliding;
             _isGrounded = entity.IsGrounded;
-            _isOnSlope = entity.IsOnSlope;
             _slideSpeed = entity.SlideSpeed;
-            _slopeAccumSpeed = entity.SlopeAccumSpeed;
+
             _rigidbody = entity.Rigidbody;
             _transform = entity.Transform;
             _collider = entity.BodyCollider;
@@ -61,77 +56,50 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
                 _slideColliderSize = new Vector2(capsule.size.x, capsule.size.y * 0.5f);
                 _slideColliderOffset = new Vector2(0f, -(capsule.size.y * 0.25f));
             }
+
+            _slideRequest.Subscribe(OnSlideRequested);
         }
 
         public void OnUpdate(float deltaTime)
         {
-            if (_isSliding.Value) return;
+            if (_cooldownTimer > 0)
+                _cooldownTimer -= deltaTime;
+        }
 
-            if (_inputService.IsSlideKeyPressed && _canSlide.Evaluate())
+        private void OnSlideRequested()
+        {
+            if (!_isSliding.Value && _isGrounded.Value && _canSlide.Evaluate() && _cooldownTimer <= 0)
             {
-                if (_isOnSlope.Value)
-                    _coroutinesPerformer.StartPerform(SlopeSlideCoroutine());
-                else if (_isGrounded.Value)
-                    _coroutinesPerformer.StartPerform(SlideCoroutine());
+                _coroutinesPerformer.StartPerform(SlideCoroutine());
             }
         }
 
         private IEnumerator SlideCoroutine()
         {
             StartSlide();
+
             float direction = Mathf.Sign(_transform.localScale.x);
             float elapsed = 0f;
 
             while (elapsed < GroundSlideDuration)
             {
-                if (_isOnSlope.Value)
-                {
-                    yield return SlopeSlideCoroutine();
-                    yield break;
-                }
+                if (!_isGrounded.Value) 
+                    break;
 
                 float t = elapsed / GroundSlideDuration;
-                float currentSpeed = Mathf.Lerp(_slideSpeed.Value, 0f, t * t);
+                float currentSpeed = Mathf.Lerp(_slideSpeed.Value, 0f, t);
+
                 _rigidbody.linearVelocity = new Vector2(direction * currentSpeed, _rigidbody.linearVelocity.y);
 
                 elapsed += Time.deltaTime;
                 yield return null;
             }
-            EndSlide();
-        }
 
-        private IEnumerator SlopeSlideCoroutine()
-        {
-            StartSlide();
-            float elapsed = 0f;
-
-            while (_isOnSlope.Value && elapsed < SlopeSlideMaxDuration)
-            {
-                Vector2 normal = _slopeSystem.SlopeNormal;
-                Vector2 downhill = GetDownhillDirection(normal);
-
-                // ФИКС: Если мы стоим на месте, даем начальный импульс вниз
-                if (_rigidbody.linearVelocity.magnitude < 1f)
-                {
-                    _rigidbody.AddForce(downhill * AutoSlidePush, ForceMode2D.Impulse);
-                }
-
-                float totalSpeed = _slideSpeed.Value + _slopeAccumSpeed.Value;
-                _rigidbody.AddForce(downhill * totalSpeed, ForceMode2D.Force);
-                _rigidbody.AddForce(-normal * SlopeDownForce, ForceMode2D.Force);
-
-                // ФИКС ПОВОРОТА: Поворачиваем персонажа по вектору движения вниз
-                HandleSpriteRotationOnSlope(downhill);
-
-                elapsed += Time.deltaTime;
-                yield return null;
-            }
             EndSlide();
         }
 
         private void StartSlide()
         {
-            if (_isSliding.Value) return;
             _isSliding.Value = true;
             SetSlideCollider(true);
         }
@@ -140,6 +108,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         {
             SetSlideCollider(false);
             _isSliding.Value = false;
+            _cooldownTimer = SlideCooldown;
         }
 
         private void SetSlideCollider(bool isSliding)
@@ -149,22 +118,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
                 capsule.size = isSliding ? _slideColliderSize : _defaultColliderSize;
                 capsule.offset = isSliding ? _slideColliderOffset : _defaultColliderOffset;
             }
-        }
-
-        private void HandleSpriteRotationOnSlope(Vector2 downhill)
-        {
-            // Смотрим туда, куда тянет склон по оси X
-            float direction = downhill.x > 0 ? 1f : -1f;
-            Vector3 scale = _transform.localScale;
-            scale.x = direction * Mathf.Abs(scale.x);
-            _transform.localScale = scale;
-        }
-
-        private Vector2 GetDownhillDirection(Vector2 normal)
-        {
-            Vector2 downhill = new Vector2(normal.y, -normal.x);
-            if (downhill.y > 0f) downhill = -downhill;
-            return downhill;
         }
     }
 }

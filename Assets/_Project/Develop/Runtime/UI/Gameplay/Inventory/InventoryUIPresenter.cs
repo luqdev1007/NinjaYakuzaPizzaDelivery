@@ -7,6 +7,7 @@ using System;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Inventory;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay.Inventory
 {
@@ -30,7 +31,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Inventory
         [SerializeField] private float _fadeDuration = 0.15f;
         [SerializeField] private float _displayDuration = 1.5f;
         [SerializeField] private float _animDelay = 0.25f; // Уменьшил для отзывчивости
-        [SerializeField] private ThrowableConfig[] _consumables;
+        [SerializeField] private ConsumableConfig[] _consumables;
 
         private Sequence _fadeSequence;
         private Sequence _switchSequence;
@@ -107,7 +108,13 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Inventory
             _itemAnimateHide.SetActive(false);
         }
 
-        private void UpdateIcon(int index) => _itemIconImage.sprite = _consumables[index].Icon;
+        private void UpdateIcon(int index)
+        {
+            if (index >= 0 && index < _consumables.Length)
+            {
+                _itemIconImage.sprite = _consumables[index].Icon;
+            }
+        }
 
         private void RefreshCountText()
         {

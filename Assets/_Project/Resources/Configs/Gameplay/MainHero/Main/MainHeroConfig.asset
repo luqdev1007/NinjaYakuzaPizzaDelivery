@@ -44,6 +44,6 @@ MonoBehaviour:
     SpawnProcessTime: 1
     DeathProcessTime: 2
   _throwables:
-    <GrappleConfig>k__BackingField: {fileID: 11400000, guid: 6443bd3d003d36342a2d702adbc37789, type: 2}
-    <ShurikenConfig>k__BackingField: {fileID: 11400000, guid: b348a5f78cee93b4cbdd19f8eead08a4, type: 2}
-    <SleepDartConfig>k__BackingField: {fileID: 11400000, guid: 68f6272de285fbb45a2662be663f5263, type: 2}
+    <GrappleItem>k__BackingField: {fileID: 11400000, guid: 1a935246506d41e48a081deb58fec3a4, type: 2}
+    <ShurikenItem>k__BackingField: {fileID: 11400000, guid: f0fecd21c361c6c479f35cf0cb733a69, type: 2}
+    <SleepDartItem>k__BackingField: {fileID: 11400000, guid: d0a189e268c292442b3cc103f924f2fa, type: 2}

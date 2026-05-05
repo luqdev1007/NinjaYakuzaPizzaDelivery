@@ -1,32 +1,47 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
-using Assets._Project.Develop.Runtime.Utilites.Conditions;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using System;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 {
-    public class DeathSystem : IInitializableSystem, IUpdatableSystem, IDisposableSystem
+    public class DeathSystem : IInitializableSystem, IDisposableSystem
     {
-        private ReactiveVariable<bool> _isDead;
-        private ICompositeCondition _mustDie;
-        private IDisposable _deathSubscription;
+        private Entity _entity;
+        private IDisposable _healthSubscription;
 
         public void OnInit(Entity entity)
         {
-            _isDead = entity.IsDead;
-            _mustDie = entity.MustDie;
+            _entity = entity;
+
+            _healthSubscription = _entity.CurrentHealth.Subscribe(OnHealthChanged);
         }
 
-        public void OnUpdate(float deltaTime)
+        private void OnHealthChanged(float oldHealth, float currentHealth)
         {
-            if (_isDead.Value) return;
+            if (_entity.IsDead.Value)
+                return;
 
-            if (_mustDie.Evaluate())
-                _isDead.Value = true;
+            if (_entity.MustDie.Evaluate())
+            {
+                ExecuteDeath();
+            }
         }
 
-        public void OnDispose() => _deathSubscription?.Dispose();
+        private void ExecuteDeath()
+        {
+            _entity.IsDead.Value = true;
+
+            _entity.DeathEvent?.Invoke();
+
+            if (_entity.Rigidbody != null)
+            {
+                _entity.Rigidbody.simulated = false;
+            }
+        }
+
+        public void OnDispose()
+        {
+            _healthSubscription?.Dispose();
+        }
     }
 }

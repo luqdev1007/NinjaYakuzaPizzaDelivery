@@ -18,6 +18,7 @@ using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilites.AssetsManagment;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilites.ObjectsManagment;
 using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -68,6 +69,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateStyleEvaluator);
             container.RegisterAsSingle(CreateSecretChestCollectService);
             container.RegisterAsSingle(CreateLevelResultService);
+
+            // object pooling
+            container.RegisterAsSingle<IVfxPoolService>(CreateVfxPoolService);
+        }
+
+        private static VfxPoolService CreateVfxPoolService(DIContainer container)
+        {
+            return new VfxPoolService();
         }
 
         private static StageProviderService CreateStageProviderService(DIContainer container)
@@ -87,7 +96,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         }
 
         private static LevelResultService CreateLevelResultService(DIContainer container) =>
-            new LevelResultService(container.Resolve<RankStyleService>(), container.Resolve<SecretChestCollectService>());
+            new LevelResultService(container.Resolve<MainHeroHolderService>().MainHero, container.Resolve<SecretChestCollectService>());
 
         private static SecretChestCollectService CreateSecretChestCollectService(DIContainer container) =>
             new SecretChestCollectService();
@@ -145,7 +154,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private static CollidersRegistryService CreateCollidersRegistryService(DIContainer container) => new CollidersRegistryService();
 
         private static MonoEntitiesFactory CreateMonoEntitiesFactory(DIContainer container) =>
-            new MonoEntitiesFactory(container.Resolve<ResourcesAssetsLoader>(), container.Resolve<EntitiesLifeContext>(), container.Resolve<CollidersRegistryService>());
+             new MonoEntitiesFactory(
+                 container,
+                 container.Resolve<ResourcesAssetsLoader>(),
+                 container.Resolve<EntitiesLifeContext>(),
+                 container.Resolve<CollidersRegistryService>());
 
         private static EntitiesLifeContext CreateEntitiesLifeContext(DIContainer container) => new EntitiesLifeContext();
 

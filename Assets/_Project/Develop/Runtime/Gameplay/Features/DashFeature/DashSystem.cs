@@ -1,5 +1,5 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
-using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
+﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
@@ -9,242 +9,214 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
-using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
-using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
     public class DashSystem : IInitializableSystem, IUpdatableSystem
     {
-        private Entity _entity;
-        private readonly IInputService _inputService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
-        private readonly LayerMask _enemyMask;
 
-        private LayerMask _hitMask;
-
+        private InputState _dashInput;
         private ICompositeCondition _canDash;
         private ReactiveVariable<bool> _isDashing;
         private ReactiveVariable<bool> _isGrounded;
+
+        private DashFeature.CometDashStateComponent _cometState;
+
         private ReactiveVariable<float> _dashForceMin;
         private ReactiveVariable<float> _dashForceMax;
         private ReactiveVariable<float> _dashChargeTime;
-        private ReactiveVariable<float> _dashCooldown;
         private ReactiveVariable<float> _dashDuration;
-        private ReactiveVariable<float> _airDashMultiplier;
         private ReactiveVariable<float> _airDashVerticalBoost;
         private ReactiveVariable<float> _dashDamage;
         private ReactiveVariable<Vector2> _dashHitboxSize;
+        private LayerMask _enemyMask;
+
         private Rigidbody2D _rigidbody;
         private Transform _transform;
 
         private float _chargeTimer;
-        private float _cooldownTimer;
         private float _dashBufferTimer;
         private bool _isCharging;
 
-        private readonly AudioService _audioService;
-        private readonly ConfigsProviderService _configsProviderService;
-        private readonly DropLootService _dropLootService;
-
-
         private const float DashBufferTime = 0.15f;
 
-        public DashSystem(IInputService inputService, ICoroutinesPerformer coroutinesPerformer, LayerMask enemyMask, AudioService audioService, ConfigsProviderService configsProviderService, DropLootService dropLootService)
-        {
-            _inputService = inputService;
+        public DashSystem(ICoroutinesPerformer coroutinesPerformer) =>
             _coroutinesPerformer = coroutinesPerformer;
-            _enemyMask = enemyMask;
-            _audioService = audioService;
-            _configsProviderService = configsProviderService;
-            _dropLootService = dropLootService;
-        }
 
         public void OnInit(Entity entity)
         {
-            _entity = entity;
+            _dashInput = entity.DashInput;
             _canDash = entity.CanDash;
             _isDashing = entity.IsDashing;
             _isGrounded = entity.IsGrounded;
+
+            _cometState = entity.GetComponent<DashFeature.CometDashStateComponent>();
+
             _dashForceMin = entity.DashForceMin;
             _dashForceMax = entity.DashForceMax;
             _dashChargeTime = entity.DashChargeTime;
-            _dashCooldown = entity.DashCooldown;
             _dashDuration = entity.DashDuration;
-            _airDashMultiplier = entity.AirDashMultiplier;
             _airDashVerticalBoost = entity.AirDashVerticalBoost;
             _dashDamage = entity.DashDamage;
             _dashHitboxSize = entity.DashHitboxSize;
+            _enemyMask = entity.AttackEnemyMask.Value;
+
             _rigidbody = entity.Rigidbody;
             _transform = entity.Transform;
-
-            _hitMask = _enemyMask | LayersAPI.LayerMaskProps;
         }
 
         public void OnUpdate(float deltaTime)
         {
-            float unscaledDt = Time.unscaledDeltaTime;
+            HandleInputBuffer(deltaTime);
 
-            if (_cooldownTimer > 0f)
-                _cooldownTimer -= unscaledDt;
-
-            if (_inputService.IsDashKeyPressed)
-                _dashBufferTimer = DashBufferTime;
-            else if (_dashBufferTimer > 0f)
-                _dashBufferTimer -= unscaledDt;
-
-            if (_dashBufferTimer > 0f && _canDash.Evaluate() && !_isCharging && _cooldownTimer <= 0)
-            {
-                _isCharging = true;
-                _chargeTimer = 0f;
-                _dashBufferTimer = 0f;
-            }
+            if (_dashBufferTimer > 0f && CanStartCharging())
+                StartCharging();
 
             if (_isCharging)
-            {
-                if (_inputService.IsDashKeyHeld)
-                {
-                    _chargeTimer = Mathf.Min(_chargeTimer + deltaTime, _dashChargeTime.Value);
-                }
+                UpdateCharging(deltaTime);
+        }
 
-                if (_inputService.IsDashKeyReleased)
-                {
-                    if (_canDash.Evaluate())
-                        ExecuteDash();
-                    else
-                        _isCharging = false;
-                }
+        private bool CanStartCharging() =>
+            _canDash.Evaluate() && !_isCharging && _cometState.CurrentCharges.Value > 0;
+
+        private void StartCharging()
+        {
+            _isCharging = true;
+            _chargeTimer = 0f;
+            _dashBufferTimer = 0f;
+        }
+
+        private void UpdateCharging(float deltaTime)
+        {
+            if (_dashInput.IsHeld.Value)
+                _chargeTimer = Mathf.Min(_chargeTimer + deltaTime, _dashChargeTime.Value);
+
+            if (_dashInput.IsReleased.Value)
+            {
+                if (_canDash.Evaluate() && _cometState.CurrentCharges.Value > 0)
+                    ExecuteDash();
+                else
+                    _isCharging = false;
             }
         }
 
         private void ExecuteDash()
         {
             float chargeRatio = _dashChargeTime.Value > 0f ? _chargeTimer / _dashChargeTime.Value : 1f;
-            float force = Mathf.Lerp(_dashForceMin.Value, _dashForceMax.Value, chargeRatio);
+
+            float baseForce = Mathf.Lerp(_dashForceMin.Value, _dashForceMax.Value, chargeRatio);
+            float finalForce = baseForce * _cometState.CurrentMultiplier.Value;
 
             bool inAir = !_isGrounded.Value;
-            if (inAir) force *= _airDashMultiplier.Value;
+            float direction = Mathf.Sign(_transform.localScale.x);
 
-            float direction = _transform.localScale.x > 0 ? 1f : -1f;
+            // Тратим ресурс
+            _cometState.CurrentCharges.Value--;
+            _cometState.CurrentMultiplier.Value = Mathf.Max(0.5f, _cometState.CurrentMultiplier.Value - _cometState.Config.MultiplierDegradation);
+
+            // Сбрасываем таймер в Recovery системе через стейт
+            _cometState.CooldownTimer.Value = _cometState.Config.BaseCooldown;
 
             _isDashing.Value = true;
-            _cooldownTimer = _dashCooldown.Value;
             _isCharging = false;
 
-            _coroutinesPerformer.StartPerform(DashCoroutine(force, direction, inAir));
+            _coroutinesPerformer.StartPerform(DashCoroutine(finalForce, direction, inAir));
         }
 
         private IEnumerator DashCoroutine(float force, float direction, bool inAir)
         {
-            // В начале DashCoroutine
             Physics2D.IgnoreLayerCollision(LayersAPI.LayerCharacters, LayersAPI.LayerEnemies, true);
+            float originalGravity = _rigidbody.gravityScale;
 
-            float elapsed = 0f;
-            float duration = _dashDuration.Value;
-            float gravityScale = _rigidbody.gravityScale;
-            HashSet<Entity> hitEntities = new HashSet<Entity>();
-
-            _rigidbody.gravityScale = 0f;
-            Vector2 dashVelocity = new Vector2(direction * force, inAir ? _airDashVerticalBoost.Value : 0f);
-            _rigidbody.linearVelocity = dashVelocity;
-
-            Vector2 lastFramePos = _transform.position;
-
-            while (elapsed < duration)
+            try
             {
-                float t = elapsed / duration;
-                // Плавное затухание скорости для лучшего ощущения контроля
-                float speedCurve = 1f - (t * t);
-                float currentSpeed = force * speedCurve;
+                _rigidbody.gravityScale = 0f;
+                float elapsed = 0f;
+                float duration = _dashDuration.Value;
+                HashSet<Entity> hitEntities = new HashSet<Entity>();
+                Vector2 lastFramePos = _transform.position;
 
-                _rigidbody.linearVelocity = new Vector2(direction * currentSpeed, _rigidbody.linearVelocity.y);
+                _rigidbody.linearVelocity = new Vector2(direction * force, inAir ? _airDashVerticalBoost.Value : 0f);
 
-                // Проверка урона по траектории от прошлого до текущего кадра
-                ApplyDashDamage(hitEntities, inAir, lastFramePos);
-                lastFramePos = _transform.position;
+                while (elapsed < duration)
+                {
+                    elapsed += Time.fixedDeltaTime;
+                    float t = elapsed / duration;
 
-                elapsed += Time.deltaTime;
-                yield return null;
+                    float speedCurve = Mathf.Cos(t * Mathf.PI * 0.5f);
+                    float currentSpeed = force * speedCurve;
+
+                    _rigidbody.linearVelocity = new Vector2(direction * currentSpeed, inAir ? _rigidbody.linearVelocity.y : 0f);
+
+                    ApplyDashDamage(hitEntities, inAir, lastFramePos);
+                    lastFramePos = _transform.position;
+
+                    yield return new WaitForFixedUpdate();
+                }
             }
+            finally
+            {
+                _rigidbody.gravityScale = originalGravity;
+                _isDashing.Value = false;
+                Physics2D.IgnoreLayerCollision(LayersAPI.LayerCharacters, LayersAPI.LayerEnemies, false);
 
-            // Финальная проверка в конце пути
-            ApplyDashDamage(hitEntities, inAir, lastFramePos);
-
-            _rigidbody.linearVelocity = new Vector2(direction * 2f, _rigidbody.linearVelocity.y);
-            _rigidbody.gravityScale = gravityScale;
-            _isDashing.Value = false;
-
-            // В конце DashCoroutine
-            Physics2D.IgnoreLayerCollision(LayersAPI.LayerCharacters, LayersAPI.LayerEnemies, false);
+                _rigidbody.linearVelocity = new Vector2(direction * 2f, _rigidbody.linearVelocity.y);
+            }
         }
 
         private void ApplyDashDamage(HashSet<Entity> hitEntities, bool inAir, Vector2 lastPosition)
         {
-            Vector2 currentPos = (Vector2)_transform.position;
+            Vector2 currentPos = _transform.position;
             float direction = Mathf.Sign(_transform.localScale.x);
 
-            Vector2 hitboxOffset = new Vector2(direction * (_dashHitboxSize.Value.x * 0.4f), 0f);
+            Vector2 hitboxOffset = new Vector2(direction * (_dashHitboxSize.Value.x * 0.5f), 0f);
             Vector2 origin = lastPosition + hitboxOffset;
             Vector2 target = currentPos + hitboxOffset;
 
             float distance = Vector2.Distance(origin, target);
-            Vector2 castDir = distance > 0.001f ? (target - origin).normalized : Vector2.right * direction;
+            Vector2 castDir = distance > 0.01f ? (target - origin).normalized : Vector2.right * direction;
 
-            // Используем обновленную _hitMask (враги + пропсы)
-            RaycastHit2D[] hits = Physics2D.BoxCastAll(origin, _dashHitboxSize.Value, 0f, castDir, distance, _hitMask);
+            RaycastHit2D[] hits = Physics2D.BoxCastAll(origin, _dashHitboxSize.Value, 0f, castDir, distance, _enemyMask);
 
             foreach (var hit in hits)
             {
                 if (hit.collider == null) continue;
 
-                // ПРОВЕРКА НА ПРОПСЫ (Коробки и т.д.) через слой
-                if (hit.collider.gameObject.layer == LayersAPI.LayerProps)
+                if (hit.collider.TryGetComponent<MonoEntity>(out var mono))
                 {
-                    HandlePropDestruction(hit.collider.gameObject);
-                    continue;
+                    Entity targetEntity = mono.LinkedEntity;
+                    if (targetEntity != null && !hitEntities.Contains(targetEntity))
+                    {
+                        hitEntities.Add(targetEntity);
+                        DealDamageToEntity(targetEntity, currentPos, inAir);
+                    }
                 }
-
-                // ПРОВЕРКА НА ВРАГОВ (Entities)
-                var mono = hit.collider.GetComponentInParent<MonoEntity>();
-                if (mono == null) continue;
-
-                Entity targetEntity = mono.LinkedEntity;
-                if (targetEntity == null || hitEntities.Contains(targetEntity)) continue;
-
-                hitEntities.Add(targetEntity);
-                DealDamageToEntity(targetEntity, currentPos, inAir);
             }
-        }
-
-        private void HandlePropDestruction(GameObject prop)
-        {
-            _audioService.PlaySfxByPrefixAuto("Box_Hit", UnityEngine.Random.Range(0.8f, 1.2f));
-
-            // ИСПРАВЛЕНО: Берем через провайдер
-            var lootProvider = _configsProviderService.GetConfig<MasterLootProviderConfig>();
-
-            // Спавним лут в позиции пропса, а не игрока (_entity)
-            _dropLootService.DropLootFor(prop.transform.position, lootProvider.PropsLoot);
-
-            Object.Destroy(prop);
         }
 
         private void DealDamageToEntity(Entity targetEntity, Vector2 currentPos, bool inAir)
         {
-            float damage = _dashDamage.Value;
-            if (inAir) damage *= _airDashMultiplier.Value;
+            float damage = _dashDamage.Value * _cometState.CurrentMultiplier.Value;
+            if (inAir) damage *= 1.2f;
 
             if (targetEntity.HasComponent<TakeDamageRequest>())
             {
-                var damageData = new DamageData { Amount = damage, SourcePosition = currentPos, Type = DamageType.Cut };
+                var damageData = new DamageData
+                {
+                    Amount = damage,
+                    SourcePosition = currentPos,
+                    Type = DamageType.Cut
+                };
                 targetEntity.TakeDamageRequest.Invoke(damageData);
-
-                // Опционально: добавь звук удара по врагу
-                _audioService.PlaySfxByPrefixAuto("Hit_Enemy", 1f);
             }
+        }
+
+        private void HandleInputBuffer(float deltaTime)
+        {
+            if (_dashInput.IsPressed.Value) _dashBufferTimer = DashBufferTime;
+            else if (_dashBufferTimer > 0f) _dashBufferTimer -= deltaTime;
         }
     }
 }

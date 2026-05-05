@@ -16,6 +16,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
         // ReactiveVariable лучше оставить в самом классе компонента для удобства подписки
     }
 
+    public class IsCometRecovering : IEntityComponent { public ReactiveVariable<bool> Value = new(false); }
+
     public class CometDashStateComponent : IEntityComponent
     {
         // Группируем конфиг

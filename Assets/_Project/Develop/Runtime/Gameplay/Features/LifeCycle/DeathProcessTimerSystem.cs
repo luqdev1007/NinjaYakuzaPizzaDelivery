@@ -1,54 +1,45 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using System;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 {
     public class DeathProcessTimerSystem : IInitializableSystem, IDisposableSystem, IUpdatableSystem
     {
-        private ReactiveVariable<bool> _isDead;
-        private ReactiveVariable<bool> _inDeathProcess;
-        private ReactiveVariable<float> _initialTime;
-        private ReactiveVariable<float> _currentTime;
-
-        private IDisposable _isDeadChangedDisposable;
+        private Entity _entity;
+        private IDisposable _isDeadSubscription;
 
         public void OnInit(Entity entity)
         {
-            _isDead = entity.IsDead;
-            _inDeathProcess = entity.InDeathProcess;
-            _initialTime = entity.DeathProcessInitialTime;
-            _currentTime = entity.DeathProcessCurrentTime;
-
-            _isDeadChangedDisposable = _isDead.Subscribe(OnIsDeadChanged);
-        }
-
-        public void OnDispose()
-        {
-            _isDeadChangedDisposable.Dispose();
+            _entity = entity;
+            _isDeadSubscription = _entity.IsDead.Subscribe(OnIsDeadChanged);
         }
 
         public void OnUpdate(float deltaTime)
         {
-            if (_inDeathProcess.Value == false)
+            if (_entity.InDeathProcess.Value == false)
                 return;
 
-            _currentTime.Value -= deltaTime;
+            _entity.DeathProcessCurrentTime.Value -= deltaTime;
 
-            if (CooldownIsOver())
-                _inDeathProcess.Value = false;
+            if (_entity.DeathProcessCurrentTime.Value <= 0)
+            {
+                _entity.InDeathProcess.Value = false;
+            }
         }
 
         private void OnIsDeadChanged(bool oldValue, bool isDead)
         {
-            if (isDead)
+            if (isDead && _entity.InDeathProcess.Value == false)
             {
-                _currentTime.Value = _initialTime.Value;
-                _inDeathProcess.Value = true;
+                _entity.DeathProcessCurrentTime.Value = _entity.DeathProcessInitialTime.Value;
+                _entity.InDeathProcess.Value = true;
             }
         }
 
-        private bool CooldownIsOver() => _currentTime.Value <= 0;
+        public void OnDispose()
+        {
+            _isDeadSubscription?.Dispose();
+        }
     }
 }

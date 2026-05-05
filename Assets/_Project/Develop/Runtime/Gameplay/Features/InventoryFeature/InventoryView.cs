@@ -1,39 +1,60 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+﻿using System;
+using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement; // Не забудь импорт
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-public class InventoryView : EntityView
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature
 {
-    [SerializeField] private Animator _animator;
-    [SerializeField] private string _switchItemSfxPrefix = "ItemSwitch"; // Префикс для звука "вжух"
-    [SerializeField] private string _throwSfxPrefix = "AbilityImpactHeroThrow";
-
-    private static readonly int ThrowTrigger = Animator.StringToHash("Throw");
-    private AudioService _audioService;
-
-    protected override void OnEntityStartedWork(Entity entity)
+    public class InventoryView : EntityView
     {
-        _audioService = entity.GetComponent<AudioComponent>().Service;
+        [SerializeField] private Animator _animator;
+        [SerializeField] private string _switchItemSfxPrefix = "ItemSwitch";
+        [SerializeField] private string _throwSfxPrefix = "AbilityImpactHeroThrow";
 
-        // Подписка на бросок
-        entity.ThrowEvent.Subscribe(OnThrow);
+        private static readonly int ThrowTrigger = Animator.StringToHash("Throw");
 
-        // Подписка на смену предмета (пропускаем первое значение при старте через Subscribe)
-        entity.CurrentThrowableIndex.Subscribe((oldIdx, newIdx) => OnItemSwitched());
-    }
+        private AudioService _audioService;
+        private IDisposable _throwSubscription;
+        private IDisposable _switchSubscription;
 
-    private void OnThrow()
-    {
-        _animator.SetTrigger(ThrowTrigger);
+        private void OnValidate()
+        {
+            _animator ??= GetComponent<Animator>();
+        }
 
-        _audioService?.PlaySfxByPrefixAuto(_throwSfxPrefix, Random.Range(0.9f, 1.1f));
-    }
+        protected override void OnDependencyResolve(DIContainer container)
+        {
+            _audioService = container.Resolve<AudioService>();
+        }
 
-    private void OnItemSwitched()
-    {
-        // Проигрываем звук смены
-        _audioService?.PlaySfxByPrefixAuto(_switchItemSfxPrefix, Random.Range(0.95f, 1.05f));
+        protected override void OnEntityStartedWork(Entity entity)
+        {
+            _throwSubscription = entity.ThrowEvent.Subscribe(OnThrow);
+            _switchSubscription = entity.CurrentThrowableIndex.Subscribe((oldIdx, newIdx) => OnItemSwitched());
+        }
+
+        private void OnThrow()
+        {
+            if (_animator != null)
+                _animator.SetTrigger(ThrowTrigger);
+
+            _audioService?.PlaySfxByPrefixAuto(_throwSfxPrefix, Random.Range(0.9f, 1.1f));
+        }
+
+        private void OnItemSwitched()
+        {
+            _audioService?.PlaySfxByPrefixAuto(_switchItemSfxPrefix, Random.Range(0.95f, 1.05f));
+        }
+
+        public override void Cleanup(Entity entity)
+        {
+            base.Cleanup(entity);
+
+            _throwSubscription?.Dispose();
+            _switchSubscription?.Dispose();
+        }
     }
 }

@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LevelResultsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
@@ -38,7 +39,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
         public RankStylePresenter CreateStylePresenter(RankStyleView view)
         {
-            return new RankStylePresenter(view, _container.Resolve<RankStyleService>());
+            return new RankStylePresenter(view, _container.Resolve<MainHeroHolderService>());
         }
 
         public DialogPresenter CreateDialogPresenter(DialogDisplayView view, DialogConfig config)

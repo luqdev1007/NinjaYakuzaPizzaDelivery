@@ -1,7 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Infrastructure.DI;
 using System;
 using UnityEngine;
 
@@ -14,17 +14,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         [SerializeField] private Animator _animator;
         [SerializeField] private AnimationClip _attackAnimationClip;
 
-        [Header("VFX")]
-        [Tooltip("Помести сюда 3 разных объекта с партиклами слэша")]
-        [SerializeField] private ParticleSystem[] _slashParticles;
+        [Header("VFX Prefabs (From Pool)")]
+        [Tooltip("Префабы слэшей, которые будут запрашиваться у пула")]
+        [SerializeField] private ParticleSystem[] _slashPrefabs;
+        [SerializeField] private Transform _slashSpawnPoint;
 
-        [Header("Audio (Auto-detected)")]
+        [Header("Audio")]
         [SerializeField] private string _swingPrefix = "SwordSwing";
         [SerializeField] private string _hitPrefix = "EnemyHit";
 
         private AudioService _audioService;
-        private Transform _rootTransform;
+        private IVfxPoolService _vfxPool;
+
         private int _currentSlashIndex;
+        private Transform _entityTransform;
 
         private IDisposable _inAttackProcessDisposable;
         private IDisposable _attackHitDisposable;
@@ -35,10 +38,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private void OnValidate() => _animator ??= GetComponent<Animator>();
 
+        protected override void OnDependencyResolve(DIContainer container)
+        {
+            _audioService = container.Resolve<AudioService>();
+            _vfxPool = container.Resolve<IVfxPoolService>();
+        }
+
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _audioService = entity.GetComponent<AudioComponent>().Service;
-            _rootTransform = entity.Transform;
+            _entityTransform = entity.Transform;
 
             if (_attackAnimationClip != null && entity.HasComponent<AttackProcessInitialTime>())
             {
@@ -58,37 +66,42 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             if (current)
             {
                 _animator.SetTrigger(AttackTrigger);
-                _audioService.PlaySfxByPrefixAuto(_swingPrefix, UnityEngine.Random.Range(0.95f, 1.05f));
+
+                if (_audioService != null)
+                    _audioService.PlaySfxByPrefixAuto(_swingPrefix, UnityEngine.Random.Range(0.95f, 1.05f));
             }
         }
 
-        private void OnAttackMoment() => PlaySlashEffect();
+        private void OnAttackMoment() => SpawnSlashVfx();
 
         private void OnSuccessfulHit()
         {
-            _audioService.PlaySfxByPrefixAuto(_hitPrefix, UnityEngine.Random.Range(0.95f, 1.1f));
+            if (_audioService != null)
+                _audioService.PlaySfxByPrefixAuto(_hitPrefix, UnityEngine.Random.Range(0.95f, 1.1f));
         }
 
-        private void PlaySlashEffect()
+        private void SpawnSlashVfx()
         {
-            if (_slashParticles == null || _slashParticles.Length == 0 || _rootTransform == null) return;
+            if (_slashPrefabs == null || _slashPrefabs.Length == 0 || _vfxPool == null) 
+                return;
 
-            // Выбираем текущий эффект
-            ParticleSystem activeSlash = _slashParticles[_currentSlashIndex];
+            ParticleSystem prefab = _slashPrefabs[_currentSlashIndex];
 
-            if (activeSlash != null)
+            if (prefab != null)
             {
-                // Настраиваем поворот (скейл)
-                Vector3 effectScale = activeSlash.transform.localScale;
-                effectScale.x = _rootTransform.localScale.x > 0 ? 1f : -1f;
-                activeSlash.transform.localScale = effectScale;
+                Vector3 spawnPos = _slashSpawnPoint != null ? _slashSpawnPoint.position : transform.position;
 
-                activeSlash.Stop();
-                activeSlash.Play();
+                ParticleSystem effect = _vfxPool.Spawn(prefab, spawnPos, Quaternion.identity);
+
+                if (_entityTransform != null)
+                {
+                    Vector3 scale = effect.transform.localScale;
+                    scale.x = Mathf.Abs(scale.x) * (_entityTransform.localScale.x > 0 ? 1f : -1f);
+                    effect.transform.localScale = scale;
+                }
             }
 
-            // Переходим к следующему индексу (зацикливаем через остаток от деления)
-            _currentSlashIndex = (_currentSlashIndex + 1) % _slashParticles.Length;
+            _currentSlashIndex = (_currentSlashIndex + 1) % _slashPrefabs.Length;
         }
 
         public override void Cleanup(Entity entity)

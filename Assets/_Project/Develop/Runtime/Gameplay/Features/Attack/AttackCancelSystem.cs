@@ -21,15 +21,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         public void OnUpdate(float deltaTime)
         {
-            if (_inAttackProcess.Value == false)
+            if (!_inAttackProcess.Value)
                 return;
 
             if (_mustCancelAttack.Evaluate())
             {
-                Debug.Log("Attack Process Canceled");
-                _inAttackProcess.Value = false;
-                _attackCanceledEvent.Invoke();
+                Cancel();
             }
+        }
+
+        private void Cancel()
+        {
+            _inAttackProcess.Value = false;
+            _attackCanceledEvent.Invoke();
+
+            Debug.Log("Attack Process Canceled");
         }
     }
 }

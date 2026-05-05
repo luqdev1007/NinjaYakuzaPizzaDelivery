@@ -1,48 +1,59 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore; 
 using System.Collections.Generic;
 using System;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
 {
-    public class RankStylePresenter : IPresenter
+    public class RankStylePresenter : IPresenter, IDisposable
     {
         private readonly RankStyleView _view;
-        private readonly RankStyleService _styleService;
+        private readonly MainHeroHolderService _heroHolder;
         private readonly List<IDisposable> _disposables = new();
 
-        public RankStylePresenter(RankStyleView view, RankStyleService styleService)
+        public RankStylePresenter(RankStyleView view, MainHeroHolderService heroHolder)
         {
             _view = view;
-            _styleService = styleService;
+            _heroHolder = heroHolder;
         }
 
         public void Initialize()
         {
-            // Оставляем одну подписку на всё, что связано с очками
-            _disposables.Add(_styleService.CurrentPoints.Subscribe((_, points) =>
-            {
-                // 1000f — это заглушка, позже можно брать из текущего ранга конфига
-                _view.SetProgress(points, 1000f);
-                _view.SetPoints(points);
-            }));
+            if (_heroHolder.MainHero != null)
+                SubscribeToHero(_heroHolder.MainHero);
 
-            _disposables.Add(_styleService.CurrentLetter.Subscribe((_, letter) => UpdateVisuals()));
-            _disposables.Add(_styleService.CurrentPrefix.Subscribe((_, prefix) => UpdateVisuals()));
-
-            UpdateVisuals();
+            _disposables.Add(_heroHolder.HeroRegistred.Subscribe(SubscribeToHero));
         }
 
-        private void UpdateVisuals()
+        private void SubscribeToHero(Entity hero)
         {
-            _view.SetRank(_styleService.CurrentLetter.Value, _styleService.CurrentPrefix.Value);
+            var points = hero.GetComponent<StylePoints>();
+            var rank = hero.GetComponent<StyleRank>();
+
+            if (points == null || rank == null) 
+                return;
+
+            _disposables.Add(points.Value.Subscribe((_, val) => {
+                _view.SetProgress(val, 1000f);
+                _view.SetPoints(val);
+            }));
+
+            _disposables.Add(rank.Value.Subscribe((_, letter) => UpdateVisuals(hero)));
+
+            UpdateVisuals(hero);
+        }
+
+        private void UpdateVisuals(Entity hero)
+        {
+            var rank = hero.GetComponent<StyleRank>().Value.Value;
+            _view.SetRank(rank.ToString(), "");
         }
 
         public void Dispose()
         {
-            foreach (var disposable in _disposables)
-                disposable.Dispose();
-
+            foreach (var d in _disposables) d.Dispose();
             _disposables.Clear();
         }
     }

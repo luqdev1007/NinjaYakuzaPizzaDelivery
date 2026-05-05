@@ -1,14 +1,8 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
-using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
-using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
-using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using UnityEngine;
 
@@ -16,9 +10,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 {
     public class PlungeSystem : IInitializableSystem, IUpdatableSystem
     {
-        private readonly IInputService _inputService;
-        private readonly LayerMask _enemyMask;
-        private Entity _entity;
+        private ReactiveVariable<bool> _plungeActive;
+
         private ICompositeCondition _canPlunge;
         private ReactiveVariable<bool> _isPlunging;
         private ReactiveVariable<bool> _isGrounded;
@@ -29,40 +22,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private Rigidbody2D _rigidbody;
         private Transform _transform;
+        private LayerMask _enemyMask;
 
-        // Таймер для расчета прогресса падения
         private float _currentFlightTime;
 
-        // services
-        private readonly AudioService _audioService;
-        private readonly ConfigsProviderService _configsProviderService;
-        private readonly DropLootService _dropLootService;
-
-        // Константы баланса
         private const float FlightCheckWidth = 1.5f;
         private const float FlightCheckHeight = 1.0f;
         private const float FlightKnockbackMultiplier = 0.3f;
-
-        // Настройки прогрессии урона
-        private const float BaseChargeTime = 0.5f; // Время, за которое набирается 100% мощи
-        private const float MaxDamageMultiplier = 2.5f; // Максимальный бонус урона (x2.5)
-        private const float MaxRadiusMultiplier = 1.4f; // Максимальное расширение радиуса (x1.4)
-
-        private readonly CameraService _cameraService;
-
-        public PlungeSystem(IInputService inputService, LayerMask enemyMask, CameraService cameraService, AudioService audioService, ConfigsProviderService configsProviderService, DropLootService dropLootService)
-        {
-            _inputService = inputService;
-            _enemyMask = enemyMask;
-            _cameraService = cameraService;
-            _audioService = audioService;
-            _configsProviderService = configsProviderService;
-            _dropLootService = dropLootService;
-        }
+        private const float BaseChargeTime = 0.5f;
+        private const float MaxDamageMultiplier = 2.5f;
+        private const float MaxRadiusMultiplier = 1.4f;
 
         public void OnInit(Entity entity)
         {
-            _entity = entity;
+            _plungeActive = entity.PlungeActive;
+            _enemyMask = entity.AttackEnemyMask.Value;
+
             _canPlunge = entity.CanPlunge;
             _isPlunging = entity.IsPlunging;
             _isGrounded = entity.IsGrounded;
@@ -70,6 +45,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             _plungeAOERadius = entity.PlungeAOERadius;
             _plungeAOEDamage = entity.PlungeAOEDamage;
             _plungeKnockbackForce = entity.PlungeKnockbackForce;
+
             _rigidbody = entity.Rigidbody;
             _transform = entity.Transform;
         }
@@ -79,11 +55,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             if (_isPlunging.Value)
             {
                 _currentFlightTime += deltaTime;
-                UpdatePlunge(deltaTime);
+                UpdatePlunge();
                 return;
             }
 
-            if (_inputService.IsSlideKeyPressed && _canPlunge.Evaluate())
+            if (_plungeActive.Value && _canPlunge.Evaluate())
             {
                 StartPlunge();
             }
@@ -93,19 +69,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         {
             _isPlunging.Value = true;
             _currentFlightTime = 0f;
-            // Резко толкаем вниз, сохраняя часть горизонтальной инерции
             _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x * 0.5f, -_plungeSpeed.Value);
         }
 
-        private void UpdatePlunge(float deltaTime)
+        private void UpdatePlunge()
         {
-            // Поддерживаем стабильную скорость падения
             if (_rigidbody.linearVelocity.y > -_plungeSpeed.Value)
             {
                 _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, -_plungeSpeed.Value);
             }
 
-            // Наносим урон врагам, через которых пролетаем (со слабым отбросом)
             ApplyFlightDamage();
 
             if (_isGrounded.Value)
@@ -114,8 +87,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
                 return;
             }
 
-            // Прерывание, если отпустили кнопку (если это предусмотрено дизайном)
-            if (_inputService.IsSlideKeyReleased)
+            if (!_plungeActive.Value)
             {
                 StopPlunge();
             }
@@ -128,21 +100,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
             foreach (var hit in hits)
             {
-                // Урон в полете всегда фиксированный (50% от базового)
-                PushAndDamage(hit, _plungeAOEDamage.Value * 0.5f, _plungeKnockbackForce.Value * FlightKnockbackMultiplier);
+                ExecuteHit(hit, _plungeAOEDamage.Value * 0.5f, _plungeKnockbackForce.Value * FlightKnockbackMultiplier);
             }
         }
 
         private void LandPlunge()
         {
             float intensityRatio = Mathf.Clamp(_currentFlightTime / BaseChargeTime, 0f, 1.0f);
-
-            // Если падение длилось дольше 0.1 сек, даем встряску
-            if (intensityRatio > 0.1f)
-            {
-                // Передаем интенсивность (например, от 0.3 до 1.0)
-                _cameraService.Shake(intensityRatio);
-            }
 
             float damageMultiplier = Mathf.Lerp(1.0f, MaxDamageMultiplier, intensityRatio);
             float radiusMultiplier = Mathf.Lerp(1.0f, MaxRadiusMultiplier, intensityRatio);
@@ -155,51 +119,37 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
             foreach (Collider2D hit in hits)
             {
-                PushAndDamage(hit, finalDamage, finalForce);
+                ExecuteHit(hit, finalDamage, finalForce);
             }
 
             StopPlunge();
         }
 
-        private void PushAndDamage(Collider2D hit, float damage, float force)
+        private void ExecuteHit(Collider2D hit, float damage, float force)
         {
-            if (hit == null || !hit.gameObject.activeSelf) return;
+            if (hit == null || !hit.gameObject.activeSelf)
+                return;
 
-            // 1. Физический импульс
             Rigidbody2D rb = hit.GetComponent<Rigidbody2D>();
+
             if (rb != null)
             {
                 Vector2 direction = ((Vector2)hit.transform.position - (Vector2)_transform.position);
-                direction.y += 0.5f; // Подбрасываем немного вверх
+                direction.y += 0.5f;
                 rb.AddForce(direction.normalized * force, ForceMode2D.Impulse);
             }
 
-            // 2. Нанесение урона через Entity
             var monoEntity = hit.GetComponentInParent<MonoEntity>();
+
             if (monoEntity != null)
             {
                 var target = monoEntity.LinkedEntity;
-                if (target != null && target.HasComponent<CurrentHealth>())
+
+                target.TakeDamageEvent?.Invoke(new DamageData
                 {
-                    target.CurrentHealth.Value -= damage;
-
-                    target.TakeDamageEvent?.Invoke(new DamageData
-                    {
-                        Amount = damage,
-                        SourcePosition = _transform.position
-                    });
-                }
-            }
-            // test
-            else
-            {
-                _audioService.PlaySfxByPrefixAuto("Box_Hit", UnityEngine.Random.Range(0.8f, 1.2f));
-
-                // ИСПРАВЛЕНО: Мастер-провайдер
-                var lootProvider = _configsProviderService.GetConfig<MasterLootProviderConfig>();
-                _dropLootService.DropLootFor(hit.transform.position, lootProvider.PropsLoot);
-
-                Object.Destroy(hit.gameObject);
+                    Amount = damage,
+                    SourcePosition = _transform.position
+                });
             }
         }
 
@@ -207,6 +157,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         {
             _isPlunging.Value = false;
             _currentFlightTime = 0f;
+            _plungeActive.Value = false;
         }
     }
 }

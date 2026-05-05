@@ -52,6 +52,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
         public ReactiveVariable<bool> Value;
     }
 
+    public class DeathEvent : IEntityComponent
+    {
+        public ReactiveEvent Value;
+    }
+
     public class DisableCollidersOnDeath : IEntityComponent
     {
         public List<Collider2D> Value;

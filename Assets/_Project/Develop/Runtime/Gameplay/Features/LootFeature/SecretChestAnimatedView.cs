@@ -1,35 +1,55 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+﻿using System;
+using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
-using System;
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using UnityEngine;
 
-public class SecretChestAnimatedView : EntityView
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Loot
 {
-    [SerializeField] private Animator _animator;
-    [SerializeField] private string _openAnimName = "IsOpened";
-
-    private IDisposable _healthDisposable;
-
-    protected override void OnEntityStartedWork(Entity entity)
+    public class SecretChestAnimatedView : EntityView
     {
-        _healthDisposable = entity.CurrentHealth.Subscribe((oldHp, newHp) =>
+        [Header("Animation")]
+        [SerializeField] private Animator _animator;
+        [SerializeField] private string _openAnimName = "IsOpened";
+
+        [Header("Audio")]
+        [SerializeField] private string _openSoundPrefix = "ChestOpen";
+
+        private AudioService _audioService;
+        private IDisposable _healthDisposable;
+
+        private void OnValidate() => _animator ??= GetComponent<Animator>();
+
+        protected override void OnDependencyResolve(DIContainer container)
         {
-            if (newHp <= 0)
+            _audioService = container.Resolve<AudioService>();
+        }
+
+        protected override void OnEntityStartedWork(Entity entity)
+        {
+            _healthDisposable = entity.CurrentHealth.Subscribe((oldHp, newHp) =>
             {
-                OpenChest();
-            }
-        });
-    }
+                if (newHp <= 0 && oldHp > 0)
+                {
+                    OpenChest();
+                }
+            });
+        }
 
-    private void OpenChest()
-    {
-        _animator.SetBool(_openAnimName, true);
-        // звук открытия через AudioService
-    }
+        private void OpenChest()
+        {
+            if (_animator != null)
+                _animator.SetBool(_openAnimName, true);
 
-    public override void Cleanup(Entity entity)
-    {
-        base.Cleanup(entity);
-        _healthDisposable?.Dispose();
+            if (!string.IsNullOrEmpty(_openSoundPrefix))
+                _audioService?.PlaySfxByPrefixAuto(_openSoundPrefix, UnityEngine.Random.Range(0.9f, 1.1f));
+        }
+
+        public override void Cleanup(Entity entity)
+        {
+            base.Cleanup(entity);
+            _healthDisposable?.Dispose();
+        }
     }
 }

@@ -14,6 +14,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
         private readonly List<IInitializableSystem> _initializables = new();
         private readonly List<IUpdatableSystem> _updatables = new();
+        private readonly List<IFixedUpdatableSystem> _fixedUpdatables = new();
         private readonly List<IDisposableSystem> _disposables = new();
 
         private bool _isInit;
@@ -37,6 +38,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             foreach (IUpdatableSystem updatable in _updatables)
                 updatable.OnUpdate(deltaTime);
+        }
+
+        public void OnFixedUpdate(float deltaTime)
+        {
+            if (_isInit == false)
+                return;
+
+            foreach (IFixedUpdatableSystem fixedUpdatable in _fixedUpdatables)
+                fixedUpdatable.OnFixedUpdate(deltaTime);
         }
 
         public void Dispose()
@@ -97,6 +107,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             if (system is IUpdatableSystem updatable)
                 _updatables.Add(updatable);
+
+            if (system is IFixedUpdatableSystem fixedUpdatable)
+                _fixedUpdatables.Add(fixedUpdatable);
 
             if (system is IDisposableSystem disposable)
                 _disposables.Add(disposable);

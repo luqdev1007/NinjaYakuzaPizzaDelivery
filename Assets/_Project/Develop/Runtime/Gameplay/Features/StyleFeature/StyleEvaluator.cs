@@ -1,15 +1,12 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Style;
-using System;
 using System.Collections.Generic;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
 {
-    public class StyleEvaluator : IDisposable
+    public class StyleEvaluator
     {
         private readonly RankStyleService _styleService;
         private readonly StyleActionsConfig _config;
-        private readonly List<string> _usedActionsHistory = new();
-
         private const int MaxHistorySize = 3;
 
         public StyleEvaluator(RankStyleService styleService, StyleActionsConfig config)
@@ -18,62 +15,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
             _config = config;
         }
 
-        public void ProcessKill()
+        public void ProcessDamage(EntitiesCore.Entity entity, float damage, string attackId)
         {
-            _styleService.AddPoints(_config.KillBasePoints);
-        }
+            float finalPoints = damage * _config.DamagePointMultiplier;
+            var history = entity.GetComponent<MoveFreshness>().LastUsedTimes;
 
-        public void ProcessDamage(float damage, string attackId)
-        {
-            float basePoints = damage * _config.DamagePointMultiplier;
-            float finalPoints = basePoints;
-
-            if (!_usedActionsHistory.Contains(attackId))
+            if (!history.ContainsKey(attackId))
             {
                 finalPoints *= _config.FreshnessBonus;
-
-                _usedActionsHistory.Add(attackId);
-                if (_usedActionsHistory.Count > MaxHistorySize)
-                    _usedActionsHistory.RemoveAt(0);
+                history.Add(attackId, UnityEngine.Time.time);
+                // Простая очистка старых записей если нужно
+                if (history.Count > MaxHistorySize) history.Clear();
             }
 
-            _styleService.AddPoints(finalPoints);
+            _styleService.AddPoints(entity, finalPoints);
         }
 
-        public void ProcessDash()
-        {
-            _styleService.AddPoints(_config.DashPoints);
-        }
-
-        public void ProcessMovementAcceleration(float deltaTime)
-        {
-            float points = _config.UpwardAccelerationPoints * deltaTime;
-            _styleService.AddPoints(points);
-        }
-
-        public void ProcessCoinCollect()
-        {
-            _styleService.AddPoints(_config.CoinCollectPoints);
-        }
-
-        public void ProcessMemoryFragmentCollect()
-        {
-            _styleService.AddPoints(_config.MemoryFragmentPoints);
-        }
-
-        public void ProcessPlayerHit()
-        {
-            _styleService.ApplyDamagePenalty();
-        }
-
-        public void Dispose()
-        {
-            _usedActionsHistory.Clear();
-        }
-
-        public void ProcessLootPick()
-        {
-            _styleService.AddPoints(_config.LootPickupPoints);
-        }
+        public void ProcessDash(EntitiesCore.Entity entity) => _styleService.AddPoints(entity, _config.DashPoints);
+        public void ProcessPlayerHit(EntitiesCore.Entity entity) => _styleService.ApplyDamagePenalty(entity);
+        public void ProcessLoot(EntitiesCore.Entity entity) => _styleService.AddPoints(entity, _config.LootPickupPoints);
     }
 }

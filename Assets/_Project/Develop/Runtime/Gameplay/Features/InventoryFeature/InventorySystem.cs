@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
+﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Inventory;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
@@ -13,36 +13,39 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
 {
     public class InventorySystem : IInitializableSystem, IUpdatableSystem
     {
-        private readonly IInputService _inputService;
-        private readonly ThrowableConfig[] _consumables;
+        private readonly ConsumableConfig[] _items;
         private readonly IThrowableBehaviourFactory _factory;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
 
-        private ReactiveEvent _throwEvent;
+        private Entity _entity;
         private ReactiveVariable<int> _currentIndex;
-        private ReactiveVariable<bool> _isThrowing;
-        private Transform _transform;
-        private Rigidbody2D _rigidbody;
+        private ReactiveVariable<bool> _isUsing;
+        private InputState _throwInput;
+        private ReactiveVariable<float> _scrollDelta;
 
         private Dictionary<int, ReactiveVariable<int>> _chargesMap;
 
-        public InventorySystem(IInputService input, ThrowableConfig[] consumables, IThrowableBehaviourFactory factory, ICoroutinesPerformer coroutinesPerformer)
+        public readonly ReactiveEvent OnItemSwitched = new();
+        public readonly ReactiveEvent OnItemUsed = new();
+        public readonly ReactiveEvent OnEmptyTry = new();
+
+        public InventorySystem(
+            ConsumableConfig[] items,
+            IThrowableBehaviourFactory factory,
+            ICoroutinesPerformer coroutinesPerformer)
         {
-            _inputService = input;
-            _consumables = consumables;
+            _items = items;
             _factory = factory;
             _coroutinesPerformer = coroutinesPerformer;
         }
 
         public void OnInit(Entity entity)
         {
+            _entity = entity;
             _currentIndex = entity.CurrentThrowableIndex;
-            _isThrowing = entity.IsThrowing;
-            _transform = entity.Transform;
-            _rigidbody = entity.Rigidbody;
-
-            // Событие для визуализации мгновенного броска (триггера)
-            _throwEvent = entity.ThrowEvent;
+            _isUsing = entity.IsThrowing;
+            _throwInput = entity.ThrowInput;
+            _scrollDelta = entity.InventoryScrollDelta;
 
             _chargesMap = new Dictionary<int, ReactiveVariable<int>>
             {
@@ -55,54 +58,53 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
         {
             HandleScroll();
 
-            if (_inputService.IsThrowKeyPressed)
+            if (_throwInput.IsPressed.Value)
             {
-                TryThrow();
+                TryUse();
             }
         }
 
-        private void TryThrow()
+        private void TryUse()
         {
             int currentIdx = _currentIndex.Value;
+            var charges = _chargesMap[currentIdx];
 
-            if (_chargesMap[currentIdx].Value <= 0) return;
+            if (charges.Value <= 0)
+            {
+                OnEmptyTry.Invoke();
+                return;
+            }
 
-            // 1. Тратим заряд
-            _chargesMap[currentIdx].Value--;
+            charges.Value--;
+            _isUsing.Value = true;
 
-            // 2. Включаем общее состояние броска (для логики или зацикленных анимаций)
-            _isThrowing.Value = true;
+            _items[currentIdx].Use(_entity, _factory);
+            OnItemUsed.Invoke();
 
-            // 3. Вызываем событие импульса (для триггера в Animator)
-            _throwEvent?.Invoke();
-
-            // 4. Логика полета
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 direction = ((Vector2)mousePos - (Vector2)_transform.position).normalized;
-
-            var projectile = _factory.Create(_consumables[currentIdx], _rigidbody, _transform);
-            projectile.Launch(_transform.position, direction);
-
-            // 5. Сброс флага состояния через короткое время
-            _coroutinesPerformer.StartPerform(ResetThrowingFlag());
-        }
-
-        private IEnumerator ResetThrowingFlag()
-        {
-            yield return new WaitForSeconds(0.15f);
-            _isThrowing.Value = false;
+            _coroutinesPerformer.StartPerform(ResetUsageFlag());
         }
 
         private void HandleScroll()
         {
-            float scroll = _inputService.MouseScrollDelta;
-            if (Mathf.Abs(scroll) < 0.01f) return;
+            float scroll = _scrollDelta.Value;
 
-            int newIndex = _currentIndex.Value + (scroll > 0 ? 1 : -1);
-            if (newIndex < 0) newIndex = _consumables.Length - 1;
-            if (newIndex >= _consumables.Length) newIndex = 0;
+            if (Mathf.Abs(scroll) < 0.01f)
+                return;
 
-            _currentIndex.Value = newIndex;
+            int step = scroll > 0 ? 1 : -1;
+            int newIndex = (_currentIndex.Value + step + _items.Length) % _items.Length;
+
+            if (newIndex != _currentIndex.Value)
+            {
+                _currentIndex.Value = newIndex;
+                OnItemSwitched.Invoke();
+            }
+        }
+
+        private IEnumerator ResetUsageFlag()
+        {
+            yield return new WaitForSeconds(0.15f);
+            _isUsing.Value = false;
         }
     }
 }

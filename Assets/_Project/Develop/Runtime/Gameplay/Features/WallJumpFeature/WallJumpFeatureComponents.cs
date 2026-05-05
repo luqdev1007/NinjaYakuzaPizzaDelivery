@@ -25,5 +25,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
         public Vector2 JumpForce;
         public float ControlLockDuration;
     }
+
+    public class WallNormal : IEntityComponent { public ReactiveVariable<Vector2> Value = new(Vector2.zero); }
 }
 

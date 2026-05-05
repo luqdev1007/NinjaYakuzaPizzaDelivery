@@ -124,6 +124,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             HandleDebugInput();
         }
 
+        private void FixedUpdate()
+        {
+            float deltaTime = Time.deltaTime;
+
+            _entitiesLifeContext?.FixedUpdate(deltaTime);
+        }
+
         private void HandleDebugInput()
         {
             if (_heroHolderService?.MainHero == null) 

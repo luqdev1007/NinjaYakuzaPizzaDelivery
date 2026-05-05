@@ -298,13 +298,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 708cb269588edeb48818c8732e6fbef6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _applyDamageEffectPrefab: {fileID: 864988755647194453, guid: a0bfa3c27a41fa54e93f06ca17129753, type: 3}
-  _effectSpawnPoint: {fileID: 2720600874618316831}
-  _vfxStopAction: 2
+  _damageVfxPrefab: {fileID: 864988755647194453, guid: a0bfa3c27a41fa54e93f06ca17129753, type: 3}
+  _vfxSpawnPoint: {fileID: 2116232433809598764}
   _spriteRenderer: {fileID: 2858558461669107319}
-  _flashColor: {r: 1, g: 1, b: 1, a: 1}
+  _flashColor: {r: 1, g: 0.41037738, b: 0.41037738, a: 1}
   _flashDuration: 0.2
-  _damageSoundPrefix: GhostHit
 --- !u!114 &1130839634098478934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -334,6 +332,37 @@ MonoBehaviour:
   _animator: {fileID: 1784155885393087696}
   _stateNames:
   - Ghost_Idle
+--- !u!1 &2978444452040903086
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2116232433809598764}
+  m_Layer: 0
+  m_Name: Damage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2116232433809598764
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2978444452040903086}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8962585156850830168}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3607678793894935207
 GameObject:
   m_ObjectHideFlags: 0
@@ -365,6 +394,7 @@ Transform:
   m_Children:
   - {fileID: 3912926186921139896}
   - {fileID: 2720600874618316831}
+  - {fileID: 2116232433809598764}
   m_Father: {fileID: 6678525575601525462}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7279735623091931903

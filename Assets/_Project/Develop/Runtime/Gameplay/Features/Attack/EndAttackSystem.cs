@@ -32,9 +32,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private void OnTimerChanged(float arg1, float currentTime)
         {
-            if (TimerIsDone(currentTime))
+            if (_inAttackProcess.Value && TimerIsDone(currentTime))
             {
-                // Debug.Log("End of attack");
                 _inAttackProcess.Value = false;
                 _endAttackEvent.Invoke();
             }

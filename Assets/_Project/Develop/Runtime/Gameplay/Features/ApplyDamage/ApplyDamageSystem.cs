@@ -1,50 +1,51 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
-using Assets._Project.Develop.Runtime.Utilites.Conditions;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using System;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
 {
     public class ApplyDamageSystem : IInitializableSystem, IDisposableSystem, IUpdatableSystem
     {
-        private ReactiveEvent<DamageData> _damageRequest;
-        private ReactiveEvent<DamageData> _damageEvent;
-        private ReactiveVariable<float> _cooldownTimer;
-        private float _defaultCooldown;
-        private ReactiveVariable<float> _health;
-        private ICompositeCondition _canApplyDamage;
-        private IDisposable _requestDisposable;
+        private Entity _entity;
+        private IDisposable _requestSubscription;
 
         public void OnInit(Entity entity)
         {
-            _damageRequest = entity.TakeDamageRequest;
-            _damageEvent = entity.TakeDamageEvent;
-            _health = entity.CurrentHealth;
-            _canApplyDamage = entity.CanApplyDamage;
-            _cooldownTimer = entity.DamageCooldownTimer;
-            _defaultCooldown = entity.DamageCooldown.Value;
-
-            _requestDisposable = _damageRequest.Subscribe(OnDamageRequest);
+            _entity = entity;
+            _requestSubscription = _entity.TakeDamageRequest.Subscribe(OnDamageRequest);
         }
 
         public void OnUpdate(float deltaTime)
         {
-            if (_cooldownTimer.Value > 0)
-                _cooldownTimer.Value -= deltaTime;
+            if (_entity.DamageCooldownTimer.Value > 0)
+            {
+                _entity.DamageCooldownTimer.Value -= deltaTime;
+            }
         }
 
         private void OnDamageRequest(DamageData damage)
         {
-            if (_canApplyDamage.Evaluate() == false)
+            if (_entity.CanApplyDamage.Evaluate() == false)
                 return;
 
-            _health.Value = MathF.Max(_health.Value - damage.Amount, 0);
-            _cooldownTimer.Value = _defaultCooldown;
+            _entity.CurrentHealth.Value = MathF.Max(_entity.CurrentHealth.Value - damage.Amount, 0);
 
-            _damageEvent.Invoke(damage);
+            _entity.DamageCooldownTimer.Value = _entity.DamageCooldown.Value;
+
+            _entity.TakeDamageEvent.Invoke(damage);
+
+            // new
+            if (damage.SourcePosition != Vector2.zero)
+            {
+                var force = new Vector2(
+                    _entity.DamageKnockbackForceX.Value * damage.SourcePosition.x,
+                    _entity.DamageKnockbackForceY.Value
+                );
+                _entity.Rigidbody.AddForce(force, ForceMode2D.Impulse);
+            }
         }
 
-        public void OnDispose() => _requestDisposable.Dispose();
+        public void OnDispose() => _requestSubscription?.Dispose();
     }
 }

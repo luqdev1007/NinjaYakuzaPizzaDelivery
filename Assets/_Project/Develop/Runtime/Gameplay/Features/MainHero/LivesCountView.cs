@@ -16,18 +16,18 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay
         {
             _livesText.text = currentLives.ToString();
 
-            // Сбрасываем старую анимацию, если она шла
             _fadeSequence?.Kill();
+            _fadeSequence = DOTween.Sequence().SetLink(gameObject);
 
-            _fadeSequence = DOTween.Sequence();
+            _fadeSequence.Append(_canvasGroup.DOFade(1, 0.2f))
+                         .Join(transform.DOScale(1.2f, 0.2f).OnComplete(() => transform.DOScale(1f, 0.1f)))
+                         .AppendInterval(_displayDuration)
+                         .Append(_canvasGroup.DOFade(0, 0.5f));
+        }
 
-            // Появление + легкий рывок вверх (Scale или Jump)
-            _fadeSequence.Append(_canvasGroup.DOFade(1, 0.2f));
-            _fadeSequence.Join(transform.DOScale(1.2f, 0.2f).OnComplete(() => transform.DOScale(1f, 0.1f)));
-
-            // Задержка и плавное исчезновение
-            _fadeSequence.AppendInterval(_displayDuration);
-            _fadeSequence.Append(_canvasGroup.DOFade(0, 0.5f));
+        private void OnDestroy()
+        {
+            _fadeSequence?.Kill();
         }
     }
 }

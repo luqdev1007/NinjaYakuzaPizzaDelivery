@@ -1,9 +1,9 @@
 ﻿using System;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using Assets._Project.Develop.Infrastructure.DI;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
@@ -26,11 +26,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
         [SerializeField] private float _vibrationSpeed = 30f;
 
         [Header("Audio Settings")]
-        [SerializeField] private string _hitPrefix = "WallHit";      // WallHit1, WallHit2...
-        [SerializeField] private string _loopPrefix = "WallHitLoop"; // WallHitLoop1, WallHitLoop2...
+        [SerializeField] private string _hitPrefix = "WallHit";
+        [SerializeField] private string _loopPrefix = "WallHitLoop";
 
         private AudioService _audioService;
-        private IReadOnlyVariable<bool> _isWallHanging;
         private IReadOnlyVariable<float> _wallDirection;
         private IDisposable _isWallHangingDisposable;
 
@@ -41,19 +40,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
 
         private void OnValidate() => _animator ??= GetComponent<Animator>();
 
+        protected override void OnDependencyResolve(DIContainer container)
+        {
+            _audioService = container.Resolve<AudioService>();
+        }
+
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _audioService = entity.GetComponent<AudioComponent>().Service;
-
-            _isWallHanging = entity.IsWallHanging;
             _wallDirection = entity.WallDirection;
 
             if (_viewContainer != null)
                 _defaultContainerPos = _viewContainer.localPosition;
 
-            _isWallHangingDisposable = _isWallHanging.Subscribe(OnHangingStateChanged);
+            _isWallHangingDisposable = entity.IsWallHanging.Subscribe(OnHangingStateChanged);
 
-            ApplyState(_isWallHanging.Value);
+            ApplyState(entity.IsWallHanging.Value);
         }
 
         private void Update()
@@ -68,36 +69,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
             _isCurrentlyHanging = isHanging;
             _vibrationTimer = 0f;
 
-            // 1. Анимация
             if (_animator != null)
                 _animator.SetBool(IsWallHangingKey, isHanging);
 
-            // 2. Эффекты
             ToggleEffects(isHanging);
 
             if (isHanging)
                 PositionEffects();
 
-            // 3. Звук
             HandleAudio(isHanging);
 
-            // Сброс позиции контейнера при выходе
             if (!isHanging && _viewContainer != null)
                 _viewContainer.localPosition = _defaultContainerPos;
         }
 
         private void HandleAudio(bool isHanging)
         {
-            // Префикс из конфига "Hero Attack Hit"
-            // Но судя по коду AudioService, мы передаем просто ID или часть префикса.
-            // Если используем PlaySfxVariation, то добавим Hero Attack Hit к поиску, если это нужно сервису.
+            if (_audioService == null) return;
 
             if (isHanging)
             {
-                // Одиночный удар при зацепе (вариации 1-4 согласно скрину)
                 _audioService.PlaySfxVariation(_hitPrefix, 1, 4, UnityEngine.Random.Range(0.9f, 1.1f));
-
-                // Зацикленный звук скольжения (вариации 1-2 согласно скрину)
                 _activeLoopId = _audioService.PlaySfxVariationLoop(_loopPrefix, 1, 2);
             }
             else
@@ -112,7 +104,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
 
         private void HandleVibration()
         {
-            if (!_isCurrentlyHanging || _viewContainer == null) return;
+            if (!_isCurrentlyHanging || _viewContainer == null || _wallDirection == null) return;
 
             _vibrationTimer += Time.deltaTime * _vibrationSpeed;
             float offsetX = Mathf.Sin(_vibrationTimer) * _vibrationStrength * _wallDirection.Value;
@@ -121,6 +113,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
 
         private void PositionEffects()
         {
+            if (_wallDirection == null) return;
+
             Vector3 offset = new Vector3(_wallDirection.Value * _effectOffset, 0f, 0f);
 
             if (_sparksPS != null) _sparksPS.transform.localPosition = offset;
@@ -146,8 +140,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
             base.Cleanup(entity);
             _isWallHangingDisposable?.Dispose();
 
-            if (!string.IsNullOrEmpty(_activeLoopId))
+            if (!string.IsNullOrEmpty(_activeLoopId) && _audioService != null)
+            {
                 _audioService.StopSfx(_activeLoopId);
+                _activeLoopId = null;
+            }
 
             if (_viewContainer != null)
                 _viewContainer.localPosition = _defaultContainerPos;

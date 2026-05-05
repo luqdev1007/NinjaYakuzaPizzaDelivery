@@ -1,32 +1,38 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
-using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
+﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.Utilites.Conditions;
 
-public class FlipDirectionSystem : IInitializableSystem, IUpdatableSystem
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.View
 {
-    private ReactiveVariable<Vector2> _direction;
-    private Transform _transform;
-    private ICompositeCondition _canFlip;
-
-    public void OnInit(Entity entity)
+    public class FlipDirectionSystem : IInitializableSystem, IUpdatableSystem
     {
-        _canFlip = entity.CanFlip;
-        _direction = entity.MoveDirection;
-        _transform = entity.Transform;
-    }
+        private Entity _entity;
 
-    public void OnUpdate(float deltaTime)
-    {
-        if (_canFlip.Evaluate() == false)
-            return;
+        public void OnInit(Entity entity)
+        {
+            _entity = entity;
+        }
 
-        if (_direction.Value.x == 0)
-            return;
+        public void OnUpdate(float deltaTime)
+        {
+            if (_entity.Transform == null || !_entity.CanFlip.Evaluate())
+                return;
 
-        Vector3 scale = _transform.localScale;
-        scale.x = _direction.Value.x > 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
-        _transform.localScale = scale;
+            float moveX = _entity.MoveDirection.Value.x;
+
+            if (Mathf.Abs(moveX) < 0.01f)
+                return;
+
+            Vector3 scale = _entity.Transform.localScale;
+
+            float desiredSign = moveX > 0 ? 1f : -1f;
+            float currentSign = Mathf.Sign(scale.x);
+
+            if (desiredSign != currentSign)
+            {
+                scale.x = Mathf.Abs(scale.x) * desiredSign;
+                _entity.Transform.localScale = scale;
+            }
+        }
     }
 }

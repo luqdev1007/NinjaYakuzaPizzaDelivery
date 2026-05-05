@@ -61,7 +61,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         {
             base.Enter();
 
-            _rankStyleService.Deactivate();
             _secretChestService.Initialize(_levelConfig.SecretChestSpawns.Count);
 
             _stageProviderService.SwitchToNext();

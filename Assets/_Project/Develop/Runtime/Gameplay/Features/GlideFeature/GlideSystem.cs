@@ -9,7 +9,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
 {
     public class GlideSystem : IInitializableSystem, IUpdatableSystem
     {
-        private readonly IInputService _inputService;
+        private InputState _glideInput;
 
         private ICompositeCondition _canGlide;
         private ReactiveVariable<float> _glideHorizontalDrag;
@@ -22,8 +22,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         private ReactiveVariable<float> _glideSnapSpeed;
         private ReactiveVariable<float> _glideSnapDuration;
         private ReactiveVariable<float> _glideCounterMultiplier;
-
-        // Добавляем ссылку на прыжки
         private ReactiveVariable<int> _jumpsAvailable;
 
         private Rigidbody2D _rigidbody;
@@ -34,13 +32,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         private float _holdTimer;
         private const float GlideHoldThreshold = 0.15f;
 
-        public GlideSystem(IInputService inputService)
-        {
-            _inputService = inputService;
-        }
-
         public void OnInit(Entity entity)
         {
+            _glideInput = entity.JumpInput;
+
             _isGliding = entity.IsGliding;
             _isGrounded = entity.IsGrounded;
             _minFallVelocity = entity.MinFallVelocityForAction;
@@ -50,21 +45,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
             _glideSnapSpeed = entity.GlideSnapSpeed;
             _glideSnapDuration = entity.GlideSnapDuration;
             _glideCounterMultiplier = entity.GlideCounterMultiplier;
-            _rigidbody = entity.Rigidbody;
             _canGlide = entity.CanGlide;
             _glideHorizontalDrag = entity.GlideHorizontalDrag;
-
-            // Инициализируем прыжки
             _jumpsAvailable = entity.JumpsAvailable;
 
+            _rigidbody = entity.Rigidbody;
             _defaultGravityScale = _rigidbody.gravityScale;
         }
 
         public void OnUpdate(float deltaTime)
         {
-            // ЛОГИКА ВОССТАНОВЛЕНИЯ: 
-            // Если мы на земле ИЛИ если у нас есть доступные прыжки (например, получили бонус в воздухе)
-            // мы позволяем снова использовать парашют.
             if (_isGrounded.Value || _jumpsAvailable.Value > 0)
             {
                 _glideUsed = false;
@@ -73,20 +63,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
             if (_isGrounded.Value)
             {
                 _holdTimer = 0f;
-                if (_isGliding.Value) StopGlide(applyBounce: false);
+
+                if (_isGliding.Value) 
+                    StopGlide(applyBounce: false);
+
                 return;
             }
 
             if (_isGliding.Value)
             {
                 ApplyGlideDamping(deltaTime);
-                if (_inputService.IsJumpKeyPressed) StopGlide(applyBounce: true);
+
+                if (_glideInput.IsPressed.Value) 
+                    StopGlide(applyBounce: true);
+
                 return;
             }
 
             bool isFallingFastEnough = _rigidbody.linearVelocity.y < _minFallVelocity.Value;
 
-            if (_inputService.IsJumpKeyHeld && !_glideUsed && _canGlide.Evaluate())
+            if (_glideInput.IsHeld.Value && !_glideUsed && _canGlide.Evaluate())
             {
                 _holdTimer += deltaTime;
                 if (_holdTimer >= GlideHoldThreshold && isFallingFastEnough)

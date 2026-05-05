@@ -81,6 +81,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.WallJumpParams() {MinVelocityY = minVelocityY, JumpForce = jumpForce, ControlLockDuration = controlLockDuration}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.WallNormal WallNormalC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.WallNormal>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> WallNormal => WallNormalC.Value;
+
+		public bool TryGetWallNormal(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.WallNormal component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallNormal()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.WallNormal() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallNormal(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature.WallNormal() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team TeamC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team>();
 
 		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Teams> Team => TeamC.Value;
@@ -103,6 +127,147 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTeam(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Teams> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StylePoints StylePointsC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StylePoints>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> StylePoints => StylePointsC.Value;
+
+		public bool TryGetStylePoints(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StylePoints component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddStylePoints()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StylePoints() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddStylePoints(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StylePoints() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleRank StyleRankC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleRank>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleRankEnum> StyleRank => StyleRankC.Value;
+
+		public bool TryGetStyleRank(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleRankEnum> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleRank component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleRankEnum>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddStyleRank()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleRank() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleRankEnum>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddStyleRank(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleRankEnum> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleRank() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleMultiplier StyleMultiplierC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleMultiplier>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> StyleMultiplier => StyleMultiplierC.Value;
+
+		public bool TryGetStyleMultiplier(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleMultiplier component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddStyleMultiplier()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleMultiplier() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddStyleMultiplier(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleMultiplier() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.MoveFreshness MoveFreshnessC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.MoveFreshness>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMoveFreshness(System.Collections.Generic.Dictionary<System.String, System.Single> lastUsedTimes)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.MoveFreshness() {LastUsedTimes = lastUsedTimes}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleDecayTimer StyleDecayTimerC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleDecayTimer>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> StyleDecayTimer => StyleDecayTimerC.Value;
+
+		public bool TryGetStyleDecayTimer(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleDecayTimer component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddStyleDecayTimer()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleDecayTimer() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddStyleDecayTimer(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleDecayTimer() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.MaxStylePoints MaxStylePointsC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.MaxStylePoints>();
+
+		public System.Single MaxStylePoints => MaxStylePointsC.Value;
+
+		public bool TryGetMaxStylePoints(out System.Single value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.MaxStylePoints component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(System.Single);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMaxStylePoints(System.Single value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.MaxStylePoints() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.MaxStyleRank MaxStyleRankC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.MaxStyleRank>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleRankEnum MaxStyleRank => MaxStyleRankC.Value;
+
+		public bool TryGetMaxStyleRank(out Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleRankEnum value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.MaxStyleRank component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleRankEnum);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMaxStyleRank(Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.StyleRankEnum value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature.MaxStyleRank() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature.SpawnInitialTime SpawnInitialTimeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature.SpawnInitialTime>();
@@ -1589,6 +1754,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.CanDropLoot() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTypeNew LootTypeNewC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTypeNew>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootType> LootTypeNew => LootTypeNewC.Value;
+
+		public bool TryGetLootTypeNew(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootType> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTypeNew component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootType>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootTypeNew()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTypeNew() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootType>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootTypeNew(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootType> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTypeNew() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTag LootTagC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTag>();
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootTag()
@@ -1843,6 +2032,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddInDeathProcess(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.InDeathProcess() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.DeathEvent DeathEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.DeathEvent>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent DeathEvent => DeathEventC.Value;
+
+		public bool TryGetDeathEvent(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.DeathEvent component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDeathEvent()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.DeathEvent() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDeathEvent(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.DeathEvent() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.DisableCollidersOnDeath DisableCollidersOnDeathC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.DisableCollidersOnDeath>();
@@ -2107,6 +2320,414 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDoubleJumpEvent(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.DoubleJumpEvent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.AttackInput AttackInputC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.AttackInput>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState AttackInput => AttackInputC.Value;
+
+		public bool TryGetAttackInput(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.AttackInput component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAttackInput()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.AttackInput() { Value = new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAttackInput(Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.AttackInput() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.GrappleInput GrappleInputC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.GrappleInput>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState GrappleInput => GrappleInputC.Value;
+
+		public bool TryGetGrappleInput(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.GrappleInput component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGrappleInput()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.GrappleInput() { Value = new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGrappleInput(Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.GrappleInput() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.MoveDirectionInput MoveDirectionInputC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.MoveDirectionInput>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> MoveDirectionInput => MoveDirectionInputC.Value;
+
+		public bool TryGetMoveDirectionInput(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.MoveDirectionInput component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMoveDirectionInput()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.MoveDirectionInput() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMoveDirectionInput(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.MoveDirectionInput() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InventoryScrollDelta InventoryScrollDeltaC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InventoryScrollDelta>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> InventoryScrollDelta => InventoryScrollDeltaC.Value;
+
+		public bool TryGetInventoryScrollDelta(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InventoryScrollDelta component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddInventoryScrollDelta()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InventoryScrollDelta() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddInventoryScrollDelta(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InventoryScrollDelta() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.JumpInput JumpInputC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.JumpInput>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState JumpInput => JumpInputC.Value;
+
+		public bool TryGetJumpInput(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.JumpInput component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddJumpInput()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.JumpInput() { Value = new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddJumpInput(Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.JumpInput() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.GlideActive GlideActiveC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.GlideActive>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> GlideActive => GlideActiveC.Value;
+
+		public bool TryGetGlideActive(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.GlideActive component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideActive()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.GlideActive() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideActive(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.GlideActive() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.DashInput DashInputC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.DashInput>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState DashInput => DashInputC.Value;
+
+		public bool TryGetDashInput(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.DashInput component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDashInput()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.DashInput() { Value = new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDashInput(Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.DashInput() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.SlideRequest SlideRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.SlideRequest>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent SlideRequest => SlideRequestC.Value;
+
+		public bool TryGetSlideRequest(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.SlideRequest component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideRequest()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.SlideRequest() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideRequest(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.SlideRequest() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.PlungeActive PlungeActiveC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.PlungeActive>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> PlungeActive => PlungeActiveC.Value;
+
+		public bool TryGetPlungeActive(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.PlungeActive component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeActive()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.PlungeActive() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeActive(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.PlungeActive() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.ThrowProjectileRequest ThrowProjectileRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.ThrowProjectileRequest>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent ThrowProjectileRequest => ThrowProjectileRequestC.Value;
+
+		public bool TryGetThrowProjectileRequest(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.ThrowProjectileRequest component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowProjectileRequest()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.ThrowProjectileRequest() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowProjectileRequest(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.ThrowProjectileRequest() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.GrapplingHookActive GrapplingHookActiveC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.GrapplingHookActive>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> GrapplingHookActive => GrapplingHookActiveC.Value;
+
+		public bool TryGetGrapplingHookActive(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.GrapplingHookActive component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGrapplingHookActive()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.GrapplingHookActive() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGrapplingHookActive(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.GrapplingHookActive() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.UltimateRequest UltimateRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.UltimateRequest>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent UltimateRequest => UltimateRequestC.Value;
+
+		public bool TryGetUltimateRequest(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.UltimateRequest component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddUltimateRequest()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.UltimateRequest() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddUltimateRequest(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.UltimateRequest() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.MouseWorldPositionInput MouseWorldPositionInputC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.MouseWorldPositionInput>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> MouseWorldPositionInput => MouseWorldPositionInputC.Value;
+
+		public bool TryGetMouseWorldPositionInput(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.MouseWorldPositionInput component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMouseWorldPositionInput()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.MouseWorldPositionInput() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMouseWorldPositionInput(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.MouseWorldPositionInput() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.ThrowInput ThrowInputC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.ThrowInput>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState ThrowInput => ThrowInputC.Value;
+
+		public bool TryGetThrowInput(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.ThrowInput component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowInput()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.ThrowInput() { Value = new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowInput(Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.InputState value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.ThrowInput() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.ShowTargetActive ShowTargetActiveC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.ShowTargetActive>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> ShowTargetActive => ShowTargetActiveC.Value;
+
+		public bool TryGetShowTargetActive(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.ShowTargetActive component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddShowTargetActive()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.ShowTargetActive() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddShowTargetActive(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.ShowTargetActive() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.AutoTargetToggleRequest AutoTargetToggleRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.AutoTargetToggleRequest>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent AutoTargetToggleRequest => AutoTargetToggleRequestC.Value;
+
+		public bool TryGetAutoTargetToggleRequest(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.AutoTargetToggleRequest component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAutoTargetToggleRequest()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.AutoTargetToggleRequest() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAutoTargetToggleRequest(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.AutoTargetToggleRequest() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.CycleTargetRequest CycleTargetRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.CycleTargetRequest>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent CycleTargetRequest => CycleTargetRequestC.Value;
+
+		public bool TryGetCycleTargetRequest(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.CycleTargetRequest component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCycleTargetRequest()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.CycleTargetRequest() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCycleTargetRequest(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.CycleTargetRequest() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang CanWallHangC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang>();
@@ -2929,37 +3550,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Effects.SleepTimer() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveAvailableJumps DriveAvailableJumpsC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveAvailableJumps>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.IsCometRecovering IsCometRecoveringC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.IsCometRecovering>();
 
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> DriveAvailableJumps => DriveAvailableJumpsC.Value;
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsCometRecovering => IsCometRecoveringC.Value;
 
-		public bool TryGetDriveAvailableJumps(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		public bool TryGetIsCometRecovering(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveAvailableJumps component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDriveAvailableJumps()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveAvailableJumps() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDriveAvailableJumps(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveAvailableJumps() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.IsDriveActive IsDriveActiveC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.IsDriveActive>();
-
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IsDriveActive => IsDriveActiveC.Value;
-
-		public bool TryGetIsDriveActive(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.IsDriveActive component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.IsCometRecovering component);
 			if (result)
 				value = component.Value;
 			else
@@ -2967,62 +3564,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return result;
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsDriveActive()
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsCometRecovering()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.IsDriveActive() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.IsCometRecovering() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsDriveActive(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsCometRecovering(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.IsDriveActive() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveDuration DriveDurationC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveDuration>();
-
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> DriveDuration => DriveDurationC.Value;
-
-		public bool TryGetDriveDuration(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveDuration component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDriveDuration()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveDuration() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDriveDuration(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveDuration() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveGravityScale DriveGravityScaleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveGravityScale>();
-
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> DriveGravityScale => DriveGravityScaleC.Value;
-
-		public bool TryGetDriveGravityScale(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveGravityScale component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDriveGravityScale()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveGravityScale() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDriveGravityScale(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature.DriveGravityScale() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.IsCometRecovering() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.CometDashStateComponent CometDashStateC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.CometDashStateComponent>();
@@ -4073,6 +4622,54 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanApplyDamage(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.CanApplyDamage() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageKnockbackForceX DamageKnockbackForceXC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageKnockbackForceX>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> DamageKnockbackForceX => DamageKnockbackForceXC.Value;
+
+		public bool TryGetDamageKnockbackForceX(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageKnockbackForceX component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDamageKnockbackForceX()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageKnockbackForceX() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDamageKnockbackForceX(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageKnockbackForceX() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageKnockbackForceY DamageKnockbackForceYC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageKnockbackForceY>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> DamageKnockbackForceY => DamageKnockbackForceYC.Value;
+
+		public bool TryGetDamageKnockbackForceY(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageKnockbackForceY component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDamageKnockbackForceY()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageKnockbackForceY() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDamageKnockbackForceY(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.DamageKnockbackForceY() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.AI.CurrentTarget CurrentTargetC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.AI.CurrentTarget>();

@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Inventory;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
@@ -8,7 +9,6 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.HangWall;
@@ -26,6 +26,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.View;
 using Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.WindFeature;
 using Assets._Project.Develop.Runtime.Utilites;
@@ -34,6 +35,7 @@ using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
@@ -100,10 +102,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddAudio(_container.Resolve<AudioService>())
                 .AddGroundMask(config.GroundMask)
 
-                // — драйв (баг-фича) —
-                .AddIsDriveActive(new ReactiveVariable<bool>(false))
-                .AddDriveAvailableJumps(new ReactiveVariable<int>(1))
-                .AddDriveDuration(new ReactiveVariable<float>(3))
+                // input
+                .AddAttackInput()
+                .AddDashInput()
+                .AddJumpInput()
+                .AddGrappleInput()
+                .AddMouseWorldPositionInput()
+                .AddMoveDirectionInput()
+                .AddThrowInput()
+                .AddInventoryScrollDelta()
+                .AddShowTargetActive()
+                .AddAutoTargetToggleRequest()
+                .AddCycleTargetRequest(new ReactiveEvent())
+                .AddUltimateRequest(new ReactiveEvent())
+                .AddThrowProjectileRequest(new ReactiveEvent())
 
                 // — движение —
                 .AddMoveDirection()
@@ -152,6 +164,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // — планирование —
                 .AddIsGliding()
+                .AddGlideActive()
                 .AddGlideCounterMultiplier(new ReactiveVariable<float>(config.Glide.CounterForceMultiplier))
                 .AddGlideHorizontalDrag(new ReactiveVariable<float>(config.Glide.HorizontalDrag))
                 .AddGlideMaxFallSpeed(new ReactiveVariable<float>(config.Glide.MaxFallSpeed))
@@ -194,10 +207,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddThrowEvent()
                 .AddIsThrowing()
                 .AddIsGrappling()
+                .AddGrapplingHookActive()
                 .AddCurrentThrowableIndex(new ReactiveVariable<int>(0))
-                .AddGrappleCharges(new ReactiveVariable<int>(config.Throwables.GrappleConfig.MaxCharges))
-                .AddShurikenCharges(new ReactiveVariable<int>(config.Throwables.ShurikenConfig.MaxCharges))
-                .AddSleepDartCharges(new ReactiveVariable<int>(config.Throwables.SleepDartConfig.MaxCharges))
+                .AddGrappleCharges(new ReactiveVariable<int>(config.Throwables.GrappleItem.ProjectileSettings.MaxCharges))
+                .AddShurikenCharges(new ReactiveVariable<int>(config.Throwables.ShurikenItem.ProjectileSettings.MaxCharges))
+                .AddSleepDartCharges(new ReactiveVariable<int>(config.Throwables.SleepDartItem.ProjectileSettings.MaxCharges))
 
                 // — вис на стене —
                 .AddIsWallHanging()
@@ -210,9 +224,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddIsSliding()
                 .AddSlideDuration(new ReactiveVariable<float>(config.Slide.Duration))
                 .AddSlideSpeed(new ReactiveVariable<float>(config.Slide.Speed))
+                .AddSlideRequest()
 
-                // — пике —
-                .AddIsPlunging()
+                 // — пике (Plunge) —
+                .AddIsPlunging() 
+                .AddPlungeActive(new ReactiveVariable<bool>(false))
                 .AddPlungeSpeed(new ReactiveVariable<float>(config.Combat.PlungeSpeed))
                 .AddPlungeAOERadius(new ReactiveVariable<float>(config.Combat.PlungeRadius))
                 .AddPlungeAOEDamage(new ReactiveVariable<float>(config.Combat.PlungeDamage))
@@ -239,6 +255,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // лут
                 .AddCollectRange(new ReactiveVariable<float>(config.LootCollectRange))
                 .AddLootPickedEvent(new ReactiveEvent<LootType>())
+
+                // — система стиля —
+                .AddStylePoints(new ReactiveVariable<float>(0f))
+                .AddStyleRank(new ReactiveVariable<StyleRankEnum>(StyleRankEnum.F))
+                .AddStyleMultiplier(new ReactiveVariable<float>(1f))
+                .AddStyleDecayTimer(new ReactiveVariable<float>(0f))
+                .AddMoveFreshness(new Dictionary<string, float>())
+                .AddMaxStylePoints(0f)
+                .AddMaxStyleRank(StyleRankEnum.F)
+
+                // — уточнение физики стен —
+                .AddWallNormal(new ReactiveVariable<Vector2>(Vector2.zero))
+
+                // — состояние восстановления кометы —
+                .AddIsCometRecovering(new ReactiveVariable<bool>(false))
 
                 // — жизненный цикл —
                 .AddMaxHealth(new ReactiveVariable<float>(config.LifeCycle.MaxHealth))
@@ -271,78 +302,57 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 dropLootService, 
                 configsProviderService);
 
-            SlopeSystem slopeSystem = new SlopeSystem();
-
-            ThrowableConfig[] consumables = new ThrowableConfig[]
+            ConsumableConfig[] consumables = new ConsumableConfig[]
             {
-                config.Throwables.ShurikenConfig,
-                config.Throwables.SleepDartConfig
+                config.Throwables.ShurikenItem,
+                config.Throwables.SleepDartItem
             };
 
             entity
-                // — инициализация —
-                .AddSystem(new SpawnProcessTimerSystem())
+                // — init/common —
                 .AddSystem(new PlayerInputSystem(inputService))
-                .AddSystem(new GroundCheckSystem(coyoteTime: 0.1f))
-
-                // new
+                .AddSystem(new SpawnProcessTimerSystem())
+                .AddSystem(new GroundCheckSystem())
                 .AddSystem(new WindSystem())
 
-                // — движение —
-                .AddSystem(new RigidbodyMovementSystem(inputService))
-                .AddSystem(new JumpSystem(inputService, slopeSystem, _cameraService))
+                // — movements —
+                .AddSystem(new JumpSystem())
+                .AddSystem(new GlideSystem())
+                .AddSystem(new WallHangSystem())
+                .AddSystem(new SlideSystem(coroutinesPerformer))
+                .AddSystem(new SlopeSystem())
+                .AddSystem(new WallJumpSystem())
+                .AddSystem(new RigidbodyMovementSystem())
 
-                .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.Combat.EnemyMask, 
-                    _audioService, 
-                    _container.Resolve<ConfigsProviderService>(),
-                    _container.Resolve<DropLootService>()))
-
-                .AddSystem(new GlideSystem(inputService))
-                .AddSystem(new WallHangSystem(inputService, audioService))
-                .AddSystem(new SlideSystem(inputService, coroutinesPerformer, slopeSystem))
-
-                .AddSystem(new PlungeSystem(inputService, config.Combat.EnemyMask, _cameraService,
-                    _audioService,
-                    _container.Resolve<ConfigsProviderService>(),
-                    _container.Resolve<DropLootService>()))
-
-                .AddSystem(slopeSystem)
+                // combat
+                .AddSystem(new DashSystem(coroutinesPerformer))
+                .AddSystem(new PlungeSystem())
                 .AddSystem(new CometRecoverySystem())
 
-                // — броски (Хук отдельно на ПКМ) —
+                // — hook —
                 .AddSystem(new GrappleSystem(
-                    inputService,
                     coroutinesPerformer,
-                    config.Throwables.GrappleConfig,
+                    (GrappleHookConfig)config.Throwables.GrappleItem.ProjectileSettings, 
                     throwableBehaviourFactory,
-                    audioService))
+                    _collidersRegistryService))
 
-                // wall jump
-                .AddSystem(new WallJumpSystem(inputService))
-
-                // — инвентарь (Сюрикены/Дротики на Q + Колесико) —
+                // — inventory —
                 .AddSystem(new InventorySystem(
-                    inputService,
                     consumables,
                     throwableBehaviourFactory,
-                    coroutinesPerformer)) // Добавь этот параметр!
+                    coroutinesPerformer)) 
 
                 // — атака —
                 .AddSystem(new AttackCancelSystem())
-                .AddSystem(new StartAttackSystem(inputService, this, _coroutinesPerformer))
+                .AddSystem(new StartAttackSystem(this, _coroutinesPerformer))
                 .AddSystem(new AttackProcessTimerSystem())
                 .AddSystem(new AttackDelayEndTriggerSystem())
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem())
                 .AddSystem(new AttackInvulnerabilitySystem())
 
-                .AddSystem(new MeleeAttackHitSystem(
-                    coroutinesPerformer, 
-                    _cameraService, 
-                    _container.Resolve<DropLootService>(), 
-                    _container.Resolve<ConfigsProviderService>(),
-                    _container.Resolve<AudioService>())
-                )
+                .AddSystem(new MeleeAttackHitSystem())
+                .AddSystem(new HitStopSystem(_coroutinesPerformer))
 
                 // — урон / жизненный цикл —
                 .AddSystem(new ApplyDamageSystem())
@@ -356,9 +366,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // лут
                 .AddSystem(new LootMagnetSystem(_collidersRegistryService))
                 .AddSystem(new LootDistanceCollectSystem(_entitiesLifeContext))
-
-                // drive (предпоследний)
-                .AddSystem(new DriveSystem(inputService, _cameraService))
 
                 // hero style system
                 .AddSystem(new HeroStyleSystem(
@@ -576,7 +583,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // — Эффекты (Сон) —
                 .AddIsAsleep()
+                .AddIsGrappledTarget(new ReactiveVariable<bool>(false))
                 .AddSleepTimer(new ReactiveVariable<float>(0f))
+                .AddDamageKnockbackForceX(new ReactiveVariable<float>(1f))
+                .AddDamageKnockbackForceY(new ReactiveVariable<float>(2f))
                 ;
 
             // — Условия —
@@ -591,7 +601,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canApplyDamage = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
-                .Add(new FuncCondition(() => entity.IsAsleep.Value == false))
                 ;
 
             ICompositeCondition canFlip = new CompositeCondition()

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using DG.Tweening;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 {
@@ -6,8 +7,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
     {
         [SerializeField] private SpriteRenderer _spriteRenderer;
 
-        private float _lifetime;
-        private float _elapsed;
         private System.Action<GameObject> _returnToPool;
 
         public void Initialize(
@@ -20,24 +19,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
         {
             _spriteRenderer.sprite = sprite;
             _spriteRenderer.color = startColor;
+
             transform.position = position;
             transform.localScale = scale;
-            _lifetime = lifetime;
-            _elapsed = 0f;
             _returnToPool = returnToPool;
+
+            _spriteRenderer.DOKill();
+            _spriteRenderer.DOFade(0f, lifetime)
+                .SetEase(Ease.Linear)
+                .OnComplete(() => _returnToPool?.Invoke(gameObject));
         }
 
-        private void Update()
+        private void OnDestroy()
         {
-            _elapsed += Time.deltaTime;
-            float t = _elapsed / _lifetime;
-
-            Color c = _spriteRenderer.color;
-            c.a = Mathf.Lerp(1f, 0f, t);
-            _spriteRenderer.color = c;
-
-            if (_elapsed >= _lifetime)
-                _returnToPool?.Invoke(gameObject);
+            _spriteRenderer?.DOKill();
         }
     }
 }

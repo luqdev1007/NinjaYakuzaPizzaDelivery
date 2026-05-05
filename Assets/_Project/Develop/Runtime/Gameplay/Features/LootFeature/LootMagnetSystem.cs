@@ -1,61 +1,70 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
-using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Utilites;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 {
     public class LootMagnetSystem : IInitializableSystem, IUpdatableSystem
     {
-        private CollidersRegistryService _collidersRegistryService;
+        private readonly CollidersRegistryService _collidersRegistry;
+        private Entity _entity;
 
-        public LootMagnetSystem(CollidersRegistryService collidersRegistryService)
+        private readonly Collider2D[] _lootBuffer = new Collider2D[20];
+        private ContactFilter2D _lootFilter;
+
+        public LootMagnetSystem(CollidersRegistryService collidersRegistry)
         {
-            _collidersRegistryService = collidersRegistryService;
+            _collidersRegistry = collidersRegistry;
         }
-
-        private Entity _lootMagnetOwner;
-        private ReactiveVariable<float> _collectRange;
-        private ReactiveEvent<LootType> _lootPickedEvent;
-        private Transform _transform;
 
         public void OnInit(Entity entity)
         {
-            _lootMagnetOwner = entity;
-            _collectRange = entity.CollectRange;
-            _transform = entity.Transform;
-            _lootPickedEvent = entity.LootPickedEvent;
+            _entity = entity;
+
+            _lootFilter = new ContactFilter2D
+            {
+                useLayerMask = true,
+                layerMask = LayersAPI.LayerMaskLoot
+            };
         }
 
         public void OnUpdate(float deltaTime)
         {
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(_transform.position, _collectRange.Value, LayersAPI.LayerMaskLoot);
+            if (_entity.Transform == null) 
+                return;
 
-            foreach (Collider2D collider in colliders)
+            int count = Physics2D.OverlapCircle(
+                _entity.Transform.position,
+                _entity.CollectRange.Value,
+                _lootFilter,
+                _lootBuffer);
+
+            for (int i = 0; i < count; i++)
             {
-                Entity entity = _collidersRegistryService.GetBy(collider);
+                Entity loot = _collidersRegistry.GetBy(_lootBuffer[i]);
 
-                if (entity == null) 
+                if (loot == null) 
                     continue;
 
-                if (entity.HasComponent<LootTag>() && entity.HasComponent<CurrentTarget>() && entity.InSpawnProcess.Value == false)
-                    Collect(entity);
+                if (loot.HasComponent<LootTag>() &&
+                    loot.InSpawnProcess.Value == false &&
+                    loot.CurrentTarget.Value == null)
+                {
+                    ActivateMagnet(loot);
+                }
             }
         }
 
-        private void Collect(Entity loot)
+        private void ActivateMagnet(Entity loot)
         {
-            loot.CurrentTarget.Value = _lootMagnetOwner;
-            loot.BodyCollider.isTrigger = true;
+            loot.CurrentTarget.Value = _entity;
 
-            var rb = loot.Transform.GetComponent<Rigidbody2D>();
+            if (loot.Rigidbody != null)
+                loot.Rigidbody.simulated = false;
 
-            if (rb != null)
-                rb.simulated = false;
-
-            _lootPickedEvent?.Invoke(LootType.Coin); // ? rework
+            if (loot.BodyCollider != null)
+                loot.BodyCollider.isTrigger = true;
         }
     }
 }

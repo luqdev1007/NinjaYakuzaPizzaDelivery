@@ -1,7 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Style;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
 {
@@ -9,173 +8,115 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
     {
         private readonly StyleRankConfig _rankConfig;
         private readonly StyleActionsConfig _actionsConfig;
-
-        private readonly ReactiveVariable<float> _currentPoints = new(0f);
-        private readonly ReactiveVariable<string> _currentLetter = new("F");
-        private readonly ReactiveVariable<string> _currentPrefix = new("");
-
-        // Поля для хранения максимумов за уровень
-        private float _maxPoints;
-        private string _maxLetter = "F";
-
-        public IReadOnlyVariable<float> CurrentPoints => _currentPoints;
-        public IReadOnlyVariable<string> CurrentLetter => _currentLetter;
-        public IReadOnlyVariable<string> CurrentPrefix => _currentPrefix;
-
-        // Публичные свойства для получения рекордов в конце уровня
-        public float MaxPoints => _maxPoints;
-        public string MaxLetter => _maxLetter;
+        private readonly List<SubRankEntry> _flattenedSubRanks = new();
 
         public RankStyleService(StyleRankConfig rankConfig, StyleActionsConfig actionsConfig)
         {
             _rankConfig = rankConfig;
             _actionsConfig = actionsConfig;
+
+            foreach (var rank in _rankConfig.Ranks)
+                foreach (var subRank in rank.SubRanks)
+                    _flattenedSubRanks.Add(subRank);
         }
 
-        private float _lastGainTime;
-        private const float DecayDelay = 3f;
-
-        public void AddPoints(float amount)
+        public void AddPoints(EntitiesCore.Entity entity, float amount)
         {
-            if (amount <= 0) return;
+            if (amount <= 0) 
+                return;
 
-            _lastGainTime = Time.time;
+            entity.GetComponent<StyleDecayTimer>().Value.Value = 0f;
+            float multiplier = entity.GetComponent<StyleMultiplier>().Value.Value;
 
-            float multiplier = GetCurrentMultiplier();
-            _currentPoints.Value += amount * multiplier;
+            var pointsComp = entity.GetComponent<StylePoints>().Value;
+            pointsComp.Value += amount * multiplier;
 
-            // Запоминаем максимальное количество очков
-            if (_currentPoints.Value > _maxPoints)
+            var maxPointsComp = entity.GetComponent<MaxStylePoints>();
+
+            if (pointsComp.Value > maxPointsComp.Value)
             {
-                _maxPoints = _currentPoints.Value;
+                maxPointsComp.Value = pointsComp.Value;
             }
 
-            UpdateRank();
+            UpdateRank(entity);
         }
 
-        public void ApplyDamagePenalty()
+        public void ApplyDamagePenalty(EntitiesCore.Entity entity)
         {
-            var allSubRanks = GetFlattenedSubRanks();
-            int currentSubRankIndex = 0;
-
-            for (int i = 0; i < allSubRanks.Count; i++)
-            {
-                if (_currentPoints.Value >= allSubRanks[i].Threshold)
-                    currentSubRankIndex = i;
-                else
-                    break;
-            }
-
+            float points = entity.GetComponent<StylePoints>().Value.Value;
+            int currentIndex = GetSubRankIndex(points);
             int penalty = _actionsConfig.RanksToDropOnDamage;
-            int newIndex = Mathf.Max(0, currentSubRankIndex - penalty);
+            int newIndex = Mathf.Max(0, currentIndex - penalty);
 
-            _currentPoints.Value = allSubRanks[newIndex].Threshold;
-
-            UpdateRank();
+            entity.GetComponent<StylePoints>().Value.Value = _flattenedSubRanks[newIndex].Threshold;
+            UpdateRank(entity);
         }
 
-        public void UpdateDecay(float deltaTime)
+        public void UpdateDecay(EntitiesCore.Entity entity, float deltaTime)
         {
-            if (Time.time - _lastGainTime < DecayDelay)
+            var timer = entity.GetComponent<StyleDecayTimer>().Value;
+            var points = entity.GetComponent<StylePoints>().Value;
+
+            timer.Value += deltaTime;
+
+            if (timer.Value < 3f || points.Value <= 0) 
                 return;
 
-            if (_currentPoints.Value <= 0)
-                return;
-
-            float decayRate = GetCurrentDecayRate();
+            float decayRate = GetDecayRate(points.Value);
             float amountToRemove = decayRate * _rankConfig.GlobalDecayMultiplier * deltaTime;
 
-            _currentPoints.Value = Mathf.Max(0, _currentPoints.Value - amountToRemove);
-            UpdateRank();
+            points.Value = Mathf.Max(0, points.Value - amountToRemove);
+            UpdateRank(entity);
         }
 
-        private void UpdateRank()
+        private void UpdateRank(EntitiesCore.Entity entity)
         {
-            string bestLetter = _rankConfig.Ranks[0].Letter;
-            string bestPrefix = _rankConfig.Ranks[0].SubRanks[0].Prefix;
+            float points = entity.GetComponent<StylePoints>().Value.Value;
+            int index = GetSubRankIndex(points);
 
-            foreach (var rankEntry in _rankConfig.Ranks)
+            entity.GetComponent<StyleMultiplier>().Value.Value = _flattenedSubRanks[index].Multiplier;
+
+            StyleRankEnum newRank = DetermineRankEnum(points);
+            entity.GetComponent<StyleRank>().Value.Value = newRank;
+
+            var maxRankComp = entity.GetComponent<MaxStyleRank>();
+            if ((int)newRank > (int)maxRankComp.Value)
             {
-                foreach (var subRank in rankEntry.SubRanks)
-                {
-                    if (_currentPoints.Value >= subRank.Threshold)
-                    {
-                        bestLetter = rankEntry.Letter;
-                        bestPrefix = subRank.Prefix;
-                    }
-                    else
-                    {
-                        goto Assign;
-                    }
-                }
-            }
-
-        Assign:
-            _currentLetter.Value = bestLetter;
-            _currentPrefix.Value = bestPrefix;
-
-            // Обновляем максимальный достигнутый ранг (букву)
-            UpdateMaxLetter(bestLetter);
-        }
-
-        private void UpdateMaxLetter(string currentLetter)
-        {
-            // Находим индекс текущего и максимального ранга в конфиге, чтобы сравнить их
-            int currentIndex = _rankConfig.Ranks.FindIndex(r => r.Letter == currentLetter);
-            int maxIndex = _rankConfig.Ranks.FindIndex(r => r.Letter == _maxLetter);
-
-            if (currentIndex > maxIndex)
-            {
-                _maxLetter = currentLetter;
+                maxRankComp.Value = newRank;
             }
         }
 
-        private float GetCurrentMultiplier()
+        private int GetSubRankIndex(float points)
         {
-            float multiplier = 1f;
-            foreach (var rankEntry in _rankConfig.Ranks)
+            int index = 0;
+            for (int i = 0; i < _flattenedSubRanks.Count; i++)
             {
-                foreach (var subRank in rankEntry.SubRanks)
-                {
-                    if (_currentPoints.Value >= subRank.Threshold)
-                        multiplier = subRank.Multiplier;
-                    else
-                        return multiplier;
-                }
+                if (points >= _flattenedSubRanks[i].Threshold) index = i;
+                else break;
             }
-            return multiplier;
+            return index;
         }
 
-        private float GetCurrentDecayRate()
+        private float GetDecayRate(float points)
         {
             float rate = _rankConfig.Ranks[0].DecayRate;
-            foreach (var rankEntry in _rankConfig.Ranks)
+            foreach (var r in _rankConfig.Ranks)
             {
-                if (_currentPoints.Value >= rankEntry.SubRanks[0].Threshold)
-                    rate = rankEntry.DecayRate;
-                else
-                    break;
+                if (points >= r.SubRanks[0].Threshold) rate = r.DecayRate;
+                else break;
             }
             return rate;
         }
 
-        private List<SubRankEntry> GetFlattenedSubRanks()
+        private StyleRankEnum DetermineRankEnum(float points)
         {
-            List<SubRankEntry> subRanks = new();
-            foreach (var rank in _rankConfig.Ranks)
+            StyleRankEnum rank = StyleRankEnum.F;
+            for (int i = 0; i < _rankConfig.Ranks.Count; i++)
             {
-                subRanks.AddRange(rank.SubRanks);
+                if (points >= _rankConfig.Ranks[i].SubRanks[0].Threshold)
+                    rank = (StyleRankEnum)(i + 1); // +1 так как F — это 0
             }
-            return subRanks;
-        }
-
-        public void Deactivate()
-        {
-            _currentPoints.Value = 0f;
-            _maxPoints = 0f;
-            _maxLetter = "F";
-            _lastGainTime = 0f;
-            UpdateRank();
+            return rank;
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
         private IDisposable _isThrowingDisposable;
 
         private Transform _hookTransform;
-        private Vector3? _staticTargetPoint; // Для фиксации веревки, если снаряд удален
+        private Vector3? _staticTargetPoint;
         private float _animationTime;
 
         private void OnValidate()
@@ -69,14 +69,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         private void LateUpdate()
         {
-            if (!_lineRenderer.enabled || _ropeOrigin == null) return;
+            if (!_lineRenderer.enabled || _ropeOrigin == null) 
+                return;
 
             Vector3 targetPos;
+
             if (_hookTransform != null)
                 targetPos = _hookTransform.position;
             else if (_staticTargetPoint.HasValue)
                 targetPos = _staticTargetPoint.Value;
-            else return;
+            else 
+                return;
 
             _animationTime += Time.deltaTime * _straightenSpeed;
             DrawRope(_ropeOrigin.position, targetPos);
@@ -84,7 +87,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         private void DrawRope(Vector3 startPos, Vector3 endPos)
         {
-            // Рассчитываем направление перпендикулярное веревке для более естественного смещения
             Vector3 direction = endPos - startPos;
             Vector3 upDir = Vector3.Cross(direction, Vector3.forward).normalized;
             if (upDir == Vector3.zero) upDir = Vector3.up;
@@ -96,16 +98,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
                 if (_animationTime < 1f)
                 {
-                    // Используем Sin для мягкого затухания амплитуды к краям веревки
                     float edgeFade = Mathf.Sin(delta * Mathf.PI);
-
-                    // Вычисляем волну (добавим Time.time для небольшого движения в полете)
                     float wave = Mathf.Sin(delta * _waveFrequency * Mathf.PI + Time.time) * _waveAmplitude;
-
-                    // Усиливаем влияние анимации (используем квадратичное затухание для резкости)
                     float multiplier = edgeFade * Mathf.Pow(1f - _animationTime, 2);
 
-                    // Смещаем позицию по перпендикуляру, а не просто вверх
                     pos += upDir * wave * multiplier;
                 }
 
@@ -115,7 +111,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         private void OnIsThrowingChanged(bool oldValue, bool value)
         {
-            if (!value) ClearHookTransform();
+            if (!value) 
+                ClearHookTransform();
         }
     }
 }

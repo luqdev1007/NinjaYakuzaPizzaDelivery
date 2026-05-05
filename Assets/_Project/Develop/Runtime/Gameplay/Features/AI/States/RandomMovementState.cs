@@ -33,6 +33,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
         public void Update(float deltaTime)
         {
             _timer += deltaTime;
+
             if (_timer >= _cooldown)
             {
                 GenerateNewDirection();
@@ -42,7 +43,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
 
         private void GenerateNewDirection()
         {
-            // Генерируем случайный угол для 2D пространства (XY)
             float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
             _movementDirection.Value = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
         }
