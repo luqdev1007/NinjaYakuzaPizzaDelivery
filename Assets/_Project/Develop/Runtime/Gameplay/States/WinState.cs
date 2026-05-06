@@ -1,5 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
-using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+﻿using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
@@ -54,7 +53,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             // _audioService.SetMusicMuted(true);
 
-            int rewardForLevel = _configsProviderService.GetConfig<GameRewardsConfig>().RewardForWin;
+            // int rewardForLevel = _configsProviderService.GetConfig<GameRewardsConfig>().RewardForWin;
+            int rewardForLevel = 50;
+
             _walletService.Add(CurrencyTypes.Coins, rewardForLevel);
 
             _levelsProgressionService.AddLevelToCompleted(_gameplayInputArgs.LevelNumber);

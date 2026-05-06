@@ -113,8 +113,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
                 rb.simulated = true;
                 rb.gravityScale = Random.Range(config.GravityRange.x, config.GravityRange.y);
 
-                float forceX = Random.Range(config.LaunchForceX.x, config.LaunchForceX.y);
-                float forceY = Random.Range(config.LaunchForceY.x, config.LaunchForceY.y);
+                float forceX = Random.Range(config.LaunchForceRangeX.x, config.LaunchForceRangeX.y);
+                float forceY = Random.Range(config.LaunchForceRangeY.x, config.LaunchForceRangeY.y);
 
                 // Для секретного лута тоже можно убрать влияние множителя на физику, 
                 // чтобы он вылетал предсказуемо

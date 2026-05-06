@@ -146,7 +146,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                 Vector2 toTarget = currentAnchorWorld - (Vector2)_transform.position;
                 float dist = toTarget.magnitude;
 
-                if (dist > _config.MaxDistance * 1.5f)
+                if (dist > _config.MaxFlyDistance * 1.5f)
                 {
                     _audioService.PlaySfxByPrefixAuto("HookBreak", 1f);
                     StopPulling(applyInertia: false);

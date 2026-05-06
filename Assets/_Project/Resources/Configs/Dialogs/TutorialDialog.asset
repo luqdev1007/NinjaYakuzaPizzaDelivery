@@ -13,12 +13,8 @@ MonoBehaviour:
   m_Name: TutorialDialog
   m_EditorClassIdentifier: 
   Replicas:
-  - CharacterId: master
-    RawText: 'Hey, NINJA, deliver that PIZZA in time! But be CAREFULLY for ghosts,
+  - RawText: 'Hey, NINJA, deliver that PIZZA in time! But be CAREFULLY for ghosts,
       if you damage pizza you won''t get any tips! '
-    OverrideTime: 1
-    CustomTime: 3
-  - CharacterId: main_hero
-    RawText: Shush! I don't have time for this... Need to get my tips...
-    OverrideTime: 1
-    CustomTime: 3
+    CharacterId: 2
+  - RawText: Shush! I don't have time for instructions... Need to get my tips...
+    CharacterId: 1

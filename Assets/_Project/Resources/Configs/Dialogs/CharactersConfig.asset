@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: CharactersConfig
   m_EditorClassIdentifier: 
   _characters:
-  - Id: main_hero
+  - Id: 1
     Name: Micke
     Portrait: {fileID: 3153539378023671787, guid: d9bd7fc23cd977642a77f2274e1d97f7, type: 3}
     Background: {fileID: 21300000, guid: 5c385a0c9e2f53446a2561c45dd5ebdc, type: 3}
-  - Id: master
-    Name: Kaka
+  - Id: 2
+    Name: Big Boss
     Portrait: {fileID: -6248741079362886434, guid: 45f5e55ff4c082f4cbc1f6f6971c673d, type: 3}
     Background: {fileID: 21300000, guid: 541c463d11305f94997500509db4d77c, type: 3}

@@ -73,7 +73,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             // Спавн всех сущностей с передачей соответствующих таблиц лута
             CreateEnemiesOnLevel(levelConfig, lootProvider.EnemyLoot);
-            CreateSecretChestsOnLevel(levelConfig, lootProvider.ChestLoot);
+            CreateSecretChestsOnLevel(levelConfig, lootProvider.SecretChestLoot);
 
             yield break;
         }

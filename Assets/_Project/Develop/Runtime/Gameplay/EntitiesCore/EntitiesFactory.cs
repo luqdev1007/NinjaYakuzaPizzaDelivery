@@ -95,7 +95,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             entity
                 // — общее —
-                .AddMinFallVelocityForAction(new ReactiveVariable<float>(config.MinFallVelocityForAction))
+                .AddMinFallVelocityForAction(new ReactiveVariable<float>(config.FallVelocityThreshold))
                 .AddIsGrounded()
                 .AddAudio(_container.Resolve<AudioService>())
                 .AddGroundMask(config.GroundMask)
@@ -117,8 +117,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddJumpForce(new ReactiveVariable<float>(config.Jump.JumpForce))
                 .AddJumpForceMax(new ReactiveVariable<float>(config.Jump.JumpForceMax))
                 .AddJumpChargeTime(new ReactiveVariable<float>(config.Jump.JumpChargeTime))
-                .AddJumpsAvailable(new ReactiveVariable<int>(config.Jump.MaxJumps))
-                .AddMaxJumps(new ReactiveVariable<int>(config.Jump.MaxJumps))
+                .AddJumpsAvailable(new ReactiveVariable<int>(config.Jump.ExtraJumpsCount))
+                .AddMaxJumps(new ReactiveVariable<int>(config.Jump.ExtraJumpsCount))
                 .AddJumpEvent()
                 .AddDoubleJumpEvent()
 
@@ -171,8 +171,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddAttackProcessCurrentTime()
                 .AddAttackDelayTime(new ReactiveVariable<float>(config.Attack.DelayTime))
                 .AddAttackDelayEndEvent()
-                .AddInstantAttackDamage(new ReactiveVariable<float>(config.Attack.InstantDamage))
-                .AddAttackDamage(new ReactiveVariable<float>(config.Attack.InstantDamage))
+                .AddInstantAttackDamage(new ReactiveVariable<float>(config.Attack.Damage))
+                .AddAttackDamage(new ReactiveVariable<float>(config.Attack.Damage))
                 .AddAttackCanceledEvent()
                 .AddAttackCooldownInitialTime(new ReactiveVariable<float>(config.Attack.Cooldown))
                 .AddAttackCooldownCurrentTime()
@@ -215,8 +215,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // — пике —
                 .AddIsPlunging()
                 .AddPlungeSpeed(new ReactiveVariable<float>(config.Plunge.Speed))
-                .AddPlungeAOERadius(new ReactiveVariable<float>(config.Plunge.AOERadius))
-                .AddPlungeAOEDamage(new ReactiveVariable<float>(config.Plunge.AOEDamage))
+                .AddPlungeAOERadius(new ReactiveVariable<float>(config.Plunge.DamageRange))
+                .AddPlungeAOEDamage(new ReactiveVariable<float>(config.Plunge.Damage))
                 .AddPlungeKnockbackForce(new ReactiveVariable<float>(config.Plunge.KnockbackForce))
 
                 // — наклонные поверхности —
@@ -475,7 +475,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
-                .Add(new FuncCondition(() => entity.Rigidbody.linearVelocityY < config.MinFallVelocityForAction)) // new
+                .Add(new FuncCondition(() => entity.Rigidbody.linearVelocityY < config.FallVelocityThreshold)) // new
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
             // — жизненный цикл —

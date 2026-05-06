@@ -13,15 +13,10 @@ MonoBehaviour:
   m_Name: DownAndUp
   m_EditorClassIdentifier: 
   Replicas:
-  - CharacterId: master
-    RawText: They order PIZZA from another side from great windmill...
-    OverrideTime: 1
-    CustomTime: 3
-  - CharacterId: master
-    RawText: It's will be interesting...good luck
-    OverrideTime: 1
-    CustomTime: 3
-  - CharacterId: main_hero
-    RawText: I don't need luck... I need my tips
-    OverrideTime: 1
-    CustomTime: 3
+  - RawText: They order PIZZA from another side from great windmill...
+    CharacterId: 2
+  - RawText: It's will be interesting...good luck, don't forget to find SECRETS for
+      our dojo!
+    CharacterId: 2
+  - RawText: I don't need luck... I need my TIPS! Let's get it!
+    CharacterId: 1

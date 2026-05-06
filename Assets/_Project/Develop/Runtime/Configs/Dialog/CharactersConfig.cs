@@ -1,24 +1,29 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using System;
 
 namespace Assets._Project.Develop.Runtime.Configs.Dialog
 {
+    public enum CharacterIDs
+    {
+        None = 0,
+        MainHero = 1,
+        Boss = 2,
+        RandomClient = 3,
+        NinjaGirl = 4,
+    }
+
     [CreateAssetMenu(fileName = "CharactersConfig", menuName = "Configs/Dialogs/CharactersConfig")]
     public class CharactersConfig : ScriptableObject
     {
         [SerializeField] private List<CharacterData> _characters;
 
-        public CharacterData GetCharacter(string id)
+        public CharacterData GetCharacter(CharacterIDs id)
         {
-            var character = _characters.FirstOrDefault(c => c.Id == id);
+            CharacterData character = _characters.Find(c => c.Id == id);
 
             if (character == null)
-            {
-                Debug.LogError($"[CharactersConfig] Character with ID '{id}' not found! Проверь конфиг в Assets.");
-                return _characters.FirstOrDefault(); // Возвращаем первого по дефолту, чтоб не упасть
-            }
+                throw new NullReferenceException($"[CharactersConfig] Character with ID '{id}' not found!");
 
             return character;
         }
@@ -27,11 +32,9 @@ namespace Assets._Project.Develop.Runtime.Configs.Dialog
     [Serializable]
     public class CharacterData
     {
-        [Tooltip("ID должен совпадать с тем, что указан в Replicas в LevelConfig")]
-        public string Id;
+        public CharacterIDs Id;
         public string Name;
         public Sprite Portrait;
         public Sprite Background;
     }
-
 }

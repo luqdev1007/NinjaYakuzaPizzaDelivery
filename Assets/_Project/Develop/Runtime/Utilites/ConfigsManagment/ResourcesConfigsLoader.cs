@@ -3,11 +3,10 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Style;
-using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Utilites.AssetsManagment;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement; // Добавил пространство имен
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,17 +22,13 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
         {
             { typeof(StartWalletConfig), "Configs/Meta/Wallet/StartWalletConfig" },
             { typeof(CurrencyIconsConfig), "Configs/Meta/Wallet/CurrencyIconsConfig" },
-            { typeof(GameRewardsConfig), "Configs/Meta/Stats/GameRewardsConfig" },
             { typeof(LevelsListConfig), "Configs/Gameplay/Levels/LevelsListConfig" },
             { typeof(MainHeroConfig), "Configs/Entities/MainHero/MainHeroConfig" },
             { typeof(GhostConfig), "Configs/Entities/Enemies/GhostConfig" },
             { typeof(DialogConfig), "Configs/Dialogs/TutorialDialog" },
             { typeof(CharactersConfig), "Configs/Dialogs/CharactersConfig" },
             { typeof(AudioConfig), "Configs/Audio/AudioConfig" },
-
-            // loot
             { typeof(MasterLootProviderConfig), "Configs/Gameplay/Loot/MasterLootProvider" },
-
             { typeof(StyleRankConfig), "Configs/Gameplay/Style/StyleRankConfig" },
             { typeof(StyleActionsConfig), "Configs/Gameplay/Style/StyleActionsConfig" },
         };

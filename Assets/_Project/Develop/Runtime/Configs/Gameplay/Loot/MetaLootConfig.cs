@@ -2,10 +2,9 @@
 
 namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Loot
 {
-    [CreateAssetMenu(menuName = "Configs/Gameplay/Loot/MetaLoot", fileName = "NewMetaLoot")]
+    [CreateAssetMenu(menuName = "Configs/Gameplay/Loot/MetaLoot", fileName = "New Meta Loot Config")]
     public class MetaLootConfig : LootConfig
     {
-        // Здесь могут быть данные, которые мы узнаем только в конце уровня
-        [field: SerializeField] public string SecretId { get; private set; }
+        [field: SerializeField] public string SecretLootId { get; private set; }
     }
 }

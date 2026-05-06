@@ -13,12 +13,8 @@ MonoBehaviour:
   m_Name: VillageToChurchDialog
   m_EditorClassIdentifier: 
   Replicas:
-  - CharacterId: master
-    RawText: Hey, NINJA, deliver that PIZZA to that monk, he is paying well, but
-      don't be late!
-    OverrideTime: 1
-    CustomTime: 3
-  - CharacterId: main_hero
-    RawText: It's a jump of faith! Let's go
-    OverrideTime: 1
-    CustomTime: 3
+  - RawText: Hey, NINJA, deliver that PIZZA to that monk, he is paying well so be
+      FAST... and also today is DANGEROUS in the sky, so look out!
+    CharacterId: 2
+  - RawText: 'My TIPS are waiting! Let''s get it! '
+    CharacterId: 1

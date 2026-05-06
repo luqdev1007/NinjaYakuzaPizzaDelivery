@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Configs.Dialog
 {
-    [CreateAssetMenu]
+    [CreateAssetMenu(fileName = "CharactersConfig", menuName = "Configs/Dialogs/DialogConfig")]
     public class DialogConfig : ScriptableObject
     {
         public List<DialogReplica> Replicas;
@@ -13,9 +13,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Dialog
     [Serializable]
     public class DialogReplica
     {
-        public string CharacterId;
         [TextArea] public string RawText;
-        public bool OverrideTime;
-        public float CustomTime;
+        public CharacterIDs CharacterId;
     }
 }

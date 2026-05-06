@@ -48,7 +48,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                 Instance.transform.position += direction * Config.ProjectileSpeed * Time.deltaTime;
                 ApplyRotation(direction);
 
-                if (Vector3.Distance(startPosition, Instance.transform.position) >= Config.MaxDistance)
+                if (Vector3.Distance(startPosition, Instance.transform.position) >= Config.MaxFlyDistance)
                 {
                     OnMaxDistanceReached(startPosition);
                     yield break;

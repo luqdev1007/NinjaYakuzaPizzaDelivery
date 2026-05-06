@@ -30,7 +30,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
         private void DropLootInternal(Vector3 position, LootTableConfig lootTable)
         {
             // 1. Определяем общее кол-во предметов, которые вылетят
-            int attempts = Random.Range(lootTable.TotalDropCount.x, lootTable.TotalDropCount.y + 1);
+            int attempts = Random.Range(lootTable.TotalDropCountRange.x, lootTable.TotalDropCountRange.y + 1);
 
             for (int i = 0; i < attempts; i++)
             {

@@ -69,7 +69,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             else
             {
                 _isIntroFinished = false;
-                _dialogFinished = _levelConfig.PreparationDialog == null;
+                _dialogFinished = _levelConfig.StartLevelDialogConfig == null;
                 _coroutines.StartPerform(ShowFinishIntro());
             }
         }
@@ -94,9 +94,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _cameraService.ShowTargetTemporarily(_finalPoint.FinalPointPosition, 14f);
 
             // 2. Параллельно может идти диалог
-            if (_levelConfig.PreparationDialog != null)
+            if (_levelConfig.StartLevelDialogConfig != null)
             {
-                _activeDialog = _popupService.OpenDialog(_levelConfig.PreparationDialog, () =>
+                _activeDialog = _popupService.OpenDialog(_levelConfig.StartLevelDialogConfig, () =>
                 {
                     _dialogFinished = true;
                     _activeDialog = null;

@@ -15,7 +15,7 @@ MonoBehaviour:
   KillBasePoints: 250
   DamagePointMultiplier: 10
   FreshnessBonus: 2
-  UpwardAccelerationPoints: 10
+  UpwardAccelerationPoints: 2
   DashPoints: 10
   CoinCollectPoints: 1
   MemoryFragmentPoints: 2

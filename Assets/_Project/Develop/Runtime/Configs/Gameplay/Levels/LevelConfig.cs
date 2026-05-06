@@ -8,31 +8,35 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Levels
     [CreateAssetMenu(menuName = "Configs/Gameplay/Levels/New Level Config", fileName = "LevelConfig", order = 54)]
     public class LevelConfig : ScriptableObject
     {
+        [Header("Level Configs")]
         [SerializeField] private List<StageConfig> _stageConfigs;
-        [SerializeField] private DialogConfig _configPrepDialog;
+        [SerializeField] private DialogConfig _startLevelDialogConfig;
 
-        [field: SerializeField] public float TargetTime { get; private set; }
-        [field: SerializeField] public string LevelName { get; private set; }
+        [Header("Level Spawners Points")]
+        [SerializeField] private List<Vector3> _enemySpawns = new List<Vector3>();
+        [SerializeField] private List<Vector3> _secretChestSpawns = new List<Vector3>();
+
+        [Header("Level Meta Info")]
         [field: SerializeField] public int LevelNumber { get; private set; }
+        [field: SerializeField] public string LevelName { get; private set; }
         [field: SerializeField] public Sprite LevelIcon { get; private set; }
+
+        [Header("Level Settings")]
+        [field: SerializeField] public GameObject LevelPrefab { get; private set; }
         [field: SerializeField] public Vector3 FinalPointPosition { get; private set; }
         [field: SerializeField] public Vector3 StartPlayerPosition { get; private set; }
-        [field: SerializeField] public GameObject LevelPrefab { get; private set; }
+        [field: SerializeField] public float TargetTime { get; private set; }
         [field: SerializeField] public float StyleStarThreshold { get; private set; }
 
-        [Header("Spawn Points")]
-        [SerializeField] private List<Vector3> _enemySpawns = new List<Vector3>();
-        public IReadOnlyList<Vector3> EnemySpawns => _enemySpawns;
-
-        [SerializeField] private List<Vector3> _secretChestSpawns = new List<Vector3>();
-        public IReadOnlyList<Vector3> SecretChestSpawns => _secretChestSpawns;
-
         public IReadOnlyList<StageConfig> StageConfigs => _stageConfigs;
-        public DialogConfig PreparationDialog => _configPrepDialog;
+        public DialogConfig StartLevelDialogConfig => _startLevelDialogConfig;
+        public IReadOnlyList<Vector3> EnemySpawns => _enemySpawns;
+        public IReadOnlyList<Vector3> SecretChestSpawns => _secretChestSpawns;
 
         public void FillSpawnersFromScene()
         {
             _enemySpawns.Clear();
+
             GameObject[] spawners = GameObject.FindGameObjectsWithTag("Spawner");
 
             foreach (var spawner in spawners)
@@ -47,6 +51,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Levels
         public void FillSecretChestsFromScene()
         {
             _secretChestSpawns.Clear();
+
             GameObject[] chests = GameObject.FindGameObjectsWithTag("SecretChest");
 
             foreach (var chest in chests)
@@ -79,10 +84,10 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Levels
 
         private void MarkDirty()
         {
-#if UNITY_EDITOR
-            UnityEditor.EditorUtility.SetDirty(this);
-            UnityEditor.AssetDatabase.SaveAssets();
-#endif
+            #if UNITY_EDITOR
+                UnityEditor.EditorUtility.SetDirty(this);
+                UnityEditor.AssetDatabase.SaveAssets();
+            #endif
         }
     }
 }

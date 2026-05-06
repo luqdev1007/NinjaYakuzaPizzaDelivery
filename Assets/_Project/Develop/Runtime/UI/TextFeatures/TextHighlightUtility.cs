@@ -9,7 +9,11 @@ namespace Assets._Project.Develop.Runtime.UI.TextFeatures
             { "CAREFULLY", "#FF0000" },
             { "PIZZA", "#FFD700" },
             { "NINJA", "#00FF00" },
-            { "TIPS", "#00FF00" } 
+            { "NINJA GIRL", "#FF9EC4" },
+            { "TIPS", "#00FF00" },
+            { "FAST", "#FF6B00" },
+            { "SECRETS", "#FF0031" },
+            { "DANGEROUS", "#FF0013" },
         };
 
         public static string ProcessText(string input)

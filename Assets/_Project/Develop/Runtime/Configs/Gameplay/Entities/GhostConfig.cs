@@ -1,13 +1,12 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
-using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 {
-    [CreateAssetMenu(fileName = "GhostConfig", menuName = "Configs/Gameplay/Enemies/New Ghost Config")]
+    [CreateAssetMenu(fileName = "GhostConfig", menuName = "Configs/Gameplay/Entities/Enemies/New Ghost Config")]
     public class GhostConfig : EntityConfig
     {
-        [field: SerializeField] public string PrefabPath { get; private set; } = "Entities/Ghost";
+        [field: SerializeField] public string PrefabPath { get; private set; } = "Entities/Enemies/Ghost";
 
         [Header("Movement")]
         [field: SerializeField] public float MovementSpeed { get; private set; } = 2f;
@@ -17,11 +16,11 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 
 
         [Header("Life Cycle")]
-        [field: SerializeField] public float MaxHealth { get; private set; } = 30f;
+        [field: SerializeField] public float MaxHealth { get; private set; } = 10f;
         [field: SerializeField] public float DeathProcessTime { get; private set; } = 0.5f;
 
         [Header("Combat")]
-        [field: SerializeField] public float ContactDamage { get; private set; } = 10f;
+        [field: SerializeField] public float ContactDamage { get; private set; } = 1f;
 
         [Header("Loot")]
         [field: SerializeField] public LootTableConfig LootTable { get; private set; }

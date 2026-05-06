@@ -14,15 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _stageConfigs:
   - {fileID: 11400000, guid: ad2ebdc480afcce4ab663bc95bc4f0f9, type: 2}
-  _configPrepDialog: {fileID: 11400000, guid: fefad9d08197dc54e83128edf854337b, type: 2}
-  <TargetTime>k__BackingField: 36
-  <LevelName>k__BackingField: Down'n'Up
-  <LevelNumber>k__BackingField: 2
-  <LevelIcon>k__BackingField: {fileID: 21300000, guid: ccda1e9d0a91445b08abb3958530382a, type: 3}
-  <FinalPointPosition>k__BackingField: {x: 7, y: 259, z: 0}
-  <StartPlayerPosition>k__BackingField: {x: -110, y: 260, z: 0}
-  <LevelPrefab>k__BackingField: {fileID: 3048164097277077460, guid: 8e5a1df5907ca6a4f88a905ff7060110, type: 3}
-  <StyleStarThreshold>k__BackingField: 1000
+  _startLevelDialogConfig: {fileID: 11400000, guid: fefad9d08197dc54e83128edf854337b, type: 2}
   _enemySpawns:
   - {x: -75, y: -0.5, z: 0}
   - {x: -67.5, y: -4, z: 0}
@@ -69,3 +61,11 @@ MonoBehaviour:
   - {x: -110.77426, y: 106.07438, z: 0}
   - {x: -107.27426, y: 106.07438, z: 0}
   - {x: -103.77426, y: 106.07438, z: 0}
+  <LevelNumber>k__BackingField: 2
+  <LevelName>k__BackingField: Down'n'Up
+  <LevelIcon>k__BackingField: {fileID: 21300000, guid: ccda1e9d0a91445b08abb3958530382a, type: 3}
+  <LevelPrefab>k__BackingField: {fileID: 3048164097277077460, guid: 8e5a1df5907ca6a4f88a905ff7060110, type: 3}
+  <FinalPointPosition>k__BackingField: {x: 7, y: 259, z: 0}
+  <StartPlayerPosition>k__BackingField: {x: -110, y: 260, z: 0}
+  <TargetTime>k__BackingField: 36
+  <StyleStarThreshold>k__BackingField: 1000
