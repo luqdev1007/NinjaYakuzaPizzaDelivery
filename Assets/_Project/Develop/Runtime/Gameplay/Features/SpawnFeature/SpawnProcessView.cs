@@ -11,7 +11,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
     [RequireComponent(typeof(Animator))]
     public class SpawnProcessView : EntityView
     {
-        private readonly int SpawningProcessKey = Animator.StringToHash("IsSpawning");
+        private static readonly int SpawningProcessKey = Animator.StringToHash("IsSpawning");
 
         [Header("Animation")]
         [SerializeField] private Animator _animator;
@@ -22,8 +22,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
         [SerializeField] private ParticleSystemStopAction _vfxStopAction = ParticleSystemStopAction.Destroy;
 
         [Header("Audio Settings")]
-        [Tooltip("Префикс звука (например, LifeCycleSpawn). Система сама найдет вариации 1, 2, 3...")]
-        [SerializeField] private string _spawnSoundPrefix = "LifeCycleSpawn";
+        [SerializeField] private SfxEvent _spawnSoundConfig; // Заменили строку на конфиг
 
         private AudioService _audioService;
         private IReadOnlyVariable<bool> _inSpawnProcess;
@@ -54,7 +53,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
 
         private void UpdateSpawnProcessState(bool value)
         {
-            _animator.SetBool(SpawningProcessKey, value);
+            if (_animator != null) _animator.SetBool(SpawningProcessKey, value);
 
             if (value)
             {
@@ -65,7 +64,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
 
         private void PlaySpawnEffect()
         {
-            if (_spawnEffectPrefab == null) return;
+            if (_spawnEffectPrefab == null)
+                return;
 
             Vector3 position = _effectSpawnPoint != null ? _effectSpawnPoint.position : transform.position;
             Quaternion rotation = _effectSpawnPoint != null ? _effectSpawnPoint.rotation : Quaternion.identity;
@@ -78,7 +78,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
 
         private void PlaySpawnAudio()
         {
-            _audioService.PlaySfxByPrefixAuto(_spawnSoundPrefix, 1f);
+            _audioService.HandleSFXEvent(_spawnSoundConfig);
         }
     }
 }

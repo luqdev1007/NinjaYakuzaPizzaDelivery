@@ -1,24 +1,28 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using Assets._Project.Develop.Runtime.Utilites.ObjectsManagment;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using System;
 using System.Collections;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 {
     public class DashView : EntityView
     {
+        private static readonly int ColorProperty = Shader.PropertyToID("_Color");
+        private static readonly int IsDashingKey = Animator.StringToHash("IsDashing");
+
         [Header("Components")]
         [SerializeField] private Animator _animator;
         [SerializeField] private SpriteRenderer _spriteRenderer;
 
-        [Header("Audio")]
-        [SerializeField] private string _dashSoundPrefix = "AbilityImpactCharge";
-        [SerializeField] private string _hitPrefix = "EnemyHit";
+        [Header("Audio (SfxEvents)")]
+        [SerializeField] private SfxEvent _dashStartConfig;
+        [SerializeField] private SfxEvent _enemyHitConfig;    // Звук при попадании по врагу во время рывка
+        [SerializeField] private SfxEvent _dashEndConfig;
 
         [Header("Afterimage (VFX)")]
         [SerializeField] private GameObject _afterimagePrefab;
@@ -39,65 +43,70 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
         private IDisposable _dashDisposable;
         private IDisposable _damageEventDisposable;
 
-        private float _spawnTimer;
+        private float _vfxSpawnTimer;
         private bool _isDashing;
-        private static readonly int ColorProperty = Shader.PropertyToID("_Color");
-        private static readonly int IsDashingKey = Animator.StringToHash("IsDashing");
 
-        private void Awake()
-        {
-            _propertyBlock = new MaterialPropertyBlock();
-        }
+        private void Awake() => _propertyBlock = new MaterialPropertyBlock();
 
         protected override void OnEntityStartedWork(Entity entity)
         {
             _audioService = entity.GetComponent<AudioComponent>().Service;
             _pool = new GameObjectPool(_afterimagePrefab, null, _poolSize);
 
-            // Основная подписка на рывок
-            _dashDisposable = entity.IsDashing.Subscribe((old, value) =>
+            // Состояние рывка (Старт / Конец)
+            _dashDisposable = entity.IsDashing.Subscribe((oldValue, newValue) =>
             {
-                _isDashing = value;
-                _spawnTimer = 0f;
-
-                if (value)
-                {
-                    // Звук
-                    _audioService.PlaySfxByPrefixAuto(_dashSoundPrefix, UnityEngine.Random.Range(1.2f, 1.4f));
-
-                    // Анимация
-                    if (_animator) _animator.SetBool(IsDashingKey, true);
-
-                    // Вспышка
-                    if (_flashCoroutine != null) StopCoroutine(_flashCoroutine);
-                    _flashCoroutine = StartCoroutine(FlashCoroutine());
-                }
-                else
-                {
-                    if (_animator) _animator.SetBool(IsDashingKey, false);
-                }
+                _isDashing = newValue;
+                if (newValue) HandleDashStart();
+                else if (oldValue) HandleDashEnd();
             });
 
-            // Звук удара во время рывка
+            // Звук удара по врагу (срабатывает, если во время рывка пролетаем сквозь цель)
             if (entity.HasComponent<TakeDamageRequest>())
             {
                 _damageEventDisposable = entity.TakeDamageEvent.Subscribe(_ =>
                 {
                     if (_isDashing)
-                        _audioService.PlaySfxByPrefixAuto(_hitPrefix, 1.4f);
+                        _audioService.HandleSFXEvent(_enemyHitConfig);
                 });
             }
+        }
+
+        private void HandleDashStart()
+        {
+            _vfxSpawnTimer = 0f;
+
+            // Звук начала рывка
+            _audioService.HandleSFXEvent(_dashStartConfig);
+
+            if (_animator) _animator.SetBool(IsDashingKey, true);
+
+            if (_flashCoroutine != null) StopCoroutine(_flashCoroutine);
+            _flashCoroutine = StartCoroutine(FlashCoroutine());
+        }
+
+        private void HandleDashEnd()
+        {
+            // Звук завершения рывка
+            _audioService.HandleSFXEvent(_dashEndConfig);
+
+            if (_animator) _animator.SetBool(IsDashingKey, false);
         }
 
         private void Update()
         {
             if (!_isDashing) return;
 
-            _spawnTimer -= Time.deltaTime;
-            if (_spawnTimer <= 0f)
+            HandleVFX();
+        }
+
+        private void HandleVFX()
+        {
+            _vfxSpawnTimer -= Time.deltaTime;
+            if (_vfxSpawnTimer <= 0f)
             {
                 SpawnAfterimage();
-                _spawnTimer = _spawnInterval;
+                _vfxSpawnTimer = _spawnInterval;
             }
         }
 
@@ -121,18 +130,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
         private IEnumerator FlashCoroutine()
         {
             float elapsed = 0f;
-            Color originalColor = Color.white; // Обычно спрайт по умолчанию белый под модификатором
-
             while (elapsed < _flashDuration)
             {
                 float t = elapsed / _flashDuration;
-                Color current = Color.Lerp(_flashColor, originalColor, t);
-
-                SetSpriteColor(current);
+                SetSpriteColor(Color.Lerp(_flashColor, Color.white, t));
                 elapsed += Time.deltaTime;
                 yield return null;
             }
-            SetSpriteColor(originalColor);
+            SetSpriteColor(Color.white);
         }
 
         private void SetSpriteColor(Color color)

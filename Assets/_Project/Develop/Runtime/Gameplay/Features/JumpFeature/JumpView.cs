@@ -12,15 +12,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
     {
         [Header("Jump Effects")]
         [SerializeField] private ParticleSystem _jumpDustPS;
-        [SerializeField] private string _jumpSoundPrefix = "MainHeroJump";
+        [SerializeField] private SfxEvent _jumpSoundConfig;
 
         [Header("Double Jump Effects")]
         [SerializeField] private ParticleSystem _doubleJumpDustPS;
-        [SerializeField] private string _doubleJumpSoundPrefix = "MainHeroJump"; // Можно использовать тот же префикс
+        [SerializeField] private SfxEvent _doubleJumpSoundConfig;
 
         [Header("Landing Effects")]
         [SerializeField] private ParticleSystem _landDustPS;
-        [SerializeField] private string _landSoundPrefix = "MainHeroLand";
+        [SerializeField] private SfxEvent _landSoundConfig;
         [SerializeField] private float _landVelocityThreshold = -5f;
 
         private AudioService _audioService;
@@ -52,24 +52,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
         private void OnJump()
         {
             _jumpDustPS?.Play();
-            // Играем рандомную вариацию прыжка (Element 5 в конфиге)
-            _audioService.PlaySfxByPrefixAuto(_jumpSoundPrefix, UnityEngine.Random.Range(0.95f, 1.15f));
+
+            _audioService.HandleSFXEvent(_jumpSoundConfig);
         }
 
         private void OnDoubleJump()
         {
             _doubleJumpDustPS?.Play();
-            // Для двойного прыжка можно чуть завысить питч для эффекта усиления
-            _audioService.PlaySfxByPrefixAuto(_doubleJumpSoundPrefix, UnityEngine.Random.Range(1.2f, 1.3f));
+
+            _audioService.HandleSFXEvent(_doubleJumpSoundConfig);
         }
 
         private void OnGroundedChanged(bool oldValue, bool value)
         {
-            // Если приземлились с большой скоростью
             if (value && !oldValue && _velocityYBeforeLand < _landVelocityThreshold)
             {
                 _landDustPS?.Play();
-                _audioService.PlaySfxByPrefixAuto(_landSoundPrefix, UnityEngine.Random.Range(0.9f, 1.1f));
+                _audioService.HandleSFXEvent(_landSoundConfig);
             }
         }
 

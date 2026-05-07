@@ -11,6 +11,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
     [RequireComponent(typeof(Animator))]
     public class MovementView : EntityView
     {
+        private static readonly int IsRunningKey = Animator.StringToHash("IsRunning");
+        private static readonly int RunSpeedMultiplierKey = Animator.StringToHash("RunAnimationSpeedMultiplier");
+
         [Header("Animator")]
         [SerializeField] private Animator _animator;
         [SerializeField, Min(0.1f)] private float _maxSpeedMultiplier = 2f;
@@ -25,11 +28,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         [SerializeField] private float _startSpeedThreshold = 1f;
 
         [Header("Audio")]
-        [SerializeField] private string _footstepPrefix = "MainHeroFootstep";
+        [SerializeField] private SfxEvent _footstepConfig;
         [SerializeField] private float _baseFootstepInterval = 0.35f;
-
-        private readonly int IsRunningKey = Animator.StringToHash("IsRunning");
-        private readonly int RunSpeedMultiplierKey = Animator.StringToHash("RunAnimationSpeedMultiplier");
 
         private AudioService _audioService;
         private Rigidbody2D _rigidbody;
@@ -66,7 +66,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
             _wasMoving = _isMoving.Value;
 
-            // Подписка на изменение состояния движения
             _isMovingDisposable = _isMoving.Subscribe((oldValue, newValue) =>
             {
                 _animator.SetBool(IsRunningKey, newValue);
@@ -83,7 +82,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             bool grounded = _isGrounded.Value;
             bool moving = _isMoving.Value;
 
-            // Вычисляем интенсивность бега
             float speedRatio = Mathf.Clamp01(Mathf.Abs(velocityX) / _maxSpeed);
 
             UpdateAnimationSpeed(speedRatio);
@@ -106,22 +104,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             bool isFastEnough = Mathf.Abs(_rigidbody.linearVelocity.x) > _runDustSpeedThreshold;
             bool isRunning = grounded && moving && isFastEnough;
 
-            // Частицы бега
             if (_runDustPS != null)
             {
                 if (isRunning && !_runDustPS.isPlaying) _runDustPS.Play();
                 else if (!isRunning && _runDustPS.isPlaying) _runDustPS.Stop();
             }
 
-            // Звук шагов
-            if (isRunning && _isDashing.Value == false && _isSliding.Value == false && _isOnSlope.Value == false)
+            if (isRunning && !_isDashing.Value && !_isSliding.Value && !_isOnSlope.Value)
             {
                 float currentMultiplier = Mathf.Lerp(1f, _maxSpeedMultiplier, speedRatio);
                 _footstepTimer -= Time.deltaTime * currentMultiplier;
 
                 if (_footstepTimer <= 0f)
                 {
-                    _audioService.PlaySfxByPrefixAuto(_footstepPrefix, UnityEngine.Random.Range(0.9f, 1.1f));
+                    _audioService.HandleSFXEvent(_footstepConfig);
                     _footstepTimer = _baseFootstepInterval;
                 }
             }
@@ -135,12 +131,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         {
             if (!grounded || _brakeDustPS == null) return;
 
-            // Проверка резкой смены направления
             bool changingDirection =
                 (_previousVelocityX > _brakeSpeedThreshold && velocityX < -_brakeDirectionThreshold) ||
                 (_previousVelocityX < -_brakeSpeedThreshold && velocityX > _brakeDirectionThreshold);
 
-            // Проверка резкой остановки
             bool hardStop =
                 Mathf.Abs(_previousVelocityX) > _brakeSpeedThreshold &&
                 Mathf.Abs(velocityX) < _brakeDirectionThreshold;

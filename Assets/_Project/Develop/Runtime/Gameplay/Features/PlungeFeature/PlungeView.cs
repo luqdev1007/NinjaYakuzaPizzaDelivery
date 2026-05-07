@@ -11,13 +11,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 {
     public class PlungeView : EntityView
     {
+        private static readonly int IsPlungingKey = Animator.StringToHash("IsPlunging");
+
         [Header("Animator")]
         [SerializeField] private Animator _animator;
-        private readonly int IsPlungingKey = Animator.StringToHash("IsPlunging");
 
         [Header("VFX - Flight (Ramp up)")]
         [SerializeField] private ParticleSystem _airConePS;
         [SerializeField] private ParticleSystem[] _fireCones;
+
         [Tooltip("Время до достижения максимальной силы эффектов")]
         [SerializeField] private float _fullPowerTime = 0.5f;
         [SerializeField] private float _maxAirEmission = 40f;
@@ -27,8 +29,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         [SerializeField] private ParticleSystem _impactPS;
 
         [Header("Audio Settings")]
-        [SerializeField] private string _plungeLoopPrefix = "AbilityImpactPlungeLoop";
-        [SerializeField] private string _plungeLandPrefix = "AbilityImpactPlunge";
+        [SerializeField] private SfxEvent _plungeLoopConfig;
+        [SerializeField] private SfxEvent _plungeLandConfig;
         [SerializeField] private float _minPitch = 1f;
         [SerializeField] private float _maxPitch = 1.6f;
 
@@ -44,7 +46,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         private IReadOnlyVariable<bool> _isPlunging;
         private IReadOnlyVariable<bool> _isGrounded;
 
-        private string _activeLoopId;
+        private SfxEvent _activeLoopEvent;
         private float _flightTimer;
         private bool _isSquashing;
         private Vector3 _defaultScale;
@@ -66,7 +68,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             _plungeDisposable = _isPlunging.Subscribe(OnPlungeChanged);
             _groundedDisposable = _isGrounded.Subscribe(OnGroundedChanged);
 
-            // Синхронизируем начальное состояние
             _animator.SetBool(IsPlungingKey, _isPlunging.Value);
         }
 
@@ -74,7 +75,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         {
             if (!_isPlunging.Value) return;
 
-            // Считаем прогресс полета
             _flightTimer += Time.deltaTime;
             float ratio = Mathf.Clamp01(_flightTimer / _fullPowerTime);
 
@@ -92,11 +92,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
                 _flightTimer = 0f;
                 _airConePS?.Play();
 
-                // Запуск зацикленного звука (используем твой метод из AudioService)
-                _activeLoopId = _audioService.PlaySfxVariationLoop(_plungeLoopPrefix, 1, 3);
 
-                if (!string.IsNullOrEmpty(_activeLoopId))
-                    _audioService.SetPitch(_activeLoopId, _minPitch);
+                _audioService.PlayLoopEvent(_plungeLoopConfig);
+                _activeLoopEvent = _plungeLoopConfig;
+
+                if (_activeLoopEvent != null)
+                    _audioService.SetLoopPitch(_activeLoopEvent, _minPitch);
             }
             else
             {
@@ -108,16 +109,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         {
             if (grounded && _flightTimer > 0.05f)
             {
-                // 1. Рассчитываем множитель силы (от 0.2 до 1.5 в зависимости от времени полета)
                 float impactRatio = Mathf.Clamp(_flightTimer / _fullPowerTime, 0.2f, 1.5f);
 
                 if (_impactPS != null)
                 {
                     var main = _impactPS.main;
-                    // Можно масштабировать размер частиц
                     main.startSizeMultiplier = impactRatio;
 
-                    // Масштабируем количество частиц в Burst
                     var emission = _impactPS.emission;
                     var burst = emission.GetBurst(0);
                     burst.count = new ParticleSystem.MinMaxCurve(10 * impactRatio, 30 * impactRatio);
@@ -126,9 +124,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
                     _impactPS.Play();
                 }
 
-                // 2. Звук удара (делаем громче и ниже при сильном падении)
-                float landPitch = Mathf.Lerp(1.5f, 0.8f, impactRatio - 0.2f);
-                _audioService.PlaySfxVariation(_plungeLandPrefix, 1, 3, landPitch);
+                _audioService.HandleSFXEvent(_plungeLandConfig);
 
                 StartSquash();
                 StopFlightEffects();
@@ -137,18 +133,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private void UpdateVFXPower(float ratio)
         {
-            // Воздушный конус плавно усиливается с нуля
             if (_airConePS != null)
             {
                 var emission = _airConePS.emission;
                 emission.rateOverTime = Mathf.Lerp(0, _maxAirEmission, ratio);
             }
 
-            // Огонь начинает появляться только после 40% прогресса полета
             float fireRatio = Mathf.InverseLerp(0.4f, 1.0f, ratio);
+
             foreach (var ps in _fireCones)
             {
-                if (ps == null) continue;
+                if (ps == null) 
+                    continue;
 
                 var emission = ps.emission;
                 emission.rateOverTime = Mathf.Lerp(0, _maxFireEmission, fireRatio);
@@ -160,18 +156,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private void UpdateSfxPower(float ratio)
         {
-            if (string.IsNullOrEmpty(_activeLoopId)) return;
+            if (_activeLoopEvent == null) 
+                return;
 
-            // Питч звука растет вместе с визуалом
             float targetPitch = Mathf.Lerp(_minPitch, _maxPitch, ratio);
-            _audioService.SetPitch(_activeLoopId, targetPitch);
+            _audioService.SetLoopPitch(_activeLoopEvent, targetPitch);
         }
 
         private void HandleStretch()
         {
             if (_viewContainer == null || _isSquashing) return;
 
-            // Вытягиваем по вертикали, сужаем по горизонтали
             Vector3 targetScale = new Vector3(
                 _defaultScale.x * (2f - _stretchY),
                 _defaultScale.y * _stretchY,
@@ -191,7 +186,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private IEnumerator SquashRoutine()
         {
-            // Сплющиваем при ударе
             Vector3 squashScale = new Vector3(
                 _defaultScale.x * (2f - _squashY),
                 _defaultScale.y * _squashY,
@@ -200,11 +194,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             _viewContainer.localScale = squashScale;
 
             float elapsed = 0;
+
             while (elapsed < _squashDuration)
             {
                 elapsed += Time.deltaTime;
                 float t = elapsed / _squashDuration;
-                // Плавно возвращаемся в норму
                 _viewContainer.localScale = Vector3.Lerp(squashScale, _defaultScale, t);
                 yield return null;
             }
@@ -218,11 +212,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             _airConePS?.Stop();
             foreach (var ps in _fireCones) ps?.Stop();
 
-            if (!string.IsNullOrEmpty(_activeLoopId))
+            if (_activeLoopEvent != null)
             {
-                // ИСПОЛЬЗУЕМ ТВОЙ МЕТОД StopSfx
-                _audioService.StopSfx(_activeLoopId);
-                _activeLoopId = null;
+                _audioService.StopLoopEvent(_activeLoopEvent);
+                _activeLoopEvent = null;
             }
 
             _flightTimer = 0f;

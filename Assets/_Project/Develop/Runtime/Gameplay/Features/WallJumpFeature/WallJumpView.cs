@@ -10,9 +10,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
 {
     public class WallJumpView : EntityView
     {
+        [Header("Components")]
         [SerializeField] private Transform _viewContainer;
+
+        [Header("Settings")]
         [SerializeField] private float _rotationDuration = 0.4f;
-        [SerializeField] private string _jumpSfx = "AbilityWallJump";
+
+        [Header("Audio")]
+        [SerializeField] private SfxEvent _wallJumpSfxConfig;
 
         private AudioService _audioService;
         private IDisposable _disposable;
@@ -33,20 +38,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
 
         private void PlayJumpSequence()
         {
-            _audioService.PlaySfxByPrefixAuto(_jumpSfx, 1f);
+            // Звук прыжка от стены через конфиг
+            _audioService.HandleSFXEvent(_wallJumpSfxConfig);
 
             if (_viewContainer == null) return;
 
-            // Сбрасываем предыдущие анимации, если игрок спамит прыжки
+            // Сбрасываем предыдущие анимации
             _viewContainer.DOKill();
 
-            // 1. Делаем сальто 360 градусов
+            // 1. Сальто 360 градусов (направление зависит от поворота персонажа)
             float direction = -Mathf.Sign(transform.localScale.x);
             _viewContainer.DOLocalRotate(new Vector3(0, 0, 360 * direction), _rotationDuration, RotateMode.FastBeyond360)
                 .SetEase(Ease.OutQuad)
                 .OnComplete(() => _viewContainer.localRotation = Quaternion.identity);
 
-            // 2. "Плющим" в комок (Squash)
+            // 2. Squash эффект
             _viewContainer.DOScale(new Vector3(0.8f, 0.8f, 1f), _rotationDuration * 0.5f)
                 .SetLoops(2, LoopType.Yoyo)
                 .SetEase(Ease.InOutQuad);
@@ -56,7 +62,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
         {
             base.Cleanup(entity);
             _disposable?.Dispose();
-            _viewContainer.DOKill();
+            if (_viewContainer != null) _viewContainer.DOKill();
         }
     }
 }

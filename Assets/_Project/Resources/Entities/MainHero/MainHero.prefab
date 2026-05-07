@@ -54813,7 +54813,6 @@ GameObject:
   - component: {fileID: 2668767352308528835}
   - component: {fileID: 2644220813990809955}
   - component: {fileID: 8833046961890528406}
-  - component: {fileID: 4185340516029209070}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -55007,8 +55006,8 @@ MonoBehaviour:
   _maxAirEmission: 40
   _maxFireEmission: 45
   _impactPS: {fileID: 5376747153504126631}
-  _plungeLoopPrefix: AbilityImpactPlungeLoop
-  _plungeLandPrefix: AbilityImpactPlunge
+  _plungeLoopConfig: {fileID: 11400000, guid: e11a7c91b90ef7045a61fc247db42da8, type: 2}
+  _plungeLandConfig: {fileID: 11400000, guid: 7cafa9baa777eab4a8ef2fe1c533a314, type: 2}
   _minPitch: 1.2
   _maxPitch: 2
   _viewContainer: {fileID: 7204672871045459169}
@@ -55037,7 +55036,7 @@ MonoBehaviour:
   _brakeDirectionThreshold: 0.5
   _startDustPS: {fileID: 703546030212057889}
   _startSpeedThreshold: 1
-  _footstepPrefix: MainHeroFootstep
+  _footstepConfig: {fileID: 11400000, guid: 887cdbe5da39d694d9c6ee9d5e679e1a, type: 2}
   _baseFootstepInterval: 0.35
 --- !u!114 &3634382198414907900
 MonoBehaviour:
@@ -55074,7 +55073,7 @@ MonoBehaviour:
   _spawnEffectPrefab: {fileID: 4287474839184976492, guid: e95d97e26829f8b40ab4cef5ab24aa38, type: 3}
   _effectSpawnPoint: {fileID: 5732669991004532747}
   _vfxStopAction: 2
-  _spawnSoundPrefix: LifeCycleMainHeroSpawn
+  _spawnSoundConfig: {fileID: 11400000, guid: 0fe6b2a7d292256448f2e0efc87eb2cf, type: 2}
 --- !u!114 &4806820538767309212
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55091,7 +55090,7 @@ MonoBehaviour:
   _frictionPS: {fileID: 7925763156243418047}
   _maxEmissionRate: 50
   _vfxRampUpTime: 0.3
-  _slideLoopPrefix: AbilityImpactSlide
+  _slideLoopSoundConfig: {fileID: 11400000, guid: c4f37f3085ab78c46a0daf5dcbdcd905, type: 2}
   _minPitch: 0.9
   _maxPitch: 1.3
   _viewContainer: {fileID: 7204672871045459169}
@@ -55119,8 +55118,8 @@ MonoBehaviour:
   _effectOffset: 0.4
   _vibrationStrength: 0.02
   _vibrationSpeed: 20
-  _hitPrefix: WallHit
-  _loopPrefix: WallHitLoop
+  _hitConfig: {fileID: 11400000, guid: e339db4a43386d04e9a4433b8aac8142, type: 2}
+  _loopConfig: {fileID: 11400000, guid: bdde204d2f43f35439a55c24ef5e378b, type: 2}
 --- !u!114 &636834125236666332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55135,8 +55134,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animator: {fileID: 1274124274879070163}
   _spriteRenderer: {fileID: 1593908433206030503}
-  _dashSoundPrefix: AbilityImpactCharge
-  _hitPrefix: EnemyHit
+  _dashStartConfig: {fileID: 11400000, guid: 6f7fa1b29244752438f353e83644db7f, type: 2}
+  _dashProcessConfig: {fileID: 11400000, guid: ed292481982bfd14bbcf21dc9d92d6c4, type: 2}
+  _enemyHitConfig: {fileID: 11400000, guid: ed292481982bfd14bbcf21dc9d92d6c4, type: 2}
+  _dashEndConfig: {fileID: 11400000, guid: ba9579496c556cb44b71e6fba7d2a3fe, type: 2}
+  _baseProcessInterval: 0.12
+  _pitchStep: 0.05
+  _maxProcessSounds: 3
   _afterimagePrefab: {fileID: 2092742535912402765, guid: bfa1d847138cafb4dbc0719e21491257, type: 3}
   _spawnInterval: 0.04
   _afterimageLifetime: 0.2
@@ -55157,11 +55161,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _jumpDustPS: {fileID: 1701715997576119759}
-  _jumpSoundPrefix: MainHeroJump
+  _jumpSoundConfig: {fileID: 11400000, guid: 198b3916c9b492f408a9c4129c8c48a6, type: 2}
   _doubleJumpDustPS: {fileID: 8950352355068528625}
-  _doubleJumpSoundPrefix: MainHeroDoubleJump
+  _doubleJumpSoundConfig: {fileID: 11400000, guid: a47487d5a10645f4ca333636215e8bce, type: 2}
   _landDustPS: {fileID: 823035172401845203}
-  _landSoundPrefix: MainHeroLand
+  _landSoundConfig: {fileID: 11400000, guid: bbfc88a5274f765499acaa36a31f7789, type: 2}
   _landVelocityThreshold: -5
 --- !u!114 &5742556136973062996
 MonoBehaviour:
@@ -55208,8 +55212,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 1274124274879070163}
-  _switchItemSfxPrefix: SwitchItem
-  _throwSfxPrefix: AbilityImpactHeroThrow
+  _switchItemSfxConfig: {fileID: 11400000, guid: d4699d5211df4fe489ae189b07ed5acf, type: 2}
+  _throwSfxConfig: {fileID: 11400000, guid: d5c5feb40f1e605488159e0a1327ba40, type: 2}
 --- !u!114 &8833046961890528406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55224,22 +55228,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _viewContainer: {fileID: 7204672871045459169}
   _rotationDuration: 0.4
-  _jumpSfx: AbilityWallJump
---- !u!114 &4185340516029209070
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2274547176414386936}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28b5004479cec5e43b68c64db0bdcaf5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _sparkPS: {fileID: 1680697946607388896}
-  _activationSfxPrefix: DriveActivation
-  _loopSfxPrefix: DriveLoop
+  _wallJumpSfxConfig: {fileID: 11400000, guid: 23ca54805ccd89b4f859f0aa94c7f840, type: 2}
 --- !u!1 &2305303809177581567
 GameObject:
   m_ObjectHideFlags: 0

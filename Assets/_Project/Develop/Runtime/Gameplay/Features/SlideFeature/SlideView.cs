@@ -11,9 +11,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 {
     public class SlideView : EntityView
     {
+        private static readonly int IsSlidingKey = Animator.StringToHash("IsSliding");
+
         [Header("Animator")]
         [SerializeField] private Animator _animator;
-        private readonly int IsSlidingKey = Animator.StringToHash("IsSliding");
 
         [Header("VFX - Friction & Dust")]
         [SerializeField] private ParticleSystem _frictionPS;
@@ -21,7 +22,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         [SerializeField] private float _vfxRampUpTime = 0.3f;
 
         [Header("Audio Settings")]
-        [SerializeField] private string _slideLoopPrefix = "AbilityImpactSlide";
+        [SerializeField] private SfxEvent _slideLoopSoundConfig; 
         [SerializeField] private float _minPitch = 0.9f;
         [SerializeField] private float _maxPitch = 1.3f;
 
@@ -38,7 +39,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         private IReadOnlyVariable<bool> _isSliding;
         private IReadOnlyVariable<bool> _isOnSlope;
 
-        private string _activeLoopId;
+        private SfxEvent _activeLoopEvent; 
         private float _slideTimer;
         private Vector3 _defaultScale;
         private Quaternion _defaultRotation;
@@ -77,7 +78,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         {
             if (_viewContainer == null) return;
 
-            // 1. Деформация (Stretch & Squash) остается прежней
             Vector3 targetScale = _defaultScale;
             if (_isSliding.Value)
             {
@@ -85,18 +85,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
             }
             _viewContainer.localScale = Vector3.Lerp(_viewContainer.localScale, targetScale, Time.deltaTime * _lerpSpeed);
 
-            // 2. Исправленное вращение
             float targetZ = 0f;
 
             if (_isSliding.Value)
             {
                 if (_isOnSlope.Value && _slopeSystem != null)
                 {
-                    // Получаем угол наклона поверхности. 
-                    // Мы вычитаем 90 градусов из угла нормали, чтобы спрайт стал параллелен земле.
                     targetZ = Vector2.SignedAngle(Vector2.up, _slopeSystem.SlopeNormal);
-
-                    // Если персонаж смотрит влево (scale.x < 0), угол нужно инвертировать для корректного отображения
                     float direction = Mathf.Sign(transform.localScale.x);
                     targetZ += (direction > 0 ? -90f : 90f);
                 }
@@ -118,8 +113,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
             if (isSliding)
             {
                 _slideTimer = 0f;
-                if (_frictionPS != null) _frictionPS.Play();
-                _activeLoopId = _audioService.PlaySfxVariationLoop(_slideLoopPrefix, 1, 3);
+                if (_frictionPS != null) 
+                    _frictionPS.Play();
+
+                _audioService.PlayLoopEvent(_slideLoopSoundConfig);
+                _activeLoopEvent = _slideLoopSoundConfig;
             }
             else
             {
@@ -136,18 +134,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 
         private void UpdateAudio(float intensity)
         {
-            if (string.IsNullOrEmpty(_activeLoopId)) return;
+            if (_activeLoopEvent == null) 
+                return;
+
             float targetPitch = Mathf.Lerp(_minPitch, _maxPitch, intensity);
-            _audioService.SetPitch(_activeLoopId, targetPitch);
+            _audioService.SetLoopPitch(_activeLoopEvent, targetPitch);
         }
 
         private void StopEffects()
         {
             if (_frictionPS != null) _frictionPS.Stop();
-            if (!string.IsNullOrEmpty(_activeLoopId))
+
+            if (_activeLoopEvent != null)
             {
-                _audioService.StopSfx(_activeLoopId);
-                _activeLoopId = null;
+                _audioService.StopLoopEvent(_activeLoopEvent);
+                _activeLoopEvent = null;
             }
         }
 

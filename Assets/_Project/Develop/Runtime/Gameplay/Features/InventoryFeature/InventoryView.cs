@@ -1,39 +1,45 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement; // Не забудь импорт
+using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using UnityEngine;
 
-public class InventoryView : EntityView
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
 {
-    [SerializeField] private Animator _animator;
-    [SerializeField] private string _switchItemSfxPrefix = "ItemSwitch"; // Префикс для звука "вжух"
-    [SerializeField] private string _throwSfxPrefix = "AbilityImpactHeroThrow";
-
-    private static readonly int ThrowTrigger = Animator.StringToHash("Throw");
-    private AudioService _audioService;
-
-    protected override void OnEntityStartedWork(Entity entity)
+    public class InventoryView : EntityView
     {
-        _audioService = entity.GetComponent<AudioComponent>().Service;
+        [SerializeField] private Animator _animator;
 
-        // Подписка на бросок
-        entity.ThrowEvent.Subscribe(OnThrow);
+        [Header("Audio Events")]
+        [SerializeField] private SfxEvent _switchItemSfxConfig;
+        [SerializeField] private SfxEvent _throwSfxConfig;
 
-        // Подписка на смену предмета (пропускаем первое значение при старте через Subscribe)
-        entity.CurrentThrowableIndex.Subscribe((oldIdx, newIdx) => OnItemSwitched());
-    }
+        private static readonly int ThrowTrigger = Animator.StringToHash("Throw");
+        private AudioService _audioService;
 
-    private void OnThrow()
-    {
-        _animator.SetTrigger(ThrowTrigger);
+        protected override void OnEntityStartedWork(Entity entity)
+        {
+            _audioService = entity.GetComponent<AudioComponent>().Service;
 
-        _audioService?.PlaySfxByPrefixAuto(_throwSfxPrefix, Random.Range(0.9f, 1.1f));
-    }
+            // Подписка на бросок
+            entity.ThrowEvent.Subscribe(OnThrow);
 
-    private void OnItemSwitched()
-    {
-        // Проигрываем звук смены
-        _audioService?.PlaySfxByPrefixAuto(_switchItemSfxPrefix, Random.Range(0.95f, 1.05f));
+            // Подписка на смену предмета
+            entity.CurrentThrowableIndex.Subscribe((oldIdx, newIdx) => OnItemSwitched());
+        }
+
+        private void OnThrow()
+        {
+            if (_animator) _animator.SetTrigger(ThrowTrigger);
+
+            // Проигрываем эвент броска
+            _audioService?.HandleSFXEvent(_throwSfxConfig);
+        }
+
+        private void OnItemSwitched()
+        {
+            // Проигрываем эвент смены предмета
+            _audioService?.HandleSFXEvent(_switchItemSfxConfig);
+        }
     }
 }

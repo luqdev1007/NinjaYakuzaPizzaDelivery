@@ -26,15 +26,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
         [SerializeField] private float _vibrationSpeed = 30f;
 
         [Header("Audio Settings")]
-        [SerializeField] private string _hitPrefix = "WallHit";      // WallHit1, WallHit2...
-        [SerializeField] private string _loopPrefix = "WallHitLoop"; // WallHitLoop1, WallHitLoop2...
+        [SerializeField] private SfxEvent _hitConfig;  // Вместо _hitPrefix
+        [SerializeField] private SfxEvent _loopConfig; // Вместо _loopPrefix
 
         private AudioService _audioService;
         private IReadOnlyVariable<bool> _isWallHanging;
         private IReadOnlyVariable<float> _wallDirection;
         private IDisposable _isWallHangingDisposable;
 
-        private string _activeLoopId;
+        private SfxEvent _activeLoopEvent; // Храним ссылку на активный эвент лупа
         private Vector3 _defaultContainerPos;
         private float _vibrationTimer;
         private bool _isCurrentlyHanging;
@@ -68,45 +68,43 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
             _isCurrentlyHanging = isHanging;
             _vibrationTimer = 0f;
 
-            // 1. Анимация
             if (_animator != null)
                 _animator.SetBool(IsWallHangingKey, isHanging);
 
-            // 2. Эффекты
             ToggleEffects(isHanging);
 
             if (isHanging)
                 PositionEffects();
 
-            // 3. Звук
             HandleAudio(isHanging);
 
-            // Сброс позиции контейнера при выходе
             if (!isHanging && _viewContainer != null)
                 _viewContainer.localPosition = _defaultContainerPos;
         }
 
         private void HandleAudio(bool isHanging)
         {
-            // Префикс из конфига "Hero Attack Hit"
-            // Но судя по коду AudioService, мы передаем просто ID или часть префикса.
-            // Если используем PlaySfxVariation, то добавим Hero Attack Hit к поиску, если это нужно сервису.
-
             if (isHanging)
             {
-                // Одиночный удар при зацепе (вариации 1-4 согласно скрину)
-                _audioService.PlaySfxVariation(_hitPrefix, 1, 4, UnityEngine.Random.Range(0.9f, 1.1f));
+                // Одиночный удар при зацепе (рандом и громкость теперь в ассете)
+                _audioService.HandleSFXEvent(_hitConfig);
 
-                // Зацикленный звук скольжения (вариации 1-2 согласно скрину)
-                _activeLoopId = _audioService.PlaySfxVariationLoop(_loopPrefix, 1, 2);
+                // Зацикленный звук скольжения
+                _audioService.PlayLoopEvent(_loopConfig);
+                _activeLoopEvent = _loopConfig;
             }
             else
             {
-                if (!string.IsNullOrEmpty(_activeLoopId))
-                {
-                    _audioService.StopSfx(_activeLoopId);
-                    _activeLoopId = null;
-                }
+                StopLoop();
+            }
+        }
+
+        private void StopLoop()
+        {
+            if (_activeLoopEvent != null)
+            {
+                _audioService.StopLoopEvent(_activeLoopEvent);
+                _activeLoopEvent = null;
             }
         }
 
@@ -146,8 +144,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
             base.Cleanup(entity);
             _isWallHangingDisposable?.Dispose();
 
-            if (!string.IsNullOrEmpty(_activeLoopId))
-                _audioService.StopSfx(_activeLoopId);
+            StopLoop();
 
             if (_viewContainer != null)
                 _viewContainer.localPosition = _defaultContainerPos;
