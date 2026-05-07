@@ -1,5 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -141,5 +140,70 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
         }
 
         private bool IsSpamming(string id) => _lastPlayedTimes.TryGetValue(id, out float t) && (Time.time - t) < GlobalSfxCooldown;
+
+        private readonly Dictionary<SfxEvent, float> _eventLastPlayedTimes = new();
+
+        public void HandleSFXEvent(SfxEvent sfxEvent)
+        {
+            if (sfxEvent == null || sfxEvent.Clips == null || sfxEvent.Clips.Length == 0)
+                return;
+
+            if (_eventLastPlayedTimes.TryGetValue(sfxEvent, out float lastTime))
+            {
+                if (Time.time - lastTime < sfxEvent.Cooldown)
+                    return;
+            }
+
+            AudioClip clip = sfxEvent.GetRandomClip();
+            float pitch = sfxEvent.GetRandomPitch();
+
+            _eventLastPlayedTimes[sfxEvent] = Time.time;
+
+            _manager.PlaySfx(clip, sfxEvent.Volume, pitch, sfxEvent.IsUi);
+        }
+
+        // В поля класса
+        private readonly Dictionary<SfxEvent, AudioSource> _activeEventLoops = new();
+
+        // В методы класса
+        public void PlayLoopEvent(SfxEvent sfxEvent, float volMult = 1f)
+        {
+            if (sfxEvent == null || sfxEvent.Clips == null || sfxEvent.Clips.Length == 0) return;
+            if (_activeEventLoops.ContainsKey(sfxEvent)) return;
+
+            AudioSource source = _manager.PlaySfxReturnSource(
+                sfxEvent.GetRandomClip(),
+                sfxEvent.Volume * volMult,
+                sfxEvent.GetRandomPitch(),
+                sfxEvent.IsUi
+            );
+
+            if (source != null)
+            {
+                source.loop = true;
+                _activeEventLoops[sfxEvent] = source;
+            }
+        }
+
+        public void StopLoopEvent(SfxEvent sfxEvent)
+        {
+            if (sfxEvent != null && _activeEventLoops.TryGetValue(sfxEvent, out var source))
+            {
+                if (source != null)
+                {
+                    source.Stop();
+                    source.loop = false;
+                }
+                _activeEventLoops.Remove(sfxEvent);
+            }
+        }
+
+        public void SetLoopPitch(SfxEvent sfxEvent, float targetPitch)
+        {
+            if (sfxEvent != null && _activeEventLoops.TryGetValue(sfxEvent, out var source))
+            {
+                if (source != null) source.pitch = targetPitch;
+            }
+        }
     }
 }

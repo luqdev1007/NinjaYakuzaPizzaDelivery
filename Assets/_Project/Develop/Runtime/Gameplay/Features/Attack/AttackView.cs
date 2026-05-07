@@ -18,9 +18,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         [Tooltip("Помести сюда 3 разных объекта с партиклами слэша")]
         [SerializeField] private ParticleSystem[] _slashParticles;
 
-        [Header("Audio (Auto-detected)")]
-        [SerializeField] private string _swingPrefix = "SwordSwing";
-        [SerializeField] private string _hitPrefix = "EnemyHit";
+        [Header("Audio")]
+        [SerializeField] private SfxEvent _swingSoundConfig;
+        [SerializeField] private SfxEvent _hitSondConfig;
+
 
         private AudioService _audioService;
         private Transform _rootTransform;
@@ -58,7 +59,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             if (current)
             {
                 _animator.SetTrigger(AttackTrigger);
-                _audioService.PlaySfxByPrefixAuto(_swingPrefix, UnityEngine.Random.Range(0.95f, 1.05f));
+                _audioService.HandleSFXEvent(_swingSoundConfig);
             }
         }
 
@@ -66,7 +67,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private void OnSuccessfulHit()
         {
-            _audioService.PlaySfxByPrefixAuto(_hitPrefix, UnityEngine.Random.Range(0.95f, 1.1f));
+            _audioService.HandleSFXEvent(_hitSondConfig);
         }
 
         private void PlaySlashEffect()

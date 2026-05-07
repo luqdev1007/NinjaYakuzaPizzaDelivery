@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0ef67415915e8e4f8c2658434fccf52, type: 3}
+  m_Name: DashImpactSFX
+  m_EditorClassIdentifier: 
+  Clips:
+  - {fileID: 8300000, guid: 2375a2e9c36210247905281915279048, type: 3}
+  - {fileID: 8300000, guid: 1c3ec3dbbcbf4f0469749df7bc98f9bc, type: 3}
+  - {fileID: 8300000, guid: de6632bd4c26c254aaec920afd3cf51a, type: 3}
+  - {fileID: 8300000, guid: febd9a8f9c07ee040aecf9811a1927f8, type: 3}
+  Volume: 1
+  PitchRange: {x: 0.7, y: 1.1}
+  Cooldown: 0.05
+  IsUi: 0

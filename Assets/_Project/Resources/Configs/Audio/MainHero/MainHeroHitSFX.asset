@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0ef67415915e8e4f8c2658434fccf52, type: 3}
+  m_Name: MainHeroHitSFX
+  m_EditorClassIdentifier: 
+  Clips:
+  - {fileID: 8300000, guid: 056f29afc65df3d4ea0bbe6cc82f40e0, type: 3}
+  - {fileID: 8300000, guid: 14e2704731bce7a4989940d45b4b9dca, type: 3}
+  - {fileID: 8300000, guid: 6c79ccac5a0541f4782bb207f4ab49a6, type: 3}
+  - {fileID: 8300000, guid: b14414cc0143858408a227ec2c2b362d, type: 3}
+  - {fileID: 8300000, guid: 31334bfe45d3f154fbf612518b18296b, type: 3}
+  - {fileID: 8300000, guid: 3e56644179215194989c5167eac14044, type: 3}
+  - {fileID: 8300000, guid: 942cdd2be0888ec4197db9304bdb0d4b, type: 3}
+  - {fileID: 8300000, guid: 4340640fdce49d141b910def4b956c55, type: 3}
+  - {fileID: 8300000, guid: ebd3136f9283713489fb85b1d665a354, type: 3}
+  Volume: 1
+  PitchRange: {x: 0.7, y: 1.1}
+  Cooldown: 0.05
+  IsUi: 0

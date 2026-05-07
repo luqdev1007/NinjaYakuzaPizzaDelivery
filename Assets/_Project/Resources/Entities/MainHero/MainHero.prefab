@@ -54931,8 +54931,8 @@ MonoBehaviour:
   - {fileID: 195415887643757542}
   - {fileID: 4561348815981717997}
   - {fileID: 4627911084152384592}
-  _swingPrefix: SwordSwing
-  _hitPrefix: EnemyHit
+  _swingSoundConfig: {fileID: 11400000, guid: b87a9417748c9e94b9c1a601fe60b5e6, type: 2}
+  _hitSondConfig: {fileID: 11400000, guid: c044858702341b548b6db38328eb4e99, type: 2}
 --- !u!114 &2097302697212107047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54946,7 +54946,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 1274124274879070163}
-  _deathSoundPrefix: MainHeroDeath
+  _deathSoundConfig: {fileID: 11400000, guid: 9a620e3fc36c0494b8890a0582a1cf9c, type: 2}
 --- !u!114 &5087571020803762458
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54962,9 +54962,9 @@ MonoBehaviour:
   _animator: {fileID: 1274124274879070163}
   _airParticlesPS: {fileID: 425958346411598012}
   _viewContainer: {fileID: 7204672871045459169}
-  _startGlidePrefix: GlideStart
-  _loopGlidePrefix: GlideLoop
-  _endGlidePrefix: GlideStart
+  _glideStartSoundConfig: {fileID: 11400000, guid: 6032950e66a526f458eb7ca3d1d60e5b, type: 2}
+  _glideLoopSoundConfig: {fileID: 11400000, guid: d1c4e8082a2815b4f8987760478f8d62, type: 2}
+  _glideEndSoundConfig: {fileID: 11400000, guid: 171ee91c299f2864db2219105478f631, type: 2}
   _minPitch: 0.9
   _maxPitch: 1.3
   _minVelocityY: -5
@@ -55181,7 +55181,7 @@ MonoBehaviour:
   _spriteRenderer: {fileID: 1593908433206030503}
   _flashColor: {r: 1, g: 1, b: 1, a: 1}
   _flashDuration: 0.2
-  _damageSoundPrefix: MainHeroHit
+  _soundConfig: {fileID: 11400000, guid: 90237fa8628c97841965bb359adbe855, type: 2}
 --- !u!114 &2668767352308528835
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -572,27 +572,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddTakeDamageRequest()
                 .AddTakeDamageEvent()
 
-                .AddDamageCooldown(new ReactiveVariable<float>(0.1f)) 
+                .AddDamageCooldown(new ReactiveVariable<float>(ghostConfig.DamageCooldown)) 
                 .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
 
-                // — Эффекты (Сон) —
-                .AddIsAsleep()
-                .AddSleepTimer(new ReactiveVariable<float>(0f))
+                // Баффы/Дебаффы
+                .AddIsGrappledTarget()
                 ;
 
             // — Условия —
 
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.HasComponent<IsGrappledTarget>() == false || entity.IsGrappledTarget.Value == false))
-                .Add(new FuncCondition(() => entity.IsAsleep.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappledTarget.Value == false))
                 ;
-
-            // Условие получения урона: не мертв и кулдаун прошел
             ICompositeCondition canApplyDamage = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
-                .Add(new FuncCondition(() => entity.IsAsleep.Value == false))
                 ;
 
             ICompositeCondition canFlip = new CompositeCondition()
@@ -631,9 +626,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new DamageKnockbackSystem())
                 .AddSystem(new DeathSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
-
-                // Таймеры эффектов
-                .AddSystem(new SleepTimerSystem())
                 ;
 
             // LOOT
@@ -653,6 +645,118 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 lootTable,
                 _container.Resolve<SecretChestCollectService>()));
             // LOOT
+
+            return entity;
+        }
+        public Entity CreateSlime(Vector3 at, SlimeConfig slimeConfig)
+        {
+            Entity entity = CreateEmpty();
+            _monoEntitiesFactory.Create(entity, at, slimeConfig.PrefabPath);
+
+            entity
+                .AddAudio(_audioService)
+
+                // — Движение —
+                .AddMoveSpeed(new ReactiveVariable<float>(slimeConfig.MovementSpeed))
+                .AddMoveDirection()
+                .AddIsMoving()
+                .AddLinearDrag(new ReactiveVariable<float>(slimeConfig.LinearDrag))
+
+                // — Коллайдеры —
+                .AddBodyContactDamage(new ReactiveVariable<float>(slimeConfig.ContactDamage))
+
+                .AddContactsDetectingMask(LayersAPI.LayerMaskCharacters)
+
+                .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
+                .AddContactEntitiesBuffer(new Buffer<Entity>(16))
+
+                // — Жизнь —
+                .AddMaxHealth(new ReactiveVariable<float>(slimeConfig.MaxHealth))
+                .AddCurrentHealth(new ReactiveVariable<float>(slimeConfig.MaxHealth))
+
+                .AddTakeDamageRequest()
+                .AddTakeDamageEvent()
+
+                .AddIsDead()
+                .AddInDeathProcess()
+
+                .AddDeathProcessInitialTime(new ReactiveVariable<float>(slimeConfig.DeathProcessTime))
+                .AddDeathProcessCurrentTime()
+
+                .AddDamageCooldown(new ReactiveVariable<float>(slimeConfig.DamageCooldown))
+                .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
+
+                // Баффы/Дебаффы
+                .AddIsGrappledTarget()
+                ;
+
+            // — Условия —
+            ICompositeCondition canMove = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappledTarget.Value == false))
+                ;
+
+            // Условие получения урона: не мертв и кулдаун прошел
+            ICompositeCondition canApplyDamage = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
+                ;
+
+            ICompositeCondition canFlip = new CompositeCondition()
+                .Add(new FuncCondition(() => true))
+                ;
+
+            ICompositeCondition mustDie = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0))
+                ;
+
+            ICompositeCondition mustSelfRelease = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == true))
+                .Add(new FuncCondition(() => entity.InDeathProcess.Value == false))
+                ;
+
+            entity
+                .AddCanMove(canMove)
+                .AddCanPhysicalyInteract(canApplyDamage)
+                .AddCanFlip(canFlip)
+                .AddCanApplyDamage(canApplyDamage)
+                .AddMustDie(mustDie)
+                .AddMustSelfRelease(mustSelfRelease)
+                ;
+
+            entity
+                // Системы логики
+                .AddSystem(new PhysicsStabilizationSystem())
+                .AddSystem(new BodyContactDetectingSystem())
+                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
+                .AddSystem(new DealDamageOnContactSystem())
+                .AddSystem(new TransformMovementSystem())
+                .AddSystem(new FlipDirectionSystem())
+
+                // Системы урона
+                .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new DamageKnockbackSystem())
+                .AddSystem(new DeathSystem())
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
+                
+
+                // LOOT
+                .AddLootIsDropped(new ReactiveVariable<bool>(false));
+
+                ICompositeCondition canDropLoot = new CompositeCondition()
+                    .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0))
+                    .Add(new FuncCondition(() => entity.IsDead.Value == true))
+                    ;
+
+                entity.AddCanDropLoot(canDropLoot);
+                
+                LootTableConfig lootTable = slimeConfig.LootTable;
+
+                entity.AddSystem(new DropLootSystem(
+                    _container.Resolve<DropLootService>(),
+                    lootTable,
+                    _container.Resolve<SecretChestCollectService>()));
+                // LOOT
 
             return entity;
         }

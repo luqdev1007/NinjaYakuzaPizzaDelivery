@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0ef67415915e8e4f8c2658434fccf52, type: 3}
+  m_Name: DropCoinSFX
+  m_EditorClassIdentifier: 
+  Clips:
+  - {fileID: 8300000, guid: b2bf5b781951e5d408532f8a8bf58d52, type: 3}
+  - {fileID: 8300000, guid: bb377f3f60c16ce4ba1f961dd35e2c0b, type: 3}
+  - {fileID: 8300000, guid: dd76f2a02fbd6674a83971d6b00e0a89, type: 3}
+  - {fileID: 8300000, guid: e0bd7c4e437084b459cd680c3c479bc2, type: 3}
+  - {fileID: 8300000, guid: 331963bad7100be45815fb4a1d5673c8, type: 3}
+  - {fileID: 8300000, guid: ac5ab6132feff514680d3fadbbdc9993, type: 3}
+  - {fileID: 8300000, guid: 1820c0cbaecc09d498f7db8c96c628fe, type: 3}
+  - {fileID: 8300000, guid: 9cc50008f8f7b1c49a9a56503fdfa688, type: 3}
+  - {fileID: 8300000, guid: 9e8e0d79f4f2a3a469d8466101787333, type: 3}
+  - {fileID: 8300000, guid: bd277fddba4705749a5cdba16be2f8e8, type: 3}
+  Volume: 1
+  PitchRange: {x: 0.7, y: 1.1}
+  Cooldown: 0.05
+  IsUi: 0

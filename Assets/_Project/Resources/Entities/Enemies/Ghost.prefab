@@ -165,7 +165,6 @@ GameObject:
   - component: {fileID: 5807132304633459110}
   - component: {fileID: 1784155885393087696}
   - component: {fileID: 2858558461669107319}
-  - component: {fileID: 2078683810804283525}
   - component: {fileID: 8267039545226137563}
   - component: {fileID: 1130839634098478934}
   - component: {fileID: 6732775899153542305}
@@ -268,24 +267,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &2078683810804283525
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2306742963253549328}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41067f5abb7bdd146be12c983ab4f2bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _spriteRenderer: {fileID: 2858558461669107319}
-  _breatheContainer: {fileID: 5149040113408065364}
-  _zzzParticles: {fileID: 8687595665311057637}
-  _breatheSpeed: 2
-  _breatheAmount: 5
-  _sleepColor: {r: 0.4008989, g: 0.4008989, b: 0.8584906, a: 0.49019608}
 --- !u!114 &8267039545226137563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -304,7 +285,7 @@ MonoBehaviour:
   _spriteRenderer: {fileID: 2858558461669107319}
   _flashColor: {r: 1, g: 1, b: 1, a: 1}
   _flashDuration: 0.2
-  _damageSoundPrefix: GhostHit
+  _soundConfig: {fileID: 11400000, guid: 3fe1dd43082e9764082798baaadf0371, type: 2}
 --- !u!114 &1130839634098478934
 MonoBehaviour:
   m_ObjectHideFlags: 0

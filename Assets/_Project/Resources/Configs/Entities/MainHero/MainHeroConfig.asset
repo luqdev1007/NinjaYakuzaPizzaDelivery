@@ -21,7 +21,6 @@ MonoBehaviour:
   <Movement>k__BackingField:
     <MoveSpeed>k__BackingField: 12
     <MoveSpeedMin>k__BackingField: 8
-    <MoveSpeedMax>k__BackingField: 15
     <Acceleration>k__BackingField: 10
     <Deceleration>k__BackingField: 25
   <Jump>k__BackingField:
@@ -84,16 +83,16 @@ MonoBehaviour:
     <AutoSlidePush>k__BackingField: 0.8
     <JumpForce>k__BackingField: {x: 10, y: 6}
   <Attack>k__BackingField:
-    <ProcessTime>k__BackingField: 0.2
-    <DelayTime>k__BackingField: 0.1
-    <Cooldown>k__BackingField: 0.15
+    <ProcessTime>k__BackingField: 0.15
+    <DelayTime>k__BackingField: 0.075
+    <Cooldown>k__BackingField: 0.1
     <EnemyMask>k__BackingField:
       serializedVersion: 2
       m_Bits: 33280
-    <Damage>k__BackingField: 3
-    <Range>k__BackingField: 1.5
-    <InvulnerabilityDuration>k__BackingField: 0.2
-    <HitBounceForce>k__BackingField: 4
+    <Damage>k__BackingField: 3.33
+    <Range>k__BackingField: 2
+    <InvulnerabilityDuration>k__BackingField: 0.5
+    <HitBounceForce>k__BackingField: 8
     <GroundHitBounceModifiers>k__BackingField: {x: 1, y: 1}
     <AirHitBounceModifiers>k__BackingField: {x: 1, y: 2}
     <HitStopScale>k__BackingField: 0.05

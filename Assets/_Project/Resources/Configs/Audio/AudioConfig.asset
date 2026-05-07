@@ -167,10 +167,14 @@ MonoBehaviour:
       Clip: {fileID: 8300000, guid: 01faf4d547cc6cb4cb55abc790323733, type: 3}
       Volume: 0.5
       BasePitch: 1.4
-    - Id: WallHitShuriken2
-      Clip: {fileID: 8300000, guid: 7add59aa6fd89c24881ab889bfc81ffe, type: 3}
-      Volume: 0.614
-      BasePitch: 1.57
+    - Id: SlimeHit2
+      Clip: {fileID: 8300000, guid: de4fc12d9e9b8c6428ce2f34fa0e2243, type: 3}
+      Volume: 0.5
+      BasePitch: 1.4
+    - Id: SlimeHit3
+      Clip: {fileID: 8300000, guid: ee7a572eb006c514f9769255f346dbcf, type: 3}
+      Volume: 0.5
+      BasePitch: 1.4
   - Type: 6
     Clips:
     - Id: GhostDeath1

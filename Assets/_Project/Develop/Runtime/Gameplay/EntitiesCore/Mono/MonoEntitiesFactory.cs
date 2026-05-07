@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.Utilites.AssetsManagment;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -62,9 +63,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
 
         public void Dispose()
         {
-            _entitiesLifeContext.Released -= OnEntityReleased;
+            Entity[] entities = _entityToMono.Keys.ToArray();
 
-            foreach (Entity entity in _entityToMono.Keys)
+            foreach (var entity in entities)
                 CleanupFor(entity);
 
             _entityToMono.Clear();
@@ -81,7 +82,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
         {
             MonoEntity monoEntity = _entityToMono[entity];
             monoEntity.Cleanup(entity);
-            Object.Destroy(monoEntity.gameObject);
+
+            if (monoEntity != null && monoEntity.gameObject != null)
+            {
+                Object.Destroy(monoEntity.gameObject);
+            }
+
+            _entityToMono.Remove(entity);
         }
     }
 }

@@ -24,7 +24,8 @@ namespace Assets._Project.Develop.Runtime.Utilites.ConfigsManagment
             { typeof(CurrencyIconsConfig), "Configs/Meta/Wallet/CurrencyIconsConfig" },
             { typeof(LevelsListConfig), "Configs/Gameplay/Levels/LevelsListConfig" },
             { typeof(MainHeroConfig), "Configs/Entities/MainHero/MainHeroConfig" },
-            { typeof(GhostConfig), "Configs/Entities/Enemies/GhostConfig" },
+            { typeof(GhostConfig), "Configs/Entities/Enemies/GhostConfig" }, // enemies config
+            { typeof(SlimeConfig), "Configs/Entities/Enemies/SlimeConfig" }, // enemies config
             { typeof(DialogConfig), "Configs/Dialogs/TutorialDialog" },
             { typeof(CharactersConfig), "Configs/Dialogs/CharactersConfig" },
             { typeof(AudioConfig), "Configs/Audio/AudioConfig" },

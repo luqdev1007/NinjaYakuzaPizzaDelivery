@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Assets._Project.Develop.Runtime.Utilites.Conditions
 {
+
     public class CompositeCondition : ICompositeCondition
     {
         private List<ICondition> _conditions = new();

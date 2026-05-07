@@ -22,7 +22,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
 
         [Header("Audio")]
         [Tooltip("Для героя: MainHeroHit. Для призрака: GhostHit")]
-        [SerializeField] private string _damageSoundPrefix = "MainHeroHit";
+        [SerializeField] private SfxEvent _soundConfig;
 
         private AudioService _audioService;
         private IDisposable _damageEventDisposable;
@@ -30,47 +30,33 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            // Получаем сервис аудио через компонент сущности
             _audioService = entity.GetComponent<AudioComponent>().Service;
             _damageEventDisposable = entity.TakeDamageEvent.Subscribe(OnDamaged);
-
-            if (_spriteRenderer != null)
-                _originalColor = _spriteRenderer.color;
+            _originalColor = _spriteRenderer.color;
         }
 
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
+
             _damageEventDisposable?.Dispose();
-            if (_spriteRenderer != null) _spriteRenderer.DOKill();
+            _spriteRenderer.DOKill();
         }
 
         private void OnDamaged(DamageData data)
         {
             SpawnDamageParticles();
             PlayFlashEffect();
+            PlaySFX();
+        }
 
-            // 1. Формируем специфический префикс (например, GhostHit + Shuriken)
-            string typeSuffix = data.Type == DamageType.Cut ? "Shuriken" : data.Type.ToString();
-            string specificPrefix = _damageSoundPrefix + typeSuffix;
-
-            // 2. Логика Fallback:
-            // Сначала ищем специфический звук (например, GhostHitShuriken1)
-            if (_audioService.GetVariationCount(specificPrefix) > 0)
-            {
-                _audioService.PlaySfxByPrefixAuto(specificPrefix, UnityEngine.Random.Range(0.9f, 1.1f));
-            }
-            // Если его нет, ищем базовый звук (например, GhostHit1, GhostHit2)
-            else if (_audioService.GetVariationCount(_damageSoundPrefix) > 0)
-            {
-                _audioService.PlaySfxByPrefixAuto(_damageSoundPrefix, UnityEngine.Random.Range(0.9f, 1.1f));
-            }
+        private void PlaySFX()
+        {
+            _audioService.HandleSFXEvent(_soundConfig);
         }
 
         private void PlayFlashEffect()
         {
-            if (_spriteRenderer == null) return;
-
             _spriteRenderer.DOKill();
             _spriteRenderer.color = _originalColor;
 
@@ -81,10 +67,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
 
         private void SpawnDamageParticles()
         {
-            if (_applyDamageEffectPrefab == null) return;
-
-            Vector3 spawnPos = _effectSpawnPoint != null ? _effectSpawnPoint.position : transform.position;
-            ParticleSystem vfx = Instantiate(_applyDamageEffectPrefab, spawnPos, Quaternion.identity);
+            ParticleSystem vfx = Instantiate(_applyDamageEffectPrefab, _effectSpawnPoint.position, Quaternion.identity);
 
             var main = vfx.main;
             main.stopAction = _vfxStopAction;

@@ -17,6 +17,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 
         [Header("Life Cycle")]
         [field: SerializeField] public float MaxHealth { get; private set; } = 10f;
+        [field: SerializeField] public float DamageCooldown { get; private set; } = 0.1f;
         [field: SerializeField] public float DeathProcessTime { get; private set; } = 0.5f;
 
         [Header("Combat")]
