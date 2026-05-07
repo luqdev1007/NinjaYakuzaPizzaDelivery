@@ -299,7 +299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 1784155885393087696}
-  _deathSoundPrefix: GhostDeath
+  _deathSoundConfig: {fileID: 11400000, guid: 0ce3b83aeace7a24b950cdfa961228fd, type: 2}
 --- !u!114 &6732775899153542305
 MonoBehaviour:
   m_ObjectHideFlags: 0

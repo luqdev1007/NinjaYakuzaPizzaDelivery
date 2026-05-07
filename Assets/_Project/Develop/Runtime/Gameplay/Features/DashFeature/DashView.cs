@@ -21,7 +21,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 
         [Header("Audio (SfxEvents)")]
         [SerializeField] private SfxEvent _dashStartConfig;
-        [SerializeField] private SfxEvent _enemyHitConfig;    // Звук при попадании по врагу во время рывка
+        [SerializeField] private SfxEvent _enemyHitConfig;    // Звук при попадании (разовый за рывок)
         [SerializeField] private SfxEvent _dashEndConfig;
 
         [Header("Afterimage (VFX)")]
@@ -45,6 +45,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 
         private float _vfxSpawnTimer;
         private bool _isDashing;
+        private bool _hasImpactedThisDash; // Флаг, чтобы звук не спамил
 
         private void Awake() => _propertyBlock = new MaterialPropertyBlock();
 
@@ -53,7 +54,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
             _audioService = entity.GetComponent<AudioComponent>().Service;
             _pool = new GameObjectPool(_afterimagePrefab, null, _poolSize);
 
-            // Состояние рывка (Старт / Конец)
             _dashDisposable = entity.IsDashing.Subscribe((oldValue, newValue) =>
             {
                 _isDashing = newValue;
@@ -61,22 +61,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
                 else if (oldValue) HandleDashEnd();
             });
 
-            // Звук удара по врагу (срабатывает, если во время рывка пролетаем сквозь цель)
-            if (entity.HasComponent<TakeDamageRequest>())
+            // Слушаем событие нанесения урона
+            _damageEventDisposable = entity.TakeDamageEvent.Subscribe(_ =>
             {
-                _damageEventDisposable = entity.TakeDamageEvent.Subscribe(_ =>
+                // Если мы в рывке и еще не «звучали» в этом рывке
+                if (_isDashing && !_hasImpactedThisDash)
                 {
-                    if (_isDashing)
-                        _audioService.HandleSFXEvent(_enemyHitConfig);
-                });
-            }
+                    _audioService.HandleSFXEvent(_enemyHitConfig);
+                    _hasImpactedThisDash = true; // Запираем до следующего раза
+                }
+            });
         }
 
         private void HandleDashStart()
         {
             _vfxSpawnTimer = 0f;
+            _hasImpactedThisDash = false; // Сбрасываем флаг в начале каждого рывка
 
-            // Звук начала рывка
             _audioService.HandleSFXEvent(_dashStartConfig);
 
             if (_animator) _animator.SetBool(IsDashingKey, true);
@@ -87,16 +88,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 
         private void HandleDashEnd()
         {
-            // Звук завершения рывка
             _audioService.HandleSFXEvent(_dashEndConfig);
-
             if (_animator) _animator.SetBool(IsDashingKey, false);
         }
 
         private void Update()
         {
             if (!_isDashing) return;
-
             HandleVFX();
         }
 
