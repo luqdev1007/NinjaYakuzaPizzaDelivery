@@ -21,8 +21,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 
         [Header("Audio (SfxEvents)")]
         [SerializeField] private SfxEvent _dashStartConfig;
-        [SerializeField] private SfxEvent _enemyHitConfig;    // Звук при попадании (разовый за рывок)
-        [SerializeField] private SfxEvent _dashEndConfig;
+        [SerializeField] private SfxEvent _enemyHitConfig;
 
         [Header("Afterimage (VFX)")]
         [SerializeField] private GameObject _afterimagePrefab;
@@ -45,7 +44,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 
         private float _vfxSpawnTimer;
         private bool _isDashing;
-        private bool _hasImpactedThisDash; // Флаг, чтобы звук не спамил
+        private bool _hasImpactedThisDash;
 
         private void Awake() => _propertyBlock = new MaterialPropertyBlock();
 
@@ -58,17 +57,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
             {
                 _isDashing = newValue;
                 if (newValue) HandleDashStart();
-                else if (oldValue) HandleDashEnd();
+                else HandleDashEnd();
             });
 
-            // Слушаем событие нанесения урона
             _damageEventDisposable = entity.TakeDamageEvent.Subscribe(_ =>
             {
-                // Если мы в рывке и еще не «звучали» в этом рывке
                 if (_isDashing && !_hasImpactedThisDash)
                 {
                     _audioService.HandleSFXEvent(_enemyHitConfig);
-                    _hasImpactedThisDash = true; // Запираем до следующего раза
+                    _hasImpactedThisDash = true;
                 }
             });
         }
@@ -76,7 +73,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
         private void HandleDashStart()
         {
             _vfxSpawnTimer = 0f;
-            _hasImpactedThisDash = false; // Сбрасываем флаг в начале каждого рывка
+            _hasImpactedThisDash = false;
 
             _audioService.HandleSFXEvent(_dashStartConfig);
 
@@ -88,7 +85,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 
         private void HandleDashEnd()
         {
-            _audioService.HandleSFXEvent(_dashEndConfig);
             if (_animator) _animator.SetBool(IsDashingKey, false);
         }
 

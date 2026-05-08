@@ -11,7 +11,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
     {
         private readonly DropLootService _dropLootService;
         private readonly LootTableConfig _lootTable;
-        private readonly SecretChestCollectService _secretChestCollectService;
 
         private ICompositeCondition _dropLootCondition;
         private ReactiveVariable<bool> _lootIsDropped;
@@ -19,12 +18,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         public DropLootSystem(
             DropLootService dropLootService,
-            LootTableConfig lootTable,
-            SecretChestCollectService secretChestCollectService)
+            LootTableConfig lootTable)
         {
             _dropLootService = dropLootService;
             _lootTable = lootTable;
-            _secretChestCollectService = secretChestCollectService;
         }
 
         public void OnInit(Entity entity)
@@ -40,11 +37,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             {
                 _dropLootService.DropLootFor(_entity, _lootTable);
                 _lootIsDropped.Value = true;
-
-                if (_entity.Transform)
-                {
-                    _secretChestCollectService.RegisterChestCollected();
-                }
             }
         }
     }

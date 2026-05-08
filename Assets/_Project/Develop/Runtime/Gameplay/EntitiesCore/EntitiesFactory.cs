@@ -8,9 +8,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.DriveBugFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.HangWall;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Inventory;
@@ -99,11 +97,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddIsGrounded()
                 .AddAudio(_container.Resolve<AudioService>())
                 .AddGroundMask(config.GroundMask)
-
-                // — драйв (баг-фича) —
-                .AddIsDriveActive(new ReactiveVariable<bool>(false))
-                .AddDriveAvailableJumps(new ReactiveVariable<int>(1))
-                .AddDriveDuration(new ReactiveVariable<float>(3))
 
                 // — движение —
                 .AddMoveDirection()
@@ -291,7 +284,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // — движение —
                 .AddSystem(new RigidbodyMovementSystem(inputService))
-                .AddSystem(new JumpSystem(inputService, slopeSystem, _cameraService))
+                .AddSystem(new JumpSystem(inputService, slopeSystem))
 
                 .AddSystem(new DashSystem(inputService, coroutinesPerformer, config.Attack.EnemyMask, 
                     _audioService, 
@@ -357,9 +350,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // лут
                 .AddSystem(new LootMagnetSystem(_collidersRegistryService))
                 .AddSystem(new LootDistanceCollectSystem(_entitiesLifeContext))
-
-                // drive (предпоследний)
-                .AddSystem(new DriveSystem(inputService, _cameraService))
 
                 // hero style system
                 .AddSystem(new HeroStyleSystem(
@@ -642,8 +632,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             entity.AddSystem(new DropLootSystem(
                 _container.Resolve<DropLootService>(), 
-                lootTable,
-                _container.Resolve<SecretChestCollectService>()));
+                lootTable));
             // LOOT
 
             return entity;
@@ -652,6 +641,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         {
             Entity entity = CreateEmpty();
             _monoEntitiesFactory.Create(entity, at, slimeConfig.PrefabPath);
+            LootTableConfig lootTable = slimeConfig.LootTable;
 
             entity
                 .AddAudio(_audioService)
@@ -688,12 +678,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // Баффы/Дебаффы
                 .AddIsGrappledTarget()
-                ;
+
+                // Loot
+                .AddLootIsDropped(new ReactiveVariable<bool>(false));
+            ;
 
             // — Условия —
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappledTarget.Value == false))
+                ;
+
+
+            ICompositeCondition canDropLoot = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0))
+                .Add(new FuncCondition(() => entity.IsDead.Value == true))
                 ;
 
             // Условие получения урона: не мертв и кулдаун прошел
@@ -721,6 +720,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddCanFlip(canFlip)
                 .AddCanApplyDamage(canApplyDamage)
                 .AddMustDie(mustDie)
+                .AddCanDropLoot(canDropLoot)
                 .AddMustSelfRelease(mustSelfRelease)
                 ;
 
@@ -738,25 +738,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new DamageKnockbackSystem())
                 .AddSystem(new DeathSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
-                
-
-                // LOOT
-                .AddLootIsDropped(new ReactiveVariable<bool>(false));
-
-                ICompositeCondition canDropLoot = new CompositeCondition()
-                    .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0))
-                    .Add(new FuncCondition(() => entity.IsDead.Value == true))
-                    ;
-
-                entity.AddCanDropLoot(canDropLoot);
-                
-                LootTableConfig lootTable = slimeConfig.LootTable;
-
-                entity.AddSystem(new DropLootSystem(
+                        
+                // loot
+                .AddSystem(new DropLootSystem(
                     _container.Resolve<DropLootService>(),
-                    lootTable,
-                    _container.Resolve<SecretChestCollectService>()));
-                // LOOT
+                    lootTable))
+                ;
+
 
             return entity;
         }
@@ -841,8 +829,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 .AddSystem(new DropLootSystem(
                     _container.Resolve<DropLootService>(), 
-                    lootTable, 
-                    _container.Resolve<SecretChestCollectService>()))
+                    lootTable))
                 
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
                 ;

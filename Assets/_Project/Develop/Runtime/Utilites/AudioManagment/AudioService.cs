@@ -162,6 +162,26 @@ namespace Assets._Project.Develop.Runtime.Utilites.AudioManagement
             _manager.PlaySfx(clip, sfxEvent.Volume, pitch, sfxEvent.IsUi);
         }
 
+        public void HandleSFXEvent(SfxEvent sfxEvent, float pitchMultiplier)
+        {
+            if (sfxEvent == null || sfxEvent.Clips == null || sfxEvent.Clips.Length == 0)
+                return;
+
+            if (_eventLastPlayedTimes.TryGetValue(sfxEvent, out float lastTime))
+            {
+                if (Time.time - lastTime < sfxEvent.Cooldown)
+                    return;
+            }
+
+            AudioClip clip = sfxEvent.GetRandomClip();
+            // Берем рандом из конфига и домножаем на наш модификатор
+            float finalPitch = sfxEvent.GetRandomPitch() * pitchMultiplier;
+
+            _eventLastPlayedTimes[sfxEvent] = Time.time;
+
+            _manager.PlaySfx(clip, sfxEvent.Volume, finalPitch, sfxEvent.IsUi);
+        }
+
         // В поля класса
         private readonly Dictionary<SfxEvent, AudioSource> _activeEventLoops = new();
 

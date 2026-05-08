@@ -13,7 +13,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
     {
         private readonly IInputService _inputService;
         private readonly SlopeSystem _slopeSystem;
-        private readonly CameraService _cameraService;
 
         private ReactiveEvent _doubleJumpEvent;
         private ReactiveEvent _jumpEvent;
@@ -21,7 +20,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
         private ICompositeCondition _canJump;
         private ReactiveVariable<bool> _isGrounded;
         private ReactiveVariable<bool> _isOnSlope;
-        private ReactiveVariable<bool> _isDriveActive;
         private ReactiveVariable<int> _jumpsAvailable;
         private ReactiveVariable<int> _maxJumps;
         private ReactiveVariable<float> _jumpForce;
@@ -37,11 +35,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
         private bool _isCharging;
         private const float JumpBufferTime = 0.15f;
 
-        public JumpSystem(IInputService inputService, SlopeSystem slopeSystem, CameraService cameraService)
+        public JumpSystem(IInputService inputService, SlopeSystem slopeSystem)
         {
             _inputService = inputService;
             _slopeSystem = slopeSystem;
-            _cameraService = cameraService;
         }
 
         public void OnInit(Entity entity)
@@ -52,7 +49,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
             _canJump = entity.CanJump;
             _isGrounded = entity.IsGrounded;
             _isOnSlope = entity.IsOnSlope;
-            _isDriveActive = entity.IsDriveActive;
             _jumpsAvailable = entity.JumpsAvailable;
             _maxJumps = entity.MaxJumps;
             _jumpForce = entity.JumpForce;
@@ -64,8 +60,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
 
         public void OnUpdate(float deltaTime)
         {
-            // ЕСЛИ МЫ В ДРАЙВЕ - ЭТА СИСТЕМА НЕ ТРОГАЕТ ФИЗИКУ
-            if (_isDriveActive.Value) return;
 
             if (_isGrounded.Value || _isOnSlope.Value)
                 _jumpsAvailable.Value = _maxJumps.Value;
