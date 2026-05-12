@@ -13,7 +13,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
 
         public RandomMovementState(Entity entity, float cooldown)
         {
-            _movementDirection = entity.MoveDirection;
+            // _movementDirection = entity.MoveDirection;
             _cooldown = cooldown;
         }
 

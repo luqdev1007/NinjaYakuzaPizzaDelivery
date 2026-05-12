@@ -50,8 +50,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         protected override void OnEntityStartedWork(Entity entity)
         {
             _audioService = entity.GetComponent<AudioComponent>().Service;
+            
+            /*
             _isGliding = entity.IsGliding;
             _rigidbody = entity.Rigidbody;
+            */
 
             _isGlidingDisposable = _isGliding.Subscribe(OnIsGlidingChanged);
 

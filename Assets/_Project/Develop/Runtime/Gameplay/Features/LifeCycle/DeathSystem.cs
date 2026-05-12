@@ -2,16 +2,14 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using System;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 {
-    public class DeathSystem : IInitializableSystem, IUpdatableSystem, IDisposableSystem
+    public class DeathSystem : IInitializableSystem, IUpdatableSystem
     {
         private ReactiveVariable<bool> _isDead;
         private ICompositeCondition _mustDie;
-        private IDisposable _deathSubscription;
 
         public void OnInit(Entity entity)
         {
@@ -21,12 +19,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 
         public void OnUpdate(float deltaTime)
         {
-            if (_isDead.Value) return;
+            if (_isDead.Value) 
+                return;
 
             if (_mustDie.Evaluate())
                 _isDead.Value = true;
         }
-
-        public void OnDispose() => _deathSubscription?.Dispose();
     }
 }

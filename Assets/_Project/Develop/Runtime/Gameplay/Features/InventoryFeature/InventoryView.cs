@@ -22,10 +22,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
             _audioService = entity.GetComponent<AudioComponent>().Service;
 
             // Подписка на бросок
-            entity.ThrowEvent.Subscribe(OnThrow);
+            // entity.ThrowEvent.Subscribe(OnThrow);
 
             // Подписка на смену предмета
-            entity.CurrentThrowableIndex.Subscribe((oldIdx, newIdx) => OnItemSwitched());
+            // entity.CurrentThrowableIndex.Subscribe((oldIdx, newIdx) => OnItemSwitched());
         }
 
         private void OnThrow()

@@ -3,8 +3,6 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using System;
 using UnityEngine;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
 {
@@ -21,18 +19,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
         [SerializeField] private Transform _effectSpawnPoint;
         [SerializeField] private ParticleSystemStopAction _vfxStopAction = ParticleSystemStopAction.Destroy;
 
-        [Header("Audio Settings")]
-        [SerializeField] private SfxEvent _spawnSoundConfig; // Заменили строку на конфиг
-
-        private AudioService _audioService;
         private IReadOnlyVariable<bool> _inSpawnProcess;
         private IDisposable _inSpawnProcessChangedDisposable;
 
-        private void OnValidate() => _animator ??= GetComponent<Animator>();
+        private void OnValidate() 
+        {
+            _animator ??= GetComponent<Animator>();
+        }
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _audioService = entity.GetComponent<AudioComponent>().Service;
             _inSpawnProcess = entity.InSpawnProcess;
 
             _inSpawnProcessChangedDisposable = _inSpawnProcess.Subscribe(OnSpawnProcessChanged);
@@ -53,32 +49,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
 
         private void UpdateSpawnProcessState(bool value)
         {
-            if (_animator != null) _animator.SetBool(SpawningProcessKey, value);
+            _animator.SetBool(SpawningProcessKey, value);
 
             if (value)
             {
                 PlaySpawnEffect();
-                PlaySpawnAudio();
             }
         }
 
         private void PlaySpawnEffect()
         {
-            if (_spawnEffectPrefab == null)
-                return;
+            ParticleSystem vfx = Instantiate(_spawnEffectPrefab, _effectSpawnPoint.position, _effectSpawnPoint.rotation);
 
-            Vector3 position = _effectSpawnPoint != null ? _effectSpawnPoint.position : transform.position;
-            Quaternion rotation = _effectSpawnPoint != null ? _effectSpawnPoint.rotation : Quaternion.identity;
-
-            ParticleSystem vfx = Instantiate(_spawnEffectPrefab, position, rotation);
             var main = vfx.main;
             main.stopAction = _vfxStopAction;
-            vfx.Play();
-        }
 
-        private void PlaySpawnAudio()
-        {
-            _audioService.HandleSFXEvent(_spawnSoundConfig);
+            vfx.Play();
         }
     }
 }

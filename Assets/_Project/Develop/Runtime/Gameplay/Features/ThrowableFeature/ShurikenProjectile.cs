@@ -54,6 +54,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
                 if (target != null && target.HasComponent<TakeDamageRequest>())
                 {
+                    /*
                     // Передаем Type = DamageType.Cut, чтобы сработала гибкая логика звука у врага
                     target.TakeDamageRequest.Invoke(new DamageData
                     {
@@ -61,6 +62,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                         SourcePosition = hit.ClosestPoint(Instance.transform.position),
                         Type = DamageType.Cut
                     });
+                    */
                 }
 
                 Destroy(); // Мясо — уничтожаем сразу
@@ -72,7 +74,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
                 // ИСПРАВЛЕНО: Мастер-провайдер
                 var lootProvider = _configsProviderService.GetConfig<MasterLootProviderConfig>();
-                _dropLootService.DropLootFor(hit.transform.position, lootProvider.PropsLoot);
+                // _dropLootService.DropLootFor(hit.transform.position, lootProvider.PropsLoot);
 
                 Object.Destroy(hit.gameObject);
             }

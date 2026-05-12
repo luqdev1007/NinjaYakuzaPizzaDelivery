@@ -49,6 +49,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 
         protected override void OnEntityStartedWork(Entity entity)
         {
+            /*
             _audioService = entity.GetComponent<AudioComponent>().Service;
             _slopeSystem = entity.GetSystem<SlopeSystem>();
             _isSliding = entity.IsSliding;
@@ -59,6 +60,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 
             _slideDisposable = _isSliding.Subscribe(OnSlideChanged);
             _animator.SetBool(IsSlidingKey, _isSliding.Value);
+            */
         }
 
         private void Update()

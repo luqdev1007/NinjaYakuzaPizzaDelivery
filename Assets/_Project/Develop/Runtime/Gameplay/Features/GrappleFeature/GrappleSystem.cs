@@ -14,17 +14,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 {
     public class GrappleSystem : IInitializableSystem, IUpdatableSystem
     {
-        private readonly IInputService _inputService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
-        private readonly GrappleHookConfig _config;
         private readonly IThrowableBehaviourFactory _behaviourFactory;
+        private readonly GrappleHookConfig _config;
         private readonly AudioService _audioService;
 
         private ICompositeCondition _canThrow;
+
         private ReactiveVariable<bool> _isThrowing;
-        private ReactiveVariable<bool> _isWallHanging; // Ссылка на стену
+
         private ReactiveVariable<int> _charges;
-        private ReactiveEvent _startAttackRequest;
+        private ReactiveVariable<bool> _isWallHanging; // Ссылка на стену
+
         private Rigidbody2D _rigidbody;
         private Transform _transform;
         private GrappleRopeView _ropeView;
@@ -40,13 +41,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         public const float PullGravity = 0.2f; // config
 
         public GrappleSystem(
-            IInputService input,
             ICoroutinesPerformer performer,
             GrappleHookConfig config,
             IThrowableBehaviourFactory factory,
             AudioService audioService)
         {
-            _inputService = input;
             _coroutinesPerformer = performer;
             _config = config;
             _behaviourFactory = factory;
@@ -55,18 +54,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         public void OnInit(Entity entity)
         {
+            /*
             _canThrow = entity.CanGrapple;
             _isThrowing = entity.IsThrowing;
             _isWallHanging = entity.IsWallHanging;
             _charges = entity.GrappleCharges;
-            _startAttackRequest = entity.StartAttackRequest;
             _transform = entity.Transform;
             _rigidbody = entity.Rigidbody;
             _ropeView = entity.Transform.GetComponentInChildren<GrappleRopeView>();
 
             _defaultGravity = _rigidbody.gravityScale;
 
-            // Если начали висеть на стене, а крюк в процессе — обрываем его
             _isWallHanging.Subscribe((_, isHanging) =>
             {
                 if (isHanging && (_isThrowing.Value || _isPulling || _activeProjectile != null))
@@ -75,10 +73,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                     StopPulling(applyInertia: false);
                 }
             });
+            */
         }
 
         public void OnUpdate(float deltaTime)
         {
+            /*
             bool isGrappleActive = _activeProjectile is GrappleHookProjectile;
 
             if (_inputService.IsGrappleKeyPressed && _canThrow.Evaluate() && !isGrappleActive && !_isPulling)
@@ -89,13 +89,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
                 if (isGrappleActive || _isPulling)
                     StopPulling(applyInertia: true);
             }
+            */
         }
 
         private void TryLaunch()
         {
-            if (_charges.Value <= 0 || Camera.main == null) return;
-
-
+            if (_charges.Value <= 0 || Camera.main == null)
+                return;
 
 
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -138,6 +138,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 
         private IEnumerator PullRoutine(Vector2 localOffset, Collider2D hit)
         {
+            yield return null;
+
+            /*
             _rigidbody.gravityScale = PullGravity;
 
             while (hit != null && hit.transform != null && _inputService.IsGrappleKeyHeld)
@@ -173,6 +176,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             }
 
             StopPulling(applyInertia: true);
+            */
         }
 
         private void StartPulling(Vector2 anchorPos, Collider2D hit)

@@ -1,8 +1,8 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using UnityEngine;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
+using UnityEngine;
 
 public class FlipDirectionSystem : IInitializableSystem, IUpdatableSystem
 {
@@ -11,7 +11,7 @@ public class FlipDirectionSystem : IInitializableSystem, IUpdatableSystem
     private ICompositeCondition _canFlip;
 
     public void OnInit(Entity entity)
-    {
+    {      
         _canFlip = entity.CanFlip;
         _direction = entity.MoveDirection;
         _transform = entity.Transform;

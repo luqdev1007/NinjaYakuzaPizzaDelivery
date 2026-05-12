@@ -44,10 +44,12 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Inventory
             _mainCanvasGroup.alpha = 0;
             ResetToIdleState();
 
+            /*
             _chargeSubscriptions.Add(_entity.ShurikenCharges.Subscribe((old, val) => RefreshCountText()));
             _chargeSubscriptions.Add(_entity.SleepDartCharges.Subscribe((old, val) => RefreshCountText()));
 
             _entity.CurrentThrowableIndex.Subscribe(OnItemSwitched);
+            */
         }
 
         private void OnItemSwitched(int oldIdx, int newIdx)
@@ -111,9 +113,9 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Inventory
 
         private void RefreshCountText()
         {
-            int index = _entity.CurrentThrowableIndex.Value;
-            int charges = index == 0 ? _entity.ShurikenCharges.Value : _entity.SleepDartCharges.Value;
-            _countText.text = charges.ToString();
+            // int index = _entity.CurrentThrowableIndex.Value;
+            // int charges = index == 0 ? _entity.ShurikenCharges.Value : _entity.SleepDartCharges.Value;
+            // _countText.text = charges.ToString();
         }
 
         public override void Cleanup(Entity entity)

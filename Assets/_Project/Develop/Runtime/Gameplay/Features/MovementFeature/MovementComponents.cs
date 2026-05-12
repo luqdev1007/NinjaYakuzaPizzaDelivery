@@ -10,21 +10,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         public ICompositeCondition Value;
     }
 
-    public class CanJump : IEntityComponent
-    {
-        public ICompositeCondition Value;
-    }
-
-    public class CanDash : IEntityComponent
-    {
-        public ICompositeCondition Value;
-    }
-
-    public class MinFallVelocityForAction : IEntityComponent
-    {
-        public ReactiveVariable<float> Value;
-    }
-
     public class Acceleration : IEntityComponent
     {
         public ReactiveVariable<float> Value;
@@ -42,7 +27,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
     public class MoveDirection : IEntityComponent
     {
-        public ReactiveVariable<Vector2> Value; // движение в 2D — X и Y
+        public ReactiveVariable<Vector2> Value; 
     }
 
     public class MoveSpeed : IEntityComponent

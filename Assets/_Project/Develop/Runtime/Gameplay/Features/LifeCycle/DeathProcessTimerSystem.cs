@@ -18,15 +18,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
         {
             _isDead = entity.IsDead;
             _inDeathProcess = entity.InDeathProcess;
+
             _initialTime = entity.DeathProcessInitialTime;
             _currentTime = entity.DeathProcessCurrentTime;
 
             _isDeadChangedDisposable = _isDead.Subscribe(OnIsDeadChanged);
-        }
 
-        public void OnDispose()
-        {
-            _isDeadChangedDisposable.Dispose();
         }
 
         public void OnUpdate(float deltaTime)
@@ -39,6 +36,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
             if (CooldownIsOver())
                 _inDeathProcess.Value = false;
         }
+
+        public void OnDispose()
+        {
+            _isDeadChangedDisposable.Dispose();
+        }
+
 
         private void OnIsDeadChanged(bool oldValue, bool isDead)
         {

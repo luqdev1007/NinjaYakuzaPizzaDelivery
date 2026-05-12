@@ -14,10 +14,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Common
         public Transform Value;
     }
 
-    public class IsAsleep : IEntityComponent
+    public class IsInvulnerable : IEntityComponent
     {
-        public ReactiveVariable<bool> Value;
+        public ReactiveVariable<bool> Value = new();
     }
 
-
+    public class FallActionThreshold : IEntityComponent
+    {
+        public ReactiveVariable<float> Value = new();
+    }
 }

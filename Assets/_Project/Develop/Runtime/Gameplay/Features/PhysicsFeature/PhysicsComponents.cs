@@ -24,6 +24,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
     {
         public ICompositeCondition Value;
     }
+
+    public class IsGrounded : IEntityComponent
+    {
+        public ReactiveVariable<bool> Value;
+    }
 }
 
 

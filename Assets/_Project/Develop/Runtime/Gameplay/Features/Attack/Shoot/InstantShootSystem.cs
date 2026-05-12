@@ -25,6 +25,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack.Shoot
 
         public void OnInit(Entity entity)
         {
+            /*
             _entity = entity;
 
             _attackDelayEndEvent = entity.AttackDelayEndEvent;
@@ -32,6 +33,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack.Shoot
             _shootPoint = entity.ShootPoint;
 
             _attackDelayDisposable = _attackDelayEndEvent.Subscribe(OnAttackDelayEnd);
+            */
         }
 
         public void OnDispose()

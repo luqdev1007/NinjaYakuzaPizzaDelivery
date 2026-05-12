@@ -45,8 +45,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
         {
             _audioService = entity.GetComponent<AudioComponent>().Service;
 
-            _isWallHanging = entity.IsWallHanging;
-            _wallDirection = entity.WallDirection;
+            // _isWallHanging = entity.IsWallHanging;
+            // _wallDirection = entity.WallDirection;
 
             if (_viewContainer != null)
                 _defaultContainerPos = _viewContainer.localPosition;

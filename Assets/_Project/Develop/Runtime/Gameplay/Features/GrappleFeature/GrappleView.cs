@@ -18,7 +18,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _isThrowing = entity.IsThrowing;
+            // _isThrowing = entity.IsThrowing;
 
             // Исправлено: добавляем второй аргумент (старое значение), который игнорируем
             _disposable = _isThrowing.Subscribe((_, val) => _animator.SetBool(IsThrowingHookKey, val));

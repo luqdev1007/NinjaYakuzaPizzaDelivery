@@ -17,7 +17,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
         {
             _linkedEntity = entity;
             // Подписываемся на переменную .Value (если это ReactiveVariable)
-            _autoDeleteCurrentTimeDisposable = _linkedEntity.AutoDeleteCurrentTime.Subscribe(OnTimerChanged);
+            // _autoDeleteCurrentTimeDisposable = _linkedEntity.AutoDeleteCurrentTime.Subscribe(OnTimerChanged);
         }
 
         private void OnTimerChanged(float oldValue, float currentTime)

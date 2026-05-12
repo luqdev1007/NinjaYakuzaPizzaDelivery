@@ -1,81 +1,43 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
-using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using System;
-using System.Collections;
 using UnityEngine;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
-using Object = UnityEngine.Object;
-using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
-using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
     public class MeleeAttackHitSystem : IInitializableSystem, IDisposableSystem
     {
-        private readonly ICoroutinesPerformer _coroutines;
-        private readonly CameraService _cameraService;
-        private readonly DropLootService _dropLootService;
-        private readonly ConfigsProviderService _configsProviderService;
-
-        private readonly AudioService _audioService;
-
-
-
         private Entity _entity;
-        private IDisposable _attackDelayEndDisposable;
 
         private ReactiveEvent _successfulHitEvent;
+
         private ReactiveVariable<float> _attackRange;
         private ReactiveVariable<float> _attackDamage;
+
         private ReactiveVariable<LayerMask> _enemyMask;
 
-        private ReactiveVariable<float> _hitStopScale;
-        private ReactiveVariable<float> _hitStopDuration;
+        private IDisposable _attackDelayEndDisposable;
 
-        private ReactiveVariable<float> _hitBounceForce;
-        private ReactiveVariable<Vector2> _groundBounceModifiers;
-        private ReactiveVariable<Vector2> _airBounceModifiers;
-
-        public MeleeAttackHitSystem(ICoroutinesPerformer coroutines,
-            CameraService cameraService,
-            DropLootService dropLootService,
-            ConfigsProviderService configsProviderService,
-            AudioService audioService)
-        {
-            _coroutines = coroutines;
-            _cameraService = cameraService;
-            _dropLootService = dropLootService;
-            _configsProviderService = configsProviderService;
-            _audioService = audioService;
-        }
 
         public void OnInit(Entity entity)
         {
             _entity = entity;
 
+            /*
             _successfulHitEvent = _entity.SuccessfulHitEvent;
             _attackRange = _entity.AttackRange;
             _attackDamage = _entity.AttackDamage;
             _enemyMask = _entity.AttackEnemyMask;
 
-            _hitStopScale = _entity.AttackHitStopScale;
-            _hitStopDuration = _entity.AttackHitStopDuration;
-
-            _hitBounceForce = _entity.AttackHitBounceForce;
-            _groundBounceModifiers = _entity.GroundHitBounceModifiers;
-            _airBounceModifiers = _entity.AirHitBounceModifiers;
-
             _attackDelayEndDisposable = _entity.AttackDelayEndEvent.Subscribe(OnAttackHit);
+            */
         }
 
         private void OnAttackHit()
         {
+            /*
             float dir = _entity.Transform.localScale.x > 0 ? 1f : -1f;
             float range = _attackRange.Value;
 
@@ -84,41 +46,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
                 range * 0.5f,
                 _enemyMask.Value);
 
-            if (hits.Length == 0) return;
+            if (hits.Length == 0) 
+                return;
 
             bool hitAny = false;
+
             foreach (var hit in hits)
             {
                 var mono = hit.GetComponentInParent<MonoEntity>();
+
                 if (mono != null)
                 {
                     ApplyDamage(mono.LinkedEntity, hit.transform.position);
                     hitAny = true;
                 }
-                // test
-                else
-                {
-                    _audioService.PlaySfxByPrefixAuto("Box_Hit", UnityEngine.Random.Range(0.8f, 1.2f));
-                    MasterLootProviderConfig lootProvider = _configsProviderService.GetConfig<MasterLootProviderConfig>();
-                    _dropLootService.DropLootFor(hit.transform.position, lootProvider.PropsLoot);
-                    Object.Destroy(hit.gameObject);
-                    // hitAny = true; // tryaska
-                }
             }
 
             if (hitAny)
             {
-                // Эффекты обратной связи
                 _successfulHitEvent?.Invoke();
-
-                // Слэшер-эффекты камеры
-                _cameraService.Shake(0.4f);      // Легкая встряска
-                _cameraService.ZoomImpulse(0.6f); // Резкий наезд камеры
-
-                ApplyJuggle(dir);
-                ExtendInvulnerability();
-                _coroutines.StartPerform(DoHitStop());
             }
+            */
         }
 
         private void ApplyDamage(Entity target, Vector2 pos)
@@ -129,43 +77,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
                 {
                     Amount = _attackDamage.Value,
                     SourcePosition = pos,
-                    // Type = DamageType.General
+                    Type = DamageType.General
                 };
-                target.TakeDamageRequest.Invoke(damageData);
+
+                // target.TakeDamageRequest.Invoke(damageData);
             }
-        }
-
-        private void ApplyJuggle(float direction)
-        {
-            float baseForce = _hitBounceForce.Value;
-            Vector2 modifiers = _entity.IsGrounded.Value
-                ? _groundBounceModifiers.Value
-                : _airBounceModifiers.Value;
-
-            float horizontalImpulse = direction * baseForce * modifiers.x;
-            float verticalImpulse = baseForce * modifiers.y;
-
-            _entity.Rigidbody.linearVelocity = new Vector2(
-                horizontalImpulse,
-                Mathf.Max(0, _entity.Rigidbody.linearVelocity.y) + verticalImpulse
-            );
-        }
-
-        private void ExtendInvulnerability()
-        {
-            if (_entity.HasComponent<AttackInvulnerabilityTimer>())
-            {
-                _entity.AttackInvulnerabilityTimer.Value = _entity.AttackInvulnerabilityDuration.Value;
-                _entity.IsAttackInvulnerable.Value = true;
-            }
-        }
-
-        private IEnumerator DoHitStop()
-        {
-            float originalScale = Time.timeScale;
-            Time.timeScale = _hitStopScale.Value;
-            yield return new WaitForSecondsRealtime(_hitStopDuration.Value);
-            Time.timeScale = originalScale;
         }
 
         public void OnDispose() => _attackDelayEndDisposable?.Dispose();

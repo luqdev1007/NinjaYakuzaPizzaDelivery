@@ -10,7 +10,8 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [Header("Common")]
         [field: SerializeField] public string PrefabPath { get; private set; } = "Entities/MainHero/MainHero";
         [field: SerializeField] public float LootCollectRange { get; private set; } = 3f;
-        [field: SerializeField] public float FallVelocityThreshold { get; private set; } = -2f;
+        [field: SerializeField] public float BaseBodyContactDamage { get; private set; } = 1f;
+        [field: SerializeField] public float FallActionThreshold { get; private set; } = -2f;
         [field: SerializeField] public LayerMask GroundMask { get; private set; }
 
         [Header("Settings")]
@@ -40,9 +41,9 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     [Serializable]
     public class JumpSettings
     {
-        [field: SerializeField, Min(0)] public float JumpForce { get; private set; } = 12f;
-        [field: SerializeField, Min(0)] public float JumpForceMax { get; private set; } = 20f;
-        [field: SerializeField, Min(0)] public float JumpChargeTime { get; private set; } = 0.25f;
+        [field: SerializeField, Min(0)] public float ForceMin { get; private set; } = 12f;
+        [field: SerializeField, Min(0)] public float ForceMax { get; private set; } = 20f;
+        [field: SerializeField, Min(0)] public float MaxChargeTime { get; private set; } = 0.25f;
         [field: SerializeField, Min(1)] public int ExtraJumpsCount { get; private set; } = 1;
     }
 
@@ -50,9 +51,10 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     public class DashSettings
     {
         [field: SerializeField] public float Duration { get; private set; } = 0.25f;
+        [field: SerializeField] public float InputBufferTimeMax { get; private set; } = 0.15f;
         [field: SerializeField] public float ForceMin { get; private set; } = 15f;
         [field: SerializeField] public float ForceMax { get; private set; } = 30f;
-        [field: SerializeField] public float ChargeTime { get; private set; } = 0.3f;
+        [field: SerializeField] public float MaxChargeTime { get; private set; } = 0.3f;
         [field: SerializeField] public float Cooldown { get; private set; } = 0.5f;
         [field: SerializeField] public float AirMultiplier { get; private set; } = 2f;
         [field: SerializeField] public float VerticalBoost { get; private set; } = 2f;

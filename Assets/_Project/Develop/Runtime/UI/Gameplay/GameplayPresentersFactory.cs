@@ -55,16 +55,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             return new HintPresenter(view, _container.Resolve<ICoroutinesPerformer>(), message);
         }
 
-        public EntitiesHealthDisplayPresenter CreateEntitiesHealthDisplayPresenter(EntitiesHealthDisplay view)
-        {
-            return new EntitiesHealthDisplayPresenter(
-                _container.Resolve<EntitiesLifeContext>(),
-                view,
-                _container.Resolve<ViewsFactory>(),
-                this
-                );
-        }
-
         public EntityHealthPresenter CreateEntityHealthPresenter(Entity entity, BarWithText view)
         {
             return new EntityHealthPresenter(view, entity);

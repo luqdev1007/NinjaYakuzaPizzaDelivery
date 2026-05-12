@@ -10,7 +10,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 
         public override void Register(Entity entity)
         {
-            entity.AddHealthBarPoint(_point);
+            // entity.AddHealthBarPoint(_point);
         }
     }
 }

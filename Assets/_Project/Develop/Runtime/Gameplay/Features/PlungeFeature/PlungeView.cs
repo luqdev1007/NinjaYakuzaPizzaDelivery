@@ -58,6 +58,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         protected override void OnEntityStartedWork(Entity entity)
         {
+            /*
             _audioService = entity.GetComponent<AudioComponent>().Service;
             _rigidbody = entity.Rigidbody;
             _isPlunging = entity.IsPlunging;
@@ -69,6 +70,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             _groundedDisposable = _isGrounded.Subscribe(OnGroundedChanged);
 
             _animator.SetBool(IsPlungingKey, _isPlunging.Value);
+            */
         }
 
         private void Update()

@@ -19,9 +19,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 
         protected override void OnEntityStartedWork(Entity entity)
         {
+            /*
             _linkedEntity = entity;
             _damageEventDisposable = entity.TakeDamageEvent.Subscribe(OnDamaged);
             _pizzaDisplay.Initialize(entity);
+            */
         }
 
         public override void Cleanup(Entity entity)
@@ -36,7 +38,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             if (_pizzaDisplay == null) return;
 
             // Обновляем количество кусков
-            _pizzaDisplay.UpdateHealthVisual(_linkedEntity.CurrentHealth.Value, _linkedEntity.MaxHealth.Value);
+            // _pizzaDisplay.UpdateHealthVisual(_linkedEntity.CurrentHealth.Value, _linkedEntity.MaxHealth.Value);
 
             // Сочная тряска пиццы
             _pizzaDisplay.transform.DOComplete();

@@ -2,12 +2,17 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using UnityEngine;
+
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
 {
     public class PlayerInputSystem : IInitializableSystem, IUpdatableSystem
     {
         private readonly IInputService _inputService;
-        private ReactiveVariable<Vector2> _moveDirection;
+
+        private ReactiveVariable<Vector2> _intentMovement;
+        private ReactiveVariable<bool> _intentJump;
+        private ReactiveVariable<bool> _intentDash;
+        private ReactiveVariable<bool> _intentAttack;
 
         public PlayerInputSystem(IInputService inputService)
         {
@@ -16,12 +21,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
 
         public void OnInit(Entity entity)
         {
-            _moveDirection = entity.MoveDirection;
+            _intentMovement = entity.IntentMovement;
+            _intentJump = entity.IntentJump;
+            _intentDash = entity.IntentDash;
+            _intentAttack = entity.IntentAttack;
         }
 
         public void OnUpdate(float deltaTime)
         {
-            _moveDirection.Value = _inputService.MoveDirection;
+            _intentMovement.Value = _inputService.MoveDirection;
+            _intentJump.Value = _inputService.IsJumpKeyHeld;
+            _intentDash.Value = _inputService.IsDashKeyHeld;
+            _intentAttack.Value = _inputService.IsAttackKeyHeld;
         }
     }
 }

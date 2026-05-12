@@ -7,6 +7,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
     public class SpeedTrailsView : EntityView
     {
         [SerializeField] private TrailRenderer[] _trails;
+
         [SerializeField] private float _speedOnThreshold = 8f;
         [SerializeField] private float _speedOffThreshold = 5f;
         [SerializeField] private float _offDelay = 0.3f;
@@ -14,6 +15,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         [SerializeField] private float _rotationSpeed = 20f;
 
         private Rigidbody2D _rigidbody;
+
         private Vector3 _lastTrailPos;
         private bool _isEmitting;
         private float _offTimer;
@@ -26,9 +28,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
         private void Update()
         {
-            if (_rigidbody == null)
-                return;
-
             Vector2 velocity = _rigidbody.linearVelocity;
             float speed = velocity.magnitude;
 
@@ -48,6 +47,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
                 if (_offTimer <= 0f)
                     SetTrailsActive(false);
             }
+        }
+
+        public override void Cleanup(Entity entity)
+        {
+            base.Cleanup(entity);
         }
 
         private void UpdateTrailPosition(Vector2 velocity)
@@ -71,15 +75,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             _lastTrailPos = _trails[0].transform.localPosition;
         }
 
-        public override void Cleanup(Entity entity)
-        {
-            base.Cleanup(entity);
-            _rigidbody = null;
-        }
 
         private void SetTrailsActive(bool active)
         {
             _isEmitting = active;
+
             foreach (TrailRenderer trail in _trails)
                 trail.emitting = active;
         }

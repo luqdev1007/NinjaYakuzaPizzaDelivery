@@ -30,12 +30,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
         protected override void OnEntityStartedWork(Entity entity)
         {
+            /*
             _rigidbody = entity.Rigidbody;
             _isGrounded = entity.IsGrounded;
             _isMoving = entity.IsMoving;
 
             _wasGrounded = _isGrounded.Value;
             _wasMoving = _isMoving.Value;
+            */
         }
 
         private void Update()

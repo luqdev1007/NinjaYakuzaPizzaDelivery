@@ -33,7 +33,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _isThrowing = entity.IsThrowing;
+            // _isThrowing = entity.IsThrowing;
             _isThrowingDisposable = _isThrowing.Subscribe(OnIsThrowingChanged);
 
             _lineRenderer.positionCount = _precision;

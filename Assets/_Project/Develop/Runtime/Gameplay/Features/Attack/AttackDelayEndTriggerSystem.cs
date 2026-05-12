@@ -21,11 +21,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         public void OnInit(Entity entity)
         {
+            /*
             _attackDelayEndEvent = entity.AttackDelayEndEvent;
             _startAttackEvent = entity.StartAttackEvent;
 
             _delay = entity.AttackDelayTime;
             _attackProcessCurrentTime = entity.AttackProcessCurrentTime;
+            */
 
             _timerDisposable = _attackProcessCurrentTime.Subscribe(OnTimerChanged);
             _startAttackDisposable = _startAttackEvent.Subscribe(OnStartAttack);

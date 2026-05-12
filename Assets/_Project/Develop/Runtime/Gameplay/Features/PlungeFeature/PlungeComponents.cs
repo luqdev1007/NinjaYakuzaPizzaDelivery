@@ -19,17 +19,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         public ReactiveVariable<float> Value;
     }
 
-    public class PlungeAOERadius : IEntityComponent
+    public class PlungeLandImpactRangeMin : IEntityComponent
     {
         public ReactiveVariable<float> Value;
     }
 
-    public class PlungeAOEDamage : IEntityComponent
+    public class PlungeLandImpactDamageMin: IEntityComponent
     {
         public ReactiveVariable<float> Value;
     }
 
-    public class PlungeKnockbackForce : IEntityComponent
+    public class PlungeLandImpactKnockbackForceMin : IEntityComponent
     {
         public ReactiveVariable<float> Value;
     }

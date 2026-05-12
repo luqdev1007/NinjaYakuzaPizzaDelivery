@@ -1,29 +1,28 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
-using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
 {
     public class WallHangSystem : IInitializableSystem, IUpdatableSystem
     {
-        private readonly IInputService _inputService;
-        private readonly AudioService _audioService;
-
         private ICompositeCondition _canWallHang;
-        private ReactiveVariable<bool> _isWallHanging;
-        private ReactiveVariable<bool> _isGrappleThrowing;
-        private ReactiveVariable<float> _wallHangSlideSpeed;
-        private ReactiveVariable<Vector2> _wallJumpForce;
-        private ReactiveVariable<float> _wallDirection;
-        private ReactiveVariable<int> _jumpsAvailable;
-        private ReactiveVariable<int> _maxJumps;
+
         private LayerMask _wallHangLayer;
+
+        private ReactiveVariable<bool> _isWallHanging;
+
+        private ReactiveVariable<bool> _isGrappleThrowing;
+
+        private ReactiveVariable<float> _wallDirection;
+        private ReactiveVariable<Vector2> _wallJumpForce;
+        private ReactiveVariable<float> _wallHangSlideSpeed;
+
         private Rigidbody2D _rigidbody;
         private Transform _transform;
+
         private float _defaultGravityScale;
 
         private float _wallCoyoteTimer;
@@ -31,14 +30,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
         private float _jumpBufferTimer;
         private const float JumpBufferTime = 0.15f;
 
-        public WallHangSystem(IInputService inputService, AudioService audioService)
-        {
-            _inputService = inputService;
-            _audioService = audioService;
-        }
-
         public void OnInit(Entity entity)
         {
+            /*
             _canWallHang = entity.CanWallHang;
             _isWallHanging = entity.IsWallHanging;
             _isGrappleThrowing = entity.IsThrowing;
@@ -59,6 +53,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
                     StopWallHang();
                 }
             });
+            */
         }
 
         public void OnUpdate(float deltaTime)
@@ -71,6 +66,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
                 return;
             }
 
+            /*
             if (_inputService.IsAttackKeyHeld && _canWallHang.Evaluate())
             {
                 TryStartWallHang();
@@ -80,10 +76,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
             {
                 ExecuteWallJump();
             }
+            */
         }
 
         private void UpdateTimers(float deltaTime)
         {
+            /*
             if (_inputService.IsJumpKeyPressed)
                 _jumpBufferTimer = JumpBufferTime;
             else
@@ -93,10 +91,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
                 _wallCoyoteTimer = WallCoyoteTime;
             else
                 _wallCoyoteTimer -= deltaTime;
+            */
         }
 
         private void TryStartWallHang()
         {
+            /*
             float direction = _transform.localScale.x > 0 ? 1f : -1f;
             Vector2 checkOrigin = (Vector2)_transform.position + Vector2.right * direction * 0.3f;
             Collider2D hit = Physics2D.OverlapCircle(checkOrigin, 0.15f, _wallHangLayer);
@@ -108,6 +108,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
             _rigidbody.gravityScale = 0f;
             _rigidbody.linearVelocity = Vector2.zero;
             _jumpsAvailable.Value = _maxJumps.Value;
+            */
         }
 
         private void UpdateWallHang(float deltaTime)
@@ -116,7 +117,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
             Vector2 checkOrigin = (Vector2)_transform.position + Vector2.right * direction * 0.3f;
             Collider2D wallCheck = Physics2D.OverlapCircle(checkOrigin, 0.15f, _wallHangLayer);
 
-            if (wallCheck == null || !_inputService.IsAttackKeyHeld)
+            if (wallCheck == null )// || !_inputService.IsAttackKeyHeld)
             {
                 StopWallHang();
                 return;

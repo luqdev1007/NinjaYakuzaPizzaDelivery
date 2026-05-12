@@ -8,8 +8,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 {
     public class LootArcMovementSystem : IInitializableSystem, IUpdatableSystem
     {
-        private const float TravelTime = 1.0f; // Время полета
-        private const float ArcHeight = 2.5f;   // Насколько высоко подпрыгнет лут
+        private const float TravelTime = 1.0f; 
+        private const float ArcHeight = 2.5f;  
 
         private Transform _transform;
         private ReactiveVariable<Entity> _currentTarget;
@@ -29,9 +29,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         public void OnInit(Entity entity)
         {
+            /*
             _transform = entity.Transform;
             _currentTarget = entity.CurrentTarget;
             _canMove = entity.CanMove;
+            */
         }
 
         public void OnUpdate(float deltaTime)
@@ -62,7 +64,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             float easeT = t * t * t;
 
             // 1. Базовая позиция (движение по прямой линии к цели)
-            Vector3 lerpPosition = Vector3.Lerp(_startPosition, _currentTarget.Value.Transform.position, easeT);
+            Vector3 lerpPosition = Vector3.zero; // Vector3.Lerp(_startPosition, _currentTarget.Value.Transform.position, easeT);
 
             // 2. Вычисляем "горб" дуги с помощью синуса
             // Sin(0) = 0, Sin(PI/2) = 1 (пик), Sin(PI) = 0

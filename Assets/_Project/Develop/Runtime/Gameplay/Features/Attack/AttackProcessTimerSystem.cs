@@ -17,9 +17,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         public void OnInit(Entity entity)
         {
+            /*
             _currentTime = entity.AttackProcessCurrentTime;
             _inAttackProcess = entity.InAttackProcess;
             _startAttackEvent = entity.StartAttackEvent;
+            */
 
             _startAttackEventDisposable = _startAttackEvent.Subscribe(OnStartAttackProcess);
         }

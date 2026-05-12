@@ -17,7 +17,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
         {
             _targetSelector = targetSelector;
             _entitiesLifeContext = entitiesLifeContext;
-            _currentTarget = entity.CurrentTarget;
+            // _currentTarget = entity.CurrentTarget;
         }
 
         public void Update(float deltaTime)

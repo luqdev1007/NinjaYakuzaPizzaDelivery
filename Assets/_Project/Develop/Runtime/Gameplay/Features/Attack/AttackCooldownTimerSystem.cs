@@ -18,12 +18,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         public void OnInit(Entity entity)
         {
+            /*
             _currentTime = entity.AttackCooldownCurrentTime;
             _initialTime = entity.AttackCooldownInitialTime;
             _inAttackCooldown = entity.InAttackCooldown;
             _endAttackEvent = entity.EndAttackEvent;
 
             _endAttackEventDisposable = _endAttackEvent.Subscribe(OnEndAttack);
+            */
         }
 
         public void OnUpdate(float deltaTime)

@@ -5,7 +5,6 @@ using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 {
@@ -20,6 +19,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         public override void Register(Entity entity)
         {
+            /*
             // components
             entity
                .AddMaxHealth(new ReactiveVariable<float>(_maxHealth))
@@ -51,7 +51,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             // systems
             entity
                 .AddSystem(new ApplyDamageSystem())
-                .AddSystem(new DropLootSystem(_container.Resolve<DropLootService>(), _lootTable));
+                // .AddSystem(new DropLootSystem(_container.Resolve<DropLootService>(), _lootTable));
+            */
             ;
         }
     }

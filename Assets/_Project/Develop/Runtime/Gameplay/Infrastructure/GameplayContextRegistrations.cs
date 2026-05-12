@@ -7,7 +7,6 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
-using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LevelResultsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
@@ -68,8 +67,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateGameplayStatesContext);
 
             container.RegisterAsSingle(CreateStartGameTriggerService);
-
-            container.RegisterAsSingle(CreateLevelProgressService);
 
             container.RegisterAsSingle(CreateCameraService);
 
@@ -138,13 +135,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             CameraService camService = new CameraService(Camera.main);
 
             return camService;
-        }
-
-        private static LevelProgressService CreateLevelProgressService(DIContainer container)
-        {
-            return new LevelProgressService(
-                container.Resolve<MainHeroHolderService>(), 
-                container.Resolve<FinalPointTriggerService>());
         }
 
         private static StartGameTriggerService CreateStartGameTriggerService(DIContainer container)

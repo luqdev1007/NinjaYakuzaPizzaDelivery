@@ -23,8 +23,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _rigidbody = entity.Rigidbody;
-            _maxSpeed = entity.MoveSpeed.Value;
+            // _rigidbody = entity.Rigidbody;
+            // _maxSpeed = entity.MoveSpeed.Value;
         }
 
         private void Update()

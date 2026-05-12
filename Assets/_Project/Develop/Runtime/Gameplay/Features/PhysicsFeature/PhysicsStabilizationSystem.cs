@@ -17,10 +17,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
 
         public void OnInit(Entity entity)
         {
+            /*
             _linearDrag = entity.LinearDrag.Value;
             _angularDrag = entity.AngularDrag.Value;
             _canAffect = entity.CanPhysicalyInteract;
             _linkedRigidbody = entity.Rigidbody;
+            */
         }
 
         public void OnUpdate(float deltaTime)

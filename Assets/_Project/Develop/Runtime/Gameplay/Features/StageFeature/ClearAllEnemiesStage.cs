@@ -85,6 +85,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
         {
             Entity spawnedEnemy = _enemiesFactory.Create(enemyItemConfig.SpawnPosition, enemyItemConfig.EnemyConfig);
 
+            /*
             IDisposable removeReason = spawnedEnemy.IsDead.Subscribe((oldValue, isDead) =>
             {
                 if (isDead)
@@ -96,6 +97,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
             });
 
             _spawnedEnemiesToRemoveReason.Add(spawnedEnemy, removeReason);
+            */
         }
         
         private void ProcessEnd()

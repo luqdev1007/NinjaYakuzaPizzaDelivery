@@ -17,4 +17,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
     {
         public ReactiveVariable<bool> Value;
     }
+
+    public class SpawnEvent : IEntityComponent
+    {
+        public ReactiveEvent Value = new();
+    }
 }

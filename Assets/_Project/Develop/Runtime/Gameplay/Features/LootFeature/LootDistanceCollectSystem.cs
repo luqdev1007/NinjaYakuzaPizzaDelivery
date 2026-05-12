@@ -19,7 +19,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
         public void OnInit(Entity entity)
         {
             _hero = entity;
-            _collectDistance.Value = entity.CollectRange.Value * 0.2f;
+            // _collectDistance.Value = entity.CollectRange.Value * 0.2f;
         }
 
         public void OnUpdate(float deltaTime)
@@ -27,12 +27,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             if (_lifeContext == null)
                 return;
 
-            Vector3 heroPosition = _hero.Transform.position;
+            // Vector3 heroPosition = _hero.Transform.position;
 
             for (int i = 0; i < _lifeContext.Entities.Count; i++)
             {
                 Entity entity = _lifeContext.Entities[i];
 
+                /*
                 if (entity.HasComponent<LootTag>() && entity.IsCollected.Value == false && entity.InSpawnProcess.Value == false)
                 {
                     float distance = Vector3.Distance(heroPosition, entity.Transform.position);
@@ -43,6 +44,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
                         Debug.Log($"Лут собран по дистанции!");
                     }
                 }
+                */
             }
         }
     }

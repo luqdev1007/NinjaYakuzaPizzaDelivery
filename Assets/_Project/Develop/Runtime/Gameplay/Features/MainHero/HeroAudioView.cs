@@ -18,7 +18,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Hero
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            // Раскомментировал получение сервиса, без этого будет NullReferenceException
+            /* Раскомментировал получение сервиса, без этого будет NullReferenceException
             _audioService = entity.GetComponent<AudioComponent>().Service;
 
             // Используем префикс, который соответствует именам в конфиге (например, "HeroTakeDamage1")
@@ -33,6 +33,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Hero
 
             // 3. Приземление
             _groundedDisposable = entity.IsGrounded.Subscribe(OnGroundedChanged);
+            */
         }
 
         private void OnDashChanged(bool old, bool isDashing)

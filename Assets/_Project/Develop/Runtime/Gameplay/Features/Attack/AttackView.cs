@@ -38,6 +38,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         protected override void OnEntityStartedWork(Entity entity)
         {
+            /*
             _audioService = entity.GetComponent<AudioComponent>().Service;
             _rootTransform = entity.Transform;
 
@@ -52,6 +53,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
             if (entity.HasComponent<SuccessfulHitEvent>())
                 _successfulHitDisposable = entity.GetComponent<SuccessfulHitEvent>().Value.Subscribe(OnSuccessfulHit);
+            */
         }
 
         private void OnAttackProcessChanged(bool old, bool current)

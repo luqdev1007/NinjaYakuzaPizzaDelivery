@@ -10,7 +10,7 @@ using System;
 public class StagesFactory
 {
     private readonly DIContainer _container;
-    private readonly LevelConfig _levelConfig; // добавь поле
+    private readonly LevelConfig _levelConfig;
 
     public StagesFactory(DIContainer container, LevelConfig levelConfig)
     {
@@ -31,9 +31,8 @@ public class StagesFactory
             case FinalPointReachedStageConfig:
                 return new FinalPointReachedStage(
                     _container.Resolve<FinalPointTriggerService>(),
-                    _container.Resolve<LevelProgressService>(),
                     _container.Resolve<MainHeroHolderService>(),
-                    _levelConfig.FinalPointPosition); // берём отсюда
+                    _levelConfig.FinalPointPosition);
 
             default:
                 throw new ArgumentException(

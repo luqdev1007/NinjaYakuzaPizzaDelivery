@@ -14,7 +14,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
         public ReactiveVariable<float> Value;
     }
 
-
     public class TakeDamageRequest : IEntityComponent
     {
         public ReactiveEvent<DamageData> Value;

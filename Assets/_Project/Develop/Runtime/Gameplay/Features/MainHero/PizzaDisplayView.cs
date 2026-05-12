@@ -23,7 +23,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             if (_linkedEntity == null)
                 return;
 
-            float heroVelocityX = _linkedEntity.Rigidbody.linearVelocity.x;
+            float heroVelocityX = 0;// _linkedEntity.Rigidbody.linearVelocity.x;
 
             if (Mathf.Abs(heroVelocityX) > 0.1f)
             {

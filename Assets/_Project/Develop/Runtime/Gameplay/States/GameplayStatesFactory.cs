@@ -62,7 +62,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             return new StageProcessState(
                 _container.Resolve<StageProviderService>(), 
-                _container.Resolve<LevelProgressService>(),
                 _container.Resolve<CameraService>(),
                 _container.Resolve<FinalPointTriggerService>(),
                 _container.Resolve<InGameTimerFeatureService>(),
@@ -116,8 +115,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             {
                 if (mainHeroHolderService.MainHero != null)
                 {
+                    /*
                     return mainHeroHolderService.MainHero.IsDead.Value &&
                            mainHeroHolderService.MainHero.InDeathProcess.Value == false;
+                    */
                 }
                 return false;
             });

@@ -13,7 +13,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
 {
     public class InventorySystem : IInitializableSystem, IUpdatableSystem
     {
-        private readonly IInputService _inputService;
         private readonly ThrowableConfig[] _consumables;
         private readonly IThrowableBehaviourFactory _factory;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
@@ -26,9 +25,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
 
         private Dictionary<int, ReactiveVariable<int>> _chargesMap;
 
-        public InventorySystem(IInputService input, ThrowableConfig[] consumables, IThrowableBehaviourFactory factory, ICoroutinesPerformer coroutinesPerformer)
+        public InventorySystem(ThrowableConfig[] consumables, IThrowableBehaviourFactory factory, ICoroutinesPerformer coroutinesPerformer)
         {
-            _inputService = input;
             _consumables = consumables;
             _factory = factory;
             _coroutinesPerformer = coroutinesPerformer;
@@ -36,6 +34,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
 
         public void OnInit(Entity entity)
         {
+            /*
             _currentIndex = entity.CurrentThrowableIndex;
             _isThrowing = entity.IsThrowing;
             _transform = entity.Transform;
@@ -49,13 +48,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
                 { 0, entity.ShurikenCharges },
                 { 1, entity.SleepDartCharges }
             };
+            */
         }
 
         public void OnUpdate(float deltaTime)
         {
             HandleScroll();
 
-            if (_inputService.IsThrowKeyPressed)
+            // if (_inputService.IsThrowKeyPressed)
             {
                 TryThrow();
             }
@@ -95,7 +95,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
 
         private void HandleScroll()
         {
-            float scroll = _inputService.MouseScrollDelta;
+            float scroll = 0; //_inputService.MouseScrollDelta;
             if (Mathf.Abs(scroll) < 0.01f) return;
 
             int newIndex = _currentIndex.Value + (scroll > 0 ? 1 : -1);

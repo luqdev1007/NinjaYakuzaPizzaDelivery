@@ -15,7 +15,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
         public NearestDamagableTargetSelector(Entity entity)
         {
             _source = entity;
-            _sourceTransform = entity.Transform;
+            // _sourceTransform = entity.Transform;
         }
 
         public Entity SelectTargetFrom(IEnumerable<Entity> targets)
@@ -24,10 +24,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
             {
                 bool result = target.HasComponent<TakeDamageRequest>();
 
+                /*
                 if (target.TryGetCanApplyDamage(out ICompositeCondition canApplyDamage))
                 {
                     result = result && canApplyDamage.Evaluate();
                 }
+                */
 
                 /*
                 if (_source.TryGetTeam(out ReactiveVariable<Teams> sourceTeam)
@@ -64,6 +66,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
             return closestTarget;
         }
 
-        private float GetDistanceTo(Entity target) => (_sourceTransform.position - target.Transform.position).magnitude;
+        private float GetDistanceTo(Entity target) => 0; //  (_sourceTransform.position - target.Transform.position).magnitude;
     }
 }

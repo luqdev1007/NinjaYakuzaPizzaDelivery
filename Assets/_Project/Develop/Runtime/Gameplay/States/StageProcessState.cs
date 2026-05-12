@@ -15,7 +15,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
     public class StageProcessState : State, IUpdatableState
     {
         private readonly StageProviderService _stageProviderService;
-        private readonly LevelProgressService _levelProgressService;
         private readonly CameraService _cameraService;
         private readonly FinalPointTriggerService _finalPoint;
         private readonly InGameTimerFeatureService _timerFeature;
@@ -31,7 +30,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         public StageProcessState(
             StageProviderService stageProviderService,
-            LevelProgressService levelProgressService,
             CameraService cameraService,
             FinalPointTriggerService finalPoint,
             InGameTimerFeatureService timerFeature,
@@ -44,7 +42,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             LevelConfig levelConfig)
         {
             _stageProviderService = stageProviderService;
-            _levelProgressService = levelProgressService;
             _cameraService = cameraService;
             _finalPoint = finalPoint;
             _timerFeature = timerFeature;
@@ -77,7 +74,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         public void Update(float deltaTime)
         {
             _stageProviderService.UpdateCurrent(deltaTime);
-            _levelProgressService.Update(deltaTime);
             _timerFeature.Update(deltaTime);
             HandleCameraInput();
         }

@@ -26,12 +26,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
         public Entity Create(LootConfig config, Vector3 position)
         {
             Entity loot = _entityFactory.CreatePullable(config, position);
-            loot.AddLootTag();
+            // loot.AddLootTag();
 
             float randomMultiplier = Random.Range(0.5f, 3f);
 
             SetupLootComponents(loot, config, randomMultiplier);
 
+            /*
             loot.IsCollected.Subscribe((oldValue, isCollected) =>
             {
                 if (isCollected)
@@ -39,6 +40,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
                     HandleLootCollection(loot, config, randomMultiplier);
                 }
             });
+            */
 
             ApplyPhysicsAndVisuals(loot, config, randomMultiplier);
 
@@ -50,17 +52,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             if (config is SoulShardLootConfig soulShardLootConfig)
             {
                 float finalExp = soulShardLootConfig.ExperienceAmount * multiplier;
-                loot.AddExperienceValue(new ReactiveVariable<float>(finalExp));
+                // loot.AddExperienceValue(new ReactiveVariable<float>(finalExp));
             }
             else if (config is CoinLootConfig coinConfig)
             {
                 int finalCoins = Mathf.RoundToInt(coinConfig.BaseAmount * multiplier);
-                loot.AddCoins(new ReactiveVariable<int>(finalCoins));
+                // loot.AddCoins(new ReactiveVariable<int>(finalCoins));
             }
         }
 
         private void HandleLootCollection(Entity loot, LootConfig config, float multiplier)
         {
+            /*
             // 1. Определяем количество награды из компонентов сущности
             int amountToAdd = 0;
 
@@ -77,6 +80,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             PlayCollectSound(config, multiplier);
 
             // Тут можно будет вызвать событие для UI-эффектов (полет иконок)
+            */
         }
 
         private void PlayCollectSound(LootConfig config, float multiplier)
@@ -90,6 +94,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         private void ApplyPhysicsAndVisuals(Entity loot, LootConfig config, float multiplier)
         {
+            /*
             // Проверяем, является ли конфиг мета-лутом (секретным)
             // Если это НЕ секретный лут, применяем множитель скейла
             if (config is not MetaLootConfig)
@@ -123,6 +128,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
                 rb.AddForce(new Vector2(forceX, forceY) * massWeight, ForceMode2D.Impulse);
             }
+            */
         }
 
         private CurrencyTypes MapLootToCurrency(LootType lootType)

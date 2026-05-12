@@ -8,22 +8,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
     public class DamageKnockbackSystem : IInitializableSystem, IDisposableSystem
     {
         private Entity _entity;
-        private IDisposable _eventSubscription;
-
-        // Константы для настройки баланса
-        private const float BaseKnockbackX = 3f;    // Минимальный толчок по X
-        private const float BaseKnockbackY = 2f;     // Минимальный подброс вверх
-        private const float DamageMultiplier = 1.2f; // На сколько умножаем каждый хитпоинт урона
-        private const float MaxForce = 60f;          // Ограничитель, чтобы при огромном уроне не улететь за карту
+        private IDisposable _takeDamageEvent;
 
         public void OnInit(Entity entity)
         {
             _entity = entity;
-            _eventSubscription = entity.TakeDamageEvent.Subscribe(OnTakeDamage);
+            // _takeDamageEvent = entity.TakeDamageEvent.Subscribe(OnTakeDamage);
         }
 
         private void OnTakeDamage(DamageData damage)
         {
+            /*
             if (_entity.Rigidbody == null)
                 return;
 
@@ -43,8 +38,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
 
             Vector2 impulse = new Vector2(pushDirectionX * finalForceX, finalForceY);
             _entity.Rigidbody.AddForce(impulse, ForceMode2D.Impulse);
+            */
         }
 
-        public void OnDispose() => _eventSubscription?.Dispose();
+        public void OnDispose() => _takeDamageEvent?.Dispose();
     }
 }

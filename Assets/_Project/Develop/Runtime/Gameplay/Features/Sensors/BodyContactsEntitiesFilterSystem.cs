@@ -19,8 +19,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
 
         public void OnInit(Entity entity)
         {
-            _contacts = entity.ContactCollidersBuffer;
-            _contactsEntities = entity.ContactEntitiesBuffer;
+            // _contacts = entity.ContactCollidersBuffer;
+            // _contactsEntities = entity.ContactEntitiesBuffer;
         }
 
         public void OnUpdate(float deltaTime)

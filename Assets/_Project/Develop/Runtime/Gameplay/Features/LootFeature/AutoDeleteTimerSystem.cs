@@ -14,11 +14,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         public void OnUpdate(float deltaTime)
         {
-            // Безопасная проверка: тикаем только если компонент есть и время не вышло
+            /*
             if (_entity.AutoDeleteCurrentTime.Value > 0)
             {
                 _entity.AutoDeleteCurrentTime.Value -= deltaTime;
             }
+            */
         }
     }
 }

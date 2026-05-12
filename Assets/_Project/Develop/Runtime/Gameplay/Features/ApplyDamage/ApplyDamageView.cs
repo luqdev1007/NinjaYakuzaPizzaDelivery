@@ -31,7 +31,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
         protected override void OnEntityStartedWork(Entity entity)
         {
             _audioService = entity.GetComponent<AudioComponent>().Service;
-            _damageEventDisposable = entity.TakeDamageEvent.Subscribe(OnDamaged);
+            // _damageEventDisposable = entity.TakeDamageEvent.Subscribe(OnDamaged);
             _originalColor = _spriteRenderer.color;
         }
 

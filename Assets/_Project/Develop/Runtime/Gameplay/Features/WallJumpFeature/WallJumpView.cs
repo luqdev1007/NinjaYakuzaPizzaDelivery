@@ -25,7 +25,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
         protected override void OnEntityStartedWork(Entity entity)
         {
             _audioService = entity.GetComponent<AudioComponent>().Service;
-            _disposable = entity.IsWallJumping.Subscribe(OnWallJumpTriggered);
+            // _disposable = entity.IsWallJumping.Subscribe(OnWallJumpTriggered);
         }
 
         private void OnWallJumpTriggered(bool old, bool current)

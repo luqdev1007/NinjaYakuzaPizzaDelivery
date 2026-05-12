@@ -5,13 +5,11 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
-    // Событие для View, чтобы проиграть звук и эффект попадания
     public class SuccessfulHitEvent : IEntityComponent
     {
         public ReactiveEvent Value = new();
     }
 
-    // Настройки HitStop (замедление времени)
     public class AttackHitStopScale : IEntityComponent
     {
         public ReactiveVariable<float> Value = new();
@@ -22,7 +20,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         public ReactiveVariable<float> Value = new();
     }
 
-    // Настройки отскока (Bounce)
     public class AttackHitBounceForce : IEntityComponent
     {
         public ReactiveVariable<float> Value = new();
@@ -38,8 +35,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         public ReactiveVariable<Vector2> Value = new();
     }
 
-    // Слой врагов для системы попадания
-    public class AttackEnemyMask : IEntityComponent
+    public class AttackHitMask : IEntityComponent
     {
         public ReactiveVariable<LayerMask> Value = new();
     }
@@ -52,11 +48,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
     public class AttackInvulnerabilityTimer : IEntityComponent
     {
         public ReactiveVariable<float> Value;
-    }
-
-    public class IsAttackInvulnerable : IEntityComponent
-    {
-        public ReactiveVariable<bool> Value = new();
     }
 
     public class StartAttackRequest : IEntityComponent
@@ -112,11 +103,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
     public class AttackDelayEndEvent : IEntityComponent
     {
         public ReactiveEvent Value;
-    }
-
-    public class InstantAttackDamage : IEntityComponent
-    {
-        public ReactiveVariable<float> Value;
     }
 
     public class ShootPoint : IEntityComponent

@@ -165,8 +165,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _cameraService.StopShowingTarget();
 
             // 2. Устанавливаем слежку за героем
-            _cameraService.SetBehaviour(new FollowBehaviour(hero.Transform, new Vector3(0, 2, -10)));
-            _cameraService.SetHeroRigidbody(hero.Rigidbody);
+            // _cameraService.SetBehaviour(new FollowBehaviour(hero.Transform, new Vector3(0, 2, -10)));
+            // _cameraService.SetHeroRigidbody(hero.Rigidbody);
 
             // 3. ВОЗВРАЩАЕМ ЗУМ. 
             // Если в CameraService есть метод ResetZoom() — используй его.

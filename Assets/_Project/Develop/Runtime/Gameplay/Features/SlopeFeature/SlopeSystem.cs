@@ -38,6 +38,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
 
         public void OnInit(Entity entity)
         {
+            /*
             _rigidbody = entity.Rigidbody;
 
             // Состояние
@@ -64,6 +65,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature
             _collisionProxy = entity.Transform.GetComponent<EntityCollisionProxy>();
             if (_collisionProxy != null)
                 _collisionProxy.OnCollisionStayEvent += OnCollisionStay;
+            */
         }
 
         public void OnUpdate(float deltaTime)

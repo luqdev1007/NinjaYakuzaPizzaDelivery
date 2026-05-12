@@ -1,10 +1,9 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
-using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
-using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Utilites;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage
 {
@@ -12,22 +11,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage
     {
         private Entity _entity;
         private Buffer<Entity> _contacts;
-        private ReactiveVariable<float> _damage;
+        private ReactiveVariable<float> _baseDamage;
+        private Rigidbody2D _rigidbody;
 
         private List<Entity> _processedEntities;
 
         public void OnInit(Entity entity)
         {
+            /*
             _entity = entity;
-
             _contacts = entity.ContactEntitiesBuffer;
-            _damage = entity.BodyContactDamage;
+            _baseDamage = entity.BodyContactDamage;
+            _rigidbody = entity.Rigidbody;
 
             _processedEntities = new List<Entity>(_contacts.Items.Length);
+            */
         }
 
         public void OnUpdate(float deltaTime)
         {
+            float currentSpeed = _rigidbody.linearVelocity.magnitude;
+            float velocityMultiplier = Mathf.Max(1f, currentSpeed * 0.1f);
+            float finalDamage = _baseDamage.Value * velocityMultiplier;
+
             for (int i = 0; i < _contacts.Count; i++)
             {
                 Entity contactEntity = _contacts.Items[i];
@@ -36,7 +42,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage
                 {
                     _processedEntities.Add(contactEntity);
 
-                    EntitiesHelper.TryTakeDamageFrom(_entity, contactEntity, _damage.Value);
+                    EntitiesHelper.TryTakeDamageFrom(_entity, contactEntity, finalDamage);
                 }
             }
 
@@ -50,7 +56,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage
             for (int i = 0; i < _contacts.Count; i++)
                 if (_contacts.Items[i] == entity)
                     return true;
-
             return false;
         }
     }

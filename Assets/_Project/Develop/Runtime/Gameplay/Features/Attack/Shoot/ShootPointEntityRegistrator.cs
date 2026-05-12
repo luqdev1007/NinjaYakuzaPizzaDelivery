@@ -10,7 +10,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack.Shoot
 
         public override void Register(Entity entity)
         {
-            entity.AddShootPoint(_shootPoint);
+            // entity.AddShootPoint(_shootPoint);
         }
     }
 }

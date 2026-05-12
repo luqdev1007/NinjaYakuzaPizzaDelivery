@@ -15,7 +15,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
@@ -72,8 +71,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 _cameraService.SetConstraints(col.bounds);
 
             // Спавн всех сущностей с передачей соответствующих таблиц лута
-            CreateEnemiesOnLevel(levelConfig, lootProvider.EnemyLoot);
-            CreateSecretChestsOnLevel(levelConfig, lootProvider.SecretChestLoot);
+            // CreateEnemiesOnLevel(levelConfig, lootProvider.EnemyLoot);
+            // CreateSecretChestsOnLevel(levelConfig, lootProvider.SecretChestLoot);
 
             yield break;
         }
@@ -102,7 +101,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             foreach (Vector3 spawnPoint in chestPoints)
             {
                 // Создаем сундук, передавая конкретно таблицу для сундуков
-                entitiesFactory.CreateChest(spawnPoint, chestLoot);
+                // entitiesFactory.CreateChest(spawnPoint, chestLoot);
             }
         }
 
@@ -120,11 +119,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _entitiesLifeContext?.Update(Time.deltaTime);
             _gameplayStatesContext?.Update(Time.deltaTime);
 
+            /*
             if (Input.GetKeyDown(KeyCode.P))
                 _container.Resolve<MainHeroHolderService>().MainHero.CollectRange.Value = 100;
 
             if (Input.GetKeyDown(KeyCode.O))
                 _container.Resolve<MainHeroHolderService>().MainHero.CollectRange.Value = 5;
+            */
         }
 
         private void LateUpdate()

@@ -17,7 +17,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         public void DropLootFor(Entity entity, LootTableConfig lootTable)
         {
-            DropLootInternal(entity.Transform.position, lootTable);
+            // DropLootInternal(entity.Transform.position, lootTable);
         }
 
         private void DropLootInternal(Vector3 position, LootTableConfig lootTable)

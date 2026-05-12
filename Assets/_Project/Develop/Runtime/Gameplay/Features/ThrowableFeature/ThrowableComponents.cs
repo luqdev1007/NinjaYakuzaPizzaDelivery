@@ -8,28 +8,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         public ReactiveEvent Value = new();
     }
 
-    public class CurrentThrowableIndex : IEntityComponent
+    public class ThrowRequest : IEntityComponent
     {
-        public ReactiveVariable<int> Value;
-    }
-
-    public class GrappleCharges : IEntityComponent
-    {
-        public ReactiveVariable<int> Value;
-    }
-
-    public class ShurikenCharges : IEntityComponent
-    {
-        public ReactiveVariable<int> Value;
-    }
-
-    public class SleepDartCharges : IEntityComponent
-    {
-        public ReactiveVariable<int> Value;
-    }
-
-    public class IsThrowing : IEntityComponent
-    {
-        public ReactiveVariable<bool> Value;
+        public ReactiveEvent Value = new();
     }
 }
