@@ -11,6 +11,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         private ICompositeCondition _canMove;
 
         private ReactiveVariable<bool> _isMoving;
+        private ReactiveVariable<float> _lookDirectionX;
 
         private ReactiveVariable<float> _moveSpeed;
         private ReactiveVariable<float> _moveSpeedMin;
@@ -29,6 +30,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             _isMoving = entity.IsMoving;
 
             _intentMovement = entity.IntentMovement;
+            _lookDirectionX = entity.LookDirectionX;
 
             _moveSpeed = entity.MoveSpeed;
             _moveSpeedMin = entity.MoveSpeedMin;
@@ -57,6 +59,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             if (Mathf.Abs(inputX) > 0.01f)
             {
                 ApplyMovement(inputX, deltaTime);
+                _lookDirectionX.Value = Mathf.Sign(inputX);
             }
             else
             {

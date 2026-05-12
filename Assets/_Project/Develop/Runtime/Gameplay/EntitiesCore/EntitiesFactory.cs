@@ -8,6 +8,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Visual;
 using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
@@ -81,6 +82,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddFallActionThreshold(new ReactiveVariable<float>(config.FallActionThreshold))
                 .AddGroundMask(config.GroundMask)
                 .AddIsGrounded()
+                .AddLookDirectionX(new ReactiveVariable<float>(1))
 
                 // movement
                 .AddIsMoving()

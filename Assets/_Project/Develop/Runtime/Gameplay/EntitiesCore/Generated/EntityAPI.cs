@@ -3615,5 +3615,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Common.FallActionThreshold() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Common.LookDirectionX LookDirectionXC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Common.LookDirectionX>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> LookDirectionX => LookDirectionXC.Value;
+
+		public bool TryGetLookDirectionX(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Common.LookDirectionX component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLookDirectionX()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Common.LookDirectionX() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLookDirectionX(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Common.LookDirectionX() {Value = value}); 
+		}
+
 	}
 }

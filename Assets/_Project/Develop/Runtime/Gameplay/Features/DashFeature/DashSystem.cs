@@ -5,6 +5,7 @@ using Assets._Project.Develop.Runtime.Utilites.Reactive;
 using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
 using System.Collections;
 using UnityEngine;
+using Assets._Project.Develop.Runtime.Gameplay.Common;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 {
@@ -18,7 +19,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
         private ReactiveVariable<bool> _isDashing;
         private ReactiveVariable<bool> _isGrounded;
 
-        private ReactiveVariable<Vector2> _moveDirection;
+        private ReactiveVariable<float> _lookDirectionX;
 
         private ReactiveVariable<float> _dashForceMin;
         private ReactiveVariable<float> _dashForceMax;
@@ -55,7 +56,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
             _isDashing = entity.IsDashing;
             _isGrounded = entity.IsGrounded;
 
-            _moveDirection = entity.MoveDirection;
+            _lookDirectionX = entity.LookDirectionX;
 
             _dashForceMin = entity.DashForceMin;
             _dashForceMax = entity.DashForceMax;
@@ -77,6 +78,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
             bool currentIntent = _intentDash.Value;
             bool isPressedDown = currentIntent && !_wasDashIntendedLastFrame;
             bool isReleased = !currentIntent && _wasDashIntendedLastFrame;
+
             _wasDashIntendedLastFrame = currentIntent;
 
             if (_cooldownTimer > 0f)
@@ -134,7 +136,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
             _cooldownTimer = _dashCooldown.Value;
             _isCharging = false;
 
-            _coroutinesPerformer.StartPerform(DashCoroutine(force, _moveDirection.Value.x, inAir));
+            _coroutinesPerformer.StartPerform(DashCoroutine(force, _lookDirectionX.Value, inAir));
         }
 
         private IEnumerator DashCoroutine(float force, float direction, bool inAir)
