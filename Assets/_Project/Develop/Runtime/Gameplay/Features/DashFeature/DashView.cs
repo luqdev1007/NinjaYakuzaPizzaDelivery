@@ -1,7 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
-using Assets._Project.Develop.Runtime.Utilites.ObjectsManagment;
+using Assets._Project.Develop.Runtime.Utilities.ObjectsManagment;
 using System;
 using System.Collections;
 using UnityEngine;

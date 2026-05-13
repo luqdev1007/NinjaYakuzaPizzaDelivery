@@ -7,13 +7,14 @@ public class DialogViewEventListener : MonoBehaviour
 
     public void OnShowAnimationEnded()
     {
-        if (_view != null) _view.OnAppearanceAnimationEnded();
+        if (_view != null) 
+            _view.OnAppearanceAnimationEnded();
     }
 
-    // ВАЖНО: Добавь Animation Event в конец DialogEndAnim и выбери этот метод
     public void OnHideAnimationEnded()
     {
-        if (_view != null) _view.OnHideAnimationEnded();
+        if (_view != null) 
+            _view.OnHideAnimationEnded();
     }
 
     private void Reset() => _view = GetComponentInParent<DialogDisplayView>();

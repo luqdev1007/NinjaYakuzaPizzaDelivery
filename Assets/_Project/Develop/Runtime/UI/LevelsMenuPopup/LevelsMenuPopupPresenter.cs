@@ -1,8 +1,8 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.UI.Core;
-using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
+using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using System.Collections.Generic;
 
 namespace Assets._Project.Develop.Runtime.UI.LevelsMenuPopup
@@ -48,7 +48,7 @@ namespace Assets._Project.Develop.Runtime.UI.LevelsMenuPopup
 
                 _view.LevelTilesListView.Add(levelTileView);
 
-                GameplayInputArgs inputArgs = new GameplayInputArgs(levelsListConfig.Levels[i].LevelNumber, levelsListConfig.Levels[i].FinalPointPosition);
+                GameplayInputArgs inputArgs = new GameplayInputArgs(levelsListConfig.Levels[i].LevelNumber);
 
                 LevelTilePresenter levelTilePresenter = _presentersFactory
                     .CreateLevelTilePresenter(levelTileView, inputArgs, levelsListConfig.Levels[i]);

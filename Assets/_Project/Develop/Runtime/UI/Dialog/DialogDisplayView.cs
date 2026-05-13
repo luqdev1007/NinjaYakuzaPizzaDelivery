@@ -16,7 +16,6 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 
         [SerializeField] private RectTransform _skipLabelVisual;
         [SerializeField] private CanvasGroup _skipLabelGroup;
-
         [SerializeField] private Image _portraitImage;
         [SerializeField] private Image _backgroundImage;
         [SerializeField] private Animator _animator;
@@ -25,7 +24,7 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         private Tween _holdTween;
         private Tween _typewriterTween;
 
-        private const float TextSpeed = 0.03f; // Скорость печати за символ
+        private const float TextSpeed = 0.03f;
 
         protected override void OnPreShow()
         {
@@ -48,9 +47,15 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             _animator.SetTrigger("Hide");
         }
 
-        public void OnAppearanceAnimationEnded() => AppearanceFinished?.Invoke();
+        public void OnAppearanceAnimationEnded()
+        {
+            AppearanceFinished?.Invoke();
+        }
 
-        public void OnHideAnimationEnded() => Hidden?.Invoke();
+        public void OnHideAnimationEnded()
+        {
+            Hidden?.Invoke();
+        }
 
         public void SetText(string text)
         {
@@ -59,7 +64,6 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             СontentProgressText.text = text;
             СontentProgressText.maxVisibleCharacters = 0;
 
-            // Анимация печати текста
             _typewriterTween = DOTween.To(() => СontentProgressText.maxVisibleCharacters,
                 x => СontentProgressText.maxVisibleCharacters = x,
                 text.Length,
@@ -73,8 +77,15 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             СontentProgressText.maxVisibleCharacters = СontentProgressText.text.Length;
         }
 
-        public void SetPortrait(Sprite portrait) => _portraitImage.sprite = portrait;
-        public void SetBackground(Sprite bg) => _backgroundImage.sprite = bg;
+        public void SetPortrait(Sprite portrait)
+        {
+            _portraitImage.sprite = portrait;
+        }
+
+        public void SetBackground(Sprite bg)
+        {
+            _backgroundImage.sprite = bg;
+        }
 
         public void ShowSkipHint()
         {
@@ -98,12 +109,16 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         public void StopHoldAnims()
         {
             _holdTween?.Kill();
-            _skipLabelVisual.DOScale(1f, 0.2f).OnComplete(() => _shakeTween?.Play());
+            _skipLabelVisual.DOScale(1f, 0.2f).OnComplete(() =>
+            {
+                _shakeTween?.Play();
+            });
         }
 
         public void ExplodeSkip()
         {
             StopSkipAnims();
+
             _skipLabelVisual.DOScale(2.5f, 0.25f).SetEase(Ease.OutExpo);
             _skipLabelGroup.DOFade(0f, 0.2f);
         }
@@ -113,13 +128,14 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             _skipLabelVisual.DOKill();
             _skipLabelGroup.DOKill();
 
-            Sequence pizzaSequence = DOTween.Sequence();
-            pizzaSequence.Join(_skipLabelVisual.DOAnchorPosY(_skipLabelVisual.anchoredPosition.y + 150f, 0.6f).SetEase(Ease.OutQuad));
-            pizzaSequence.Join(_skipLabelVisual.DORotate(new Vector3(360, 0, 180), 0.6f, RotateMode.LocalAxisAdd).SetEase(Ease.Linear));
-            pizzaSequence.Join(_skipLabelVisual.DOScale(0f, 0.6f).SetEase(Ease.InBack));
-            pizzaSequence.Join(_skipLabelGroup.DOFade(0f, 0.4f).SetDelay(0.2f));
+            Sequence sequence = DOTween.Sequence();
 
-            pizzaSequence.SetLink(_skipLabelVisual.gameObject);
+            sequence.Join(_skipLabelVisual.DOAnchorPosY(_skipLabelVisual.anchoredPosition.y + 150f, 0.6f).SetEase(Ease.OutQuad));
+            sequence.Join(_skipLabelVisual.DORotate(new Vector3(360, 0, 180), 0.6f, RotateMode.LocalAxisAdd).SetEase(Ease.Linear));
+            sequence.Join(_skipLabelVisual.DOScale(0f, 0.6f).SetEase(Ease.InBack));
+            sequence.Join(_skipLabelGroup.DOFade(0f, 0.4f).SetDelay(0.2f));
+
+            sequence.SetLink(_skipLabelVisual.gameObject);
         }
 
         private void StopSkipAnims()

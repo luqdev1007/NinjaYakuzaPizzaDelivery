@@ -4,10 +4,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
 {
     public interface IInputService
     {
+        bool IsInteractKeyPressed { get; } 
+        bool IsInteractKeyHeld { get; } 
+        bool IsInteractKeyReleased { get; } 
 
 
-        bool IsThrowKeyPressed { get; } // Для кнопки Q
-        float MouseScrollDelta { get; }  // Для колесика
+        bool IsStartLevelKeyPressed { get; } 
+
+        Vector2 CameraMoveDirection { get; }
+        bool IsThrowKeyPressed { get; } 
+        float MouseScrollDelta { get; } 
 
         bool IsAttackKeyHeld { get; }
         bool IsAttackKeyReleased { get; }
@@ -16,8 +22,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
         bool IsSlideKeyReleased { get; }
 
         bool IsGrappleKeyPressed { get; }
-        bool IsGrappleKeyHeld { get; } // ДОБАВЛЕНО
-        bool IsGrappleKeyReleased { get; }
+        bool IsGrappleKeyHeld { get; } 
+        bool IsGrappleKeyReleased { get; }        
 
         bool IsDashKeyPressed { get; }
         bool IsDashKeyHeld { get; }

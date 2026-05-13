@@ -1,5 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+﻿using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 
 namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
 {
@@ -7,7 +6,6 @@ namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
     public class AudioSettingsPopupPresenter : PopupPresenterBase
     {
         private readonly AudioSettingsPopupView _view;
-        private readonly AudioService _audioService;
 
         private bool _masterMuted;
         private bool _musicMuted;
@@ -21,20 +19,19 @@ namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
 
         public AudioSettingsPopupPresenter(
             AudioSettingsPopupView view,
-            AudioService audioService,
             ICoroutinesPerformer coroutinesPerformer) : base(coroutinesPerformer)
         {
             _view = view;
-            _audioService = audioService;
         }
 
         public override void Initialize()
         {
             base.Initialize();
 
-            float masterVol = _audioService.GetMasterVolume();
-            float musicVol = _audioService.GetMusicVolume();
-            float sfxVol = _audioService.GetSFXVolume();
+
+            float masterVol = 1; // _audioService.GetMasterVolume();
+            float musicVol = 1; // _audioService.GetMusicVolume();
+            float sfxVol = 1; // _audioService.GetSFXVolume();
 
             // Порог в 0.001f надежнее для float значений из миксера
             _masterBeforeMute = masterVol > 0.001f ? masterVol : 1f;
@@ -77,7 +74,7 @@ namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
 
         private void OnMasterSliderChanged(float value)
         {
-            _audioService.SetMasterVolume(value);
+            // _audioService.SetMasterVolume(value);
             if (_masterMuted && value > 0.001f)
             {
                 _masterMuted = false;
@@ -87,7 +84,7 @@ namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
 
         private void OnMusicSliderChanged(float value)
         {
-            _audioService.SetMusicVolume(value);
+            // _audioService.SetMusicVolume(value);
             if (_musicMuted && value > 0.001f)
             {
                 _musicMuted = false;
@@ -97,7 +94,7 @@ namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
 
         private void OnSFXSliderChanged(float value)
         {
-            _audioService.SetSFXVolume(value);
+            // _audioService.SetSFXVolume(value);
             if (_sfxMuted && value > 0.001f)
             {
                 _sfxMuted = false;
@@ -111,12 +108,12 @@ namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
             if (_masterMuted)
             {
                 _masterBeforeMute = _view.MasterSlider.value > 0.001f ? _view.MasterSlider.value : 1f;
-                _audioService.SetMasterVolume(0f);
+                // _audioService.SetMasterVolume(0f);
                 _view.SetMasterSliderSilent(0f);
             }
             else
             {
-                _audioService.SetMasterVolume(_masterBeforeMute);
+                // _audioService.SetMasterVolume(_masterBeforeMute);
                 _view.SetMasterSliderSilent(_masterBeforeMute);
             }
             _view.SetMasterToggleIcon(_masterMuted);
@@ -128,12 +125,12 @@ namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
             if (_musicMuted)
             {
                 _musicBeforeMute = _view.MusicSlider.value > 0.001f ? _view.MusicSlider.value : 1f;
-                _audioService.SetMusicVolume(0f);
+                // _audioService.SetMusicVolume(0f);
                 _view.SetMusicSliderSilent(0f);
             }
             else
             {
-                _audioService.SetMusicVolume(_musicBeforeMute);
+                // _audioService.SetMusicVolume(_musicBeforeMute);
                 _view.SetMusicSliderSilent(_musicBeforeMute);
             }
             _view.SetMusicToggleIcon(_musicMuted);
@@ -145,12 +142,12 @@ namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
             if (_sfxMuted)
             {
                 _sfxBeforeMute = _view.SFXSlider.value > 0.001f ? _view.SFXSlider.value : 1f;
-                _audioService.SetSFXVolume(0f);
+                // _audioService.SetSFXVolume(0f);
                 _view.SetSFXSliderSilent(0f);
             }
             else
             {
-                _audioService.SetSFXVolume(_sfxBeforeMute);
+                // _audioService.SetSFXVolume(_sfxBeforeMute);
                 _view.SetSFXSliderSilent(_sfxBeforeMute);
             }
             _view.SetSFXToggleIcon(_sfxMuted);

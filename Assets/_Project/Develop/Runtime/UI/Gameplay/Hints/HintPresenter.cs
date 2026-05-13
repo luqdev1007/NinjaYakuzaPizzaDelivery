@@ -1,5 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.UI.Core;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay.Hints
 {

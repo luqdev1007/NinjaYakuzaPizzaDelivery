@@ -450,7 +450,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 38392951099632383}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -459,7 +459,7 @@ Transform:
   - {fileID: 3069597175821927110}
   - {fileID: 81973921771693086}
   - {fileID: 4555898691196292187}
-  m_Father: {fileID: 1701045288548680643}
+  m_Father: {fileID: 2531722831009867396}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &47038955839124128
 GameObject:
@@ -1127,8 +1127,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7705022714851197127}
   - component: {fileID: 2998439758536021714}
+  - component: {fileID: 2482408027829702263}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (4)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1204,6 +1205,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2482408027829702263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 159669771707497153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &180394069448650742
 GameObject:
   m_ObjectHideFlags: 0
@@ -1496,7 +1510,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 197960723677933125}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1511,7 +1525,7 @@ Transform:
   - {fileID: 165320501088246797}
   - {fileID: 7785537883074855458}
   - {fileID: 2781593773217359675}
-  m_Father: {fileID: 1701045288548680643}
+  m_Father: {fileID: 2531722831009867396}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &199216574056184067
 GameObject:
@@ -2163,6 +2177,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8534635180985278201}
+  - component: {fileID: 8910657965249899254}
   m_Layer: 0
   m_Name: Chest (6)
   m_TagString: SecretChest
@@ -2185,6 +2200,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2197237991669714545}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8910657965249899254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289014161141970267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afff48c844e345d4d9ee8d78a0c5237c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &289099858518887871
 GameObject:
   m_ObjectHideFlags: 0
@@ -2457,8 +2484,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5878824191297941335}
   - component: {fileID: 5635321535732387477}
+  - component: {fileID: 5560250809354376353}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (52)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2534,6 +2562,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5560250809354376353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 303197710312486585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &305221502742258912
 GameObject:
   m_ObjectHideFlags: 0
@@ -3747,8 +3788,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4844952285982475489}
   - component: {fileID: 8823650248781384126}
+  - component: {fileID: 860352447355499761}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (18)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3824,6 +3866,94 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &860352447355499761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 471013846739690196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+--- !u!1 &538333492982642010
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7986632054582827187}
+  - component: {fileID: 2794558614382191590}
+  m_Layer: 0
+  m_Name: IntroCamera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7986632054582827187
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 538333492982642010}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2106304218255765495}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2794558614382191590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 538333492982642010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Priority:
+    Enabled: 0
+    m_Value: 0
+  OutputChannel: 1
+  StandbyUpdate: 2
+  m_StreamingVersion: 20241001
+  m_LegacyPriority: 0
+  Target:
+    TrackingTarget: {fileID: 0}
+    LookAtTarget: {fileID: 0}
+    CustomLookAtTarget: 0
+  Lens:
+    FieldOfView: 107
+    OrthographicSize: 47.35071
+    NearClipPlane: 0.3
+    FarClipPlane: 1000
+    Dutch: 0
+    ModeOverride: 0
+    PhysicalProperties:
+      GateFit: 2
+      SensorSize: {x: 21.946, y: 16.002}
+      LensShift: {x: 0, y: 0}
+      FocusDistance: 10
+      Iso: 200
+      ShutterSpeed: 0.005
+      Aperture: 16
+      BladeCount: 5
+      Curvature: {x: 2, y: 11}
+      BarrelClipping: 0.25
+      Anamorphism: 0
+  BlendHint: 0
 --- !u!1 &569304905667731132
 GameObject:
   m_ObjectHideFlags: 0
@@ -3833,6 +3963,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1187252053165567264}
+  - component: {fileID: 2339885391825784176}
   m_Layer: 0
   m_Name: Chest (2)
   m_TagString: SecretChest
@@ -3855,6 +3986,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2197237991669714545}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2339885391825784176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 569304905667731132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afff48c844e345d4d9ee8d78a0c5237c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &580795927169017962
 GameObject:
   m_ObjectHideFlags: 0
@@ -4310,8 +4453,9 @@ GameObject:
   m_Component:
   - component: {fileID: 9019069211279712138}
   - component: {fileID: 5620290332070846031}
+  - component: {fileID: 7348137845925716615}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (7)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4387,6 +4531,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7348137845925716615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593187931113480678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &620713006579220649
 GameObject:
   m_ObjectHideFlags: 0
@@ -5160,6 +5317,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6241476993538115117}
+  - component: {fileID: 6158308749467994991}
   m_Layer: 15
   m_Name: Chest (4)
   m_TagString: SecretChest
@@ -5182,6 +5340,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2197237991669714545}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6158308749467994991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743003554485961869}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afff48c844e345d4d9ee8d78a0c5237c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &747634225242015050
 GameObject:
   m_ObjectHideFlags: 0
@@ -5734,8 +5904,9 @@ GameObject:
   m_Component:
   - component: {fileID: 91634995046644679}
   - component: {fileID: 5727101902998028985}
+  - component: {fileID: 2087689067929188515}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (1)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5811,6 +5982,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2087689067929188515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 811938533663975263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &813631270725612331
 GameObject:
   m_ObjectHideFlags: 0
@@ -7761,8 +7945,9 @@ GameObject:
   m_Component:
   - component: {fileID: 9136289092029317490}
   - component: {fileID: 9163408004604931529}
+  - component: {fileID: 7594478672839484578}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (44)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7838,6 +8023,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7594478672839484578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1072648321895586831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &1078121723767713660
 GameObject:
   m_ObjectHideFlags: 0
@@ -8396,8 +8594,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4047583519274435414}
   - component: {fileID: 3320491168649170121}
+  - component: {fileID: 4356658244053564133}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (12)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8473,6 +8672,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4356658244053564133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1190890049393370789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &1199907660468525351
 GameObject:
   m_ObjectHideFlags: 0
@@ -9201,7 +9413,7 @@ Transform:
   - {fileID: 8534635180985278201}
   - {fileID: 3032609637307987912}
   - {fileID: 6241476993538115117}
-  m_Father: {fileID: 1701045288548680643}
+  m_Father: {fileID: 8357599443556953509}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1343353604156526961
 GameObject:
@@ -9300,8 +9512,9 @@ GameObject:
   m_Component:
   - component: {fileID: 473523234538276648}
   - component: {fileID: 300109403765711876}
+  - component: {fileID: 3155499799099226546}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (57)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9377,6 +9590,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &3155499799099226546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1354935405739258321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &1359089702797311498
 GameObject:
   m_ObjectHideFlags: 0
@@ -9648,8 +9874,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3308847298059649061}
   - component: {fileID: 5465312190574854853}
+  - component: {fileID: 8490116840596125524}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (41)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9725,6 +9952,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8490116840596125524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1427102115834911399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &1455866762714147929
 GameObject:
   m_ObjectHideFlags: 0
@@ -11078,8 +11318,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3424756399036598352}
   - component: {fileID: 1197828293885051609}
+  - component: {fileID: 8259217629396901827}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (36)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11155,6 +11396,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8259217629396901827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1573856887998170411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &1584777223544477023
 GameObject:
   m_ObjectHideFlags: 0
@@ -12590,6 +12844,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3032609637307987912}
+  - component: {fileID: 733044427576937853}
   m_Layer: 0
   m_Name: Chest (7)
   m_TagString: SecretChest
@@ -12612,6 +12867,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2197237991669714545}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &733044427576937853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1764156948517860188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afff48c844e345d4d9ee8d78a0c5237c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1771840110831196601
 GameObject:
   m_ObjectHideFlags: 0
@@ -12843,8 +13110,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5692196543808651478}
   - component: {fileID: 7033042034336860105}
+  - component: {fileID: 4964575769387217926}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (6)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12920,6 +13188,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4964575769387217926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1786812653341973414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &1819647795967071900
 GameObject:
   m_ObjectHideFlags: 0
@@ -13537,8 +13818,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4351190265984834012}
   - component: {fileID: 2871188264894146051}
+  - component: {fileID: 6446718676013269091}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (14)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13614,6 +13896,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6446718676013269091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1904721739110386233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &1915009011867068373
 GameObject:
   m_ObjectHideFlags: 0
@@ -14320,8 +14615,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7028898915157339272}
   - component: {fileID: 2742306662955286410}
+  - component: {fileID: 1759089015364191352}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (30)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14397,6 +14693,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1759089015364191352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2104432346585374356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &2126157425799277470
 GameObject:
   m_ObjectHideFlags: 0
@@ -15752,8 +16061,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2949709024218022874}
   - component: {fileID: 2850695470866277469}
+  - component: {fileID: 6538347674990618115}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (51)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15829,6 +16139,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6538347674990618115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2247698231864334310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &2276593354969861915
 GameObject:
   m_ObjectHideFlags: 0
@@ -16686,6 +17009,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5672759819893439072}
+  - component: {fileID: 791968400330177774}
   m_Layer: 0
   m_Name: Chest
   m_TagString: SecretChest
@@ -16708,6 +17032,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2197237991669714545}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &791968400330177774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2384693841923594530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afff48c844e345d4d9ee8d78a0c5237c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2413964952243523927
 GameObject:
   m_ObjectHideFlags: 0
@@ -16718,8 +17054,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3334775993308315766}
   - component: {fileID: 6234834009446402705}
+  - component: {fileID: 7000281014666904198}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (66)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16795,6 +17132,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7000281014666904198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2413964952243523927}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &2423710065676477411
 GameObject:
   m_ObjectHideFlags: 0
@@ -17703,8 +18053,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6961842166897688752}
   - component: {fileID: 1272577765726394681}
+  - component: {fileID: 7827430341149281477}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (53)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17780,6 +18131,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7827430341149281477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2531528802626583788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &2550260994744016673
 GameObject:
   m_ObjectHideFlags: 0
@@ -19604,8 +19968,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7350391969131527012}
   - component: {fileID: 1333421424841301818}
+  - component: {fileID: 4231018410461035911}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (8)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19681,6 +20046,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4231018410461035911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2737656074026549643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &2740118108208614593
 GameObject:
   m_ObjectHideFlags: 0
@@ -19865,8 +20243,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3390589589434887925}
   - component: {fileID: 2518438691651712616}
+  - component: {fileID: 1349252065509160321}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (34)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19942,6 +20321,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1349252065509160321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2769612720023935617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &2783908194630182479
 GameObject:
   m_ObjectHideFlags: 0
@@ -19952,8 +20344,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4505252800191132236}
   - component: {fileID: 9205457380148777567}
+  - component: {fileID: 4525210546781614606}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (61)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20029,6 +20422,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4525210546781614606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2783908194630182479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &2793673098435952965
 GameObject:
   m_ObjectHideFlags: 0
@@ -20140,12 +20546,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2798877044409516849}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 90, y: 10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1701045288548680643}
+  m_Father: {fileID: 8357599443556953509}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2800414531940093992
 GameObject:
@@ -20157,8 +20563,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6441642112110613732}
   - component: {fileID: 7534212537850174347}
+  - component: {fileID: 3518881224746365144}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (27)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20234,6 +20641,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &3518881224746365144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2800414531940093992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &2800977955138888730
 GameObject:
   m_ObjectHideFlags: 0
@@ -20670,6 +21090,81 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &2858814014476453637
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 551181683485597530}
+  - component: {fileID: 7012810670739971622}
+  m_Layer: 0
+  m_Name: HeroCamera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &551181683485597530
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2858814014476453637}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2106304218255765495}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7012810670739971622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2858814014476453637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Priority:
+    Enabled: 0
+    m_Value: 0
+  OutputChannel: 1
+  StandbyUpdate: 2
+  m_StreamingVersion: 20241001
+  m_LegacyPriority: 0
+  Target:
+    TrackingTarget: {fileID: 0}
+    LookAtTarget: {fileID: 0}
+    CustomLookAtTarget: 0
+  Lens:
+    FieldOfView: 107
+    OrthographicSize: 47.35071
+    NearClipPlane: 0.3
+    FarClipPlane: 1000
+    Dutch: 0
+    ModeOverride: 0
+    PhysicalProperties:
+      GateFit: 2
+      SensorSize: {x: 21.946, y: 16.002}
+      LensShift: {x: 0, y: 0}
+      FocusDistance: 10
+      Iso: 200
+      ShutterSpeed: 0.005
+      Aperture: 16
+      BladeCount: 5
+      Curvature: {x: 2, y: 11}
+      BarrelClipping: 0.25
+      Anamorphism: 0
+  BlendHint: 0
 --- !u!1 &2888217160308958690
 GameObject:
   m_ObjectHideFlags: 0
@@ -21112,8 +21607,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4324425639927591711}
   - component: {fileID: 5283861300216790220}
+  - component: {fileID: 2570183743179724562}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (33)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21189,6 +21685,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2570183743179724562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2930027099446476821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &2931492048073962780
 GameObject:
   m_ObjectHideFlags: 0
@@ -22903,8 +23412,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1097033019166062269}
   - component: {fileID: 5732176170653582423}
+  - component: {fileID: 968401854363242397}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (29)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22980,6 +23490,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &968401854363242397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3135172129368693993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &3136732700622260218
 GameObject:
   m_ObjectHideFlags: 0
@@ -23297,8 +23820,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4128273549253386216}
   - component: {fileID: 1396998733751461832}
+  - component: {fileID: 2478981531749030815}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (10)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23374,6 +23898,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2478981531749030815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3158093001565230592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &3178221607055569231
 GameObject:
   m_ObjectHideFlags: 0
@@ -23679,6 +24216,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1701045288548680643}
+  - component: {fileID: 905989608684699571}
   m_Layer: 0
   m_Name: Village
   m_TagString: Untagged
@@ -23699,17 +24237,238 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 2106304218255765495}
+  - {fileID: 2531722831009867396}
   - {fileID: 6800448173694324289}
-  - {fileID: 9064102348367123541}
-  - {fileID: 5463490597442126159}
-  - {fileID: 2721759987561065125}
-  - {fileID: 2197237991669714545}
-  - {fileID: 3090440052307223557}
-  - {fileID: 6664218048730988893}
-  - {fileID: 9132834362991013780}
-  - {fileID: 1618342399915894285}
+  - {fileID: 8357599443556953509}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &905989608684699571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3215380827292991448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37e347919dbaf6b45bbffae61d6e4202, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <IntroCamera>k__BackingField: {fileID: 2794558614382191590}
+  <ScoutingCamera>k__BackingField: {fileID: 2393303040751386844}
+  <HeroCamera>k__BackingField: {fileID: 7012810670739971622}
+  <StartPoint>k__BackingField: {fileID: 6664218048730988893}
+  <FinishPoint>k__BackingField: {fileID: 9132834362991013780}
+  _enemies:
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -69, y: -0.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -60.5, y: 2, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -50.5, y: -0.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -36.5, y: -0.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -29.5, y: 4.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -23.5, y: 0, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -26, y: 16, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -12, y: 14, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -12, y: 6.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -3.5, y: 18, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 16.5, y: 27.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 8.5, y: 35, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 0, y: 39.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 28, y: 42, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 50.5, y: 26, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 46.5, y: 40.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 31, y: 14, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 64, y: 49.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 34, y: 53, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 69, y: 32.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 62.5, y: 19.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 49, y: -1, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -14.5, y: 33, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -50.5, y: 37.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -38, y: 49.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -26.5, y: 52.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -46, y: 66.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -69.5, y: 51, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -91.5, y: 57, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -102.5, y: 39, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -83, y: 36, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -106, y: 18.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -96.5, y: 9, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -104, y: 4.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -96.5, y: 0.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -85.5, y: 17, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -79, y: 16.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -94, y: 23, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -68.5, y: 17.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -62.5, y: 17.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -45, y: 17.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -35, y: 24.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -118, y: 9, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -116.5, y: -6, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -106.5, y: -18.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -91.5, y: -17, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -73.5, y: -17.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -59.5, y: -18.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -40.5, y: -17.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -24, y: -19, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -8, y: -18, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 3.5, y: -18, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 16.5, y: -18, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 40, y: -7, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 53.5, y: -14.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 84, y: -15.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 70, y: -4.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 72, y: 10.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 99, y: -15.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 93.5, y: -4.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 22.5, y: 6, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -10.5, y: 66, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 24, y: 68, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 88.5, y: 69.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: 90.5, y: 36, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -93, y: 70.5, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  - Config: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+    Position: {x: -69.5, y: 79, z: 0}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}
+  _chests:
+  - {x: -12.459999, y: -2.8299942, z: 0}
+  - {x: 73.58, y: 65.48, z: 0}
+  - {x: -62.120003, y: 65.48, z: 0}
+  - {x: 77.399994, y: 65.48, z: 0}
+  - {x: 68.8, y: 65.48, z: 0}
+  - {x: -69.130005, y: 65.48, z: 0}
 --- !u!1 &3232831087937407649
 GameObject:
   m_ObjectHideFlags: 0
@@ -24590,8 +25349,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5760897260279839778}
   - component: {fileID: 3897141884130818973}
+  - component: {fileID: 8387039281418075292}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (40)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24667,6 +25427,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8387039281418075292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3343725652883886138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &3344343576165317250
 GameObject:
   m_ObjectHideFlags: 0
@@ -25090,6 +25863,40 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &3375049552583177640
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2531722831009867396}
+  m_Layer: 0
+  m_Name: Environment
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2531722831009867396
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3375049552583177640}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 9064102348367123541}
+  - {fileID: 5463490597442126159}
+  - {fileID: 2721759987561065125}
+  m_Father: {fileID: 1701045288548680643}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3395408728487342032
 GameObject:
   m_ObjectHideFlags: 0
@@ -25806,8 +26613,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7395312348450272608}
   - component: {fileID: 938579681389522522}
+  - component: {fileID: 9096069424832037923}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (46)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25883,6 +26691,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &9096069424832037923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3433950741359174825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &3438219723334132431
 GameObject:
   m_ObjectHideFlags: 0
@@ -26356,8 +27177,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1160477984129941188}
   - component: {fileID: 6458148067342624475}
+  - component: {fileID: 2174461285615121460}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (56)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26433,6 +27255,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2174461285615121460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3495514662694001042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &3496298075497731985
 GameObject:
   m_ObjectHideFlags: 0
@@ -26772,8 +27607,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8542142792819258654}
   - component: {fileID: 2097971631628559469}
+  - component: {fileID: 2016982424416760009}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (37)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26849,6 +27685,53 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2016982424416760009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3499845038927211727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+--- !u!1 &3516516189457905286
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2106304218255765495}
+  m_Layer: 0
+  m_Name: Cameras
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2106304218255765495
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3516516189457905286}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7986632054582827187}
+  - {fileID: 2151239480099424275}
+  - {fileID: 551181683485597530}
+  m_Father: {fileID: 1701045288548680643}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3557064652443352680
 GameObject:
   m_ObjectHideFlags: 0
@@ -26859,8 +27742,9 @@ GameObject:
   m_Component:
   - component: {fileID: 73510423447707096}
   - component: {fileID: 7835566998793825770}
+  - component: {fileID: 78181618907149903}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (11)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26936,6 +27820,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &78181618907149903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3557064652443352680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &3584543064632238105
 GameObject:
   m_ObjectHideFlags: 0
@@ -27034,8 +27931,9 @@ GameObject:
   m_Component:
   - component: {fileID: 9018943445346297698}
   - component: {fileID: 7671957509569283236}
+  - component: {fileID: 3572174121268262781}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (58)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27111,6 +28009,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &3572174121268262781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3595498472709120732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &3599393065387872390
 GameObject:
   m_ObjectHideFlags: 0
@@ -29144,7 +30055,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3911950359109089544}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -29216,7 +30127,7 @@ Transform:
   - {fileID: 2583283909441012556}
   - {fileID: 7940156782032084439}
   - {fileID: 3334775993308315766}
-  m_Father: {fileID: 1701045288548680643}
+  m_Father: {fileID: 8357599443556953509}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3939560893451686162
 GameObject:
@@ -30385,8 +31296,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5024175287025609082}
   - component: {fileID: 7988873477758688863}
+  - component: {fileID: 1841565133518981777}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (59)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30462,6 +31374,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1841565133518981777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4114011162348935213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &4116258967456022893
 GameObject:
   m_ObjectHideFlags: 0
@@ -30811,6 +31736,81 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &4231887833789308360
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2151239480099424275}
+  - component: {fileID: 2393303040751386844}
+  m_Layer: 0
+  m_Name: ScoutingCamera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2151239480099424275
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4231887833789308360}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2106304218255765495}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2393303040751386844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4231887833789308360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Priority:
+    Enabled: 0
+    m_Value: 0
+  OutputChannel: 1
+  StandbyUpdate: 2
+  m_StreamingVersion: 20241001
+  m_LegacyPriority: 0
+  Target:
+    TrackingTarget: {fileID: 0}
+    LookAtTarget: {fileID: 0}
+    CustomLookAtTarget: 0
+  Lens:
+    FieldOfView: 107
+    OrthographicSize: 47.35071
+    NearClipPlane: 0.3
+    FarClipPlane: 1000
+    Dutch: 0
+    ModeOverride: 0
+    PhysicalProperties:
+      GateFit: 2
+      SensorSize: {x: 21.946, y: 16.002}
+      LensShift: {x: 0, y: 0}
+      FocusDistance: 10
+      Iso: 200
+      ShutterSpeed: 0.005
+      Aperture: 16
+      BladeCount: 5
+      Curvature: {x: 2, y: 11}
+      BarrelClipping: 0.25
+      Anamorphism: 0
+  BlendHint: 0
 --- !u!1 &4233372093016569718
 GameObject:
   m_ObjectHideFlags: 0
@@ -31224,8 +32224,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2290142024785602644}
   - component: {fileID: 5679383088722821460}
+  - component: {fileID: 6292987538387484255}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (47)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31301,6 +32302,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6292987538387484255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4303387021692258960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &4312616944749557610
 GameObject:
   m_ObjectHideFlags: 0
@@ -31485,8 +32499,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1900576527422414961}
   - component: {fileID: 1092569428488026214}
+  - component: {fileID: 7579482505623816682}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (23)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31562,6 +32577,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7579482505623816682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4319130535485642366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &4331341898337432678
 GameObject:
   m_ObjectHideFlags: 0
@@ -31962,14 +32990,13 @@ GameObject:
   m_Component:
   - component: {fileID: 1618342399915894285}
   - component: {fileID: 1589993115404396939}
-  - component: {fileID: 2156556041941341536}
   m_Layer: 0
   m_Name: WindArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1618342399915894285
 Transform:
   m_ObjectHideFlags: 0
@@ -31984,7 +33011,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5448008321239852377}
-  m_Father: {fileID: 1701045288548680643}
+  m_Father: {fileID: 5463490597442126159}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &1589993115404396939
 BoxCollider2D:
@@ -32032,21 +33059,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &2156556041941341536
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4390025312184065867}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a411368cb0a518245b1e761d94345214, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  WindForce: {x: 2, y: 4}
-  OnlyForGliding: 1
-  GlideMultiplier: 3
 --- !u!1 &4396233409445936064
 GameObject:
   m_ObjectHideFlags: 0
@@ -32851,6 +33863,41 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.90625, y: 0.96875}
   m_EdgeRadius: 0
+--- !u!1 &4573755040050676526
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8357599443556953509}
+  m_Layer: 0
+  m_Name: Points
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8357599443556953509
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4573755040050676526}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6664218048730988893}
+  - {fileID: 9132834362991013780}
+  - {fileID: 2197237991669714545}
+  - {fileID: 3090440052307223557}
+  m_Father: {fileID: 1701045288548680643}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4617070453670367444
 GameObject:
   m_ObjectHideFlags: 0
@@ -32980,8 +34027,9 @@ GameObject:
   m_Component:
   - component: {fileID: 845273539239195857}
   - component: {fileID: 1167207425740399986}
+  - component: {fileID: 9092614965966419483}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (54)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33057,6 +34105,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &9092614965966419483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4633244290328203227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &4664907724574083219
 GameObject:
   m_ObjectHideFlags: 0
@@ -35229,8 +36290,9 @@ GameObject:
   m_Component:
   - component: {fileID: 255870479223926885}
   - component: {fileID: 7101302306061025516}
+  - component: {fileID: 2130379596591237941}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (25)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35306,6 +36368,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2130379596591237941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4962712985298434996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &4963358408452965567
 GameObject:
   m_ObjectHideFlags: 0
@@ -35672,8 +36747,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7097930081599074600}
   - component: {fileID: 1144602471478696847}
+  - component: {fileID: 3658183721235510801}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (48)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35749,6 +36825,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &3658183721235510801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4970067953632440891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &4971093958646505781
 GameObject:
   m_ObjectHideFlags: 0
@@ -37635,8 +38724,9 @@ GameObject:
   m_Component:
   - component: {fileID: 419757149407568972}
   - component: {fileID: 5076515243292412927}
+  - component: {fileID: 4677120069496830194}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (3)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37712,6 +38802,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4677120069496830194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5195208480401023062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &5196493441124200054
 GameObject:
   m_ObjectHideFlags: 0
@@ -38156,6 +39259,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4347771149987153731}
+  - component: {fileID: 9064502112602963841}
   m_Layer: 0
   m_Name: Chest (5)
   m_TagString: SecretChest
@@ -38178,6 +39282,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2197237991669714545}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9064502112602963841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5237693389975381406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afff48c844e345d4d9ee8d78a0c5237c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5254989762149174539
 GameObject:
   m_ObjectHideFlags: 0
@@ -39355,8 +40471,9 @@ GameObject:
   m_Component:
   - component: {fileID: 483133619727911613}
   - component: {fileID: 6576232647151031559}
+  - component: {fileID: 5682697522720870958}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (32)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39432,6 +40549,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5682697522720870958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5433248626125228191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &5438124275553440714
 GameObject:
   m_ObjectHideFlags: 0
@@ -40392,8 +41522,9 @@ GameObject:
   m_Component:
   - component: {fileID: 9204501417201516766}
   - component: {fileID: 4646350565458530949}
+  - component: {fileID: 1515019405576328102}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (49)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -40469,6 +41600,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1515019405576328102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5525584636111877567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &5556097134773041059
 GameObject:
   m_ObjectHideFlags: 0
@@ -42858,8 +44002,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8592088254579304456}
   - component: {fileID: 8277987612555224883}
+  - component: {fileID: 8739514992658987504}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (20)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -42935,6 +44080,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8739514992658987504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5773881823783077446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &5775190651558976413
 GameObject:
   m_ObjectHideFlags: 0
@@ -63204,8 +64362,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4530170647765680333}
   - component: {fileID: 3268900457355200451}
+  - component: {fileID: 4561984438274119358}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (31)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -63281,6 +64440,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4561984438274119358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5964755159086585674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &5988174811567728147
 GameObject:
   m_ObjectHideFlags: 0
@@ -64191,8 +65363,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3845084784437592937}
   - component: {fileID: 6605776781139664160}
+  - component: {fileID: 5238675912012861317}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (50)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -64268,6 +65441,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5238675912012861317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6096044991749545058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &6103825558602432101
 GameObject:
   m_ObjectHideFlags: 0
@@ -64539,8 +65725,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3433223918557736412}
   - component: {fileID: 6572588092574676120}
+  - component: {fileID: 2842016017699656697}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (35)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -64616,6 +65803,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2842016017699656697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6154547434576647382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &6158711311989961277
 GameObject:
   m_ObjectHideFlags: 0
@@ -70616,8 +71816,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8296912281803856895}
   - component: {fileID: 5999201623112728052}
+  - component: {fileID: 5904074014083871777}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (17)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70693,6 +71894,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5904074014083871777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6344517678396852745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &6353400036861868325
 GameObject:
   m_ObjectHideFlags: 0
@@ -70964,8 +72178,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3904475343935071466}
   - component: {fileID: 6723756967097175697}
+  - component: {fileID: 3842802253683097915}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (26)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71041,6 +72256,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &3842802253683097915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6399075836066050933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &6400470695870487106
 GameObject:
   m_ObjectHideFlags: 0
@@ -72875,8 +74103,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1979308664506235038}
   - component: {fileID: 3825451128963107100}
+  - component: {fileID: 8403035719087087405}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (22)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72952,6 +74181,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8403035719087087405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6694077810593283784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &6706275709211591875
 GameObject:
   m_ObjectHideFlags: 0
@@ -73679,8 +74921,9 @@ GameObject:
   m_Component:
   - component: {fileID: 510345351102623016}
   - component: {fileID: 5903662296546598402}
+  - component: {fileID: 4672714061454150703}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (24)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73756,6 +74999,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4672714061454150703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6819372282143560632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &6824594039857099781
 GameObject:
   m_ObjectHideFlags: 0
@@ -75174,8 +76430,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1939806836398963682}
   - component: {fileID: 4926837905514386706}
+  - component: {fileID: 7130954869504525339}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (62)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75251,6 +76508,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7130954869504525339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7110552955664951222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &7131590316455080708
 GameObject:
   m_ObjectHideFlags: 0
@@ -75471,8 +76741,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3854694675072634945}
   - component: {fileID: 1930314517701196308}
+  - component: {fileID: 8854503771231715310}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (21)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75548,6 +76819,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8854503771231715310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7135420251099463593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &7139707380585191030
 GameObject:
   m_ObjectHideFlags: 0
@@ -76552,8 +77836,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5394604445790621685}
   - component: {fileID: 3408613224677874238}
+  - component: {fileID: 7921720915517162799}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (55)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76629,6 +77914,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7921720915517162799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7278578967121907788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &7293751649110322157
 GameObject:
   m_ObjectHideFlags: 0
@@ -76824,8 +78122,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5783996651681261442}
   - component: {fileID: 173218946680789822}
+  - component: {fileID: 1286724564341502118}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (39)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76901,6 +78200,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1286724564341502118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7342356016398075072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &7364519122064167726
 GameObject:
   m_ObjectHideFlags: 0
@@ -78334,8 +79646,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1753413957808955754}
   - component: {fileID: 2301178097781673397}
+  - component: {fileID: 7857184066396312828}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (5)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78411,6 +79724,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7857184066396312828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7526220276821669638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &7527054055511805380
 GameObject:
   m_ObjectHideFlags: 0
@@ -79479,8 +80805,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7940156782032084439}
   - component: {fileID: 8671700956515395337}
+  - component: {fileID: 8093098179930721155}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (65)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79556,6 +80883,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8093098179930721155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7650177834346903199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &7651613083673213159
 GameObject:
   m_ObjectHideFlags: 0
@@ -79566,8 +80906,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2791437321838045988}
   - component: {fileID: 5312812367442717411}
+  - component: {fileID: 4352171645282601692}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (19)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79643,6 +80984,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4352171645282601692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7651613083673213159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &7679823535816703056
 GameObject:
   m_ObjectHideFlags: 0
@@ -79961,8 +81315,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1366881033508037656}
   - component: {fileID: 2021969314079784344}
+  - component: {fileID: 3895383596333471789}
   m_Layer: 0
-  m_Name: EnemySpawnPoint
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80038,6 +81393,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &3895383596333471789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7715902573839704081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &7724609937608101583
 GameObject:
   m_ObjectHideFlags: 0
@@ -80135,8 +81503,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3821029913067834607}
   - component: {fileID: 3705099041657059955}
+  - component: {fileID: 8672676876361300866}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (60)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80212,6 +81581,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8672676876361300866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7730852234127629263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &7746093047331581366
 GameObject:
   m_ObjectHideFlags: 0
@@ -80356,8 +81738,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1732626782331964648}
   - component: {fileID: 5878185668824952018}
+  - component: {fileID: 7186706042152363429}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (43)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80433,6 +81816,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7186706042152363429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7753354048776406702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &7758036368249226365
 GameObject:
   m_ObjectHideFlags: 0
@@ -81014,12 +82410,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7804398517853307349}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -83.5, y: -1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1701045288548680643}
+  m_Father: {fileID: 8357599443556953509}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7814040930067793269
 GameObject:
@@ -81118,8 +82514,9 @@ GameObject:
   m_Component:
   - component: {fileID: 832303830304074144}
   - component: {fileID: 7632267543148422932}
+  - component: {fileID: 5854202267221665884}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (15)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -81195,6 +82592,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5854202267221665884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7836377204364915953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &7837656629158121383
 GameObject:
   m_ObjectHideFlags: 0
@@ -81293,8 +82703,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5577544991885207423}
   - component: {fileID: 4359466559012557781}
+  - component: {fileID: 802208435113149943}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (13)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -81370,6 +82781,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &802208435113149943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7842209159485505489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &7847026698378609995
 GameObject:
   m_ObjectHideFlags: 0
@@ -81380,8 +82804,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6622339808182711464}
   - component: {fileID: 6195307205564467133}
+  - component: {fileID: 2136312509996413684}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (45)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -81457,6 +82882,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2136312509996413684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7847026698378609995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &7848397631846174551
 GameObject:
   m_ObjectHideFlags: 0
@@ -81991,8 +83429,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2583283909441012556}
   - component: {fileID: 6535004925205018153}
+  - component: {fileID: 5222293095060947694}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (64)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -82068,6 +83507,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5222293095060947694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7884372360237015011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &7896980083515823633
 GameObject:
   m_ObjectHideFlags: 0
@@ -90470,8 +91922,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1417294821725000507}
   - component: {fileID: 5507462183703353931}
+  - component: {fileID: 6917621764603153368}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (42)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -90547,6 +92000,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6917621764603153368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8022777059329580701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &8049657636445872670
 GameObject:
   m_ObjectHideFlags: 0
@@ -90557,8 +92023,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3494719033544109878}
   - component: {fileID: 2800712477817694975}
+  - component: {fileID: 7569452952623451800}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (28)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -90634,6 +92101,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7569452952623451800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8049657636445872670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &8054785186159743288
 GameObject:
   m_ObjectHideFlags: 0
@@ -90742,8 +92222,9 @@ GameObject:
   m_Component:
   - component: {fileID: 53060323599837009}
   - component: {fileID: 1714469545206665345}
+  - component: {fileID: 1612158992713119359}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (16)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -90819,6 +92300,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1612158992713119359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8108037288722893549}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &8116184490419230211
 GameObject:
   m_ObjectHideFlags: 0
@@ -91923,13 +93417,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8275586074975448066}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6813058848523622795}
-  m_Father: {fileID: 1701045288548680643}
+  - {fileID: 1618342399915894285}
+  m_Father: {fileID: 2531722831009867396}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8291375859547576996
 GameObject:
@@ -92547,8 +94042,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1405810168785230819}
   - component: {fileID: 1377533442917829654}
+  - component: {fileID: 8816897526567299520}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (9)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -92624,6 +94120,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8816897526567299520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8345882011269234365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &8351783092787997905
 GameObject:
   m_ObjectHideFlags: 0
@@ -93389,8 +94898,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2122782229293883071}
   - component: {fileID: 5396476628311809105}
+  - component: {fileID: 1917823250780768258}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (38)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93466,6 +94976,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1917823250780768258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8430388148725253534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &8443613766055297370
 GameObject:
   m_ObjectHideFlags: 0
@@ -93476,8 +94999,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8301841340759029987}
   - component: {fileID: 8773719395301655805}
+  - component: {fileID: 2366379023237047144}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (2)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93553,6 +95077,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2366379023237047144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8443613766055297370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &8521278939497928464
 GameObject:
   m_ObjectHideFlags: 0
@@ -99326,8 +100863,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8525398456975962791}
   - component: {fileID: 6679398839837475056}
+  - component: {fileID: 8828413978719881825}
   m_Layer: 0
-  m_Name: EnemySpawnPoint (63)
+  m_Name: GhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -99403,6 +100941,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8828413978719881825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9120015604413192644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
 --- !u!1 &9139178716373534897
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,9 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using UnityEngine;
 
@@ -21,11 +19,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         [SerializeField] private float _maxEmissionRate = 50f;
         [SerializeField] private float _vfxRampUpTime = 0.3f;
 
-        [Header("Audio Settings")]
-        [SerializeField] private SfxEvent _slideLoopSoundConfig; 
-        [SerializeField] private float _minPitch = 0.9f;
-        [SerializeField] private float _maxPitch = 1.3f;
-
         [Header("Visual Deformation")]
         [SerializeField] private Transform _viewContainer;
         [SerializeField] private float _slideStretchX = 1.3f;
@@ -34,12 +27,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         [SerializeField] private float _lerpSpeed = 10f;
         [SerializeField] private float _slopeRotationLerp = 0.15f;
 
-        private AudioService _audioService;
         private SlopeSystem _slopeSystem;
         private IReadOnlyVariable<bool> _isSliding;
         private IReadOnlyVariable<bool> _isOnSlope;
 
-        private SfxEvent _activeLoopEvent; 
         private float _slideTimer;
         private Vector3 _defaultScale;
         private Quaternion _defaultRotation;
@@ -73,7 +64,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
             float intensity = Mathf.Clamp01(_slideTimer / _vfxRampUpTime);
 
             UpdateVFX(intensity);
-            UpdateAudio(intensity);
         }
 
         private void HandleRotationAndDeformation()
@@ -115,11 +105,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
             if (isSliding)
             {
                 _slideTimer = 0f;
+
                 if (_frictionPS != null) 
                     _frictionPS.Play();
-
-                _audioService.PlayLoopEvent(_slideLoopSoundConfig);
-                _activeLoopEvent = _slideLoopSoundConfig;
             }
             else
             {
@@ -129,36 +117,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 
         private void UpdateVFX(float intensity)
         {
-            if (_frictionPS == null) return;
+            if (_frictionPS == null) 
+                return;
+
             var emission = _frictionPS.emission;
             emission.rateOverTime = Mathf.Lerp(5f, _maxEmissionRate, intensity);
         }
 
-        private void UpdateAudio(float intensity)
-        {
-            if (_activeLoopEvent == null) 
-                return;
-
-            float targetPitch = Mathf.Lerp(_minPitch, _maxPitch, intensity);
-            _audioService.SetLoopPitch(_activeLoopEvent, targetPitch);
-        }
-
         private void StopEffects()
         {
-            if (_frictionPS != null) _frictionPS.Stop();
-
-            if (_activeLoopEvent != null)
-            {
-                _audioService.StopLoopEvent(_activeLoopEvent);
-                _activeLoopEvent = null;
-            }
+            if (_frictionPS != null) 
+                _frictionPS.Stop();
         }
 
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
+
             StopEffects();
+
             _slideDisposable?.Dispose();
+
             if (_viewContainer != null)
             {
                 _viewContainer.localScale = _defaultScale;

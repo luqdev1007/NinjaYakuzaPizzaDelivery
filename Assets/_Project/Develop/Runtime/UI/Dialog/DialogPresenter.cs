@@ -1,10 +1,10 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Dialog;
 using Assets._Project.Develop.Runtime.UI.Core;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.UI.TextFeatures; // Подключили утилиту
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.UI.TextFeatures;
 using System;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.UI.Gameplay;
+using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 
 namespace Assets._Project.Develop.Runtime.UI.Dialog
 {
@@ -15,32 +15,28 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         private readonly DialogDisplayView _view;
         private readonly DialogConfig _config;
         private readonly CharactersConfig _charactersConfig;
-
-        private readonly GameplayUIRoot _gameplayUIRoot;
+        private readonly IInputService _inputService;
 
         private int _currentLineIndex = -1;
         private bool _isTyping;
         private float _currentHoldTime;
         private bool _isHolding;
-
-        // Таймер для быстрого пролистывания при зажатии
         private float _fastForwardTimer;
 
-        private const KeyCode SkipKey = KeyCode.E;
-        private const float SkipHoldDuration = 0.8f; // Уменьшил, чтобы быстрее реагировало
-        private const float FastForwardInterval = 0.2f; // Скорость прокрутки при зажатии
+        private const float SkipHoldDuration = 0.8f;
+        private const float FastForwardInterval = 0.2f;
 
         public DialogPresenter(
             DialogDisplayView view,
             ICoroutinesPerformer coroutinesPerformer,
             DialogConfig config,
             CharactersConfig charactersConfig,
-            GameplayUIRoot gameplayUIRoot) : base(coroutinesPerformer)
+            IInputService inputService) : base(coroutinesPerformer)
         {
             _view = view;
             _config = config;
             _charactersConfig = charactersConfig;
-            _gameplayUIRoot = gameplayUIRoot;
+            _inputService = inputService;
         }
 
         protected override PopupViewBase PopupView => _view;
@@ -50,7 +46,6 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             base.Initialize();
             _view.AppearanceFinished += OnAppearanceFinished;
             _view.ShowSkipHint();
-            _gameplayUIRoot.HUDLayer.gameObject.SetActive(false);
         }
 
         private void OnAppearanceFinished()
@@ -67,8 +62,7 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 
         private void HandleProgressInput()
         {
-            // Теперь и E (нажатие) тоже продвигает диалог
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0) || Input.GetKeyDown(SkipKey))
+            if (_inputService.IsInteractKeyPressed)
             {
                 ProgressDialog();
             }
@@ -76,10 +70,10 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 
         private void ProgressDialog()
         {
-            if (_isTyping)
+            if (_isTyping == true)
             {
                 FinishTyping();
-                _view.FinishTypingInstant(); // Нужно, чтобы View сразу показала весь текст
+                _view.FinishTypingInstant();
             }
             else
             {
@@ -89,7 +83,7 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 
         private void HandleSkipInput(float deltaTime)
         {
-            if (Input.GetKeyDown(SkipKey))
+            if (_inputService.IsInteractKeyPressed == true)
             {
                 _isHolding = true;
                 _currentHoldTime = 0f;
@@ -97,19 +91,17 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
                 _view.StartHoldAnims(SkipHoldDuration);
             }
 
-            if (Input.GetKey(SkipKey) && _isHolding)
+            if (_inputService.IsInteractKeyHeld == true && _isHolding == true)
             {
                 _currentHoldTime += deltaTime;
                 _fastForwardTimer += deltaTime;
 
-                // Если зажали — начинаем быстро пролистывать реплики
                 if (_fastForwardTimer >= FastForwardInterval)
                 {
                     _fastForwardTimer = 0f;
                     ProgressDialog();
                 }
 
-                // Если держим долго — полный выход из диалога (взрыв)
                 if (_currentHoldTime >= SkipHoldDuration)
                 {
                     _isHolding = false;
@@ -118,7 +110,7 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
                 }
             }
 
-            if (Input.GetKeyUp(SkipKey))
+            if (_inputService.IsInteractKeyReleased == true)
             {
                 _isHolding = false;
                 _view.StopHoldAnims();
@@ -138,14 +130,13 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             DialogReplica replica = _config.Replicas[_currentLineIndex];
             CharacterData characterData = _charactersConfig.GetCharacter(replica.CharacterId);
 
-            // Обработка текста утилитой подсветки перед выводом
             string processedText = TextHighlightUtility.ProcessText(replica.RawText);
 
             _view.SetText(processedText);
             _view.SetPortrait(characterData.Portrait);
             _view.SetBackground(characterData.Background);
 
-            _isTyping = true; // Считаем, что начали печатать
+            _isTyping = true;
         }
 
         private void FinishTyping()
@@ -156,13 +147,11 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         private void EndDialog()
         {
             DialogEnded?.Invoke();
-            _gameplayUIRoot.HUDLayer.gameObject.SetActive(true);
             OnCloseRequest();
         }
 
         public override void Dispose()
         {
-            _gameplayUIRoot.HUDLayer.gameObject.SetActive(true);
             _view.AppearanceFinished -= OnAppearanceFinished;
             base.Dispose();
         }

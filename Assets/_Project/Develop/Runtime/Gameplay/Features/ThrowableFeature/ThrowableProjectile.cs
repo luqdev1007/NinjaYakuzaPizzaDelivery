@@ -1,5 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using System;
 using System.Collections;
 using UnityEngine;

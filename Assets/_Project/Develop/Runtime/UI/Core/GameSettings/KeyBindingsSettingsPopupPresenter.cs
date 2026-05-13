@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+﻿using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using System;
 using UnityEngine;
 

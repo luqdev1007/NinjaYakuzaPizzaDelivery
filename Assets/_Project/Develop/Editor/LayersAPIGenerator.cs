@@ -8,11 +8,11 @@ namespace Assets._Project.Develop.Editor
 {
     public class LayersAPIGenerator
     {
-        private const string Namespace = "Assets._Project.Develop.Runtime.Utilites";
+        private const string Namespace = "Assets._Project.Develop.Runtime.Utilities";
         private const string ClassName = "LayersAPI";
 
         private static string OutputPath
-            => Path.Combine(Application.dataPath, "_Project/Develop/Runtime/Utilites/Layers/LayersAPI.cs");
+            => Path.Combine(Application.dataPath, "_Project/Develop/Runtime/Utilities/Layers/LayersAPI.cs");
 
         [InitializeOnLoadMethod]
         [MenuItem("Tools/GenerateLayersAPI")]

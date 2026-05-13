@@ -5,19 +5,18 @@ using Assets._Project.Develop.Runtime.Meta.Features.Stats;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
-using Assets._Project.Develop.Runtime.Utilites.AssetsManagment;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
-using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.Utilites.DataManagment;
-using Assets._Project.Develop.Runtime.Utilites.DataManagment.DataRepository;
-using Assets._Project.Develop.Runtime.Utilites.DataManagment.KeyStorage;
-using Assets._Project.Develop.Runtime.Utilites.DataManagment.Serializers;
-using Assets._Project.Develop.Runtime.Utilites.DataProviders;
-using Assets._Project.Develop.Runtime.Utilites.LoadingScreen;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
-using Assets._Project.Develop.Runtime.Utilites.Timer;
+using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
+using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.DataManagment;
+using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataRepository;
+using Assets._Project.Develop.Runtime.Utilities.DataManagment.KeyStorage;
+using Assets._Project.Develop.Runtime.Utilities.DataManagment.Serializers;
+using Assets._Project.Develop.Runtime.Utilities.DataProviders;
+using Assets._Project.Develop.Runtime.Utilities.LoadingScreen;
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
+using Assets._Project.Develop.Runtime.Utilities.Timer;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -58,32 +57,12 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
 
             container.RegisterAsSingle(CreateLevelsProgressionService).NonLazy();
 
-            container.RegisterAsSingle(CreateAudioService);
-
             container.RegisterAsSingle<IInputService>(CreateDesktopInput);
         }
 
         private static DesktopInput CreateDesktopInput(DIContainer container)
         {
             return new DesktopInput();
-        }
-
-        private static AudioService CreateAudioService(DIContainer container)
-        {
-            var assetsLoader = container.Resolve<ResourcesAssetsLoader>();
-            var configProvider = container.Resolve<ConfigsProviderService>();
-
-            AudioConfig config = configProvider.GetConfig<AudioConfig>();
-            AudioManager prefab = assetsLoader.Load<AudioManager>("Utilities/AudioManager");
-
-            AudioManager managerInstance = Object.Instantiate(prefab);
-            Object.DontDestroyOnLoad(managerInstance);
-
-            // Достаем миксер из менеджера (убедись, что в AudioManager.cs есть публичное поле Mixer 
-            // или достань его через outputAudioMixerGroup.audioMixer)
-            UnityEngine.Audio.AudioMixer mixer = managerInstance.MainMixer;
-
-            return new AudioService(config, managerInstance, mixer);
         }
 
         private static TimerServiceFactory CreateTimerServiceFactory(DIContainer container)

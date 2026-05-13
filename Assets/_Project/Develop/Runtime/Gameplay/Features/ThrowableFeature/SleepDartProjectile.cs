@@ -1,6 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature

@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Configs.Dialog;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
+using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LevelResultsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
@@ -16,10 +17,10 @@ using Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups;
 using Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Timers;
 using Assets._Project.Develop.Runtime.UI.Wallet;
-using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
-using Assets._Project.Develop.Runtime.Utilites.Timer;
+using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
+using Assets._Project.Develop.Runtime.Utilities.Timer;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay
 {
@@ -46,7 +47,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
                 _container.Resolve<ICoroutinesPerformer>(), 
                 config, 
                 _container.Resolve<ConfigsProviderService>().GetConfig<CharactersConfig>(),
-                _container.Resolve<GameplayUIRoot>()
+                _container.Resolve<IInputService>()
                 );
         }
 

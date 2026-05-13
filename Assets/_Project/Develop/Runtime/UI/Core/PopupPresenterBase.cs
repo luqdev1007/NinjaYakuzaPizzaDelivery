@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
+﻿using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using DG.Tweening;
 using System;
 using System.Collections;

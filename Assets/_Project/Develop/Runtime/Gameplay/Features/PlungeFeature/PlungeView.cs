@@ -1,8 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -28,11 +26,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         [Header("VFX - Impact")]
         [SerializeField] private ParticleSystem _impactPS;
 
-        [Header("Audio Settings")]
-        [SerializeField] private SfxEvent _plungeLoopConfig;
-        [SerializeField] private SfxEvent _plungeLandConfig;
-        [SerializeField] private float _minPitch = 1f;
-        [SerializeField] private float _maxPitch = 1.6f;
 
         [Header("Squash & Stretch")]
         [SerializeField] private Transform _viewContainer;
@@ -41,12 +34,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         [SerializeField] private float _squashDuration = 0.15f;
         [SerializeField] private float _lerpSpeed = 12f;
 
-        private AudioService _audioService;
         private Rigidbody2D _rigidbody;
         private IReadOnlyVariable<bool> _isPlunging;
         private IReadOnlyVariable<bool> _isGrounded;
 
-        private SfxEvent _activeLoopEvent;
         private float _flightTimer;
         private bool _isSquashing;
         private Vector3 _defaultScale;
@@ -81,7 +72,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             float ratio = Mathf.Clamp01(_flightTimer / _fullPowerTime);
 
             UpdateVFXPower(ratio);
-            UpdateSfxPower(ratio);
             HandleStretch();
         }
 
@@ -93,13 +83,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             {
                 _flightTimer = 0f;
                 _airConePS?.Play();
-
-
-                _audioService.PlayLoopEvent(_plungeLoopConfig);
-                _activeLoopEvent = _plungeLoopConfig;
-
-                if (_activeLoopEvent != null)
-                    _audioService.SetLoopPitch(_activeLoopEvent, _minPitch);
             }
             else
             {
@@ -125,8 +108,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
                     _impactPS.Play();
                 }
-
-                _audioService.HandleSFXEvent(_plungeLandConfig);
 
                 StartSquash();
                 StopFlightEffects();
@@ -154,15 +135,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
                 if (fireRatio > 0.05f && !ps.isPlaying) ps.Play();
                 else if (fireRatio <= 0.05f && ps.isPlaying) ps.Stop();
             }
-        }
-
-        private void UpdateSfxPower(float ratio)
-        {
-            if (_activeLoopEvent == null) 
-                return;
-
-            float targetPitch = Mathf.Lerp(_minPitch, _maxPitch, ratio);
-            _audioService.SetLoopPitch(_activeLoopEvent, targetPitch);
         }
 
         private void HandleStretch()
@@ -212,13 +184,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         private void StopFlightEffects()
         {
             _airConePS?.Stop();
-            foreach (var ps in _fireCones) ps?.Stop();
 
-            if (_activeLoopEvent != null)
-            {
-                _audioService.StopLoopEvent(_activeLoopEvent);
-                _activeLoopEvent = null;
-            }
+            foreach (var ps in _fireCones) 
+                ps?.Stop();
 
             _flightTimer = 0f;
         }
@@ -226,6 +194,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
+
             StopFlightEffects();
             _plungeDisposable?.Dispose();
             _groundedDisposable?.Dispose();

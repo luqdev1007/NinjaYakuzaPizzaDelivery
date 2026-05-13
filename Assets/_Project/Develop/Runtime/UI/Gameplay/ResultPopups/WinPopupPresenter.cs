@@ -2,8 +2,8 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels; // Для LevelConfig
 using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers; // Для таймера
 using Assets._Project.Develop.Runtime.UI.Core;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
@@ -47,7 +47,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
 
             _view.SetTitle(TitleName);
 
-            float finalTime = _timerService.ElapsedTime;
+            float finalTime = 5; //_timerService.ElapsedTime;
 
             LevelResultReport report = _levelResultService.CalculateResult(_levelConfig, finalTime);
 

@@ -1,19 +1,16 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Utilites.SceneManagement
+namespace Assets._Project.Develop.Runtime.Utilities.SceneManagement
 {
     public class GameplayInputArgs : IInputSceneArgs
     {
-        public GameplayInputArgs(int levelNumber, Vector3 levelSpawnPointPosition)
+        public GameplayInputArgs(int levelNumber)
         {
             LevelNumber = levelNumber;
-            FinalPointSpawnPosition = levelSpawnPointPosition;
         }
 
-        public bool IsRestart;
-
         public int LevelNumber { get; private set; }
-        public Vector3 FinalPointSpawnPosition { get; private set; }
+        public bool IsRestart;
     }
 }

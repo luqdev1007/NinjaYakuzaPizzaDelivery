@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Style;
+using Assets._Project.Develop.Runtime.Gameplay.Context;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
@@ -16,9 +17,9 @@ using Assets._Project.Develop.Runtime.Gameplay.States;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
-using Assets._Project.Develop.Runtime.Utilites.AssetsManagment;
-using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
-using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
+using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
+using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -27,12 +28,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
     public class GameplayContextRegistrations
     {
         private static GameplayInputArgs _inputArgs;
+        private static GameplaySceneContext _sceneContext;
 
-        public static void Process(DIContainer container, GameplayInputArgs inputArgs)
+        public static void Process(DIContainer container, GameplayInputArgs inputArgs, GameplaySceneContext sceneContext)
         {
             Debug.Log("Process registrations on gameplay scene");
 
             _inputArgs = inputArgs;
+            _sceneContext = sceneContext;
 
             container.RegisterAsSingle(CreateGameplayUIRoot).NonLazy();
 
@@ -54,8 +57,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             container.RegisterAsSingle(CreateAIBrainContext);
 
-
-
             container.RegisterAsSingle(CreateMainHeroFactory);
             container.RegisterAsSingle(CreateEnemiesFactory);
             container.RegisterAsSingle(CreateStagesFactory);
@@ -67,8 +68,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateGameplayStatesContext);
 
             container.RegisterAsSingle(CreateStartGameTriggerService);
-
-            container.RegisterAsSingle(CreateCameraService);
 
             container.RegisterAsSingle(CreateLootFactory);
             container.RegisterAsSingle(CreateDropLootService);
@@ -83,6 +82,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateSecretChestCollectService);
 
             container.RegisterAsSingle(CreateLevelResultService);
+
+            container.RegisterAsSingle(CreateCameraService);      
+        }
+
+        private static CameraService CreateCameraService(DIContainer container)
+        {
+            return new CameraService(_sceneContext.IntroCamera, _sceneContext.ScoutingCamera, _sceneContext.HeroCamera);
         }
 
         private static LevelResultService CreateLevelResultService(DIContainer container)
@@ -130,13 +136,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new LootFactory(container);
         }
 
-        private static CameraService CreateCameraService(DIContainer container)
-        {
-            CameraService camService = new CameraService(Camera.main);
-
-            return camService;
-        }
-
         private static StartGameTriggerService CreateStartGameTriggerService(DIContainer container)
         {
             return new StartGameTriggerService();
@@ -146,7 +145,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         {
             return new GameplayStatesContext(
                 container.Resolve<GameplayStatesFactory>()
-                .CreateGameplayStateMachine(_inputArgs));
+                .CreateGameplayStateMachine());
         }
 
         private static GameplayStatesFactory CreateGameplayStatesFactory(DIContainer container)
@@ -178,9 +177,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         {
             return new StagesFactory(
                 container,
-                container.Resolve<ConfigsProviderService>()
-                    .GetConfig<LevelsListConfig>()
-                    .GetBy(_inputArgs.LevelNumber));
+                _sceneContext);
         }
 
         private static MainHeroFactory CreateMainHeroFactory(DIContainer container)

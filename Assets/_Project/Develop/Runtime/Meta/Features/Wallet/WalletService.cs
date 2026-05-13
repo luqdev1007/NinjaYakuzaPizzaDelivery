@@ -1,6 +1,6 @@
-﻿using Assets._Project.Develop.Runtime.Utilites.DataManagment;
-using Assets._Project.Develop.Runtime.Utilites.DataProviders;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
+﻿using Assets._Project.Develop.Runtime.Utilities.DataManagment;
+using Assets._Project.Develop.Runtime.Utilities.DataProviders;
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,6 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.UI.Core;
-using Assets._Project.Develop.Runtime.Utilites.Timer;
+using Assets._Project.Develop.Runtime.Utilities.Timer;
 using DG.Tweening;
 using System;
 using System.Collections.Generic;
@@ -39,9 +39,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Timers
             _disposables.Add(_timerService.CurrentTime.Subscribe(OnTimeChanged));
             _disposables.Add(_timerService.CooldownEnded.Subscribe(OnTimerFinished));
 
-            // Подписки на команды от стейт-машины через сервис-посредник
-            _timerFeature.OnTimerShowRequested += ShowAndStart;
-            _timerFeature.OnTimerHideRequested += Hide;
         }
 
         public void ShowAndStart()
@@ -119,9 +116,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Timers
 
         public void Dispose()
         {
-            // Отписка от сервиса-посредника
-            _timerFeature.OnTimerShowRequested -= ShowAndStart;
-            _timerFeature.OnTimerHideRequested -= Hide;
+
 
             // Очистка реактивных подписок
             foreach (var disposable in _disposables)

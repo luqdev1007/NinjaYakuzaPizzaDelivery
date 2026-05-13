@@ -14,6 +14,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Dialog
     public class DialogReplica
     {
         [TextArea] public string RawText;
+
         public CharacterIDs CharacterId;
     }
 }

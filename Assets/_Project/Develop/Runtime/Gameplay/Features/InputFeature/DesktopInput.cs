@@ -5,6 +5,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
     public class DesktopInput : IInputService
     {
         private const string HorizontalAxisName = "Horizontal";
+        private const string VerticalAxisName = "Vertical";
 
 
         public bool IsThrowKeyPressed => IsEnabled && Input.GetKeyDown(KeyCode.Q);
@@ -39,8 +40,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
             {
                 if (IsEnabled == false)
                     return Vector2.zero;
+
                 return new Vector2(Input.GetAxisRaw(HorizontalAxisName), 0);
             }
         }
+
+
+
+        public bool IsStartLevelKeyPressed => Input.GetKeyDown(KeyCode.T);
+
+        public Vector2 CameraMoveDirection => new Vector2(Input.GetAxisRaw(HorizontalAxisName), Input.GetAxisRaw(VerticalAxisName));
+
+        // interact key
+        public bool IsInteractKeyPressed => Input.GetKeyDown(KeyCode.E);
+        public bool IsInteractKeyHeld => Input.GetKey(KeyCode.E);
+        public bool IsInteractKeyReleased => Input.GetKeyUp(KeyCode.E);
     }
 }

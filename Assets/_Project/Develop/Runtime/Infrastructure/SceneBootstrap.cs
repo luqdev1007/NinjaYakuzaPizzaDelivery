@@ -1,5 +1,5 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
-using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
+using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using System.Collections;
 using UnityEngine;
 

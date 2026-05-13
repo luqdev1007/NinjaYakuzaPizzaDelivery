@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Utilites.Reactive;
+﻿using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature

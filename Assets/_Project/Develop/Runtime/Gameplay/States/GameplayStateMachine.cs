@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Utilites.StateMachineCore;
+﻿using Assets._Project.Develop.Runtime.Utilities.StateMachineCore;
 using System;
 using System.Collections.Generic;
 

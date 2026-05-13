@@ -1,5 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Style;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System.Collections.Generic;
 using UnityEngine;
 

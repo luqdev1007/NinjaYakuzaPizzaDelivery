@@ -1,5 +1,4 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
-using Assets._Project.Develop.Runtime.Configs.Dialog;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
@@ -9,15 +8,12 @@ using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Core.ConfirmPopup;
 using Assets._Project.Develop.Runtime.UI.Core.GameSettings;
-using Assets._Project.Develop.Runtime.UI.Dialog;
 using Assets._Project.Develop.Runtime.UI.LevelsMenuPopup;
 using Assets._Project.Develop.Runtime.UI.Wallet;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
-using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
-using Assets._Project.Develop.Runtime.Utilites.Timer;
+using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using System;
 
 namespace Assets._Project.Develop.Runtime.UI
@@ -69,7 +65,6 @@ namespace Assets._Project.Develop.Runtime.UI
         {
             return new AudioSettingsPopupPresenter(
                 view,
-                _container.Resolve<AudioService>(),
                 _container.Resolve<ICoroutinesPerformer>());
         }
 

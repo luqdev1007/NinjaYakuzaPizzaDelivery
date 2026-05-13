@@ -2,12 +2,11 @@
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
-using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.Utilites.DataProviders;
-using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
-using Assets._Project.Develop.Runtime.Utilites.StateMachineCore;
+using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.DataProviders;
+using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
+using Assets._Project.Develop.Runtime.Utilities.StateMachineCore;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.States
@@ -21,8 +20,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly GameplayPopupService _gameplayPopupService;
         private readonly WalletService _walletService;
-        private readonly ConfigsProviderService _configsProviderService;
-        private readonly AudioService _audioService;
+
 
         public WinState(
             IInputService inputService,
@@ -31,9 +29,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             PlayerDataProvider playerDataProvider,
             ICoroutinesPerformer coroutinesPerformer,
             GameplayPopupService gameplayPopupService,
-            WalletService walletService,
-            ConfigsProviderService configsProviderService,
-            AudioService audioService) : base(inputService)
+            WalletService walletService) : base(inputService)
         {
             _levelsProgressionService = levelsProgressionService;
             _gameplayInputArgs = gameplayInputArgs;
@@ -41,8 +37,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _coroutinesPerformer = coroutinesPerformer;
             _gameplayPopupService = gameplayPopupService;
             _walletService = walletService;
-            _configsProviderService = configsProviderService;
-            _audioService = audioService;
         }
 
         public override void Enter()
@@ -51,9 +45,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             Debug.Log("VICTORY!");
 
-            // _audioService.SetMusicMuted(true);
-
-            // int rewardForLevel = _configsProviderService.GetConfig<GameRewardsConfig>().RewardForWin;
             int rewardForLevel = 50;
 
             _walletService.Add(CurrencyTypes.Coins, rewardForLevel);

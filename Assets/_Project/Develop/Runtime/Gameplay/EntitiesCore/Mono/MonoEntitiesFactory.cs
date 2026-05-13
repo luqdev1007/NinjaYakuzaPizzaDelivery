@@ -1,5 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.Infrastructure.DI;
-using Assets._Project.Develop.Runtime.Utilites.AssetsManagment;
+using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
 using System;
 using System.Collections.Generic;
 using System.Linq;

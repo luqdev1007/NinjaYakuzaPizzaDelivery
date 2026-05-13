@@ -2,11 +2,9 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
-using Assets._Project.Develop.Runtime.Utilites.Conditions;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
+using Assets._Project.Develop.Runtime.Utilities.Conditions;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System.Collections;
 using UnityEngine;
 
@@ -17,14 +15,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly IThrowableBehaviourFactory _behaviourFactory;
         private readonly GrappleHookConfig _config;
-        private readonly AudioService _audioService;
 
         private ICompositeCondition _canThrow;
 
         private ReactiveVariable<bool> _isThrowing;
 
         private ReactiveVariable<int> _charges;
-        private ReactiveVariable<bool> _isWallHanging; // Ссылка на стену
+        private ReactiveVariable<bool> _isWallHanging; 
 
         private Rigidbody2D _rigidbody;
         private Transform _transform;
@@ -43,13 +40,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         public GrappleSystem(
             ICoroutinesPerformer performer,
             GrappleHookConfig config,
-            IThrowableBehaviourFactory factory,
-            AudioService audioService)
+            IThrowableBehaviourFactory factory)
         {
             _coroutinesPerformer = performer;
             _config = config;
             _behaviourFactory = factory;
-            _audioService = audioService;
         }
 
         public void OnInit(Entity entity)
@@ -103,10 +98,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             dir.z = 0;
 
             _charges.Value--;
-            _isThrowing.Value = true; // WallHangSystem это увидит и отпустит стену
-
-            _audioService.PlaySfxByPrefixAuto("HookShot", 1f);
-            _activeLoopId = _audioService.PlaySfxVariationLoop("HookLoop", 1, 1);
+            _isThrowing.Value = true;
 
             _activeProjectile = _behaviourFactory.Create(_config, _rigidbody, _transform);
 
@@ -232,7 +224,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
         {
             if (!string.IsNullOrEmpty(_activeLoopId))
             {
-                _audioService.StopSfx(_activeLoopId);
                 _activeLoopId = null;
             }
         }

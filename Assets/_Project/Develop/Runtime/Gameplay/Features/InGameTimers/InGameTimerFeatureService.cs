@@ -1,38 +1,20 @@
-﻿using System;
+﻿using Assets._Project.Develop.Runtime.Utilities.Reactive;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers
 {
     public class InGameTimerFeatureService
     {
-        public event Action OnTimerShowRequested;
-        public event Action OnTimerHideRequested;
-
-        private float _elapsedTime;
+        public ReactiveVariable<float> ElapsedTime { get; } = new(0);
         private bool _isActive;
 
-        // То самое свойство, которое ищет WinPopupPresenter
-        public float ElapsedTime => _elapsedTime;
+        public void Start() => _isActive = true;
+        public void Stop() => _isActive = false;
+        public void Reset() => ElapsedTime.Value = 0;
 
-        public void Show()
-        {
-            _elapsedTime = 0; // Сбрасываем при старте уровня
-            _isActive = true;
-            OnTimerShowRequested?.Invoke();
-        }
-
-        public void Hide()
-        {
-            _isActive = false;
-            OnTimerHideRequested?.Invoke();
-        }
-
-        // Этот метод будем вызывать из стейта
-        public void Update(float deltaTime)
+        public void Tick(float deltaTime)
         {
             if (_isActive)
-            {
-                _elapsedTime += deltaTime;
-            }
+                ElapsedTime.Value += deltaTime;
         }
     }
 }

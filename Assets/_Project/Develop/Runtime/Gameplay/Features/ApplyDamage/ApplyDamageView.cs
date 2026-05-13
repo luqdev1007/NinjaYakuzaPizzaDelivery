@@ -1,10 +1,8 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using UnityEngine;
 using System;
 using DG.Tweening;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
 {
@@ -20,18 +18,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
         [SerializeField] private Color _flashColor = Color.white;
         [SerializeField] private float _flashDuration = 0.1f;
 
-        [Header("Audio")]
-        [Tooltip("Для героя: MainHeroHit. Для призрака: GhostHit")]
-        [SerializeField] private SfxEvent _soundConfig;
-
-        private AudioService _audioService;
         private IDisposable _damageEventDisposable;
         private Color _originalColor;
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _audioService = entity.GetComponent<AudioComponent>().Service;
-            // _damageEventDisposable = entity.TakeDamageEvent.Subscribe(OnDamaged);
+            _damageEventDisposable = entity.TakeDamageEvent.Subscribe(OnDamaged);
             _originalColor = _spriteRenderer.color;
         }
 
@@ -47,12 +39,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
         {
             SpawnDamageParticles();
             PlayFlashEffect();
-            PlaySFX();
-        }
-
-        private void PlaySFX()
-        {
-            _audioService.HandleSFXEvent(_soundConfig);
         }
 
         private void PlayFlashEffect()

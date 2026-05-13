@@ -1,7 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
 using DG.Tweening;
 using System;
 using UnityEngine;
@@ -10,21 +8,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
 {
     public class WallJumpView : EntityView
     {
-        [Header("Components")]
         [SerializeField] private Transform _viewContainer;
-
-        [Header("Settings")]
         [SerializeField] private float _rotationDuration = 0.4f;
 
-        [Header("Audio")]
-        [SerializeField] private SfxEvent _wallJumpSfxConfig;
-
-        private AudioService _audioService;
         private IDisposable _disposable;
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _audioService = entity.GetComponent<AudioComponent>().Service;
             // _disposable = entity.IsWallJumping.Subscribe(OnWallJumpTriggered);
         }
 
@@ -38,11 +28,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
 
         private void PlayJumpSequence()
         {
-            // Звук прыжка от стены через конфиг
-            _audioService.HandleSFXEvent(_wallJumpSfxConfig);
-
-            if (_viewContainer == null) return;
-
             // Сбрасываем предыдущие анимации
             _viewContainer.DOKill();
 
@@ -61,8 +46,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.WallJumpFeature
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
+
             _disposable?.Dispose();
-            if (_viewContainer != null) _viewContainer.DOKill();
+            _viewContainer.DOKill();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
+using Assets._Project.Develop.Runtime.Gameplay.Context; 
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
@@ -10,12 +10,12 @@ using System;
 public class StagesFactory
 {
     private readonly DIContainer _container;
-    private readonly LevelConfig _levelConfig;
+    private readonly GameplaySceneContext _sceneContext; 
 
-    public StagesFactory(DIContainer container, LevelConfig levelConfig)
+    public StagesFactory(DIContainer container, GameplaySceneContext sceneContext)
     {
         _container = container;
-        _levelConfig = levelConfig;
+        _sceneContext = sceneContext;
     }
 
     public IStage Create(StageConfig stageConfig)
@@ -32,7 +32,7 @@ public class StagesFactory
                 return new FinalPointReachedStage(
                     _container.Resolve<FinalPointTriggerService>(),
                     _container.Resolve<MainHeroHolderService>(),
-                    _levelConfig.FinalPointPosition);
+                    _sceneContext.FinishPoint.position); 
 
             default:
                 throw new ArgumentException(

@@ -6,27 +6,24 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.States;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
-using Assets._Project.Develop.Runtime.UI;
-using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.UI.Dialog;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
-using Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay;
-using Assets._Project.Develop.Runtime.UI.Gameplay.Timers;
-using Assets._Project.Develop.Runtime.Utilites.AudioManagement;
-using Assets._Project.Develop.Runtime.Utilites.Conditions;
-using Assets._Project.Develop.Runtime.Utilites.ConfigsManagment;
-using Assets._Project.Develop.Runtime.Utilites.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.Utilites.DataProviders;
-using Assets._Project.Develop.Runtime.Utilites.SceneManagement;
+using Assets._Project.Develop.Runtime.Utilities.Conditions;
+using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.DataProviders;
+using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.States
 {
     public class GameplayStatesFactory
     {
         private readonly DIContainer _container;
-        private GameplayInputArgs _inputArgs;
+        private readonly GameplayInputArgs _inputArgs;
 
         public GameplayStatesFactory(DIContainer container, GameplayInputArgs inputArgs)
         {
@@ -34,132 +31,115 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _inputArgs = inputArgs;
         }
 
-        public PreperationState CreatePreperationState()
+        public LevelIntroState CreateIntroState()
         {
-            return new PreperationState(
-                _container.Resolve<StartGameTriggerService>(),
+            return new LevelIntroState(
                 _container.Resolve<CameraService>(),
-                _container.Resolve<MainHeroFactory>(),
-                _container.Resolve<FinalPointTriggerService>(),
-                _container.Resolve<StageProviderService>(),
-                _container.Resolve<ICoroutinesPerformer>(),
-                _container.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>().GetBy(_inputArgs.LevelNumber),
-                _container.Resolve<GameplayPopupService>(),
-                _inputArgs
+                _container.Resolve<DialogPresenter>(),
+                _container.Resolve<GameplayUIRoot>()
             );
         }
 
-        public LaunchState CreateLaunchState(float timer)
+        public LevelScoutingState CreateScoutingState()
         {
-            return new LaunchState(timer);
-        }
-
-        public StageProcessState CreateStageProcessState()
-        {
-            LevelConfig levelConfig = _container.Resolve<ConfigsProviderService>()
-                .GetConfig<LevelsListConfig>()
-                .GetBy(_inputArgs.LevelNumber);
-
-            return new StageProcessState(
-                _container.Resolve<StageProviderService>(), 
+            return new LevelScoutingState(
                 _container.Resolve<CameraService>(),
-                _container.Resolve<FinalPointTriggerService>(),
-                _container.Resolve<InGameTimerFeatureService>(),
-                _container.Resolve<IInputService>(),
-                _container.Resolve<ICoroutinesPerformer>(),
-                _container.Resolve<SceneSwitcherService>(),
-                _inputArgs,
-                _container.Resolve<RankStyleService>(),
-                _container.Resolve<SecretChestCollectService>(),
-                levelConfig
-                );
+                _container.Resolve<IInputService>()
+            );
         }
 
-        public WinState CreateWinState(GameplayInputArgs inputArgs)
+        public LevelProcessState CreateProcessState()
+        {
+            var configsProvider = _container.Resolve<ConfigsProviderService>();
+            var levelConfig = configsProvider.GetConfig<LevelsListConfig>().GetBy(_inputArgs.LevelNumber);
+
+            return new LevelProcessState(
+                _container.Resolve<CameraService>(),
+                _container.Resolve<MainHeroFactory>(),
+                _container.Resolve<GameplayUIRoot>(),
+                _container.Resolve<InGameTimerFeatureService>(),
+                levelConfig.StartPlayerPosition
+            );
+        }
+
+        public WinState CreateWinState()
         {
             return new WinState(
                 _container.Resolve<IInputService>(),
                 _container.Resolve<LevelsProgressionService>(),
-                inputArgs,
+                _inputArgs,
                 _container.Resolve<PlayerDataProvider>(),
                 _container.Resolve<ICoroutinesPerformer>(),
                 _container.Resolve<GameplayPopupService>(),
-                _container.Resolve<WalletService>(),
-                _container.Resolve<ConfigsProviderService>(),
-                _container.Resolve<AudioService>());
+                _container.Resolve<WalletService>()
+            );
         }
 
         public DefeatState CreateDefeatState()
         {
             return new DefeatState(
                 _container.Resolve<IInputService>(),
-                _container.Resolve<GameplayPopupService>(),
-                _container.Resolve<AudioService>());
+                _container.Resolve<GameplayPopupService>()
+            );
         }
 
-        public GameplayStateMachine CreateGameplayStateMachine(GameplayInputArgs inputArgs)
+        public GameplayStateMachine CreateCoreLoop()
         {
-            FinalPointTriggerService finalPointTrigger =
-                _container.Resolve<FinalPointTriggerService>();
-            MainHeroHolderService mainHeroHolderService =
-                _container.Resolve<MainHeroHolderService>();
+            LevelIntroState intro = CreateIntroState();
+            LevelScoutingState scouting = CreateScoutingState();
+            LevelProcessState process = CreateProcessState();
 
-            GameplayStateMachine coreLoopState = CreateCoreLoopState();
-            DefeatState defeatState = CreateDefeatState();
-            WinState winState = CreateWinState(inputArgs);
+            GameplayStateMachine stateMachine = new GameplayStateMachine();
 
-            ICondition toWin = new FuncCondition(() =>
-                finalPointTrigger.HasMainHeroContact.Value == true);
+            stateMachine.AddState(intro);
+            stateMachine.AddState(scouting);
+            stateMachine.AddState(process);
 
-            ICondition toDefeat = new FuncCondition(() =>
+            stateMachine.AddTransition(intro, scouting, new FuncCondition(() =>
             {
-                if (mainHeroHolderService.MainHero != null)
-                {
-                    /*
-                    return mainHeroHolderService.MainHero.IsDead.Value &&
-                           mainHeroHolderService.MainHero.InDeathProcess.Value == false;
-                    */
-                }
-                return false;
-            });
+                return intro.IsFinished;
+            }));
+
+            stateMachine.AddTransition(scouting, process, new FuncCondition(() =>
+            {
+                return scouting.IsConfirmed;
+            }));
+
+            return stateMachine;
+        }
+
+        public GameplayStateMachine CreateGameplayStateMachine()
+        {
+            FinalPointTriggerService finalPointTrigger = _container.Resolve<FinalPointTriggerService>();
+            MainHeroHolderService mainHeroHolderService = _container.Resolve<MainHeroHolderService>();
+
+            GameplayStateMachine coreLoop = CreateCoreLoop();
+            WinState winState = CreateWinState();
+            DefeatState defeatState = CreateDefeatState();
 
             GameplayStateMachine gameplayCycle = new GameplayStateMachine();
 
-            gameplayCycle.AddState(coreLoopState);
+            gameplayCycle.AddState(coreLoop);
             gameplayCycle.AddState(winState);
             gameplayCycle.AddState(defeatState);
 
-            gameplayCycle.AddTransition(coreLoopState, winState, toWin);
-            gameplayCycle.AddTransition(coreLoopState, defeatState, toDefeat);
+            gameplayCycle.AddTransition(coreLoop, winState, new FuncCondition(() =>
+            {
+                return finalPointTrigger.HasMainHeroContact.Value == true;
+            }));
+
+            gameplayCycle.AddTransition(coreLoop, defeatState, new FuncCondition(() =>
+            {
+                if (mainHeroHolderService.MainHero != null)
+                {
+                    return mainHeroHolderService.MainHero.IsDead.Value == true &&
+                           mainHeroHolderService.MainHero.InDeathProcess.Value == false;
+                }
+
+                return false;
+            }));
 
             return gameplayCycle;
-        }
-
-        public GameplayStateMachine CreateCoreLoopState()
-        {
-            StartGameTriggerService startTrigger =
-                _container.Resolve<StartGameTriggerService>();
-
-            PreperationState preperationState = CreatePreperationState();
-            LaunchState launchState = CreateLaunchState(timer: 2);
-            StageProcessState stageProcessState = CreateStageProcessState();
-
-            FuncCondition prepToLaunch =
-                new FuncCondition(() => startTrigger.IsStartRequested);
-
-            FuncCondition launchToProcess =
-                new FuncCondition(() => launchState.IsFinished);
-
-            GameplayStateMachine coreLoopState = new GameplayStateMachine();
-
-            coreLoopState.AddState(preperationState);
-            coreLoopState.AddState(launchState);
-            coreLoopState.AddState(stageProcessState);
-
-            coreLoopState.AddTransition(preperationState, launchState, prepToLaunch);
-            coreLoopState.AddTransition(launchState, stageProcessState, launchToProcess);
-
-            return coreLoopState;
         }
     }
 }

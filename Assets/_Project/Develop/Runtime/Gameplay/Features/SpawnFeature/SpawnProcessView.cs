@@ -2,7 +2,7 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using System;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.Utilites.Reactive;
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
 {
