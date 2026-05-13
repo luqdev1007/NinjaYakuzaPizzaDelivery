@@ -22,7 +22,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private DIContainer _container;
         private GameplayInputArgs _inputArgs;
         private GameplayStatesContext _gameplayStatesContext;
-        private GameplayScreenPresenter _screenPresenter;
         private EntitiesLifeContext _entitiesLifeContext;
         private AIBrainsContext _brainsContext;
         private GameplaySceneContext _sceneContext;
@@ -38,8 +37,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             _inputArgs = gameplayInputArgs;
 
-            // Регистрируем всё, что не зависит от объектов на сцене префаба
-            GameplayContextRegistrations.Process(_container, _inputArgs, null);
+            // Раньше здесь вызывался GameplayContextRegistrations.Process с null. 
+            // ТЕПЕРЬ МЫ ЭТОГО НЕ ДЕЛАЕМ.
         }
 
         public override IEnumerator Initialize()
@@ -48,40 +47,39 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             LevelConfig levelConfig = configsProvider.GetConfig<LevelsListConfig>().GetBy(_inputArgs.LevelNumber);
 
             GameObject levelHolder = GameObject.FindWithTag("LevelHolder");
-
-            if (levelHolder == null) 
+            if (levelHolder == null)
                 throw new NullReferenceException("LevelHolder not found");
 
+            // 1. Создаем уровень
             GameObject levelInstance = Instantiate(levelConfig.LevelPrefab, levelHolder.transform);
 
+            // 2. Достаем контекст сцены
             _sceneContext = levelInstance.GetComponentInChildren<GameplaySceneContext>();
-
-            if (_sceneContext == null) 
+            if (_sceneContext == null)
                 throw new NullReferenceException("GameplaySceneContext missing in Level Prefab");
 
-            _container.RegisterAsSingle(c => new CameraService(
-                _sceneContext.IntroCamera,
-                _sceneContext.ScoutingCamera,
-                _sceneContext.HeroCamera
-            ));
+            // 3. ТОЛЬКО ТЕПЕРЬ регистрируем все зависимости, когда у нас есть и конфиги, и объекты на сцене
+            GameplayContextRegistrations.Process(_container, _inputArgs, _sceneContext);
 
-            _screenPresenter = _container.Resolve<GameplayScreenPresenter>();
+            // 4. Инициализируем контейнер (теперь NonLazy создадутся без ошибок, так как _sceneContext валиден)
+            _container.Initialize();
+
+            // 5. Разрешаем (Resolve) нужные нам для Update системы
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
             _brainsContext = _container.Resolve<AIBrainsContext>();
             _gameplayStatesContext = _container.Resolve<GameplayStatesContext>();
 
+            // 6. Спавним начальных сущностей
             var enemiesFactory = _container.Resolve<EnemiesFactory>();
             var lootFactory = _container.Resolve<LootFactory>();
 
             foreach (var enemyData in _sceneContext.Enemies)
-            {
                 enemiesFactory.Create(enemyData.Position, enemyData.Config);
-            }
 
+            /*
             foreach (var chestPos in _sceneContext.Chests)
-            {
                 lootFactory.CreateSecretChest(chestPos);
-            }
+            */
 
             yield break;
         }
@@ -94,6 +92,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private void Update()
         {
             float deltaTime = Time.deltaTime;
+
             _brainsContext?.Update(deltaTime);
             _entitiesLifeContext?.Update(deltaTime);
             _gameplayStatesContext?.Update(deltaTime);

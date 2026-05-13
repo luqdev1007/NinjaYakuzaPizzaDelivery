@@ -10,19 +10,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
     {
         private Transform _transform;
         private ReactiveVariable<Vector2> _moveDirection;
+        private ReactiveVariable<float> _lookDirectionX;
         private ICompositeCondition _canMove;
         private ReactiveVariable<float> _moveSpeed;
         private ReactiveVariable<bool> _isMoving;
 
         public void OnInit(Entity entity)
         {
-            /*
             _transform = entity.Transform;
             _moveDirection = entity.MoveDirection;
+            _lookDirectionX = entity.LookDirectionX;
             _moveSpeed = entity.MoveSpeed;
             _isMoving = entity.IsMoving;
             _canMove = entity.CanMove;
-            */
         }
 
         public void OnUpdate(float deltaTime)
@@ -34,6 +34,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
             if (direction.sqrMagnitude > 0.001f)
             {
+                _lookDirectionX.Value = direction.x;
                 _transform.Translate(direction * _moveSpeed.Value * deltaTime, Space.World);
                 _isMoving.Value = true;
             }

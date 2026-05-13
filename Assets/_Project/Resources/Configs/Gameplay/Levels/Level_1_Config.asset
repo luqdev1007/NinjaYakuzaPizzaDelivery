@@ -12,89 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea55c19b01a54a848aae2bcf831dfbb8, type: 3}
   m_Name: Level_1_Config
   m_EditorClassIdentifier: 
-  _stageConfigs:
-  - {fileID: 11400000, guid: ad2ebdc480afcce4ab663bc95bc4f0f9, type: 2}
-  _startLevelDialogConfig: {fileID: 11400000, guid: 943bcf7fb606f51469786c299cc45e0c, type: 2}
-  _enemySpawns:
-  - {x: -69, y: -0.5, z: 0}
-  - {x: -60.5, y: 2, z: 0}
-  - {x: -50.5, y: -0.5, z: 0}
-  - {x: -36.5, y: -0.5, z: 0}
-  - {x: -29.5, y: 4.5, z: 0}
-  - {x: -23.5, y: 0, z: 0}
-  - {x: -26, y: 16, z: 0}
-  - {x: -12, y: 14, z: 0}
-  - {x: -12, y: 6.5, z: 0}
-  - {x: -3.5, y: 18, z: 0}
-  - {x: 16.5, y: 27.5, z: 0}
-  - {x: 8.5, y: 35, z: 0}
-  - {x: 0, y: 39.5, z: 0}
-  - {x: 28, y: 42, z: 0}
-  - {x: 50.5, y: 26, z: 0}
-  - {x: 46.5, y: 40.5, z: 0}
-  - {x: 31, y: 14, z: 0}
-  - {x: 64, y: 49.5, z: 0}
-  - {x: 34, y: 53, z: 0}
-  - {x: 69, y: 32.5, z: 0}
-  - {x: 62.5, y: 19.5, z: 0}
-  - {x: 49, y: -1, z: 0}
-  - {x: -14.5, y: 33, z: 0}
-  - {x: -50.5, y: 37.5, z: 0}
-  - {x: -38, y: 49.5, z: 0}
-  - {x: -26.5, y: 52.5, z: 0}
-  - {x: -46, y: 66.5, z: 0}
-  - {x: -69.5, y: 51, z: 0}
-  - {x: -91.5, y: 57, z: 0}
-  - {x: -102.5, y: 39, z: 0}
-  - {x: -83, y: 36, z: 0}
-  - {x: -106, y: 18.5, z: 0}
-  - {x: -96.5, y: 9, z: 0}
-  - {x: -104, y: 4.5, z: 0}
-  - {x: -96.5, y: 0.5, z: 0}
-  - {x: -85.5, y: 17, z: 0}
-  - {x: -79, y: 16.5, z: 0}
-  - {x: -94, y: 23, z: 0}
-  - {x: -68.5, y: 17.5, z: 0}
-  - {x: -62.5, y: 17.5, z: 0}
-  - {x: -45, y: 17.5, z: 0}
-  - {x: -35, y: 24.5, z: 0}
-  - {x: -118, y: 9, z: 0}
-  - {x: -116.5, y: -6, z: 0}
-  - {x: -106.5, y: -18.5, z: 0}
-  - {x: -91.5, y: -17, z: 0}
-  - {x: -73.5, y: -17.5, z: 0}
-  - {x: -59.5, y: -18.5, z: 0}
-  - {x: -40.5, y: -17.5, z: 0}
-  - {x: -24, y: -19, z: 0}
-  - {x: -8, y: -18, z: 0}
-  - {x: 3.5, y: -18, z: 0}
-  - {x: 16.5, y: -18, z: 0}
-  - {x: 40, y: -7, z: 0}
-  - {x: 53.5, y: -14.5, z: 0}
-  - {x: 84, y: -15.5, z: 0}
-  - {x: 70, y: -4.5, z: 0}
-  - {x: 72, y: 10.5, z: 0}
-  - {x: 99, y: -15.5, z: 0}
-  - {x: 93.5, y: -4.5, z: 0}
-  - {x: 22.5, y: 6, z: 0}
-  - {x: -10.5, y: 66, z: 0}
-  - {x: 24, y: 68, z: 0}
-  - {x: 88.5, y: 69.5, z: 0}
-  - {x: 90.5, y: 36, z: 0}
-  - {x: -93, y: 70.5, z: 0}
-  - {x: -69.5, y: 79, z: 0}
-  _secretChestSpawns:
-  - {x: 68.8, y: 65.48, z: 0}
-  - {x: 77.399994, y: 65.48, z: 0}
-  - {x: -62.120003, y: 65.48, z: 0}
-  - {x: 73.58, y: 65.48, z: 0}
-  - {x: -12.459999, y: -2.8299942, z: 0}
-  - {x: -69.130005, y: 65.48, z: 0}
   <LevelNumber>k__BackingField: 1
   <LevelName>k__BackingField: Tutorial Village
   <LevelIcon>k__BackingField: {fileID: 21300000, guid: ccda1e9d0a91445b08abb3958530382a, type: 3}
   <LevelPrefab>k__BackingField: {fileID: 3215380827292991448, guid: 8988d1c7a35590c439f87e63ab8fc695, type: 3}
-  <FinalPointPosition>k__BackingField: {x: 90, y: 11, z: 0}
-  <StartPlayerPosition>k__BackingField: {x: -83.5, y: -1, z: 0}
+  <StartLevelDialogConfig>k__BackingField: {fileID: 11400000, guid: 943bcf7fb606f51469786c299cc45e0c, type: 2}
+  _stageConfigs:
+  - {fileID: 11400000, guid: ad2ebdc480afcce4ab663bc95bc4f0f9, type: 2}
   <TargetTime>k__BackingField: 75
   <StyleStarThreshold>k__BackingField: 1000
+  <StartPlayerPosition>k__BackingField: {x: -83.5, y: -1, z: 0}

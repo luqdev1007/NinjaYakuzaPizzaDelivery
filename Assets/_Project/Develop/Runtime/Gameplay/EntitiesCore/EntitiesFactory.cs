@@ -7,6 +7,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Visual;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
@@ -41,6 +42,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _coroutinesPerformer = container.Resolve<ICoroutinesPerformer>();
         }
 
+        // ecs projectile example
         /*
         public Entity CreateProjectile(Vector3 position, Vector3 direction, float damage, Entity owner)
         {
@@ -115,7 +117,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             return entity;
         }
-
         private void AddHeroComponents(Entity entity, MainHeroConfig config)
         {
             entity
@@ -516,7 +517,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ;
         */
         }
-
         private void AddHeroSystems(Entity entity, MainHeroConfig config)
         {
             entity
@@ -620,51 +620,50 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             return null;
         }
 
-        // ─── HELPERS ─────────────────────────────────────────────────────────
-
+        // HELPERS 
         private Entity CreateEmpty() => new Entity();
 
         // ENEMIES
         public Entity CreateGhost(Vector3 at, GhostConfig ghostConfig)
         {
-            /*
             Entity entity = CreateEmpty();
+
             _monoEntitiesFactory.Create(entity, at, ghostConfig.PrefabPath);
 
             entity
-                .AddAudio(_audioService)
+                // Common
+                .AddLookDirectionX(new ReactiveVariable<float>(1))
+
+                // Physics
                 .AddLinearDrag(new ReactiveVariable<float>(ghostConfig.LinearDrag))
                 .AddAngularDrag(new ReactiveVariable<float>(ghostConfig.AngularDrag))
 
-                // — Движение —
+                // Movement
+                .AddIsMoving()
                 .AddMoveDirection()
                 .AddRotationDirection()
-                .AddIsMoving()
                 .AddMoveSpeed(new ReactiveVariable<float>(ghostConfig.MovementSpeed))
 
-                // — Боёвка —
-                .AddBodyContactDamage(new ReactiveVariable<float>(ghostConfig.ContactDamage))
-                .AddContactsDetectingMask(LayersAPI.LayerMaskCharacters)
-                .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
-                .AddContactEntitiesBuffer(new Buffer<Entity>(16))
-
-                // — Жизнь —
+                // Combat
+                .AddTakeDamageEvent()
+                // .AddBodyContactDamage(new ReactiveVariable<float>(ghostConfig.ContactDamage))
+                // .AddContactsDetectingMask(LayersAPI.LayerMaskCharacters)
+                // .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
+                // .AddContactEntitiesBuffer(new Buffer<Entity>(16))
+                // .AddTakeDamageRequest()
+                // .AddDamageCooldown(new ReactiveVariable<float>(ghostConfig.DamageCooldown)) 
+                // .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
+               
+                // LifeCycle
                 .AddMaxHealth(new ReactiveVariable<float>(ghostConfig.MaxHealth))
                 .AddCurrentHealth(new ReactiveVariable<float>(ghostConfig.MaxHealth))
 
                 .AddIsDead()
                 .AddInDeathProcess()
-
                 .AddDeathProcessInitialTime(new ReactiveVariable<float>(ghostConfig.DeathProcessTime))
                 .AddDeathProcessCurrentTime()
 
-                .AddTakeDamageRequest()
-                .AddTakeDamageEvent()
-
-                .AddDamageCooldown(new ReactiveVariable<float>(ghostConfig.DamageCooldown)) 
-                .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
-
-                // Баффы/Дебаффы
+                // Effects
                 .AddIsGrappledTarget()
                 ;
 
@@ -674,10 +673,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappledTarget.Value == false))
                 ;
+
+            /*
             ICompositeCondition canApplyDamage = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
                 ;
+            */
 
             ICompositeCondition canFlip = new CompositeCondition()
                 .Add(new FuncCondition(() => true))
@@ -694,34 +696,31 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             entity
                 .AddCanMove(canMove)
-                .AddCanPhysicalyInteract(canApplyDamage)
                 .AddCanFlip(canFlip)
-                .AddCanApplyDamage(canApplyDamage)
+                // .AddCanPhysicalyInteract(canApplyDamage)
+                // .AddCanApplyDamage(canApplyDamage)
                 .AddMustDie(mustDie)
                 .AddMustSelfRelease(mustSelfRelease)
                 ;
 
             entity
-                // Системы логики
-                .AddSystem(new PhysicsStabilizationSystem())
+                // .AddSystem(new PhysicsStabilizationSystem())
 
-                // combat logic
-                .AddSystem(new BodyContactDetectingSystem())
-                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
-                .AddSystem(new DealDamageOnContactSystem())
+                // .AddSystem(new ApplyDamageSystem())
+                // .AddSystem(new DamageKnockbackSystem())
+
+                // .AddSystem(new BodyContactDetectingSystem())
+                // .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
+                // .AddSystem(new DealDamageOnContactSystem())
 
                 .AddSystem(new TransformMovementSystem())
                 .AddSystem(new FlipDirectionSystem())
-
-                // Системы урона
-                .AddSystem(new ApplyDamageSystem())
-                .AddSystem(new DamageKnockbackSystem())
                 .AddSystem(new DeathSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
                 ;
 
-            // LOOT
-
+            // Loot settings
+            /*
             entity
                 .AddLootIsDropped(new ReactiveVariable<bool>(false));
 
@@ -735,12 +734,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             entity.AddSystem(new DropLootSystem(
                 _container.Resolve<DropLootService>(), 
                 lootTable));
-            // LOOT
-
-            return entity;
             */
 
-            return null;
+            return entity;
         }
 
         public Entity CreateSlime(Vector3 at, SlimeConfig slimeConfig)

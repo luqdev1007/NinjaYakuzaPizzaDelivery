@@ -3,7 +3,6 @@ using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.UI.TextFeatures;
 using System;
-using UnityEngine;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 
 namespace Assets._Project.Develop.Runtime.UI.Dialog

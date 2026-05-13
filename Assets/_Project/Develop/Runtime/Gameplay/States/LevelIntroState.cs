@@ -2,27 +2,32 @@
 using Assets._Project.Develop.Runtime.UI.Dialog;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilities.StateMachineCore;
+using Assets._Project.Develop.Runtime.Configs.Dialog; 
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
 {
     public class LevelIntroState : State, IUpdatableState
     {
         private readonly CameraService _cameraService;
-        private readonly DialogPresenter _dialogPresenter;
+        private readonly GameplayPopupService _popupService;
         private readonly GameplayUIRoot _uiRoot;
+        private readonly DialogConfig _dialogConfig;
 
+        private DialogPresenter _activeDialog;
         private bool _isFinished;
 
         public bool IsFinished => _isFinished;
 
         public LevelIntroState(
             CameraService cameraService,
-            DialogPresenter dialogPresenter,
-            GameplayUIRoot uiRoot)
+            GameplayPopupService popupService,
+            GameplayUIRoot uiRoot,
+            DialogConfig dialogConfig)
         {
             _cameraService = cameraService;
-            _dialogPresenter = dialogPresenter;
+            _popupService = popupService;
             _uiRoot = uiRoot;
+            _dialogConfig = dialogConfig;
         }
 
         public override void Enter()
@@ -33,18 +38,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
             _uiRoot.HUDLayer.gameObject.SetActive(false);
             _cameraService.SetState(CameraState.Intro);
 
-            _dialogPresenter.DialogEnded += OnDialogEnded;
-            _dialogPresenter.Initialize();
+            _activeDialog = _popupService.OpenDialog(_dialogConfig, OnDialogEnded);
+            _activeDialog.Initialize();
         }
 
         public void Update(float deltaTime)
         {
-            _dialogPresenter.Update(deltaTime);
+            _activeDialog?.Update(deltaTime);
         }
 
         public override void Exit()
         {
-            _dialogPresenter.DialogEnded -= OnDialogEnded;
+            _activeDialog?.Hide();
+            _activeDialog = null;
             base.Exit();
         }
 

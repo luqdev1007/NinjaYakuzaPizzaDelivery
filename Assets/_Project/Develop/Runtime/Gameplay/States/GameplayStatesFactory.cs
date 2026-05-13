@@ -3,20 +3,18 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.States;
-using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
-using Assets._Project.Develop.Runtime.UI.Dialog;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
+using Assets._Project.Develop.Runtime.Configs.Dialog; // Для доступа к DialogConfig
 
 namespace Assets._Project.Develop.Runtime.Gameplay.States
 {
@@ -33,10 +31,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         public LevelIntroState CreateIntroState()
         {
+            var configsProvider = _container.Resolve<ConfigsProviderService>();
+            var levelConfig = configsProvider.GetConfig<LevelsListConfig>().GetBy(_inputArgs.LevelNumber);
+
             return new LevelIntroState(
                 _container.Resolve<CameraService>(),
-                _container.Resolve<DialogPresenter>(),
-                _container.Resolve<GameplayUIRoot>()
+                _container.Resolve<GameplayPopupService>(),
+                _container.Resolve<GameplayUIRoot>(),
+                levelConfig.StartLevelDialogConfig 
             );
         }
 
@@ -44,7 +46,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         {
             return new LevelScoutingState(
                 _container.Resolve<CameraService>(),
-                _container.Resolve<IInputService>()
+                _container.Resolve<IInputService>(),
+                _container.Resolve<GameplayPopupService>()
             );
         }
 
@@ -95,15 +98,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             stateMachine.AddState(scouting);
             stateMachine.AddState(process);
 
-            stateMachine.AddTransition(intro, scouting, new FuncCondition(() =>
-            {
-                return intro.IsFinished;
-            }));
+            stateMachine.AddTransition(intro, scouting, new FuncCondition(() => intro.IsFinished));
 
-            stateMachine.AddTransition(scouting, process, new FuncCondition(() =>
-            {
-                return scouting.IsConfirmed;
-            }));
+            stateMachine.AddTransition(scouting, process, new FuncCondition(() => scouting.IsConfirmed));
 
             return stateMachine;
         }

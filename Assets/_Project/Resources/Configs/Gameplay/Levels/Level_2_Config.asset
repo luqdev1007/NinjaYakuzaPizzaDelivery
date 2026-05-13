@@ -12,60 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea55c19b01a54a848aae2bcf831dfbb8, type: 3}
   m_Name: Level_2_Config
   m_EditorClassIdentifier: 
-  _stageConfigs:
-  - {fileID: 11400000, guid: ad2ebdc480afcce4ab663bc95bc4f0f9, type: 2}
-  _startLevelDialogConfig: {fileID: 11400000, guid: fefad9d08197dc54e83128edf854337b, type: 2}
-  _enemySpawns:
-  - {x: -75, y: -0.5, z: 0}
-  - {x: -67.5, y: -4, z: 0}
-  - {x: -63.5, y: -8, z: 0}
-  - {x: -32.5, y: -5.5, z: 0}
-  - {x: -30, y: -8, z: 0}
-  - {x: -37.5, y: -6, z: 0}
-  - {x: -34, y: 12.5, z: 0}
-  - {x: -68.5, y: 28, z: 0}
-  - {x: -31.5, y: 48.5, z: 0}
-  - {x: -69.5, y: 64.5, z: 0}
-  - {x: -31, y: 108.5, z: 0}
-  - {x: -34, y: 131.5, z: 0}
-  - {x: -68.5, y: 140, z: 0}
-  - {x: -69, y: 123.5, z: 0}
-  - {x: -85, y: 110.5, z: 0}
-  - {x: -102, y: 110.5, z: 0}
-  - {x: -92, y: 110, z: 0}
-  - {x: -27.5, y: 156, z: 0}
-  - {x: -32, y: 155.5, z: 0}
-  - {x: -36, y: 155.5, z: 0}
-  - {x: -41, y: 155, z: 0}
-  - {x: -60.5, y: 156, z: 0}
-  - {x: -65.5, y: 156.5, z: 0}
-  - {x: -69.5, y: 156, z: 0}
-  - {x: -74.5, y: 156, z: 0}
-  - {x: -27.5, y: 175, z: 0}
-  - {x: -31.5, y: 187, z: 0}
-  - {x: -75.5, y: 177.5, z: 0}
-  - {x: -70, y: 186.5, z: 0}
-  - {x: -75.5, y: 212.5, z: 0}
-  - {x: -63.5, y: 212.5, z: 0}
-  - {x: -24.5, y: 211.5, z: 0}
-  - {x: -37.5, y: 212, z: 0}
-  - {x: -31.5, y: 211.5, z: 0}
-  - {x: -69.5, y: 213, z: 0}
-  - {x: -71.5, y: 275.5, z: 0}
-  - {x: -35, y: 275, z: 0}
-  - {x: -17, y: 261, z: 0}
-  - {x: -87.5, y: 261.5, z: 0}
-  - {x: -40.5, y: -1, z: 0}
-  _secretChestSpawns:
-  - {x: -73.77426, y: -9.925624, z: 0}
-  - {x: -110.77426, y: 106.07438, z: 0}
-  - {x: -107.27426, y: 106.07438, z: 0}
-  - {x: -103.77426, y: 106.07438, z: 0}
   <LevelNumber>k__BackingField: 2
   <LevelName>k__BackingField: Down'n'Up
   <LevelIcon>k__BackingField: {fileID: 21300000, guid: ccda1e9d0a91445b08abb3958530382a, type: 3}
   <LevelPrefab>k__BackingField: {fileID: 3048164097277077460, guid: 8e5a1df5907ca6a4f88a905ff7060110, type: 3}
-  <FinalPointPosition>k__BackingField: {x: 7, y: 259, z: 0}
-  <StartPlayerPosition>k__BackingField: {x: -110, y: 260, z: 0}
+  <StartLevelDialogConfig>k__BackingField: {fileID: 11400000, guid: fefad9d08197dc54e83128edf854337b, type: 2}
+  _stageConfigs:
+  - {fileID: 11400000, guid: ad2ebdc480afcce4ab663bc95bc4f0f9, type: 2}
   <TargetTime>k__BackingField: 36
   <StyleStarThreshold>k__BackingField: 1000
+  <StartPlayerPosition>k__BackingField: {x: -110, y: 260, z: 0}
