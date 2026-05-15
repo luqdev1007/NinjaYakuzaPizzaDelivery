@@ -21,6 +21,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature
             _heroCamera = heroCamera;
         }
 
+        public CinemachineCamera ScoutingCamera => _scoutingCamera;
+
         public void SetState(CameraState state)
         {
             if (_activeCamera != null)

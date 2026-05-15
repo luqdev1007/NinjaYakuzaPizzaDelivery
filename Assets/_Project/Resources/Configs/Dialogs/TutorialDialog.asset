@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: TutorialDialog
   m_EditorClassIdentifier: 
   Replicas:
+  - RawText: start_dialog
+    CharacterId: 0
   - RawText: 'Hey, NINJA, deliver that PIZZA in time! But be CAREFULLY for ghosts,
       if you damage pizza you won''t get any tips! '
     CharacterId: 2

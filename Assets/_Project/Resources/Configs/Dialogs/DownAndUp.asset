@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: DownAndUp
   m_EditorClassIdentifier: 
   Replicas:
+  - RawText: start_dialog
+    CharacterId: 0
   - RawText: They order PIZZA from another side from great windmill...
     CharacterId: 2
   - RawText: It's will be interesting...good luck, don't forget to find SECRETS for

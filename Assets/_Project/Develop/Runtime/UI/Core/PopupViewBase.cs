@@ -51,8 +51,11 @@ namespace Assets._Project.Develop.Runtime.UI.Core
 
             OnPreHide();
 
-            _mainGroup.alpha = 0;
-            _mainGroup.blocksRaycasts = false;
+            if (_mainGroup != null)
+            {
+                _mainGroup.alpha = 0;
+                _mainGroup.blocksRaycasts = false;
+            }
 
             Sequence animation = PopupAnimationsCreator
                 .CreateHideAnimation(_body, _anticlicker, _animationType, _anticlickerDefaultAlpha);

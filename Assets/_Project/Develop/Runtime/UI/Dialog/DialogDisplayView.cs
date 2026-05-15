@@ -1,5 +1,4 @@
 ﻿using Assets._Project.Develop.Runtime.UI.Core;
-using System;
 using TMPro;
 using UnityEngine;
 using DG.Tweening;
@@ -9,139 +8,128 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 {
     public class DialogDisplayView : PopupViewBase
     {
-        public event Action AppearanceFinished;
-        public event Action Hidden;
-
-        [field: SerializeField] public TMP_Text СontentProgressText { get; private set; }
-
-        [SerializeField] private RectTransform _skipLabelVisual;
-        [SerializeField] private CanvasGroup _skipLabelGroup;
+        [field: SerializeField] public TMP_Text ContentProgressText { get; private set; }
+        [SerializeField] private SkipLabelView _skipLabel;
+        [SerializeField] private RectTransform _topCinemaLine;
+        [SerializeField] private RectTransform _bottomCinemaLine;
+        [SerializeField] private RectTransform _backgroundGlow;
+        [SerializeField] private RectTransform _portraitRoot;
         [SerializeField] private Image _portraitImage;
         [SerializeField] private Image _backgroundImage;
-        [SerializeField] private Animator _animator;
 
-        private Tween _shakeTween;
-        private Tween _holdTween;
         private Tween _typewriterTween;
 
         private const float TextSpeed = 0.03f;
+        private const float LineOffset = 2500f;
+
+        public SkipLabelView SkipLabel => _skipLabel;
 
         protected override void OnPreShow()
         {
             base.OnPreShow();
+            if (ContentProgressText != null)
+            {
+                ContentProgressText.text = string.Empty;
+                ContentProgressText.alpha = 1f;
+            }
+            _skipLabel?.Initialize();
 
-            _animator.SetTrigger("Show");
-            _skipLabelVisual.localScale = Vector3.one;
-            _skipLabelVisual.localRotation = Quaternion.identity;
-            _skipLabelGroup.alpha = 0;
-            СontentProgressText.text = string.Empty;
+            ResetElement(_topCinemaLine, new Vector2(-LineOffset, _topCinemaLine.anchoredPosition.y));
+            ResetElement(_bottomCinemaLine, new Vector2(LineOffset, _bottomCinemaLine.anchoredPosition.y));
+
+            if (_backgroundGlow != null)
+            {
+                _backgroundGlow.DOKill();
+                _backgroundGlow.localScale = new Vector3(0, 1, 1);
+            }
+
+            if (_portraitRoot != null)
+            {
+                _portraitRoot.DOKill();
+                _portraitRoot.localScale = Vector3.zero;
+            }
         }
 
-        protected override void OnPreHide()
+        private void ResetElement(RectTransform rect, Vector2 pos)
         {
-            base.OnPreHide();
+            if (rect == null) return;
+            rect.DOKill();
+            rect.anchoredPosition = pos;
+        }
 
-            StopSkipAnims();
+        public Sequence PlayAppearance()
+        {
+            KillAllAnimations();
+            Sequence seq = DOTween.Sequence();
+
+            seq.Append(_topCinemaLine.DOAnchorPosX(0, 0.7f).SetEase(Ease.OutCubic));
+            seq.Join(_bottomCinemaLine.DOAnchorPosX(0, 0.7f).SetEase(Ease.OutCubic));
+            seq.Append(_backgroundGlow.DOScaleX(1f, 0.4f).SetEase(Ease.OutQuad));
+            seq.Append(_portraitRoot.DOScale(1f, 0.5f).SetEase(Ease.OutBack));
+            seq.AppendCallback(() => _skipLabel?.Show());
+
+            return seq.SetUpdate(true);
+        }
+
+        public Sequence PlayDisappearance()
+        {
+            if (_skipLabel != null) _skipLabel.Hide();
             _typewriterTween?.Kill();
-            HideSkipWithPizzaEffect();
-            _animator.SetTrigger("Hide");
+
+            Sequence seq = DOTween.Sequence();
+
+            if (_portraitRoot != null) seq.Append(_portraitRoot.DOScale(0f, 0.25f).SetEase(Ease.InBack));
+            if (ContentProgressText != null) seq.Join(ContentProgressText.DOFade(0f, 0.2f));
+            if (_backgroundGlow != null) seq.Append(_backgroundGlow.DOScaleX(0f, 0.3f).SetEase(Ease.InQuad));
+
+            seq.Append(_topCinemaLine.DOAnchorPosX(-LineOffset, 0.4f).SetEase(Ease.InCubic));
+            seq.Join(_bottomCinemaLine.DOAnchorPosX(LineOffset, 0.4f).SetEase(Ease.InCubic));
+
+            return seq.SetUpdate(true);
         }
 
-        public void OnAppearanceAnimationEnded()
+        public void SetText(string text, System.Action onComplete)
         {
-            AppearanceFinished?.Invoke();
-        }
+            if (ContentProgressText == null) return;
 
-        public void OnHideAnimationEnded()
-        {
-            Hidden?.Invoke();
-        }
-
-        public void SetText(string text)
-        {
             _typewriterTween?.Kill();
+            ContentProgressText.text = text;
+            ContentProgressText.maxVisibleCharacters = 0;
 
-            СontentProgressText.text = text;
-            СontentProgressText.maxVisibleCharacters = 0;
-
-            _typewriterTween = DOTween.To(() => СontentProgressText.maxVisibleCharacters,
-                x => СontentProgressText.maxVisibleCharacters = x,
+            _typewriterTween = DOTween.To(() => ContentProgressText.maxVisibleCharacters,
+                x => ContentProgressText.maxVisibleCharacters = x,
                 text.Length,
                 text.Length * TextSpeed)
-                .SetEase(Ease.Linear);
+                .SetEase(Ease.Linear)
+                .OnComplete(() => onComplete?.Invoke());
+        }
+
+        public void ClearText()
+        {
+            _typewriterTween?.Kill();
+            if (ContentProgressText != null) ContentProgressText.text = string.Empty;
         }
 
         public void FinishTypingInstant()
         {
             _typewriterTween?.Kill();
-            СontentProgressText.maxVisibleCharacters = СontentProgressText.text.Length;
+            if (ContentProgressText != null)
+                ContentProgressText.maxVisibleCharacters = ContentProgressText.text.Length;
         }
 
-        public void SetPortrait(Sprite portrait)
+        public void SetPortrait(Sprite portrait) { if (_portraitImage != null) _portraitImage.sprite = portrait; }
+        public void SetBackground(Sprite bg) { if (_backgroundImage != null) _backgroundImage.sprite = bg; }
+
+        private void KillAllAnimations()
         {
-            _portraitImage.sprite = portrait;
+            if (_topCinemaLine != null) _topCinemaLine.DOKill();
+            if (_bottomCinemaLine != null) _bottomCinemaLine.DOKill();
+            if (_backgroundGlow != null) _backgroundGlow.DOKill();
+            if (_portraitRoot != null) _portraitRoot.DOKill();
+            _typewriterTween?.Kill();
+            if (ContentProgressText != null) ContentProgressText.DOKill();
         }
 
-        public void SetBackground(Sprite bg)
-        {
-            _backgroundImage.sprite = bg;
-        }
-
-        public void ShowSkipHint()
-        {
-            _skipLabelGroup.DOKill();
-            _skipLabelGroup.DOFade(1f, 0.4f);
-
-            _shakeTween?.Kill();
-            _shakeTween = _skipLabelVisual.DOShakeAnchorPos(1f, 5, 10)
-                .SetLoops(-1)
-                .SetDelay(3f)
-                .SetLink(_skipLabelVisual.gameObject);
-        }
-
-        public void StartHoldAnims(float duration)
-        {
-            _shakeTween?.Pause();
-            _holdTween?.Kill();
-            _holdTween = _skipLabelVisual.DOScale(1.4f, duration).SetEase(Ease.OutQuad);
-        }
-
-        public void StopHoldAnims()
-        {
-            _holdTween?.Kill();
-            _skipLabelVisual.DOScale(1f, 0.2f).OnComplete(() =>
-            {
-                _shakeTween?.Play();
-            });
-        }
-
-        public void ExplodeSkip()
-        {
-            StopSkipAnims();
-
-            _skipLabelVisual.DOScale(2.5f, 0.25f).SetEase(Ease.OutExpo);
-            _skipLabelGroup.DOFade(0f, 0.2f);
-        }
-
-        private void HideSkipWithPizzaEffect()
-        {
-            _skipLabelVisual.DOKill();
-            _skipLabelGroup.DOKill();
-
-            Sequence sequence = DOTween.Sequence();
-
-            sequence.Join(_skipLabelVisual.DOAnchorPosY(_skipLabelVisual.anchoredPosition.y + 150f, 0.6f).SetEase(Ease.OutQuad));
-            sequence.Join(_skipLabelVisual.DORotate(new Vector3(360, 0, 180), 0.6f, RotateMode.LocalAxisAdd).SetEase(Ease.Linear));
-            sequence.Join(_skipLabelVisual.DOScale(0f, 0.6f).SetEase(Ease.InBack));
-            sequence.Join(_skipLabelGroup.DOFade(0f, 0.4f).SetDelay(0.2f));
-
-            sequence.SetLink(_skipLabelVisual.gameObject);
-        }
-
-        private void StopSkipAnims()
-        {
-            _shakeTween?.Kill();
-            _holdTween?.Kill();
-        }
+        private void OnDestroy() => KillAllAnimations();
     }
 }

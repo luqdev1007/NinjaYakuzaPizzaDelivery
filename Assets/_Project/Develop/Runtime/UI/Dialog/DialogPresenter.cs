@@ -4,6 +4,8 @@ using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.UI.TextFeatures;
 using System;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using DG.Tweening;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.UI.Dialog
 {
@@ -20,10 +22,9 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         private bool _isTyping;
         private float _currentHoldTime;
         private bool _isHolding;
-        private float _fastForwardTimer;
+        private bool _isEnding;
 
-        private const float SkipHoldDuration = 0.8f;
-        private const float FastForwardInterval = 0.2f;
+        private const float SkipHoldDuration = 1.2f;
 
         public DialogPresenter(
             DialogDisplayView view,
@@ -43,35 +44,62 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         public override void Initialize()
         {
             base.Initialize();
-            _view.AppearanceFinished += OnAppearanceFinished;
-            _view.ShowSkipHint();
-        }
+            _currentLineIndex = -1;
+            _isEnding = false;
+            _isHolding = false;
 
-        private void OnAppearanceFinished()
-        {
-            _view.AppearanceFinished -= OnAppearanceFinished;
-            ShowNextLine();
+            _view.PlayAppearance().OnComplete(() =>
+            {
+                if (_isEnding) return;
+                ShowNextLine();
+            });
         }
 
         public void Update(float deltaTime)
         {
-            HandleProgressInput();
-            HandleSkipInput(deltaTime);
+            if (_isEnding || _view == null) return;
+
+            _view.SkipLabel.UpdateIdle(deltaTime);
+            HandleInput(deltaTime);
         }
 
-        private void HandleProgressInput()
+        private void HandleInput(float deltaTime)
         {
             if (_inputService.IsInteractKeyPressed)
             {
-                ProgressDialog();
+                _isHolding = true;
+                _currentHoldTime = 0f;
+                _view.SkipLabel.StartHoldProgress(SkipHoldDuration);
+            }
+
+            if (_isHolding && _inputService.IsInteractKeyHeld)
+            {
+                _currentHoldTime += deltaTime;
+                if (_currentHoldTime >= SkipHoldDuration)
+                {
+                    _isHolding = false;
+                    _view.SkipLabel.StopHoldProgress();
+                    EndDialog();
+                    return;
+                }
+            }
+
+            if (_inputService.IsInteractKeyReleased)
+            {
+                if (_isHolding && _currentHoldTime < SkipHoldDuration)
+                {
+                    ProgressDialog();
+                }
+                _isHolding = false;
+                _view.SkipLabel.StopHoldProgress();
             }
         }
 
         private void ProgressDialog()
         {
-            if (_isTyping == true)
+            if (_isTyping)
             {
-                FinishTyping();
+                _isTyping = false;
                 _view.FinishTypingInstant();
             }
             else
@@ -80,44 +108,10 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             }
         }
 
-        private void HandleSkipInput(float deltaTime)
-        {
-            if (_inputService.IsInteractKeyPressed == true)
-            {
-                _isHolding = true;
-                _currentHoldTime = 0f;
-                _fastForwardTimer = 0f;
-                _view.StartHoldAnims(SkipHoldDuration);
-            }
-
-            if (_inputService.IsInteractKeyHeld == true && _isHolding == true)
-            {
-                _currentHoldTime += deltaTime;
-                _fastForwardTimer += deltaTime;
-
-                if (_fastForwardTimer >= FastForwardInterval)
-                {
-                    _fastForwardTimer = 0f;
-                    ProgressDialog();
-                }
-
-                if (_currentHoldTime >= SkipHoldDuration)
-                {
-                    _isHolding = false;
-                    _view.ExplodeSkip();
-                    EndDialog();
-                }
-            }
-
-            if (_inputService.IsInteractKeyReleased == true)
-            {
-                _isHolding = false;
-                _view.StopHoldAnims();
-            }
-        }
-
         private void ShowNextLine()
         {
+            if (_isEnding) return;
+
             _currentLineIndex++;
 
             if (_currentLineIndex >= _config.Replicas.Count)
@@ -129,30 +123,33 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             DialogReplica replica = _config.Replicas[_currentLineIndex];
             CharacterData characterData = _charactersConfig.GetCharacter(replica.CharacterId);
 
+            if (characterData != null)
+            {
+                _view.SetPortrait(characterData.Portrait);
+                _view.SetBackground(characterData.Background);
+            }
+
             string processedText = TextHighlightUtility.ProcessText(replica.RawText);
 
-            _view.SetText(processedText);
-            _view.SetPortrait(characterData.Portrait);
-            _view.SetBackground(characterData.Background);
-
             _isTyping = true;
-        }
-
-        private void FinishTyping()
-        {
-            _isTyping = false;
+            _view.SetText(processedText, () => _isTyping = false);
         }
 
         private void EndDialog()
         {
-            DialogEnded?.Invoke();
-            OnCloseRequest();
-        }
+            if (_isEnding) return;
+            _isEnding = true;
+            _isHolding = false;
 
-        public override void Dispose()
-        {
-            _view.AppearanceFinished -= OnAppearanceFinished;
-            base.Dispose();
+            _view.FinishTypingInstant();
+            _view.ClearText();
+
+            _view.PlayDisappearance().OnComplete(() =>
+            {
+                if (_view == null) return;
+                DialogEnded?.Invoke();
+                OnCloseRequest();
+            });
         }
     }
 }
