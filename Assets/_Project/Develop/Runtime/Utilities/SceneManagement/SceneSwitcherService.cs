@@ -105,6 +105,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.SceneManagement
 
             _loadingScreen.Hide();
 
+            yield return null;
+
             sceneBootstrap.Run();
         }
 

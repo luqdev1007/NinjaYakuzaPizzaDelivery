@@ -12,21 +12,6 @@ namespace Assets._Project.Develop.Runtime.Utilities.AudioManagment
 
         private void Awake() => Source = GetComponent<AudioSource>();
 
-        public void Play(SoundData data, Action<AudioEmitter> onComplete)
-        {
-            _onComplete = onComplete;
-
-            Source.clip = data.Clips[UnityEngine.Random.Range(0, data.Clips.Length)];
-            Source.volume = data.Volume;
-            Source.pitch = UnityEngine.Random.Range(data.PitchMin, data.PitchMax);
-            Source.outputAudioMixerGroup = data.Group;
-            Source.loop = false;
-
-            Source.Play();
-
-            Invoke(nameof(ReturnToPool), Source.clip.length + 0.1f);
-        }
-
         public void Play(SoundData data, Vector3? position, Action<AudioEmitter> onComplete)
         {
             _onComplete = onComplete;
@@ -34,22 +19,37 @@ namespace Assets._Project.Develop.Runtime.Utilities.AudioManagment
             if (position.HasValue)
             {
                 transform.position = position.Value;
-                Source.spatialBlend = 1f; 
+                Source.spatialBlend = 1f;
             }
             else
             {
                 Source.spatialBlend = 0f;
             }
 
-            Source.clip = data.Clips[UnityEngine.Random.Range(0, data.Clips.Length)];
+            if (data.Clips != null && data.Clips.Length > 0)
+            {
+                Source.clip = data.Clips[UnityEngine.Random.Range(0, data.Clips.Length)];
+            }
+            else
+            {
+                Debug.LogWarning($"SoundData with key {data.Key} has no clips!");
+                ReturnToPool();
+                return;
+            }
+
             Source.volume = data.Volume;
             Source.pitch = UnityEngine.Random.Range(data.PitchMin, data.PitchMax);
             Source.outputAudioMixerGroup = data.Group;
+            Source.loop = false;
 
             Source.Play();
-            Invoke(nameof(ReturnToPool), Source.clip.length + 0.1f);
+
+            float duration = Source.clip.length / Mathf.Max(0.01f, Source.pitch);
+            Invoke(nameof(ReturnToPool), duration + 0.1f);
         }
 
         private void ReturnToPool() => _onComplete?.Invoke(this);
+
+        private void OnDisable() => CancelInvoke();
     }
 }

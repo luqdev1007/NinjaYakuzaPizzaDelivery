@@ -5,8 +5,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.AudioManagment
     [Serializable]
     public class AudioSettings
     {
-        public string MasterVolumeParam = "MasterVol";
-        public string MusicVolumeParam = "MusicVol";
-        public string SfxVolumeParam = "SfxVol";
+        public string MasterVolumeParam = "MasterVolume";
+        public string MusicVolumeParam = "MusicVolume";
+        public string SfxVolumeParam = "SFXVolume";
     }
 }

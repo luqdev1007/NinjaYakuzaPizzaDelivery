@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Infrastructure;
 using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
@@ -29,7 +30,8 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
 
         public override void Run()
         {
-
+            IAudioService audioService = _container.Resolve<IAudioService>();
+            audioService.PlayPlaylist("MainMenu_Playlist");
         }
 
         private void Update()

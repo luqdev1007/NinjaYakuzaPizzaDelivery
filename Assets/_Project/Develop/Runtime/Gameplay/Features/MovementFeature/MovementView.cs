@@ -63,6 +63,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
         private void Update()
         {
+            if (_rigidbody == null || _isGrounded == null)
+                return;
+
             float velocityX = _rigidbody.linearVelocity.x;
             bool grounded = _isGrounded.Value;
             bool moving = _isMoving.Value;

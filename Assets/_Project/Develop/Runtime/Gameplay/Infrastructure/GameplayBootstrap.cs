@@ -14,6 +14,7 @@ using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using System;
 using System.Collections;
 using UnityEngine;
+using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 {
@@ -86,6 +87,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         public override void Run()
         {
+            IAudioService audioService = _container.Resolve<IAudioService>();
+
+            // Можно брать ключ прямо из конфига уровня, если добавишь туда поле string MusicKey
+            // audioService.PlayMusic(levelConfig.MusicKey); 
+
+            audioService.PlayPlaylist("Gameplay_Playlist");
+
             _gameplayStatesContext.Run();
         }
 

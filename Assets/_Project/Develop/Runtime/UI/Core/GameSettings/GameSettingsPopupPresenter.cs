@@ -96,6 +96,8 @@ namespace Assets._Project.Develop.Runtime.UI.Core.GameSettings
         {
             base.Dispose();
 
+            _input.IsEnabled = true;
+
             _view.OpenAudioSettings.onClick.RemoveListener(OnOpenAudioSettingsButtonClicked);
             _view.OpenKeyBindingsSettings.onClick.RemoveListener(OnOpenKeyBindingsSettingsButtonClicked);
 

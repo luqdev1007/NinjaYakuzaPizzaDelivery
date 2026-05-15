@@ -10,6 +10,7 @@ using Assets._Project.Develop.Runtime.UI.Core.ConfirmPopup;
 using Assets._Project.Develop.Runtime.UI.Core.GameSettings;
 using Assets._Project.Develop.Runtime.UI.LevelsMenuPopup;
 using Assets._Project.Develop.Runtime.UI.Wallet;
+using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -65,7 +66,8 @@ namespace Assets._Project.Develop.Runtime.UI
         {
             return new AudioSettingsPopupPresenter(
                 view,
-                _container.Resolve<ICoroutinesPerformer>());
+                _container.Resolve<ICoroutinesPerformer>(),
+                _container.Resolve<IAudioService>());
         }
 
         public WalletPresenter CreateWalletPresenter(IconTextListView view)

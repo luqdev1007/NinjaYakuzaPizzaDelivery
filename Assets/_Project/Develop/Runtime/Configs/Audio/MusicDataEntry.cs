@@ -1,13 +1,12 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.Audio;
 
 namespace Assets._Project.Develop.Runtime.Configs.Audio
 {
-    public abstract class AudioData : ScriptableObject
+    [Serializable]
+    public class MusicDataEntry
     {
-        public string Key;
+        public AudioClip Clip;
         [Range(0, 1)] public float Volume = 1f;
-        public AudioMixerGroup Group;
     }
 }

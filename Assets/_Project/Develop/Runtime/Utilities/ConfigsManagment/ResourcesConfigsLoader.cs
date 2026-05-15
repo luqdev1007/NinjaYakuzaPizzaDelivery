@@ -1,3 +1,4 @@
+using Assets._Project.Develop.Runtime.Configs.Audio;
 using Assets._Project.Develop.Runtime.Configs.Dialog;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
@@ -30,6 +31,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
             { typeof(MasterLootProviderConfig), "Configs/Gameplay/Loot/MasterLootProvider" },
             { typeof(StyleRankConfig), "Configs/Gameplay/Style/StyleRankConfig" },
             { typeof(StyleActionsConfig), "Configs/Gameplay/Style/StyleActionsConfig" },
+
+            { typeof(AudioLibrary), "Configs/Audio/AudioLibrary" },
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)

@@ -1,4 +1,5 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Configs.Audio;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
 using Assets._Project.Develop.Runtime.Meta.Features.Stats;
@@ -6,6 +7,7 @@ using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
+using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataManagment;
@@ -14,18 +16,23 @@ using Assets._Project.Develop.Runtime.Utilities.DataManagment.KeyStorage;
 using Assets._Project.Develop.Runtime.Utilities.DataManagment.Serializers;
 using Assets._Project.Develop.Runtime.Utilities.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.LoadingScreen;
+using Assets._Project.Develop.Runtime.Utilities.ObjectsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using Assets._Project.Develop.Runtime.Utilities.Timer;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using Object = UnityEngine.Object;
 
 namespace Assets._Project.Develop.Infrastructure.EntryPoint
 {
     public class ProjectContextRegistrations
     {
+        private const string AudioMixerPath = "Utilities/AudioMixerMain";
+        private const string AudioEmitterPrefabPath = "Utilities/AudioEmitter"; 
+
         public static void Process(DIContainer container)
         {
             container.RegisterAsSingle<ICoroutinesPerformer>(CreateCoroutinesPerformer);
@@ -58,7 +65,35 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             container.RegisterAsSingle(CreateLevelsProgressionService).NonLazy();
 
             container.RegisterAsSingle<IInputService>(CreateDesktopInput);
+
+            container.RegisterAsSingle<IAudioService>(CreateAudioService);
         }
+
+        private static IAudioService CreateAudioService(DIContainer container)
+        {
+            ResourcesAssetsLoader loader = container.Resolve<ResourcesAssetsLoader>();
+            ICoroutinesPerformer coroutines = container.Resolve<ICoroutinesPerformer>();
+
+            AudioLibrary library = container.Resolve<ConfigsProviderService>().GetConfig<AudioLibrary>();
+            AudioMixer mixer = loader.Load<AudioMixer>(AudioMixerPath);
+
+            if (mixer == null) 
+                throw new Exception($"AudioMixer not found at {AudioMixerPath}");
+
+
+            GameObject poolRoot = new GameObject("AudioPoolRoot");
+            Object.DontDestroyOnLoad(poolRoot);
+
+            AudioEmitter emitterPrefab = loader.Load<AudioEmitter>(AudioEmitterPrefabPath);
+
+            GameObjectPool sfxPool = new GameObjectPool(
+                emitterPrefab.gameObject,
+                poolRoot.transform,
+                10);
+
+            return new AudioService(library, mixer, sfxPool, coroutines);
+        }
+
 
         private static DesktopInput CreateDesktopInput(DIContainer container)
         {
