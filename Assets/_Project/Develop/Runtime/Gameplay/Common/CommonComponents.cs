@@ -28,4 +28,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Common
     {
         public ReactiveVariable<float> Value = new();
     }
+
+    public class LockoutDuration : IEntityComponent
+    {
+        public ReactiveVariable<float> Value = new();
+    }
 }

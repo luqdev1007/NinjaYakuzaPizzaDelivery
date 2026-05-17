@@ -16,7 +16,15 @@ MonoBehaviour:
     MasterVolumeParam: MasterVolume
     MusicVolumeParam: MusicVolume
     SfxVolumeParam: SFXVolume
-  Sounds: []
+  Sounds:
+  - {fileID: 11400000, guid: 9999775c65eeda342be1603f6d53b1e8, type: 2}
+  - {fileID: 11400000, guid: dc529866934567b44b1db0d3322f8da9, type: 2}
+  - {fileID: 11400000, guid: c493f79dacb9b594a85967c5afad8ab9, type: 2}
+  - {fileID: 11400000, guid: 8c28b9aaec1217c4bb7e895182626d50, type: 2}
+  - {fileID: 11400000, guid: f659e9bba26fcb244ab499b1deeaf4a4, type: 2}
+  - {fileID: 11400000, guid: 18c4339da9725524881e84279a0dbffb, type: 2}
+  - {fileID: 11400000, guid: e86f24ad8396924449fbb45859ef29d6, type: 2}
+  - {fileID: 11400000, guid: 546dc5fde22e25d4b81d465c959047af, type: 2}
   Musics: []
   Playlists:
   - {fileID: 11400000, guid: da7b10a3442f927479af57185bff26b7, type: 2}

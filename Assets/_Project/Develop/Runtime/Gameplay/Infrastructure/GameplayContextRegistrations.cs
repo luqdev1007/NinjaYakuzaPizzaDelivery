@@ -18,6 +18,7 @@ using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
+using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using UnityEngine;
@@ -163,7 +164,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new MonoEntitiesFactory(
                 container.Resolve<ResourcesAssetsLoader>(),
                 container.Resolve<EntitiesLifeContext>(),
-                container.Resolve<CollidersRegistryService>());
+                container.Resolve<CollidersRegistryService>(),
+                container.Resolve<IAudioService>());
         }
 
         private static EntitiesLifeContext CreateEntitiesLifeContext(DIContainer container) => new EntitiesLifeContext();

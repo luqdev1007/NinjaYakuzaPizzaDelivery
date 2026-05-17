@@ -13,7 +13,7 @@ namespace Assets._Project.Develop.Runtime.Utilities
 		public static readonly int LayerCharacters = LayerMask.NameToLayer("Characters");
 		public static readonly int LayerGround = LayerMask.NameToLayer("Ground");
 		public static readonly int LayerEnemies = LayerMask.NameToLayer("Enemies");
-		public static readonly int LayerWallHangable = LayerMask.NameToLayer("WallHangable");
+		public static readonly int LayerWall = LayerMask.NameToLayer("Wall");
 		public static readonly int LayerSlope = LayerMask.NameToLayer("Slope");
 		public static readonly int LayerPizza = LayerMask.NameToLayer("Pizza");
 		public static readonly int LayerLoot = LayerMask.NameToLayer("Loot");
@@ -29,7 +29,7 @@ namespace Assets._Project.Develop.Runtime.Utilities
 		public static readonly int LayerMaskCharacters = 1 << LayerCharacters;
 		public static readonly int LayerMaskGround = 1 << LayerGround;
 		public static readonly int LayerMaskEnemies = 1 << LayerEnemies;
-		public static readonly int LayerMaskWallHangable = 1 << LayerWallHangable;
+		public static readonly int LayerMaskWall = 1 << LayerWall;
 		public static readonly int LayerMaskSlope = 1 << LayerSlope;
 		public static readonly int LayerMaskPizza = 1 << LayerPizza;
 		public static readonly int LayerMaskLoot = 1 << LayerLoot;

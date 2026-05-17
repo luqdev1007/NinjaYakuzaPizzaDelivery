@@ -123,5 +123,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             return system;
         }
+
+        internal object AddWallMask(object wallMask)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

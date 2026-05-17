@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
 {
@@ -7,11 +8,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
         private CollidersRegistryService _collidersRegistryService;
         private Entity _linkedEntity;
 
+        private IAudioService _audioService;
+
         public Entity LinkedEntity => _linkedEntity;
 
-        public void Initialize(CollidersRegistryService collidersRegistryService)
+        public void Initialize(CollidersRegistryService collidersRegistryService, IAudioService audioService)
         {
             _collidersRegistryService = collidersRegistryService;
+            _audioService = audioService; 
         }
 
         public void Link(Entity entity)
@@ -27,8 +31,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
                     registrator.Register(entity);
 
             if (views != null)
+            {
                 foreach (EntityView entityView in views)
+                {
+                    if (entityView is IRequireAudioService audioView)
+                        audioView.Construct(_audioService);
+
                     entityView.Link(entity);
+                }
+            }
 
             foreach (Collider2D collider in GetComponentsInChildren<Collider2D>())
                 _collidersRegistryService.Register(collider, entity);

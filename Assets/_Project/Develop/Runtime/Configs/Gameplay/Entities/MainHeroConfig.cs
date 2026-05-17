@@ -17,6 +17,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [Header("Settings")]
         [field: SerializeField] public MovementSettings Movement { get; private set; } = new();
         [field: SerializeField] public JumpSettings Jump { get; private set; } = new();
+        [field: SerializeField] public AirJumpSettings AirJump { get; private set; } = new();
         [field: SerializeField] public DashSettings Dash { get; private set; } = new();
         [field: SerializeField] public GlideSettings Glide { get; private set; } = new();
         [field: SerializeField] public WallHangSettings WallHang { get; private set; } = new();
@@ -39,12 +40,20 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     }
 
     [Serializable]
+    public class AirJumpSettings
+    {
+        [field: SerializeField, Min(0)] public float ForceMin { get; private set; } = 12f;
+        [field: SerializeField, Min(0)] public float ForceMax { get; private set; } = 20f;
+        [field: SerializeField, Min(0)] public float MaxChargeTime { get; private set; } = 0.25f;
+        [field: SerializeField, Min(1)] public int JumpsMaxCount { get; private set; } = 1;
+    }
+
+    [Serializable]
     public class JumpSettings
     {
         [field: SerializeField, Min(0)] public float ForceMin { get; private set; } = 12f;
         [field: SerializeField, Min(0)] public float ForceMax { get; private set; } = 20f;
         [field: SerializeField, Min(0)] public float MaxChargeTime { get; private set; } = 0.25f;
-        [field: SerializeField, Min(1)] public int ExtraJumpsCount { get; private set; } = 1;
     }
 
     [Serializable]
@@ -91,8 +100,9 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     public class WallJumpSettings
     {
         [field: SerializeField] public float VelocityYAbs { get; private set; } = 5f;
-        [field: SerializeField] public Vector2 JumpForce { get; private set; } = new Vector2(12f, 15f); // from jump settings
-        [field: SerializeField] public float ControlLockDuration { get; private set; } = 0.2f; 
+        [field: SerializeField] public float ControlLockDuration { get; private set; } = 0.2f;
+        [field: SerializeField] public LayerMask WallMask { get; private set; }
+        [field: SerializeField] public Vector2 ForceMultiplier { get; private set; } = new Vector2(0.5f, 1.2f);
     }
 
     [Serializable]

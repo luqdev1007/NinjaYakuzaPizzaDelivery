@@ -22,7 +22,7 @@ TagManager:
   - Characters
   - Ground
   - Enemies
-  - WallHangable
+  - Wall
   - Slope
   - Pizza
   - Loot

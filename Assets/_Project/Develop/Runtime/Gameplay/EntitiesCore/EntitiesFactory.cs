@@ -2,12 +2,12 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
-using Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Dash;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Jump;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Visual;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
@@ -155,11 +155,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddAcceleration(new ReactiveVariable<float>(config.Movement.Acceleration))
                 .AddDeceleration(new ReactiveVariable<float>(config.Movement.Deceleration))
                 
-                // jump
+                // jump         
                 .AddJumpChargeTime(new ReactiveVariable<float>(config.Jump.MaxChargeTime))
                 .AddJumpForceMin(new ReactiveVariable<float>(config.Jump.ForceMin))
                 .AddJumpForceMax(new ReactiveVariable<float>(config.Jump.ForceMax))
+                .AddJumpRequest()
                 .AddJumpEvent()
+
+                // air jump         
+                .AddAirJumpChargeTime(new ReactiveVariable<float>(config.AirJump.MaxChargeTime))
+                .AddAirJumpForceMin(new ReactiveVariable<float>(config.AirJump.ForceMin))
+                .AddAirJumpForceMax(new ReactiveVariable<float>(config.AirJump.ForceMax))
+                .AddAirJumpsCount(new ReactiveVariable<int>(config.AirJump.JumpsMaxCount))
+                .AddAirJumpsMaxCount(new ReactiveVariable<int>(config.AirJump.JumpsMaxCount))
+                .AddAirJumpRequest()
+                .AddAirJumpEvent()
+
+                // wall jumping
+                .AddIsWallJumping()
+                .AddWallJumpForceMultiplier(new ReactiveVariable<Vector2>(config.WallJump.ForceMultiplier))
+                .AddWallMask(config.WallJump.WallMask)
+                .AddLockoutDuration(new ReactiveVariable<float>(config.WallJump.ControlLockDuration))
 
                 // dash
                 .AddIsDashing()
@@ -342,12 +358,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         {
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsWallJumping.Value == false))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false));
 
             ICompositeCondition canJump = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrounded.Value == true))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false));
+
+            ICompositeCondition canAirJump = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.AirJumpsCount.Value > 0))
+                .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
+                .Add(new FuncCondition(() => entity.IsWallJumping.Value == false))
+                .Add(new FuncCondition(() => entity.Rigidbody.linearVelocity.y >= entity.FallActionThreshold.Value))
+                .Add(new FuncCondition(() => entity.IsDead.Value == false));
+
+            ICompositeCondition mustRestoreAirJumpsCount_mustRestoreAirJumpsCount = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsGrounded.Value))
+                .Add(new FuncCondition(() => entity.AirJumpsCount.Value < entity.AirJumpsMaxCount.Value));
 
             ICompositeCondition canDash = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
@@ -371,6 +400,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             entity
                 .AddCanMove(canMove)
                 .AddCanJump(canJump)
+                .AddCanAirJump(canAirJump)
+                .AddMustRestoreAirJumpsCount(mustRestoreAirJumpsCount_mustRestoreAirJumpsCount)
                 .AddCanDash(canDash)
                 .AddCanFlip(canFlip)
                 .AddMustDie(mustDie)
@@ -522,12 +553,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             entity
                 // common
                 .AddSystem(new PlayerInputSystem(_inputService)) 
+
                 .AddSystem(new SpawnProcessTimerSystem()) 
+
                 .AddSystem(new GroundCheckSystem()) 
 
                 // movement
                 .AddSystem(new RigidbodyMovementSystem())
+
                 .AddSystem(new JumpSystem()) 
+
+                .AddSystem(new AirJumpSystem())
+                .AddSystem(new AirJumpsRecoverySystem())
+
+                .AddSystem(new WallJumpSystem())
+
                 .AddSystem(new DashSystem(_coroutinesPerformer))
 
                 // visual

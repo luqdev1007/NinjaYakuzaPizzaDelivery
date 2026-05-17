@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/MainHero/MainHero
   <LootCollectRange>k__BackingField: 4
-  <FallVelocityThreshold>k__BackingField: -2
+  <BaseBodyContactDamage>k__BackingField: 1
+  <FallActionThreshold>k__BackingField: -2
   <GroundMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 36096
@@ -24,15 +25,20 @@ MonoBehaviour:
     <Acceleration>k__BackingField: 10
     <Deceleration>k__BackingField: 25
   <Jump>k__BackingField:
-    <JumpForce>k__BackingField: 12
-    <JumpForceMax>k__BackingField: 20
-    <JumpChargeTime>k__BackingField: 0.25
-    <ExtraJumpsCount>k__BackingField: 1
+    <ForceMin>k__BackingField: 12
+    <ForceMax>k__BackingField: 20
+    <MaxChargeTime>k__BackingField: 0.25
+  <AirJump>k__BackingField:
+    <ForceMin>k__BackingField: 12
+    <ForceMax>k__BackingField: 20
+    <MaxChargeTime>k__BackingField: 0.25
+    <JumpsMaxCount>k__BackingField: 1
   <Dash>k__BackingField:
     <Duration>k__BackingField: 0.25
+    <InputBufferTimeMax>k__BackingField: 0.15
     <ForceMin>k__BackingField: 15
     <ForceMax>k__BackingField: 30
-    <ChargeTime>k__BackingField: 0.3
+    <MaxChargeTime>k__BackingField: 0.3
     <Cooldown>k__BackingField: 0.5
     <AirMultiplier>k__BackingField: 2
     <VerticalBoost>k__BackingField: 2
@@ -54,8 +60,11 @@ MonoBehaviour:
     <JumpForce>k__BackingField: {x: 8, y: 12}
   <WallJump>k__BackingField:
     <VelocityYAbs>k__BackingField: 5
-    <JumpForce>k__BackingField: {x: 12, y: 15}
     <ControlLockDuration>k__BackingField: 0.2
+    <WallMask>k__BackingField:
+      serializedVersion: 2
+      m_Bits: 1024
+    <ForceMultiplier>k__BackingField: {x: 0.5, y: 1.2}
   <Slide>k__BackingField:
     <Duration>k__BackingField: 0.2
     <Speed>k__BackingField: 15
