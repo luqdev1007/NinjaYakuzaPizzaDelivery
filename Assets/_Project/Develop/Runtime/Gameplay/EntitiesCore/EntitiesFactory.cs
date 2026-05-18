@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Dash;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Jump;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
@@ -124,7 +125,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddIntentMovement()
                 .AddIntentJump()
                 .AddIntentDash()
-                .AddIntentAttack()
+                .AddIntentSlide()
+
+                .AddIntentAttack() // nope
 
                 // spawn
                 .AddInSpawnProcess()
@@ -146,6 +149,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddGroundMask(config.GroundMask)
                 .AddIsGrounded()
                 .AddLookDirectionX(new ReactiveVariable<float>(1))
+                .AddCurrentMovementState(new ReactiveVariable<MovementStates>(MovementStates.Default))
 
                 // movement
                 .AddIsMoving()
@@ -186,6 +190,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddDashCooldown(new ReactiveVariable<float>(config.Dash.Cooldown))
                 .AddAirDashMultiplier(new ReactiveVariable<float>(config.Dash.AirMultiplier))
                 .AddAirDashVerticalBoost(new ReactiveVariable<float>(config.Dash.VerticalBoost))
+
+                // slope
+                .AddSlopeAngle()
+                .AddSlopeNormal()
+                .AddIsOnSlope()
+                .AddSlopeMinAngle(new ReactiveVariable<float>(config.Slope.MinAngle))
+                .AddSlopeMaxAngle(new ReactiveVariable<float>(config.Slope.MaxAngle))
+                .AddSlopeMaxStableAngle(new ReactiveVariable<float>(config.Slope.MaxStableAngle))
+                .AddSlopeSlipForce(new ReactiveVariable<float>(config.Slope.SlipForce))
+                .AddSlopeBaseSlideSpeed(new ReactiveVariable<float>(config.Slope.BaseSlideSpeed))
+                .AddSlopeSlideAcceleration(new ReactiveVariable<float>(config.Slope.SlideAcceleration))
+                .AddSlopeMaxSlideSpeed(new ReactiveVariable<float>(config.Slope.MaxSlideSpeed))
                 ;
 
             /*
@@ -569,6 +585,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new WallJumpSystem())
 
                 .AddSystem(new DashSystem(_coroutinesPerformer))
+
+                // slope
+                .AddSystem(new SlopeRotationSystem())
+                .AddSystem(new SlopeSlipSystem())
+                .AddSystem(new SlopeSlideSystem())
 
                 // visual
                 .AddSystem(new FlipDirectionSystem()) 

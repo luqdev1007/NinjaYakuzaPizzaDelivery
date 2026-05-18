@@ -75,22 +75,13 @@ MonoBehaviour:
     <Damage>k__BackingField: 10
     <KnockbackForce>k__BackingField: 5
   <Slope>k__BackingField:
-    <Mask>k__BackingField:
-      serializedVersion: 2
-      m_Bits: 2048
     <MinAngle>k__BackingField: 15
     <MaxAngle>k__BackingField: 75
-    <DownhillBaseForce>k__BackingField: 10
-    <BoostMultiplier>k__BackingField: 2
-    <MagnetForce>k__BackingField: 15
-    <MaxAccumSpeed>k__BackingField: 12
-    <AccumGainRate>k__BackingField: 4
-    <AccumDecayRate>k__BackingField: 10
-    <SlideOffDelay>k__BackingField: 0.1
-    <MinEjectVelocity>k__BackingField: 6
-    <EjectForceMultiplier>k__BackingField: 0.8
-    <AutoSlidePush>k__BackingField: 0.8
-    <JumpForce>k__BackingField: {x: 10, y: 6}
+    <SlipForce>k__BackingField: 15
+    <MaxStableAngle>k__BackingField: 45
+    <BaseSlideSpeed>k__BackingField: 15
+    <SlideAcceleration>k__BackingField: 25
+    <MaxSlideSpeed>k__BackingField: 40
   <Attack>k__BackingField:
     <ProcessTime>k__BackingField: 0.15
     <DelayTime>k__BackingField: 0.075

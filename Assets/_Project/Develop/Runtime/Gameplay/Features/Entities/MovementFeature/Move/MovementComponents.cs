@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move
 {
+    public class CurrentMovementState : IEntityComponent
+    {
+        public ReactiveVariable<MovementStates> Value;
+    }
+
     public class CanFlip : IEntityComponent
     {
         public ICompositeCondition Value;

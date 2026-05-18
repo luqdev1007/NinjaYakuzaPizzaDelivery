@@ -14,6 +14,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
         public ReactiveVariable<bool> Value;
     }
 
+    public class IntentSlide : IEntityComponent
+    {
+        public ReactiveVariable<bool> Value;
+    }
+
     public class IntentDash : IEntityComponent
     {
         public ReactiveVariable<bool> Value;

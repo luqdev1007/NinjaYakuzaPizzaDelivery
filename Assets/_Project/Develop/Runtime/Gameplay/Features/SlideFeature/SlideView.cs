@@ -1,6 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
-using Assets._Project.Develop.Runtime.Gameplay.Features.SlopeFeature;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using UnityEngine;
@@ -27,7 +26,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         [SerializeField] private float _lerpSpeed = 10f;
         [SerializeField] private float _slopeRotationLerp = 0.15f;
 
-        private SlopeSystem _slopeSystem;
         private IReadOnlyVariable<bool> _isSliding;
         private IReadOnlyVariable<bool> _isOnSlope;
 
@@ -79,6 +77,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 
             float targetZ = 0f;
 
+            /*
             if (_isSliding.Value)
             {
                 if (_isOnSlope.Value && _slopeSystem != null)
@@ -93,6 +92,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
                     targetZ = -_slideTiltAngle * direction;
                 }
             }
+            */
 
             Quaternion targetRot = Quaternion.Euler(0, 0, targetZ);
             _viewContainer.localRotation = Quaternion.Lerp(_viewContainer.localRotation, targetRot, _slopeRotationLerp);

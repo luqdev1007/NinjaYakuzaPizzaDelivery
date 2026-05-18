@@ -1,5 +1,5 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
-using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
@@ -11,16 +11,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         private float _coyoteTimer;
 
         private ReactiveVariable<bool> _isGrounded;
+        private ReactiveVariable<bool> _isOnSlope;
+        private ReactiveVariable<Vector2> _slopeNormal;
+        private ReactiveVariable<float> _slopeAngle;
+        private ReactiveVariable<float> _slopeMinAngle;
+        private ReactiveVariable<float> _slopeMaxAngle;
 
         private Collider2D _body;
         private LayerMask _groundMask;
-
         private ContactFilter2D _contactFilter;
         private readonly RaycastHit2D[] _results = new RaycastHit2D[1];
 
         public void OnInit(Entity entity)
         {
             _isGrounded = entity.IsGrounded;
+            _isOnSlope = entity.IsOnSlope;
+            _slopeNormal = entity.SlopeNormal;
+            _slopeAngle = entity.SlopeAngle;
+            _slopeMinAngle = entity.SlopeMinAngle;
+            _slopeMaxAngle = entity.SlopeMaxAngle;
+
             _body = entity.BodyCollider;
             _groundMask = entity.GroundMask;
 
@@ -33,32 +43,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         {
             Vector2 origin = _body.bounds.center;
             Vector2 size = new Vector2(_body.bounds.size.x * 0.8f, 0.1f);
-            float castDistance = _body.bounds.extents.y + 0.1f;
+            float castDistance = _body.bounds.extents.y + 0.2f;
 
             int hitCount = Physics2D.BoxCast(
-                origin,
-                size,
-                0f,
-                Vector2.down,
-                _contactFilter,
-                _results,
-                castDistance);
+                origin, size, 0f, Vector2.down, _contactFilter, _results, castDistance);
 
             if (hitCount > 0)
             {
                 _coyoteTimer = CoyoteTime;
                 _isGrounded.Value = true;
+
+                Vector2 normal = _results[0].normal;
+                float angle = Vector2.Angle(Vector2.up, normal);
+
+                _slopeNormal.Value = normal;
+                _slopeAngle.Value = angle;
+
+                _isOnSlope.Value = angle > _slopeMinAngle.Value && angle < _slopeMaxAngle.Value;
             }
             else
             {
-                if (_coyoteTimer > 0f)
-                {
-                    _coyoteTimer -= deltaTime;
-                }
-                else
-                {
-                    _isGrounded.Value = false;
-                }
+                _isGrounded.Value = false;
+                _isOnSlope.Value = false;
+                _slopeNormal.Value = Vector2.up;
+                _slopeAngle.Value = 0f;
             }
         }
     }
