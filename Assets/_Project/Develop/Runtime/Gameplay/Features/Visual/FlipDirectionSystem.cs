@@ -24,13 +24,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Visual
             if (_canFlip.Evaluate() == false)
                 return;
 
-            Vector3 scale = _transform.localScale;
-            float targetScaleX = _lookDirectionX.Value > 0 ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+            float targetYRotation = _lookDirectionX.Value > 0 ? 0f : 180f;
+            float currentYRotation = _transform.localRotation.eulerAngles.y;
 
-            if (!Mathf.Approximately(scale.x, targetScaleX))
+            if (!Mathf.Approximately(currentYRotation, targetYRotation))
             {
-                scale.x = targetScaleX;
-                _transform.localScale = scale;
+                Vector3 currentAngles = _transform.localRotation.eulerAngles;
+                _transform.localRotation = Quaternion.Euler(currentAngles.x, targetYRotation, currentAngles.z);
             }
         }
     }

@@ -1,6 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
-using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move; 
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using UnityEngine;
@@ -25,9 +25,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         [SerializeField] private float _slideSquashY = 0.7f;
         [SerializeField] private float _slideTiltAngle = 12f;
         [SerializeField] private float _lerpSpeed = 10f;
-        [SerializeField] private float _slopeRotationLerp = 10f;
+        [SerializeField] private float _slopeRotationLerp = 12f;
 
         private Entity _entity;
+        private Transform _transform;
         private IReadOnlyVariable<bool> _isSliding;
         private IReadOnlyVariable<bool> _isOnSlope;
         private IReadOnlyVariable<MovementStates> _movementState;
@@ -37,7 +38,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         private Quaternion _defaultRotation;
 
         private IDisposable _slideDisposable;
-        private IDisposable _stateDisposable; 
+        private IDisposable _stateDisposable;
         private bool _isInitialized;
         private bool _wasSlidingLastFrame;
 
@@ -46,6 +47,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         protected override void OnEntityStartedWork(Entity entity)
         {
             _entity = entity;
+            _transform = entity.Transform;
             _isSliding = entity.IsSliding;
             _isOnSlope = entity.IsOnSlope;
             _movementState = entity.CurrentMovementState;
@@ -111,29 +113,50 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 
             bool isSliding = IsCurrentlySliding();
 
+            // --- Деформация масштаба ---
             Vector3 targetScale = isSliding
                 ? new Vector3(_defaultScale.x * _slideStretchX, _defaultScale.y * _slideSquashY, _defaultScale.z)
                 : _defaultScale;
 
             _viewContainer.localScale = Vector3.Lerp(_viewContainer.localScale, targetScale, Time.deltaTime * _lerpSpeed);
 
+            // --- Вращение ---
             if (isSliding)
             {
                 float targetZ = 0f;
-                float direction = Mathf.Sign(_entity.LookDirectionX.Value);
 
                 if (_isOnSlope.Value)
                 {
-                    targetZ = Vector2.SignedAngle(Vector2.up, _entity.SlopeNormal.Value);
-                    targetZ += (direction > 0 ? -90f : 90f);
+                    Vector3 worldNormal = _entity.SlopeNormal.Value;
+                    // Переводим в локальные координаты родителя
+                    Vector3 localNormal = _transform.InverseTransformDirection(worldNormal);
+
+                    targetZ = Mathf.Atan2(localNormal.x, localNormal.y) * -Mathf.Rad2Deg;
                 }
                 else
                 {
+                    // На ровной поверхности наклоняем в сторону, противоположную взгляду
+                    float direction = Mathf.Sign(_entity.LookDirectionX.Value);
                     targetZ = -_slideTiltAngle * direction;
+
+                    // Если Flip сделан через поворот родителя по Y (180), локальная ось Z инвертируется в мире.
+                    // Нам нужно скорректировать это для правильного наклона назад.
+                    if (_transform.localEulerAngles.y > 90f || _transform.localScale.x < 0f)
+                    {
+                        targetZ = -targetZ;
+                    }
                 }
 
-                Quaternion targetRot = Quaternion.Euler(0, 0, targetZ);
+                Quaternion targetRot = Quaternion.Euler(0f, 0f, targetZ);
                 _viewContainer.localRotation = Quaternion.Lerp(_viewContainer.localRotation, targetRot, Time.deltaTime * _slopeRotationLerp);
+            }
+            else
+            {
+                // Если не скользим и не на склоне — плавно сбрасываем локальный поворот в дефолт
+                if (!_isOnSlope.Value)
+                {
+                    _viewContainer.localRotation = Quaternion.Lerp(_viewContainer.localRotation, Quaternion.identity, Time.deltaTime * _lerpSpeed);
+                }
             }
         }
 

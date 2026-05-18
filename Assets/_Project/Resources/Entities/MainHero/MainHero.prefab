@@ -55074,7 +55074,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _viewContainer: {fileID: 7204672871045459169}
-  _rotationSpeed: 5
+  _rotationSpeed: 20
 --- !u!114 &3495019817932253489
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Dash
 {
-    public class DashView : EntityView, IRequireAudioService 
+    public class DashView : EntityView, IRequireAudioService
     {
         private static readonly int ColorProperty = Shader.PropertyToID("_Color");
         private static readonly int IsDashingKey = Animator.StringToHash("IsDashing");
@@ -29,7 +29,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         [SerializeField] private Color _flashColor = Color.white;
 
         [Header("SFX Keys")]
-        [SerializeField] private string _dashSfxKey = "DashExecute";   
+        [SerializeField] private string _dashSfxKey = "DashExecute";
 
         private bool _isDashing;
         private IDisposable _dashDisposable;
@@ -114,6 +114,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
                     _afterimageLifetime,
                     _afterimageColor,
                     _pool.Return);
+
+                obj.transform.rotation = _spriteRenderer.transform.rotation;
             }
         }
 
