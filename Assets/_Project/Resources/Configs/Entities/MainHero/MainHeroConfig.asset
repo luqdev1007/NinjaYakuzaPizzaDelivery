@@ -66,8 +66,9 @@ MonoBehaviour:
       m_Bits: 1024
     <ForceMultiplier>k__BackingField: {x: 0.7, y: 1.4}
   <Slide>k__BackingField:
-    <Duration>k__BackingField: 0.2
-    <Speed>k__BackingField: 15
+    <Duration>k__BackingField: 0.3
+    <Speed>k__BackingField: 20
+    <Cooldown>k__BackingField: 0.35
     <HitBoxSize>k__BackingField: {x: 1.5, y: 0.5}
   <Plunge>k__BackingField:
     <Speed>k__BackingField: 25

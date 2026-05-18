@@ -1,14 +1,17 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
+using Assets._Project.Develop.Runtime.Gameplay.Common;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Dash;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Jump;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope;
+using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Visual;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
@@ -158,7 +161,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMoveSpeedMin(new ReactiveVariable<float>(config.Movement.MoveSpeedMin))
                 .AddAcceleration(new ReactiveVariable<float>(config.Movement.Acceleration))
                 .AddDeceleration(new ReactiveVariable<float>(config.Movement.Deceleration))
-                
+
                 // jump         
                 .AddJumpChargeTime(new ReactiveVariable<float>(config.Jump.MaxChargeTime))
                 .AddJumpForceMin(new ReactiveVariable<float>(config.Jump.ForceMin))
@@ -203,6 +206,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSlopeSlideAcceleration(new ReactiveVariable<float>(config.Slope.SlideAcceleration))
                 .AddSlopeMaxSlideSpeed(new ReactiveVariable<float>(config.Slope.MaxSlideSpeed))
                 .AddMinFallVelocityForAutoSlide(new ReactiveVariable<float>(config.Slope.MinFallVelocityForAutoSlide))
+
+                // slide
+                .AddIsSliding()
+                .AddSlideSpeed(new ReactiveVariable<float>(config.Slide.Speed))
+                .AddSlideDuration(new ReactiveVariable<float>(config.Slide.Duration))
+                .AddSlideCooldown(new ReactiveVariable<float>(config.Slide.Cooldown))
+                .AddSlideHitBoxSize(new ReactiveVariable<Vector2>(config.Slide.HitBoxSize))
                 ;
 
             /*
@@ -415,16 +425,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.InDeathProcess.Value == false));
 
             ICompositeCondition canSlide = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-                .Add(new FuncCondition(() => entity.IsDashing.Value == false)) 
-                .Add(new FuncCondition(() => entity.IsGrounded.Value == true)); 
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrounded.Value == true))
+                .Add(new FuncCondition(() => entity.IsOnSlope.Value == false))
+                .Add(new FuncCondition(() => entity.IsDead.Value == false));
 
             ICompositeCondition canSlopeSlip = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.CurrentMovementState.Value == MovementStates.Default));
-
 
             entity
                 .AddCanMove(canMove)
@@ -604,6 +614,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // slope
                 .AddSystem(new SlopeSlipSystem())
                 .AddSystem(new SlopeSlideSystem())
+
+                // slide
+                .AddSystem(new SlideSystem(_coroutinesPerformer))
 
                 // visual
                 .AddSystem(new FlipDirectionSystem()) 

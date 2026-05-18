@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move; 
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using UnityEngine;
@@ -24,39 +25,52 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
         [SerializeField] private float _slideSquashY = 0.7f;
         [SerializeField] private float _slideTiltAngle = 12f;
         [SerializeField] private float _lerpSpeed = 10f;
-        [SerializeField] private float _slopeRotationLerp = 0.15f;
+        [SerializeField] private float _slopeRotationLerp = 10f;
 
+        private Entity _entity;
         private IReadOnlyVariable<bool> _isSliding;
         private IReadOnlyVariable<bool> _isOnSlope;
+        private IReadOnlyVariable<MovementStates> _movementState;
 
         private float _slideTimer;
         private Vector3 _defaultScale;
         private Quaternion _defaultRotation;
+
         private IDisposable _slideDisposable;
+        private IDisposable _stateDisposable; 
+        private bool _isInitialized;
+        private bool _wasSlidingLastFrame;
 
         private void OnValidate() => _animator ??= GetComponent<Animator>();
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            /*
-            _audioService = entity.GetComponent<AudioComponent>().Service;
-            _slopeSystem = entity.GetSystem<SlopeSystem>();
+            _entity = entity;
             _isSliding = entity.IsSliding;
             _isOnSlope = entity.IsOnSlope;
+            _movementState = entity.CurrentMovementState;
 
             _defaultScale = _viewContainer != null ? _viewContainer.localScale : Vector3.one;
             _defaultRotation = _viewContainer != null ? _viewContainer.localRotation : Quaternion.identity;
 
-            _slideDisposable = _isSliding.Subscribe(OnSlideChanged);
-            _animator.SetBool(IsSlidingKey, _isSliding.Value);
-            */
+            _slideDisposable = _isSliding.Subscribe((old, cur) => EvaluateSlidingState());
+            _stateDisposable = _movementState.Subscribe((old, cur) => EvaluateSlidingState());
+
+            _wasSlidingLastFrame = IsCurrentlySliding();
+            _animator.SetBool(IsSlidingKey, _wasSlidingLastFrame);
+
+            _isInitialized = true;
         }
 
         private void Update()
         {
+            if (!_isInitialized)
+                return;
+
             HandleRotationAndDeformation();
 
-            if (!_isSliding.Value) return;
+            if (!IsCurrentlySliding())
+                return;
 
             _slideTimer += Time.deltaTime;
             float intensity = Mathf.Clamp01(_slideTimer / _vfxRampUpTime);
@@ -64,50 +78,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
             UpdateVFX(intensity);
         }
 
-        private void HandleRotationAndDeformation()
+        private bool IsCurrentlySliding()
         {
-            if (_viewContainer == null) return;
-
-            Vector3 targetScale = _defaultScale;
-            if (_isSliding.Value)
-            {
-                targetScale = new Vector3(_defaultScale.x * _slideStretchX, _defaultScale.y * _slideSquashY, _defaultScale.z);
-            }
-            _viewContainer.localScale = Vector3.Lerp(_viewContainer.localScale, targetScale, Time.deltaTime * _lerpSpeed);
-
-            float targetZ = 0f;
-
-            /*
-            if (_isSliding.Value)
-            {
-                if (_isOnSlope.Value && _slopeSystem != null)
-                {
-                    targetZ = Vector2.SignedAngle(Vector2.up, _slopeSystem.SlopeNormal);
-                    float direction = Mathf.Sign(transform.localScale.x);
-                    targetZ += (direction > 0 ? -90f : 90f);
-                }
-                else
-                {
-                    float direction = Mathf.Sign(transform.localScale.x);
-                    targetZ = -_slideTiltAngle * direction;
-                }
-            }
-            */
-
-            Quaternion targetRot = Quaternion.Euler(0, 0, targetZ);
-            _viewContainer.localRotation = Quaternion.Lerp(_viewContainer.localRotation, targetRot, _slopeRotationLerp);
+            return _isSliding.Value || _movementState.Value == MovementStates.Sliding;
         }
 
-        private void OnSlideChanged(bool oldValue, bool isSliding)
+        private void EvaluateSlidingState()
         {
-            _animator.SetBool(IsSlidingKey, isSliding);
+            bool isSlidingNow = IsCurrentlySliding();
 
-            if (isSliding)
+            if (isSlidingNow == _wasSlidingLastFrame)
+                return;
+
+            _wasSlidingLastFrame = isSlidingNow;
+            _animator.SetBool(IsSlidingKey, isSlidingNow);
+
+            if (isSlidingNow)
             {
                 _slideTimer = 0f;
-
-                if (_frictionPS != null) 
-                    _frictionPS.Play();
+                if (_frictionPS != null) _frictionPS.Play();
             }
             else
             {
@@ -115,10 +104,42 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
             }
         }
 
+        private void HandleRotationAndDeformation()
+        {
+            if (_viewContainer == null)
+                return;
+
+            bool isSliding = IsCurrentlySliding();
+
+            Vector3 targetScale = isSliding
+                ? new Vector3(_defaultScale.x * _slideStretchX, _defaultScale.y * _slideSquashY, _defaultScale.z)
+                : _defaultScale;
+
+            _viewContainer.localScale = Vector3.Lerp(_viewContainer.localScale, targetScale, Time.deltaTime * _lerpSpeed);
+
+            if (isSliding)
+            {
+                float targetZ = 0f;
+                float direction = Mathf.Sign(_entity.LookDirectionX.Value);
+
+                if (_isOnSlope.Value)
+                {
+                    targetZ = Vector2.SignedAngle(Vector2.up, _entity.SlopeNormal.Value);
+                    targetZ += (direction > 0 ? -90f : 90f);
+                }
+                else
+                {
+                    targetZ = -_slideTiltAngle * direction;
+                }
+
+                Quaternion targetRot = Quaternion.Euler(0, 0, targetZ);
+                _viewContainer.localRotation = Quaternion.Lerp(_viewContainer.localRotation, targetRot, Time.deltaTime * _slopeRotationLerp);
+            }
+        }
+
         private void UpdateVFX(float intensity)
         {
-            if (_frictionPS == null) 
-                return;
+            if (_frictionPS == null) return;
 
             var emission = _frictionPS.emission;
             emission.rateOverTime = Mathf.Lerp(5f, _maxEmissionRate, intensity);
@@ -126,17 +147,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
 
         private void StopEffects()
         {
-            if (_frictionPS != null) 
-                _frictionPS.Stop();
+            if (_frictionPS != null) _frictionPS.Stop();
         }
 
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
+            _isInitialized = false;
 
             StopEffects();
-
             _slideDisposable?.Dispose();
+            _stateDisposable?.Dispose();
 
             if (_viewContainer != null)
             {

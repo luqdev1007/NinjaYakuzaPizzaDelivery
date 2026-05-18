@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope
@@ -23,13 +24,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
         private void Update()
         {
-            if (!_isInitialized)
+            if (!_isInitialized) 
+                return;
+
+            if (_entity.IsSliding.Value || _entity.CurrentMovementState.Value == MovementStates.Sliding)
                 return;
 
             if (_entity.IsOnSlope.Value)
             {
                 Vector2 normal = _entity.SlopeNormal.Value;
-
                 float targetAngle = Mathf.Atan2(normal.x, normal.y) * -Mathf.Rad2Deg;
 
                 float facingSign = Mathf.Sign(_entity.LookDirectionX.Value);
@@ -47,7 +50,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
-
             _isInitialized = false;
 
             if (_viewContainer != null)

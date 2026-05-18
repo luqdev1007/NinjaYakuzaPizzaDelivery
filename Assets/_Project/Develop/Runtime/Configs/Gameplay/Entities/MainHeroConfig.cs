@@ -118,6 +118,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     {
         [field: SerializeField] public float Duration { get; private set; } = 0.2f;
         [field: SerializeField] public float Speed { get; private set; } = 15f;
+        [field: SerializeField] public float Cooldown { get; private set; } = 0.25f;
         [field: SerializeField] public Vector2 HitBoxSize { get; private set; } = new Vector2(1.5f, 0.5f); // not used!
     }
 
