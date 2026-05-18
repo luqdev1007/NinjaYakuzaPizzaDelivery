@@ -202,6 +202,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSlopeBaseSlideSpeed(new ReactiveVariable<float>(config.Slope.BaseSlideSpeed))
                 .AddSlopeSlideAcceleration(new ReactiveVariable<float>(config.Slope.SlideAcceleration))
                 .AddSlopeMaxSlideSpeed(new ReactiveVariable<float>(config.Slope.MaxSlideSpeed))
+                .AddMinFallVelocityForAutoSlide(new ReactiveVariable<float>(config.Slope.MinFallVelocityForAutoSlide))
                 ;
 
             /*
@@ -572,7 +573,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 .AddSystem(new SpawnProcessTimerSystem()) 
 
-                .AddSystem(new GroundCheckSystem()) 
+                .AddSystem(new SurfaceCheckSystem()) 
 
                 // movement
                 .AddSystem(new RigidbodyMovementSystem())

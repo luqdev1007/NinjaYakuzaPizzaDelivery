@@ -9,29 +9,37 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
     public class SlopeSlideSystem : IInitializableSystem, IUpdatableSystem
     {
         private ReactiveVariable<MovementStates> _movementState;
-
         private ReactiveVariable<bool> _intentSlide;
-
         private ReactiveVariable<bool> _isOnSlope;
         private ReactiveVariable<Vector2> _slopeNormal;
-
-        private ReactiveVariable<float> _lookDirectionX; 
+        private ReactiveVariable<float> _lookDirectionX;
 
         private ReactiveVariable<float> _baseSlideSpeed;
         private ReactiveVariable<float> _slideAcceleration;
         private ReactiveVariable<float> _maxSlideSpeed;
 
+        private ReactiveVariable<float> _slopeAngle;
+        private ReactiveVariable<float> _autoSlideMinAngle;
+        private ReactiveVariable<float> _minFallVelocityForAutoSlide;
+
         private Rigidbody2D _rigidbody;
 
         private float _currentSlideSpeed;
+        private float _lastFrameVelocityY; 
 
         public void OnInit(Entity entity)
         {
             _movementState = entity.CurrentMovementState;
-            _isOnSlope = entity.IsOnSlope;
-            _slopeNormal = entity.SlopeNormal;
             _intentSlide = entity.IntentSlide;
-            _lookDirectionX = entity.LookDirectionX; 
+            _isOnSlope = entity.IsOnSlope;
+            _slopeAngle = entity.SlopeAngle;
+
+            _autoSlideMinAngle = entity.SlopeMinAngle;
+
+            _slopeNormal = entity.SlopeNormal;
+            _lookDirectionX = entity.LookDirectionX;
+
+            _minFallVelocityForAutoSlide = entity.MinFallVelocityForAutoSlide;
 
             _baseSlideSpeed = entity.SlopeBaseSlideSpeed;
             _slideAcceleration = entity.SlopeSlideAcceleration;
@@ -43,19 +51,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         public void OnUpdate(float deltaTime)
         {
             MovementStates currentState = _movementState.Value;
-            bool canStartSlide = _intentSlide.Value && _isOnSlope.Value;
+
+            bool manualSlide = _intentSlide.Value && _isOnSlope.Value;
+
+            bool autoSlideOnLanding = _isOnSlope.Value && _slopeAngle.Value >= _autoSlideMinAngle.Value && _lastFrameVelocityY < _minFallVelocityForAutoSlide.Value;
+            bool canStartSlide = manualSlide || autoSlideOnLanding;
 
             if (currentState == MovementStates.Default && canStartSlide)
             {
                 _movementState.Value = MovementStates.Sliding;
-                _currentSlideSpeed = Mathf.Max(Mathf.Abs(_rigidbody.linearVelocity.x), _baseSlideSpeed.Value);
+
+                float horizontalSpeed = Mathf.Abs(_rigidbody.linearVelocity.x);
+                float fallImpactSpeed = Mathf.Abs(_lastFrameVelocityY);
+
+                _currentSlideSpeed = Mathf.Max(horizontalSpeed + fallImpactSpeed, _baseSlideSpeed.Value);
             }
 
             if (_movementState.Value == MovementStates.Sliding)
             {
-                if (!_isOnSlope.Value || !_intentSlide.Value)
+                if (!_isOnSlope.Value || (!_intentSlide.Value && _slopeAngle.Value < _autoSlideMinAngle.Value))
                 {
                     _movementState.Value = MovementStates.Default;
+                    _lastFrameVelocityY = _rigidbody.linearVelocity.y; 
                     return;
                 }
 
@@ -70,6 +87,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
                 _currentSlideSpeed = Mathf.MoveTowards(_currentSlideSpeed, _maxSlideSpeed.Value, _slideAcceleration.Value * deltaTime);
                 _rigidbody.linearVelocity = downSlopeDirection * _currentSlideSpeed;
             }
+
+            _lastFrameVelocityY = _rigidbody.linearVelocity.y;
         }
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Jump
 {
-    public class GroundCheckSystem : IInitializableSystem, IUpdatableSystem
+    public class SurfaceCheckSystem : IInitializableSystem, IUpdatableSystem
     {
         private const float CoyoteTime = 0.1f;
         private float _coyoteTimer;
@@ -20,7 +20,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         private Collider2D _body;
         private LayerMask _groundMask;
         private ContactFilter2D _contactFilter;
-        private readonly RaycastHit2D[] _results = new RaycastHit2D[1];
 
         public void OnInit(Entity entity)
         {
@@ -41,32 +40,53 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
         public void OnUpdate(float deltaTime)
         {
-            Vector2 origin = _body.bounds.center;
-            Vector2 size = new Vector2(_body.bounds.size.x * 0.8f, 0.1f);
-            float castDistance = _body.bounds.extents.y + 0.2f;
+            float castDistance = 0.15f;
+            RaycastHit2D[] results = new RaycastHit2D[4];
+            int hitCount = _body.Cast(Vector2.down, _contactFilter, results, castDistance);
 
-            int hitCount = Physics2D.BoxCast(
-                origin, size, 0f, Vector2.down, _contactFilter, _results, castDistance);
+            bool foundValidGround = false;
 
-            if (hitCount > 0)
+            for (int i = 0; i < hitCount; i++)
             {
+                RaycastHit2D hit = results[i];
+
+                if (hit.distance <= 0.001f)
+                {
+                    continue;
+                }
+
+                if (hit.normal.y < 0.6f)
+                {
+                    continue;
+                }
+
+                foundValidGround = true;
                 _coyoteTimer = CoyoteTime;
                 _isGrounded.Value = true;
 
-                Vector2 normal = _results[0].normal;
+                Vector2 normal = hit.normal;
                 float angle = Vector2.Angle(Vector2.up, normal);
 
                 _slopeNormal.Value = normal;
                 _slopeAngle.Value = angle;
 
                 _isOnSlope.Value = angle > _slopeMinAngle.Value && angle < _slopeMaxAngle.Value;
+
+                break;
             }
-            else
+
+            if (!foundValidGround)
             {
-                _isGrounded.Value = false;
                 _isOnSlope.Value = false;
                 _slopeNormal.Value = Vector2.up;
                 _slopeAngle.Value = 0f;
+
+                if (_coyoteTimer > 0f)
+                {
+                    _coyoteTimer -= deltaTime;
+                }
+
+                _isGrounded.Value = _coyoteTimer > 0f;
             }
         }
     }

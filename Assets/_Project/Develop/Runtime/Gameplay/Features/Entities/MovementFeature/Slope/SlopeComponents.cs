@@ -14,6 +14,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         public LayerMask Value;
     }
 
+    public class MinFallVelocityForAutoSlide : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
     public class SlopeNormal: IEntityComponent
     {
         public ReactiveVariable<Vector2> Value;

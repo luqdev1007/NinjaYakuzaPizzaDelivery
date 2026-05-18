@@ -27,9 +27,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
         public void OnUpdate(float deltaTime)
         {
-            if (_viewContainer == null || _isOnSlope == null || _slopeNormal == null || _lookDirectionX == null)
-                return;
-
             if (_isOnSlope.Value)
             {
                 float targetAngle = Mathf.Atan2(_slopeNormal.Value.x, _slopeNormal.Value.y) * -Mathf.Rad2Deg;
@@ -37,7 +34,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
                 float facingSign = Mathf.Sign(_lookDirectionX.Value);
                 targetAngle *= facingSign;
 
-                Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
+                Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle);
                 _viewContainer.localRotation = Quaternion.Lerp(_viewContainer.localRotation, targetRotation, RotationSpeed * deltaTime);
             }
             else

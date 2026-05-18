@@ -64,7 +64,7 @@ MonoBehaviour:
     <WallMask>k__BackingField:
       serializedVersion: 2
       m_Bits: 1024
-    <ForceMultiplier>k__BackingField: {x: 0.5, y: 1.2}
+    <ForceMultiplier>k__BackingField: {x: 0.7, y: 1.4}
   <Slide>k__BackingField:
     <Duration>k__BackingField: 0.2
     <Speed>k__BackingField: 15
@@ -82,6 +82,7 @@ MonoBehaviour:
     <BaseSlideSpeed>k__BackingField: 15
     <SlideAcceleration>k__BackingField: 25
     <MaxSlideSpeed>k__BackingField: 40
+    <MinFallVelocityForAutoSlide>k__BackingField: -10
   <Attack>k__BackingField:
     <ProcessTime>k__BackingField: 0.15
     <DelayTime>k__BackingField: 0.075
