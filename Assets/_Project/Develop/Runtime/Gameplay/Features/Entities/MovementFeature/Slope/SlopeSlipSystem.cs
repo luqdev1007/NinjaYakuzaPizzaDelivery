@@ -1,6 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
-using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move;
+using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
@@ -8,7 +8,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 {
     public class SlopeSlipSystem : IInitializableSystem, IUpdatableSystem
     {
-        private ReactiveVariable<MovementStates> _movementState;
+        private ICompositeCondition _canSlip;
+
         private ReactiveVariable<bool> _isOnSlope;
         private ReactiveVariable<float> _slopeAngle;
         private ReactiveVariable<Vector2> _slopeNormal;
@@ -20,7 +21,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
         public void OnInit(Entity entity)
         {
-            _movementState = entity.CurrentMovementState;
+            _canSlip = entity.CanSlopeSlip;
+
             _isOnSlope = entity.IsOnSlope;
             _slopeAngle = entity.SlopeAngle;
             _slopeNormal = entity.SlopeNormal;
@@ -32,13 +34,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
         public void OnUpdate(float deltaTime)
         {
-            if (_movementState.Value != MovementStates.Default) 
+            if (!_canSlip.Evaluate())
                 return;
 
             if (_isOnSlope.Value && _slopeAngle.Value > _maxStableAngle.Value && Mathf.Abs(_intentMovement.Value.x) < 0.01f)
             {
                 Vector2 slopeTangent = new Vector2(_slopeNormal.Value.y, -_slopeNormal.Value.x).normalized;
-
                 Vector2 downSlopeDirection = slopeTangent.y < 0 ? slopeTangent : -slopeTangent;
 
                 _rigidbody.linearVelocity += downSlopeDirection * (_slipForce.Value * deltaTime);

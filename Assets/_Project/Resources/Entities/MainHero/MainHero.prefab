@@ -54806,6 +54806,7 @@ GameObject:
   - component: {fileID: 8930589787623109644}
   - component: {fileID: 5732396750324451766}
   - component: {fileID: 5007838522181490775}
+  - component: {fileID: 8012312656025252305}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -55059,6 +55060,20 @@ MonoBehaviour:
   _viewContainer: {fileID: 7204672871045459169}
   _rotationDuration: 0.4
   _wallJumpSfxKey: WallJump
+--- !u!114 &8012312656025252305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2274547176414386936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d3fa260fa4d3447ad4c30b7ba2135b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _viewContainer: {fileID: 7204672871045459169}
+  _rotationSpeed: 5
 --- !u!1 &2305303809177581567
 GameObject:
   m_ObjectHideFlags: 0

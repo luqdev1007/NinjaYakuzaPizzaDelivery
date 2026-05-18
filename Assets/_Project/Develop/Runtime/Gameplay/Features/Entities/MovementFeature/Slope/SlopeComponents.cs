@@ -1,9 +1,15 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope
 {
+    public class CanSlopeSlip : IEntityComponent
+    {
+        public ICompositeCondition Value;
+    }
+
     public class IsOnSlope : IEntityComponent
     {
         public ReactiveVariable<bool> Value;

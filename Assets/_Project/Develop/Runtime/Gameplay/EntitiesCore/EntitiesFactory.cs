@@ -414,12 +414,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsDead.Value == true))
                 .Add(new FuncCondition(() => entity.InDeathProcess.Value == false));
 
+            ICompositeCondition canSlide = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false)) 
+                .Add(new FuncCondition(() => entity.IsGrounded.Value == true)); 
+
+            ICompositeCondition canSlopeSlip = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.CurrentMovementState.Value == MovementStates.Default));
+
+
             entity
                 .AddCanMove(canMove)
                 .AddCanJump(canJump)
                 .AddCanAirJump(canAirJump)
                 .AddMustRestoreAirJumpsCount(mustRestoreAirJumpsCount_mustRestoreAirJumpsCount)
                 .AddCanDash(canDash)
+                .AddCanSlide(canSlide)
+                .AddCanSlopeSlip(canSlopeSlip)
                 .AddCanFlip(canFlip)
                 .AddMustDie(mustDie)
                 .AddMustSelfRelease(mustSelfRelease)
@@ -588,7 +602,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new DashSystem(_coroutinesPerformer))
 
                 // slope
-                .AddSystem(new SlopeRotationSystem())
                 .AddSystem(new SlopeSlipSystem())
                 .AddSystem(new SlopeSlideSystem())
 
