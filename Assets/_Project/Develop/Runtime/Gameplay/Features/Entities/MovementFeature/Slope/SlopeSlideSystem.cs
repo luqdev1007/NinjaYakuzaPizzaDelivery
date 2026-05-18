@@ -15,9 +15,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         private ReactiveVariable<bool> _isOnSlope;
         private ReactiveVariable<Vector2> _slopeNormal;
 
+        private ReactiveVariable<float> _lookDirectionX; 
+
         private ReactiveVariable<float> _baseSlideSpeed;
         private ReactiveVariable<float> _slideAcceleration;
-        private ReactiveVariable<float> _maxSlideSpeed;    
+        private ReactiveVariable<float> _maxSlideSpeed;
 
         private Rigidbody2D _rigidbody;
 
@@ -29,6 +31,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _isOnSlope = entity.IsOnSlope;
             _slopeNormal = entity.SlopeNormal;
             _intentSlide = entity.IntentSlide;
+            _lookDirectionX = entity.LookDirectionX; 
 
             _baseSlideSpeed = entity.SlopeBaseSlideSpeed;
             _slideAcceleration = entity.SlopeSlideAcceleration;
@@ -45,7 +48,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             if (currentState == MovementStates.Default && canStartSlide)
             {
                 _movementState.Value = MovementStates.Sliding;
-
                 _currentSlideSpeed = Mathf.Max(Mathf.Abs(_rigidbody.linearVelocity.x), _baseSlideSpeed.Value);
             }
 
@@ -60,8 +62,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
                 Vector2 slopeTangent = new Vector2(_slopeNormal.Value.y, -_slopeNormal.Value.x).normalized;
                 Vector2 downSlopeDirection = slopeTangent.y < 0 ? slopeTangent : -slopeTangent;
 
-                _currentSlideSpeed = Mathf.MoveTowards(_currentSlideSpeed, _maxSlideSpeed.Value, _slideAcceleration.Value * deltaTime);
+                if (Mathf.Abs(downSlopeDirection.x) > 0.01f)
+                {
+                    _lookDirectionX.Value = Mathf.Sign(downSlopeDirection.x);
+                }
 
+                _currentSlideSpeed = Mathf.MoveTowards(_currentSlideSpeed, _maxSlideSpeed.Value, _slideAcceleration.Value * deltaTime);
                 _rigidbody.linearVelocity = downSlopeDirection * _currentSlideSpeed;
             }
         }
