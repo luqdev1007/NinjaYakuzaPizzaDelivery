@@ -17,3 +17,29 @@ MonoBehaviour:
   <MoveSpeedMin>k__BackingField: 5
   <Acceleration>k__BackingField: 15
   <Deceleration>k__BackingField: 15
+  <MaxExtraJumps>k__BackingField: 1
+  <JumpForceBase>k__BackingField: 10
+  <JumpForceMax>k__BackingField: 20
+  <JumpChargeTime>k__BackingField: 0.3
+  <DashForceMin>k__BackingField: 20
+  <DashForceMax>k__BackingField: 30
+  <DashChargeTime>k__BackingField: 0.3
+  <DashCooldown>k__BackingField: 2
+  <DashDuration>k__BackingField: 0.25
+  <AirDashMultiplier>k__BackingField: 1
+  <AirDashVerticalBoost>k__BackingField: 2
+  <DashDamage>k__BackingField: 0
+  <DashHitboxSize>k__BackingField: {x: 0, y: 0}
+  <SlideDuration>k__BackingField: 0.2
+  <SlideSpeed>k__BackingField: 15
+  <GroundMask>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 256
+  <AirJumpMultiplier>k__BackingField: 1.2
+  <MinFallVelocity>k__BackingField: -2.5
+  <GlideMaxFallSpeed>k__BackingField: -5
+  <GlideSpeedDamping>k__BackingField: 10
+  <GlideBounceForce>k__BackingField: 10
+  <GlideSnapSpeed>k__BackingField: 20
+  <GlideSnapDuration>k__BackingField: 0.2
+  <GlideHorizontalDrag>k__BackingField: 5

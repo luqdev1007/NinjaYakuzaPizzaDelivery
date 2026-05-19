@@ -19,5 +19,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
     public class AirDashVerticalBoost : IEntityComponent { public ReactiveVariable<float> Value; }
     public class DashDamage : IEntityComponent { public ReactiveVariable<float> Value; }
     public class DashHitboxSize : IEntityComponent { public ReactiveVariable<Vector2> Value; }
+    public class DashRequest : IEntityComponent { public ReactiveEvent Value; }
 }
 

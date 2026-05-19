@@ -75,7 +75,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             // _gameplayStatesContext?.Update(Time.deltaTime);
 
             _entitiesLifeContext?.Update(Time.deltaTime);
-
         }
 
         private void LateUpdate()

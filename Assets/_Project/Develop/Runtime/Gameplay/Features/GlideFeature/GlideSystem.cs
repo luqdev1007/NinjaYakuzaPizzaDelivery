@@ -77,7 +77,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
             bool isFalling = _rigidbody.linearVelocity.y < _minFallVelocity.Value;
 
             if (_inputService.IsJumpKeyPressed && isFalling && !_glideUsed && _canGlide.Evaluate())
+            {
                 _glideActivationDelay = GlideActivationDelayTime;
+
+                Debug.Log("Glide Delay Started");
+            }
 
             if (_glideActivationDelay > 0f)
             {
@@ -94,6 +98,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
             _glideUsed = true;
             _glideTimer = 0f;
             _rigidbody.gravityScale = 0f;
+
+            Debug.Log("GlideStarted");
         }
 
         private void StopGlide(bool applyBounce)
@@ -107,6 +113,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
                     _rigidbody.linearVelocity.x,
                     _glideBounceForce.Value);
             }
+
+            Debug.Log("GlideStopped");
         }
 
         private void ApplyGlideDamping(float deltaTime)
@@ -129,6 +137,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
             float newX = Mathf.MoveTowards(currentX, 0f, _glideHorizontalDrag.Value * deltaTime);
 
             _rigidbody.linearVelocity = new Vector2(newX, newY);
+
+            Debug.Log("GlideDampingApplied");
         }
     }
 }

@@ -36,8 +36,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
             _wallHangSlideSpeed = entity.WallHangSlideSpeed;
             _wallJumpForce = entity.WallJumpForce;
             _wallDirection = entity.WallDirection;
-            _jumpsAvailable = entity.JumpsAvailable;
-            _maxJumps = entity.MaxJumps;
+            _jumpsAvailable = entity.ExtraJumpsAvailable;
+            _maxJumps = entity.MaxExtraJumps;
             _wallHangLayer = entity.WallHangLayer;
             _rigidbody = entity.Rigidbody;
             _transform = entity.Transform;

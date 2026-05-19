@@ -12,6 +12,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
         private ReactiveVariable<bool> _isGrounded;
         private Collider2D _body;
         private LayerMask _groundMask;
+
         private float _coyoteTimer;
 
         public GroundCheckSystem(float coyoteTime = 0.1f)
@@ -45,6 +46,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
             else
             {
                 _coyoteTimer -= deltaTime;
+
                 if (_coyoteTimer <= 0f)
                     _isGrounded.Value = false;
             }

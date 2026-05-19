@@ -23,4 +23,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
     {
         public ReactiveVariable<float> Value;
     }
+
+    public class SlideRequest : IEntityComponent
+    {
+        public ReactiveEvent Value;
+    }
 }

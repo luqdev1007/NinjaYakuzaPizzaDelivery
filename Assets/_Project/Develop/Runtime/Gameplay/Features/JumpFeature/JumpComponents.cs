@@ -1,4 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Utilites.Conditions;
 using Assets._Project.Develop.Runtime.Utilites.Reactive;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
@@ -33,12 +34,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
         public ReactiveVariable<float> Value;
     }
 
-    public class JumpsAvailable : IEntityComponent
+    public class ExtraJumpsAvailable : IEntityComponent
     {
         public ReactiveVariable<int> Value;
     }
 
-    public class MaxJumps : IEntityComponent
+    public class MaxExtraJumps : IEntityComponent
     {
         public ReactiveVariable<int> Value;
     }
@@ -51,5 +52,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
     public class DoubleJumpEvent : IEntityComponent
     {
         public ReactiveEvent Value = new();
+    }
+
+    public class AirJumpMultiplier : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+    public class MustRestoreExtraJumps : IEntityComponent
+    {
+        public ICompositeCondition Value;
+    }
+
+    public class CanExtraJump : IEntityComponent
+    {
+        public ICompositeCondition Value;
     }
 }

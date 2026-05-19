@@ -309,6 +309,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideSpeed() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideRequest SlideRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideRequest>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent SlideRequest => SlideRequestC.Value;
+
+		public bool TryGetSlideRequest(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideRequest component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideRequest()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideRequest() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideRequest(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideRequest() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.Sensors.BodyCollider BodyColliderC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Sensors.BodyCollider>();
 
 		public UnityEngine.Collider2D BodyCollider => BodyColliderC.Value;
@@ -1369,13 +1393,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.GravityScale() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.JumpsAvailable JumpsAvailableC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.JumpsAvailable>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.ExtraJumpsAvailable ExtraJumpsAvailableC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.ExtraJumpsAvailable>();
 
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> JumpsAvailable => JumpsAvailableC.Value;
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> ExtraJumpsAvailable => ExtraJumpsAvailableC.Value;
 
-		public bool TryGetJumpsAvailable(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		public bool TryGetExtraJumpsAvailable(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.JumpsAvailable component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.ExtraJumpsAvailable component);
 			if (result)
 				value = component.Value;
 			else
@@ -1383,23 +1407,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return result;
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddJumpsAvailable()
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExtraJumpsAvailable()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.JumpsAvailable() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.ExtraJumpsAvailable() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>() }); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddJumpsAvailable(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExtraJumpsAvailable(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.JumpsAvailable() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.ExtraJumpsAvailable() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.MaxJumps MaxJumpsC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.MaxJumps>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.MaxExtraJumps MaxExtraJumpsC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.MaxExtraJumps>();
 
-		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> MaxJumps => MaxJumpsC.Value;
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> MaxExtraJumps => MaxExtraJumpsC.Value;
 
-		public bool TryGetMaxJumps(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		public bool TryGetMaxExtraJumps(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.MaxJumps component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.MaxExtraJumps component);
 			if (result)
 				value = component.Value;
 			else
@@ -1407,14 +1431,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return result;
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMaxJumps()
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMaxExtraJumps()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.MaxJumps() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.MaxExtraJumps() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32>() }); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMaxJumps(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMaxExtraJumps(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Int32> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.MaxJumps() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.MaxExtraJumps() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.JumpEvent JumpEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.JumpEvent>();
@@ -1463,6 +1487,116 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDoubleJumpEvent(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.DoubleJumpEvent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.AirJumpMultiplier AirJumpMultiplierC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.AirJumpMultiplier>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> AirJumpMultiplier => AirJumpMultiplierC.Value;
+
+		public bool TryGetAirJumpMultiplier(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.AirJumpMultiplier component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAirJumpMultiplier()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.AirJumpMultiplier() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAirJumpMultiplier(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.AirJumpMultiplier() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.MustRestoreExtraJumps MustRestoreExtraJumpsC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.MustRestoreExtraJumps>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition MustRestoreExtraJumps => MustRestoreExtraJumpsC.Value;
+
+		public bool TryGetMustRestoreExtraJumps(out Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.MustRestoreExtraJumps component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMustRestoreExtraJumps(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.MustRestoreExtraJumps() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.CanExtraJump CanExtraJumpC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.CanExtraJump>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition CanExtraJump => CanExtraJumpC.Value;
+
+		public bool TryGetCanExtraJump(out Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.CanExtraJump component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanExtraJump(Assets._Project.Develop.Runtime.Utilites.Conditions.ICompositeCondition value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature.CanExtraJump() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentJump IntentJumpC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentJump>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IntentJump => IntentJumpC.Value;
+
+		public bool TryGetIntentJump(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentJump component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIntentJump()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentJump() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIntentJump(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentJump() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentDash IntentDashC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentDash>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> IntentDash => IntentDashC.Value;
+
+		public bool TryGetIntentDash(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentDash component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIntentDash()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentDash() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIntentDash(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentDash() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang CanWallHangC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang>();
@@ -2235,6 +2369,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDashHitboxSize(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.DashHitboxSize() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.DashRequest DashRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.DashRequest>();
+
+		public Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent DashRequest => DashRequestC.Value;
+
+		public bool TryGetDashRequest(out Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.DashRequest component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDashRequest()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.DashRequest() { Value = new Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDashRequest(Assets._Project.Develop.Runtime.Utilites.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature.DashRequest() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.BodyContactDamage BodyContactDamageC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.BodyContactDamage>();

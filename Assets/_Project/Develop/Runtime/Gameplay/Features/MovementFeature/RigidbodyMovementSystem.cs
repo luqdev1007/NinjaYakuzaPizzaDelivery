@@ -7,9 +7,8 @@ using UnityEngine;
 
 public class RigidbodyMovementSystem : IInitializableSystem, IUpdatableSystem
 {
-    private readonly IInputService _inputService;
-
     private ReactiveVariable<float> _moveSpeed;
+    private ReactiveVariable<Vector2> _moveDirection;
     private ReactiveVariable<float> _moveSpeedMin;
     private ReactiveVariable<float> _acceleration;
     private ReactiveVariable<float> _deceleration;
@@ -23,22 +22,20 @@ public class RigidbodyMovementSystem : IInitializableSystem, IUpdatableSystem
     // extra
     private float _currentSpeedX;
 
-    public RigidbodyMovementSystem(IInputService inputService)
-    {
-        _inputService = inputService;
-    }
 
     public void OnInit(Entity entity)
     {
-        _moveSpeed = entity.MoveSpeed;
-        _moveSpeedMin = entity.MoveSpeedMin;
-        _acceleration = entity.Acceleration;
-        _deceleration = entity.Deceleration;
+        _canMove = entity.CanMove;
         _isMoving = entity.IsMoving;
 
-        _rigidbody = entity.Rigidbody; // RigidbodyRegistrator
+        _moveDirection = entity.MoveDirection;
+        _moveSpeed = entity.MoveSpeed;
+        _moveSpeedMin = entity.MoveSpeedMin;
 
-        _canMove = entity.CanMove;
+        _acceleration = entity.Acceleration;
+        _deceleration = entity.Deceleration;
+
+        _rigidbody = entity.Rigidbody;
     }
 
     public void OnUpdate(float deltaTime)
@@ -53,7 +50,7 @@ public class RigidbodyMovementSystem : IInitializableSystem, IUpdatableSystem
             return;
         }
 
-        float inputX = _inputService.MoveDirection.x;
+        float inputX = _moveDirection.Value.x;
 
         if (Mathf.Abs(inputX) > 0.01f)
         {
