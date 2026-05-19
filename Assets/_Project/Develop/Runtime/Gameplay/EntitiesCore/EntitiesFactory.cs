@@ -11,6 +11,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature
 using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Visual;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
@@ -226,6 +227,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddGlideSnapSpeed(new ReactiveVariable<float>(config.Glide.SnapSpeed))
                 .AddGlideSnapDuration(new ReactiveVariable<float>(config.Glide.SnapDuration))
                 .AddGlideHorizontalDrag(new ReactiveVariable<float>(config.Glide.HorizontalDrag))
+
+                // plunge
+                .AddIsPlunging()
+                .AddPlungeSpeed(new ReactiveVariable<float>(config.Plunge.Speed))
                 ;
 
             /*
@@ -412,6 +417,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
                 .Add(new FuncCondition(() => entity.IsWallJumping.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
                 .Add(new FuncCondition(() => entity.Rigidbody.linearVelocity.y >= entity.FallActionThreshold.Value))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false));
 
@@ -421,6 +427,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
                 .Add(new FuncCondition(() => entity.IsSliding.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
                 .Add(new FuncCondition(() =>
                 entity.IsGliding.Value 
                 || entity.Rigidbody.linearVelocity.y < entity.FallActionThreshold.Value));
@@ -432,6 +439,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canDash = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() =>
                     entity.IsGrounded.Value ||
@@ -467,7 +475,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.CurrentMovementState.Value == MovementStates.Sliding));
 
 
+            ICompositeCondition canPlunge = new CompositeCondition()
+                  .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                  .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                  .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
+                  .Add(new FuncCondition(() => entity.IsDashing.Value == false)) 
+                  .Add(new FuncCondition(() => entity.IsWallJumping.Value == false)) 
+                  .Add(new FuncCondition(() => entity.IsGliding.Value == false)); 
+
+
             entity
+                .AddCanPlunge(canPlunge)
                 .AddCanMove(canMove)
                 .AddCanJump(canJump)
                 .AddCanAirJump(canAirJump)
@@ -654,6 +672,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // glide
                 .AddSystem(new GlideSystem())
+
+                // plunge
+                .AddSystem(new PlungeSystem())
 
                 // visual
                 .AddSystem(new FlipDirectionSystem()) 

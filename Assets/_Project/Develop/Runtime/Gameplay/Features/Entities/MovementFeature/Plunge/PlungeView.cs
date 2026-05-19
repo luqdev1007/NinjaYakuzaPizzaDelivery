@@ -26,7 +26,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         [Header("VFX - Impact")]
         [SerializeField] private ParticleSystem _impactPS;
 
-
         [Header("Squash & Stretch")]
         [SerializeField] private Transform _viewContainer;
         [SerializeField] private float _stretchY = 1.4f;
@@ -34,7 +33,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         [SerializeField] private float _squashDuration = 0.15f;
         [SerializeField] private float _lerpSpeed = 12f;
 
-        private Rigidbody2D _rigidbody;
         private IReadOnlyVariable<bool> _isPlunging;
         private IReadOnlyVariable<bool> _isGrounded;
 
@@ -49,9 +47,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            /*
-            _audioService = entity.GetComponent<AudioComponent>().Service;
-            _rigidbody = entity.Rigidbody;
             _isPlunging = entity.IsPlunging;
             _isGrounded = entity.IsGrounded;
 
@@ -61,7 +56,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             _groundedDisposable = _isGrounded.Subscribe(OnGroundedChanged);
 
             _animator.SetBool(IsPlungingKey, _isPlunging.Value);
-            */
         }
 
         private void Update()
@@ -92,6 +86,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private void OnGroundedChanged(bool oldValue, bool grounded)
         {
+            // Если коснулись земли и до этого падали хотя бы чуть-чуть
             if (grounded && _flightTimer > 0.05f)
             {
                 float impactRatio = Mathf.Clamp(_flightTimer / _fullPowerTime, 0.2f, 1.5f);
@@ -111,6 +106,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
                 StartSquash();
                 StopFlightEffects();
+
+                // Сбрасываем таймер, чтобы эффект не сработал повторно без нового Plunge
+                _flightTimer = 0f;
             }
         }
 
@@ -126,8 +124,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
             foreach (var ps in _fireCones)
             {
-                if (ps == null) 
-                    continue;
+                if (ps == null) continue;
 
                 var emission = ps.emission;
                 emission.rateOverTime = Mathf.Lerp(0, _maxFireEmission, fireRatio);
@@ -185,10 +182,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         {
             _airConePS?.Stop();
 
-            foreach (var ps in _fireCones) 
+            foreach (var ps in _fireCones)
                 ps?.Stop();
-
-            _flightTimer = 0f;
         }
 
         public override void Cleanup(Entity entity)

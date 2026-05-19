@@ -284,145 +284,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Sensors.IsTouchAnotherTeam() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.CanPlunge CanPlungeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.CanPlunge>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition CanPlunge => CanPlungeC.Value;
-
-		public bool TryGetCanPlunge(out Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.CanPlunge component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanPlunge(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.CanPlunge() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.IsPlunging IsPlungingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.IsPlunging>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsPlunging => IsPlungingC.Value;
-
-		public bool TryGetIsPlunging(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.IsPlunging component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsPlunging()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.IsPlunging() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsPlunging(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.IsPlunging() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeSpeed PlungeSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeSpeed>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> PlungeSpeed => PlungeSpeedC.Value;
-
-		public bool TryGetPlungeSpeed(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeSpeed component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeSpeed()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeSpeed() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeSpeed(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeSpeed() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactRangeMin PlungeLandImpactRangeMinC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactRangeMin>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> PlungeLandImpactRangeMin => PlungeLandImpactRangeMinC.Value;
-
-		public bool TryGetPlungeLandImpactRangeMin(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactRangeMin component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeLandImpactRangeMin()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactRangeMin() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeLandImpactRangeMin(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactRangeMin() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactDamageMin PlungeLandImpactDamageMinC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactDamageMin>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> PlungeLandImpactDamageMin => PlungeLandImpactDamageMinC.Value;
-
-		public bool TryGetPlungeLandImpactDamageMin(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactDamageMin component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeLandImpactDamageMin()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactDamageMin() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeLandImpactDamageMin(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactDamageMin() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactKnockbackForceMin PlungeLandImpactKnockbackForceMinC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactKnockbackForceMin>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> PlungeLandImpactKnockbackForceMin => PlungeLandImpactKnockbackForceMinC.Value;
-
-		public bool TryGetPlungeLandImpactKnockbackForceMin(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactKnockbackForceMin component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeLandImpactKnockbackForceMin()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactKnockbackForceMin() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeLandImpactKnockbackForceMin(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactKnockbackForceMin() {Value = value}); 
-		}
-
 		public Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.BaseGravityScale BaseGravityScaleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.BaseGravityScale>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> BaseGravityScale => BaseGravityScaleC.Value;
@@ -1444,6 +1305,145 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGrappleArriveDistance(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleArriveDistance() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.CanPlunge CanPlungeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.CanPlunge>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition CanPlunge => CanPlungeC.Value;
+
+		public bool TryGetCanPlunge(out Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.CanPlunge component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanPlunge(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.CanPlunge() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.IsPlunging IsPlungingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.IsPlunging>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsPlunging => IsPlungingC.Value;
+
+		public bool TryGetIsPlunging(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.IsPlunging component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsPlunging()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.IsPlunging() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsPlunging(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.IsPlunging() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeSpeed PlungeSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeSpeed>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> PlungeSpeed => PlungeSpeedC.Value;
+
+		public bool TryGetPlungeSpeed(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeSpeed component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeSpeed()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeSpeed() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeSpeed(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeSpeed() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactRangeMin PlungeLandImpactRangeMinC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactRangeMin>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> PlungeLandImpactRangeMin => PlungeLandImpactRangeMinC.Value;
+
+		public bool TryGetPlungeLandImpactRangeMin(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactRangeMin component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeLandImpactRangeMin()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactRangeMin() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeLandImpactRangeMin(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactRangeMin() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactDamageMin PlungeLandImpactDamageMinC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactDamageMin>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> PlungeLandImpactDamageMin => PlungeLandImpactDamageMinC.Value;
+
+		public bool TryGetPlungeLandImpactDamageMin(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactDamageMin component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeLandImpactDamageMin()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactDamageMin() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeLandImpactDamageMin(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactDamageMin() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactKnockbackForceMin PlungeLandImpactKnockbackForceMinC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactKnockbackForceMin>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> PlungeLandImpactKnockbackForceMin => PlungeLandImpactKnockbackForceMinC.Value;
+
+		public bool TryGetPlungeLandImpactKnockbackForceMin(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactKnockbackForceMin component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeLandImpactKnockbackForceMin()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactKnockbackForceMin() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeLandImpactKnockbackForceMin(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactKnockbackForceMin() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope.CanSlopeJump CanSlopeJumpC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope.CanSlopeJump>();
