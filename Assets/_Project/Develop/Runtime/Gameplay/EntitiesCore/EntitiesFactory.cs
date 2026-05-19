@@ -9,6 +9,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.HangWall;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature;
@@ -129,8 +130,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddIntentJump()
                 .AddIntentDash()
                 .AddIntentSlide()
-
-                .AddIntentAttack() // nope
+                .AddIntentAttack() 
 
                 // spawn
                 .AddInSpawnProcess()
@@ -148,7 +148,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMaxHealth(new ReactiveVariable<float>(config.LifeCycle.MaxHealth))
 
                 // common
-                .AddBaseGravityScale(new ReactiveVariable<float>(entity.Rigidbody.gravityScale)) 
+                .AddBaseGravityScale(new ReactiveVariable<float>(entity.Rigidbody.gravityScale))
                 .AddFallActionThreshold(new ReactiveVariable<float>(config.FallActionThreshold))
                 .AddGroundMask(config.GroundMask)
                 .AddIsGrounded()
@@ -209,8 +209,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMinFallVelocityForAutoSlide(new ReactiveVariable<float>(config.Slope.MinFallVelocityForAutoSlide))
 
                 // slope jump
-                .AddBaseSlopeJumpForce(new ReactiveVariable<float>(config.Slope.BaseJumpForce)) 
-                .AddSlopeJumpForceModifier(new ReactiveVariable<Vector2>(config.Slope.JumpForceModifier)) 
+                .AddBaseSlopeJumpForce(new ReactiveVariable<float>(config.Slope.BaseJumpForce))
+                .AddSlopeJumpForceModifier(new ReactiveVariable<Vector2>(config.Slope.JumpForceModifier))
 
                 // slide
                 .AddIsSliding()
@@ -231,6 +231,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // plunge
                 .AddIsPlunging()
                 .AddPlungeSpeed(new ReactiveVariable<float>(config.Plunge.Speed))
+
+                // wall hang
+                .AddWallHangLayer(config.WallHang.Layer)
+                .AddIsWallHanging()
+                .AddWallDirection()
+                .AddWallHangSlideSpeed(new ReactiveVariable<float>(config.WallHang.SlideSpeed))
+                .AddWallJumpForce(new ReactiveVariable<Vector2>(config.WallHang.JumpForce))
+
                 ;
 
             /*
@@ -481,7 +489,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                   .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
                   .Add(new FuncCondition(() => entity.IsDashing.Value == false)) 
                   .Add(new FuncCondition(() => entity.IsWallJumping.Value == false)) 
-                  .Add(new FuncCondition(() => entity.IsGliding.Value == false)); 
+                  .Add(new FuncCondition(() => entity.IsGliding.Value == false));
+
+            ICompositeCondition canWallHang = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
+                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                // .Add(new FuncCondition(() => entity.InAttackProcess.Value == true))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
 
             entity
@@ -498,6 +514,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMustSelfRelease(mustSelfRelease)
                 .AddCanSlopeJump(canSlopeJump)
                 .AddCanGlide(canGlide)
+                .AddCanWallHang(canWallHang)
                 ;
 
             /*
@@ -675,6 +692,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // plunge
                 .AddSystem(new PlungeSystem())
+
+                // wall hang
+                .AddSystem(new WallHangSystem())
 
                 // visual
                 .AddSystem(new FlipDirectionSystem()) 

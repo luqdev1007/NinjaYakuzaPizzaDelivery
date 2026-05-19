@@ -890,140 +890,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentAttack() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang CanWallHangC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition CanWallHang => CanWallHangC.Value;
-
-		public bool TryGetCanWallHang(out Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanWallHang(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.IsWallHanging IsWallHangingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.IsWallHanging>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsWallHanging => IsWallHangingC.Value;
-
-		public bool TryGetIsWallHanging(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.IsWallHanging component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsWallHanging()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.IsWallHanging() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsWallHanging(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.IsWallHanging() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangSlideSpeed WallHangSlideSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangSlideSpeed>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> WallHangSlideSpeed => WallHangSlideSpeedC.Value;
-
-		public bool TryGetWallHangSlideSpeed(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangSlideSpeed component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallHangSlideSpeed()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangSlideSpeed() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallHangSlideSpeed(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangSlideSpeed() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangLayer WallHangLayerC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangLayer>();
-
-		public UnityEngine.LayerMask WallHangLayer => WallHangLayerC.Value;
-
-		public bool TryGetWallHangLayer(out UnityEngine.LayerMask value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangLayer component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(UnityEngine.LayerMask);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallHangLayer(UnityEngine.LayerMask value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangLayer() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallJumpForce WallJumpForceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallJumpForce>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> WallJumpForce => WallJumpForceC.Value;
-
-		public bool TryGetWallJumpForce(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallJumpForce component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallJumpForce()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallJumpForce() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallJumpForce(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallJumpForce() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallDirection WallDirectionC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallDirection>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> WallDirection => WallDirectionC.Value;
-
-		public bool TryGetWallDirection(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallDirection component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallDirection()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallDirection() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallDirection(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallDirection() {Value = value}); 
-		}
-
 		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ThrowEvent ThrowEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ThrowEvent>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent ThrowEvent => ThrowEventC.Value;
@@ -1444,6 +1310,140 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlungeLandImpactKnockbackForceMin(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature.PlungeLandImpactKnockbackForceMin() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang CanWallHangC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition CanWallHang => CanWallHangC.Value;
+
+		public bool TryGetCanWallHang(out Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanWallHang(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.CanWallHang() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.IsWallHanging IsWallHangingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.IsWallHanging>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsWallHanging => IsWallHangingC.Value;
+
+		public bool TryGetIsWallHanging(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.IsWallHanging component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsWallHanging()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.IsWallHanging() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsWallHanging(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.IsWallHanging() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangSlideSpeed WallHangSlideSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangSlideSpeed>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> WallHangSlideSpeed => WallHangSlideSpeedC.Value;
+
+		public bool TryGetWallHangSlideSpeed(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangSlideSpeed component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallHangSlideSpeed()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangSlideSpeed() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallHangSlideSpeed(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangSlideSpeed() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangLayer WallHangLayerC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangLayer>();
+
+		public UnityEngine.LayerMask WallHangLayer => WallHangLayerC.Value;
+
+		public bool TryGetWallHangLayer(out UnityEngine.LayerMask value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangLayer component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(UnityEngine.LayerMask);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallHangLayer(UnityEngine.LayerMask value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallHangLayer() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallJumpForce WallJumpForceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallJumpForce>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> WallJumpForce => WallJumpForceC.Value;
+
+		public bool TryGetWallJumpForce(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallJumpForce component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallJumpForce()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallJumpForce() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallJumpForce(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallJumpForce() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallDirection WallDirectionC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallDirection>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> WallDirection => WallDirectionC.Value;
+
+		public bool TryGetWallDirection(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallDirection component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallDirection()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallDirection() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddWallDirection(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.HangWall.WallDirection() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope.CanSlopeJump CanSlopeJumpC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope.CanSlopeJump>();
