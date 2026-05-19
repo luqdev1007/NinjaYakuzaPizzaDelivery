@@ -2,7 +2,6 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
-using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope
@@ -13,13 +12,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
         private ReactiveVariable<bool> _intentJump;
 
-        private ReactiveVariable<bool> _isSliding;
-
         private ReactiveVariable<float> _baseSlopeJumpForce;
         private ReactiveVariable<Vector2> _jumpForceModifier;
 
-
-        private ReactiveVariable<MovementStates> _movementState;
 
         private Rigidbody2D _rigidbody;
 
@@ -30,10 +25,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _canSlopeJump = entity.CanSlopeJump;
 
             _intentJump = entity.IntentJump;
-
-            _isSliding = entity.IsSliding;
-
-            _movementState = entity.CurrentMovementState;
 
             _baseSlopeJumpForce = entity.BaseSlopeJumpForce;
             _jumpForceModifier = entity.SlopeJumpForceModifier;
@@ -68,8 +59,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _rigidbody.linearVelocity = new Vector2(targetX, targetY);
 
             _intentJump.Value = false;
-            _isSliding.Value = false;
-            // _movementState.Value = MovementStates.InAir;
         }
     }
 }

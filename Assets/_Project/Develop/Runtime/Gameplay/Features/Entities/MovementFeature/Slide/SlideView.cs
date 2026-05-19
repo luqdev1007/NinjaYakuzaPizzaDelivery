@@ -5,7 +5,7 @@ using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide
 {
     public class SlideView : EntityView
     {

@@ -6,7 +6,7 @@ using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System.Collections;
 using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide
 {
     public class SlideSystem : IInitializableSystem, IUpdatableSystem
     {

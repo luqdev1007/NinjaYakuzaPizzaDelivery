@@ -1633,145 +1633,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideHorizontalDrag() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.CanSlide CanSlideC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.CanSlide>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition CanSlide => CanSlideC.Value;
-
-		public bool TryGetCanSlide(out Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.CanSlide component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanSlide(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.CanSlide() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideHitBoxSize SlideHitBoxSizeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideHitBoxSize>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> SlideHitBoxSize => SlideHitBoxSizeC.Value;
-
-		public bool TryGetSlideHitBoxSize(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideHitBoxSize component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideHitBoxSize()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideHitBoxSize() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideHitBoxSize(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideHitBoxSize() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.IsSliding IsSlidingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.IsSliding>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsSliding => IsSlidingC.Value;
-
-		public bool TryGetIsSliding(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.IsSliding component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsSliding()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.IsSliding() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsSliding(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.IsSliding() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideCooldown SlideCooldownC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideCooldown>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> SlideCooldown => SlideCooldownC.Value;
-
-		public bool TryGetSlideCooldown(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideCooldown component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideCooldown()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideCooldown() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideCooldown(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideCooldown() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideDuration SlideDurationC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideDuration>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> SlideDuration => SlideDurationC.Value;
-
-		public bool TryGetSlideDuration(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideDuration component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideDuration()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideDuration() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideDuration(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideDuration() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideSpeed SlideSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideSpeed>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> SlideSpeed => SlideSpeedC.Value;
-
-		public bool TryGetSlideSpeed(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideSpeed component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideSpeed()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideSpeed() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideSpeed(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature.SlideSpeed() {Value = value}); 
-		}
-
 		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope.CanSlopeJump CanSlopeJumpC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope.CanSlopeJump>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition CanSlopeJump => CanSlopeJumpC.Value;
@@ -2235,6 +2096,145 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlopeMaxAngle(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope.SlopeMaxAngle() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.CanSlide CanSlideC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.CanSlide>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition CanSlide => CanSlideC.Value;
+
+		public bool TryGetCanSlide(out Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.CanSlide component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanSlide(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.CanSlide() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideHitBoxSize SlideHitBoxSizeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideHitBoxSize>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> SlideHitBoxSize => SlideHitBoxSizeC.Value;
+
+		public bool TryGetSlideHitBoxSize(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideHitBoxSize component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideHitBoxSize()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideHitBoxSize() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideHitBoxSize(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideHitBoxSize() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.IsSliding IsSlidingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.IsSliding>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsSliding => IsSlidingC.Value;
+
+		public bool TryGetIsSliding(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.IsSliding component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsSliding()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.IsSliding() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsSliding(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.IsSliding() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideCooldown SlideCooldownC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideCooldown>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> SlideCooldown => SlideCooldownC.Value;
+
+		public bool TryGetSlideCooldown(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideCooldown component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideCooldown()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideCooldown() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideCooldown(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideCooldown() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideDuration SlideDurationC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideDuration>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> SlideDuration => SlideDurationC.Value;
+
+		public bool TryGetSlideDuration(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideDuration component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideDuration()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideDuration() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideDuration(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideDuration() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideSpeed SlideSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideSpeed>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> SlideSpeed => SlideSpeedC.Value;
+
+		public bool TryGetSlideSpeed(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideSpeed component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideSpeed()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideSpeed() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSlideSpeed(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide.SlideSpeed() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move.CurrentMovementState CurrentMovementStateC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move.CurrentMovementState>();

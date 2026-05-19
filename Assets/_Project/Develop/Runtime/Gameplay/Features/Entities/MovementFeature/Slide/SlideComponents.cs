@@ -3,7 +3,7 @@ using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.SlideFeature
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide
 {
     public class CanSlide : IEntityComponent
     {
