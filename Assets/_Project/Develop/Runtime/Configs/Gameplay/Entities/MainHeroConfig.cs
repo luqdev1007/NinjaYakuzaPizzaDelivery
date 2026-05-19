@@ -141,6 +141,8 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField] public float BaseSlideSpeed { get; private set; } = 15;
         [field: SerializeField] public float SlideAcceleration { get; private set; } = 25;
         [field: SerializeField] public float MaxSlideSpeed { get; private set; } = 40;
+        [field: SerializeField] public float BaseJumpForce { get; private set; } = 15;
+        [field: SerializeField] public Vector2 JumpForceModifier { get; private set; }
         [field: SerializeField] public float MinFallVelocityForAutoSlide { get; private set; } = -1f;
     }
 

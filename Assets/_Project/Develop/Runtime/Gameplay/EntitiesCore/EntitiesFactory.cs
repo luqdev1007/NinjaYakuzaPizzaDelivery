@@ -207,6 +207,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSlopeMaxSlideSpeed(new ReactiveVariable<float>(config.Slope.MaxSlideSpeed))
                 .AddMinFallVelocityForAutoSlide(new ReactiveVariable<float>(config.Slope.MinFallVelocityForAutoSlide))
 
+                // slope jump
+                .AddBaseSlopeJumpForce(new ReactiveVariable<float>(config.Slope.BaseJumpForce)) 
+                .AddSlopeJumpForceModifier(new ReactiveVariable<Vector2>(config.Slope.JumpForceModifier)) 
+
                 // slide
                 .AddIsSliding()
                 .AddSlideSpeed(new ReactiveVariable<float>(config.Slide.Speed))
@@ -436,6 +440,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.CurrentMovementState.Value == MovementStates.Default));
 
+            ICompositeCondition canSlopeJump = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsOnSlope.Value == true))
+                .Add(new FuncCondition(() => entity.CurrentMovementState.Value == MovementStates.Sliding));
+
             entity
                 .AddCanMove(canMove)
                 .AddCanJump(canJump)
@@ -447,6 +457,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddCanFlip(canFlip)
                 .AddMustDie(mustDie)
                 .AddMustSelfRelease(mustSelfRelease)
+                .AddCanSlopeJump(canSlopeJump)
                 ;
 
             /*
@@ -614,6 +625,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // slope
                 .AddSystem(new SlopeSlipSystem())
                 .AddSystem(new SlopeSlideSystem())
+                .AddSystem(new SlopeJumpSystem())
 
                 // slide
                 .AddSystem(new SlideSystem(_coroutinesPerformer))

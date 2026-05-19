@@ -4,6 +4,7 @@
     {
         Default,
         WallJumping,
-        Sliding
+        Sliding,
+        InAir
     }
 }

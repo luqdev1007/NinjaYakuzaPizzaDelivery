@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope
 {
+    public class CanSlopeJump : IEntityComponent
+    {
+        public ICompositeCondition Value;
+    }
+
     public class CanSlopeSlip : IEntityComponent
     {
         public ICompositeCondition Value;
@@ -14,6 +19,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
     {
         public ReactiveVariable<bool> Value;
     }
+
+    public class BaseSlopeJumpForce : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+    public class JumpForceModifier : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+    public class SlopeJumpForceModifier : IEntityComponent
+    {
+        public ReactiveVariable<Vector2> Value;
+    }
+
 
     public class SlopeMask : IEntityComponent
     {
