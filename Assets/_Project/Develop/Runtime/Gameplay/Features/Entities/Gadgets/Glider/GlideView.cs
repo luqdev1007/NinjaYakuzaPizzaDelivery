@@ -15,18 +15,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         [SerializeField] private ParticleSystem _airParticlesPS;
         [SerializeField] private Transform _viewContainer;
 
-        [Header("Pitch Settings")]
-        [SerializeField] private float _minPitch = 0.9f;
-        [SerializeField] private float _maxPitch = 1.3f;
-        [SerializeField] private float _minVelocityY = -15f; 
-        [SerializeField] private float _maxVelocityY = -2f;  
-
         [Header("Sway Settings")]
         [SerializeField] private float _swayAngle = 5f;
         [SerializeField] private float _swaySpeed = 2f;
         [SerializeField] private float _swayLerpSpeed = 5f;
 
-        private Rigidbody2D _rigidbody;
         private IReadOnlyVariable<bool> _isGliding;
         private IDisposable _isGlidingDisposable;
 
@@ -41,8 +34,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         protected override void OnEntityStartedWork(Entity entity)
         {
             _isGliding = entity.IsGliding;
-            _rigidbody = entity.Rigidbody;
-
             _isGlidingDisposable = _isGliding.Subscribe(OnIsGlidingChanged);
 
             ApplyState(_isGliding.Value);
@@ -65,13 +56,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
 
             _animator.SetBool(IsGlidingKey, isGliding);
 
-            if (isGliding) 
+            if (isGliding)
                 _airParticlesPS.Play();
-            else 
+            else
                 _airParticlesPS.Stop();
-            
         }
-
 
         private void HandleSway()
         {
@@ -93,7 +82,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
-
             _isGlidingDisposable?.Dispose();
         }
     }

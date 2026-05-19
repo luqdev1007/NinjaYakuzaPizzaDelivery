@@ -8,6 +8,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope;
+using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
@@ -146,6 +147,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMaxHealth(new ReactiveVariable<float>(config.LifeCycle.MaxHealth))
 
                 // common
+                .AddBaseGravityScale(new ReactiveVariable<float>(entity.Rigidbody.gravityScale)) 
                 .AddFallActionThreshold(new ReactiveVariable<float>(config.FallActionThreshold))
                 .AddGroundMask(config.GroundMask)
                 .AddIsGrounded()
@@ -215,6 +217,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSlideDuration(new ReactiveVariable<float>(config.Slide.Duration))
                 .AddSlideCooldown(new ReactiveVariable<float>(config.Slide.Cooldown))
                 .AddSlideHitBoxSize(new ReactiveVariable<Vector2>(config.Slide.HitBoxSize))
+
+                // glide
+                .AddIsGliding()
+                .AddGlideGravityScale(new ReactiveVariable<float>(config.Glide.GravityScale))
+                .AddGlideMaxFallSpeed(new ReactiveVariable<float>(config.Glide.MaxFallSpeed))
+                .AddGlideSpeedDamping(new ReactiveVariable<float>(config.Glide.SpeedDamping))
+                .AddGlideSnapSpeed(new ReactiveVariable<float>(config.Glide.SnapSpeed))
+                .AddGlideSnapDuration(new ReactiveVariable<float>(config.Glide.SnapDuration))
+                .AddGlideHorizontalDrag(new ReactiveVariable<float>(config.Glide.HorizontalDrag))
                 ;
 
             /*
@@ -400,8 +411,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.AirJumpsCount.Value > 0))
                 .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
                 .Add(new FuncCondition(() => entity.IsWallJumping.Value == false))
+                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
                 .Add(new FuncCondition(() => entity.Rigidbody.linearVelocity.y >= entity.FallActionThreshold.Value))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false));
+
+            ICompositeCondition canGlide = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
+                .Add(new FuncCondition(() =>
+                entity.IsGliding.Value 
+                || entity.Rigidbody.linearVelocity.y < entity.FallActionThreshold.Value));
 
             ICompositeCondition mustRestoreAirJumpsCount_mustRestoreAirJumpsCount = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsGrounded.Value))
@@ -444,6 +466,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsOnSlope.Value == true))
                 .Add(new FuncCondition(() => entity.CurrentMovementState.Value == MovementStates.Sliding));
 
+
             entity
                 .AddCanMove(canMove)
                 .AddCanJump(canJump)
@@ -456,6 +479,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMustDie(mustDie)
                 .AddMustSelfRelease(mustSelfRelease)
                 .AddCanSlopeJump(canSlopeJump)
+                .AddCanGlide(canGlide)
                 ;
 
             /*
@@ -627,6 +651,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // slide
                 .AddSystem(new SlideSystem(_coroutinesPerformer))
+
+                // glide
+                .AddSystem(new GlideSystem())
 
                 // visual
                 .AddSystem(new FlipDirectionSystem()) 

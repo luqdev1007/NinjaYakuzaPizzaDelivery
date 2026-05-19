@@ -54808,6 +54808,7 @@ GameObject:
   - component: {fileID: 5007838522181490775}
   - component: {fileID: 8012312656025252305}
   - component: {fileID: 3495019817932253489}
+  - component: {fileID: 480695481704909712}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -55097,6 +55098,24 @@ MonoBehaviour:
   _slideTiltAngle: 12
   _lerpSpeed: 10
   _slopeRotationLerp: 10
+--- !u!114 &480695481704909712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2274547176414386936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8313603674328a345bdff7074f1d3fc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animator: {fileID: 1274124274879070163}
+  _airParticlesPS: {fileID: 425958346411598012}
+  _viewContainer: {fileID: 7204672871045459169}
+  _swayAngle: 5
+  _swaySpeed: 2
+  _swayLerpSpeed: 5
 --- !u!1 &2305303809177581567
 GameObject:
   m_ObjectHideFlags: 0

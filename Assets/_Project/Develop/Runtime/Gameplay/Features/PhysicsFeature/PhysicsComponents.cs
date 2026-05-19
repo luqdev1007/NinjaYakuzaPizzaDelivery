@@ -5,6 +5,12 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
 {
+
+    public class BaseGravityScale : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
     public class AngularDrag : IEntityComponent
     {
         public ReactiveVariable<float> Value;

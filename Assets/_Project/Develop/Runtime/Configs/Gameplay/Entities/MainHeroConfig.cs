@@ -93,7 +93,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         public float SnapDuration { get; private set; } = 0.15f;
 
         [field: SerializeField, Tooltip("Множитель противодействия текущей скорости падения при раскрытии.")]
-        public float CounterForceMultiplier { get; private set; } = 0.8f;
+        public float GravityScale { get; private set; } = 0.8f;
     }
 
     [Serializable]

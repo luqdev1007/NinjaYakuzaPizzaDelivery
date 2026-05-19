@@ -45,13 +45,13 @@ MonoBehaviour:
     <Damage>k__BackingField: 10
     <HitboxSize>k__BackingField: {x: 0.5, y: 1.5}
   <Glide>k__BackingField:
-    <HorizontalDrag>k__BackingField: 3
-    <MaxFallSpeed>k__BackingField: -2
-    <SpeedDamping>k__BackingField: 5
-    <BounceForce>k__BackingField: 5
-    <SnapSpeed>k__BackingField: 40
+    <HorizontalDrag>k__BackingField: 2
+    <MaxFallSpeed>k__BackingField: -3
+    <SpeedDamping>k__BackingField: 15
+    <BounceForce>k__BackingField: 0
+    <SnapSpeed>k__BackingField: 0
     <SnapDuration>k__BackingField: 0.15
-    <CounterForceMultiplier>k__BackingField: 0.8
+    <GravityScale>k__BackingField: 0.3
   <WallHang>k__BackingField:
     <Layer>k__BackingField:
       serializedVersion: 2
