@@ -55102,7 +55102,7 @@ MonoBehaviour:
   _lerpSpeed: 10
   _slopeRotationLerp: 10
   _slideKey: Slide
-  _slopeSlideLoopKey: SlideLoop
+  _slideLoopKey: SlideLoop
 --- !u!114 &480695481704909712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55165,7 +55165,7 @@ MonoBehaviour:
   _viewContainer: {fileID: 7204672871045459169}
   _sparksPS: {fileID: 607381912949035129}
   _debrisPS: {fileID: 7973330733837797487}
-  _effectOffset: 0.4
+  _effectOffset: 0.05
   _vibrationStrength: 0.03
   _vibrationSpeed: 30
   _hitSfxKey: WallHit

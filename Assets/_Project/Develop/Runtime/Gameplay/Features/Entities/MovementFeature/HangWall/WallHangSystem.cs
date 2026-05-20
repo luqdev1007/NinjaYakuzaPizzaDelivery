@@ -4,7 +4,7 @@ using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.HangWall
 {
     public class WallHangSystem : IInitializableSystem, IUpdatableSystem
     {

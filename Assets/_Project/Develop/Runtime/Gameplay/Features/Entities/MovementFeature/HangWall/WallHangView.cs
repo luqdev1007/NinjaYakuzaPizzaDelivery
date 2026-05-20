@@ -5,7 +5,7 @@ using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.HangWall
 {
     public class WallHangView : EntityView, IRequireAudioService
     {
@@ -85,7 +85,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
         {
             if (isHanging)
             {
-                // Передаем ключ напрямую — SoundData сам выберет случайный клип из инспектора
                 _audioService.PlaySfx(_hitSfxKey, transform.position);
 
                 _activeLoopKey = _loopSfxKey;
