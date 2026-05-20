@@ -2,11 +2,12 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
 {
-    public class WallHangView : EntityView
+    public class WallHangView : EntityView, IRequireAudioService
     {
         private static readonly int IsWallHangingKey = Animator.StringToHash("IsWallHanging");
 
@@ -25,21 +26,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
         [SerializeField] private float _vibrationStrength = 0.03f;
         [SerializeField] private float _vibrationSpeed = 30f;
 
+        [Header("SFX Keys")]
+        [SerializeField] private string _hitSfxKey = "WallHit";
+        [SerializeField] private string _loopSfxKey = "WallHitLoop";
+
+        private IAudioService _audioService;
         private IReadOnlyVariable<bool> _isWallHanging;
         private IDisposable _isWallHangingDisposable;
 
         private Vector3 _defaultContainerPos;
         private float _vibrationTimer;
         private bool _isCurrentlyHanging;
+        private string _activeLoopKey;
+
+        public void Construct(IAudioService audioService)
+        {
+            _audioService = audioService;
+        }
 
         private void OnValidate() => _animator ??= GetComponent<Animator>();
 
         protected override void OnEntityStartedWork(Entity entity)
         {
             _isWallHanging = entity.IsWallHanging;
-
-            if (_viewContainer != null)
-                _defaultContainerPos = _viewContainer.localPosition;
+            _defaultContainerPos = _viewContainer.localPosition;
 
             _isWallHangingDisposable = _isWallHanging.Subscribe(OnHangingStateChanged);
 
@@ -65,45 +75,62 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
             if (isHanging)
                 PositionEffects();
 
-            if (!isHanging && _viewContainer != null)
+            HandleAudio(isHanging);
+
+            if (!isHanging)
                 _viewContainer.localPosition = _defaultContainerPos;
+        }
+
+        private void HandleAudio(bool isHanging)
+        {
+            if (isHanging)
+            {
+                // Передаем ключ напрямую — SoundData сам выберет случайный клип из инспектора
+                _audioService.PlaySfx(_hitSfxKey, transform.position);
+
+                _activeLoopKey = _loopSfxKey;
+                _audioService.PlaySfxLoop(_activeLoopKey, transform.position);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(_activeLoopKey))
+                {
+                    _audioService.StopSfx(_activeLoopKey);
+                    _activeLoopKey = null;
+                }
+            }
         }
 
         private void HandleVibration()
         {
-            if (!_isCurrentlyHanging || _viewContainer == null)
+            if (!_isCurrentlyHanging)
                 return;
 
             _vibrationTimer += Time.deltaTime * _vibrationSpeed;
 
-            // Т.к. родитель крутится по оси Y, локальный X всегда "вперед" к стене
             float offsetX = Mathf.Sin(_vibrationTimer) * _vibrationStrength;
             _viewContainer.localPosition = _defaultContainerPos + new Vector3(offsetX, 0f, 0f);
         }
 
         private void PositionEffects()
         {
-            // Сдвиг всегда по локальному X (вперед к стене)
             Vector3 offset = new Vector3(_effectOffset, 0f, 0f);
 
-            if (_sparksPS != null)
-                _sparksPS.transform.localPosition = offset;
-
-            if (_debrisPS != null)
-                _debrisPS.transform.localPosition = offset;
+            _sparksPS.transform.localPosition = offset;
+            _debrisPS.transform.localPosition = offset;
         }
 
         private void ToggleEffects(bool play)
         {
             if (play)
             {
-                if (_sparksPS != null) _sparksPS.Play();
-                if (_debrisPS != null) _debrisPS.Play();
+                _sparksPS.Play();
+                _debrisPS.Play();
             }
             else
             {
-                if (_sparksPS != null) _sparksPS.Stop();
-                if (_debrisPS != null) _debrisPS.Stop();
+                _sparksPS.Stop();
+                _debrisPS.Stop();
             }
         }
 
@@ -113,8 +140,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.HangWall
 
             _isWallHangingDisposable?.Dispose();
 
-            if (_viewContainer != null)
-                _viewContainer.localPosition = _defaultContainerPos;
+            if (!string.IsNullOrEmpty(_activeLoopKey))
+            {
+                _audioService.StopSfx(_activeLoopKey);
+                _activeLoopKey = null;
+            }
+
+            _viewContainer.localPosition = _defaultContainerPos;
         }
     }
 }

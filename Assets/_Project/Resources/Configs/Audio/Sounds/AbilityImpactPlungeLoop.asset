@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 413d67370f75cbd4bba703df219df8c0, type: 3}
+  m_Name: AbilityImpactPlungeLoop
+  m_EditorClassIdentifier: 
+  Key: AbilityImpactPlungeLoop
+  Volume: 1
+  Group: {fileID: -3705572875233171632, guid: 07979af4c966f0b4e82620b1c1202d9d, type: 2}
+  Clips:
+  - {fileID: 8300000, guid: aa7f9d4426a11354eb985124161f0f0f, type: 3}
+  - {fileID: 8300000, guid: d8c543e928f964f4d851504e004d874c, type: 3}
+  - {fileID: 8300000, guid: ffb54208d812afc4eadc5b51cf184ed6, type: 3}
+  - {fileID: 8300000, guid: de7ad833eb2891b468d053057a17b56f, type: 3}
+  PitchMin: 0.9
+  PitchMax: 1.1

@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.ObjectsManagment;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -23,6 +24,9 @@ namespace Assets._Project.Develop.Runtime.Utilities.AudioManagment
         private int _currentTrackIndex;
         private Coroutine _playlistCoroutine;
 
+        // Хранилище активных зацикленных эммитеров
+        private readonly Dictionary<string, AudioEmitter> _activeLoops = new Dictionary<string, AudioEmitter>();
+
         public AudioService(AudioLibrary library, AudioMixer mixer, GameObjectPool sfxPool, ICoroutinesPerformer coroutines)
         {
             _library = library;
@@ -43,13 +47,12 @@ namespace Assets._Project.Develop.Runtime.Utilities.AudioManagment
             Object.DontDestroyOnLoad(_inactiveMusicSource.gameObject);
         }
 
-        // SFX
+        // SFX - Одиночные
         public void PlaySfx(string key) => PlaySfx(key, null);
 
         public void PlaySfx(string key, Vector3? position = null)
         {
-            var data = _library.GetSound(key);
-            if (data == null) return;
+            var data = _library.GetSound(key); // Вызовет ошибку дальше, если звук не найден
 
             var emitterObj = _sfxPool.Get();
             var emitter = emitterObj.GetComponent<AudioEmitter>();
@@ -57,11 +60,33 @@ namespace Assets._Project.Develop.Runtime.Utilities.AudioManagment
             emitter.Play(data, position, (e) => _sfxPool.Return(e.gameObject));
         }
 
+        // SFX - Зацикленные (Loop)
+        public void PlaySfxLoop(string key, Vector3? position = null)
+        {
+            if (_activeLoops.ContainsKey(key)) return;
+
+            var data = _library.GetSound(key);
+            var emitterObj = _sfxPool.Get();
+            var emitter = emitterObj.GetComponent<AudioEmitter>();
+
+            // Для Loop не передаем callback автоматического возврата в пул, контролируем вручную
+            emitter.Play(data, position, null);
+            _activeLoops[key] = emitter;
+        }
+
+        public void StopSfx(string key)
+        {
+            if (_activeLoops.TryGetValue(key, out var emitter))
+            {
+                _sfxPool.Return(emitter.gameObject);
+                _activeLoops.Remove(key);
+            }
+        }
+
         // Плейлисты
         public void PlayPlaylist(string key, bool fade = true)
         {
             var playlist = _library.GetPlaylist(key);
-            if (playlist == null || playlist.Tracks.Count == 0) return;
 
             if (_playlistCoroutine != null)
                 _coroutines.StopPerform(_playlistCoroutine);
@@ -74,11 +99,10 @@ namespace Assets._Project.Develop.Runtime.Utilities.AudioManagment
 
         private IEnumerator PlaylistProcessor(bool fade)
         {
-            while (_currentPlaylist != null && _currentPlaylist.Tracks.Count > 0)
+            while (_currentPlaylist.Tracks.Count > 0)
             {
                 var trackEntry = _currentPlaylist.Tracks[_currentTrackIndex];
 
-                // Создаем временную MusicData для работы кроссфейда
                 MusicData tempMusic = ScriptableObject.CreateInstance<MusicData>();
                 tempMusic.Clip = trackEntry.Clip;
                 tempMusic.Volume = trackEntry.Volume;
@@ -87,10 +111,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.AudioManagment
 
                 PlayMusicInternal(tempMusic, fade);
 
-                // Ждем окончания трека минус время следующего фейда
                 yield return new WaitForSeconds(trackEntry.Clip.length - 1.5f);
 
-                // Выбор следующего трека
                 if (_currentPlaylist.Shuffle)
                     _currentTrackIndex = Random.Range(0, _currentPlaylist.Tracks.Count);
                 else
@@ -102,9 +124,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.AudioManagment
         public void PlayMusic(string key, bool fade = true)
         {
             var data = _library.GetMusic(key);
-            if (data == null) return;
 
-            // Если включаем одиночный трек, останавливаем плейлист
             if (_playlistCoroutine != null)
             {
                 _coroutines.StopPerform(_playlistCoroutine);
@@ -117,7 +137,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.AudioManagment
 
         private void PlayMusicInternal(MusicData data, bool fade)
         {
-            if (data == null || (_activeMusicSource.clip == data.Clip && _activeMusicSource.isPlaying))
+            if (_activeMusicSource.clip == data.Clip && _activeMusicSource.isPlaying)
                 return;
 
             if (_fadeCoroutine != null)
@@ -138,9 +158,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.AudioManagment
 
         public float GetVolume(string parameterName)
         {
-            if (_mixer.GetFloat(parameterName, out float db))
-                return Mathf.Pow(10, db / 20);
-            return 1f;
+            _mixer.GetFloat(parameterName, out float db);
+            return Mathf.Pow(10, db / 20);
         }
 
         public void SetMasterVolume(float value) => SetVolume(_library.Settings.MasterVolumeParam, value);

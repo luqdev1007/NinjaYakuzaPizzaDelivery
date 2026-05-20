@@ -7,6 +7,10 @@ namespace Assets._Project.Develop.Runtime.Utilities.AudioManagment
         void PlaySfx(string key);
         void PlaySfx(string key, Vector3? position = null);
 
+        // Зацикленные эффекты (Добавлено)
+        void PlaySfxLoop(string key, Vector3? position = null);
+        void StopSfx(string key);
+
         // Одиночные треки
         void PlayMusic(string key, bool fade = true);
 

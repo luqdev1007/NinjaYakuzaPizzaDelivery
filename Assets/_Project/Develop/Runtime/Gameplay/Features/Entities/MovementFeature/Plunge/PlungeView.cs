@@ -1,13 +1,14 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using System;
 using System.Collections;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 {
-    public class PlungeView : EntityView
+    public class PlungeView : EntityView, IRequireAudioService
     {
         private static readonly int IsPlungingKey = Animator.StringToHash("IsPlunging");
 
@@ -26,6 +27,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         [Header("VFX - Impact")]
         [SerializeField] private ParticleSystem _impactPS;
 
+        [Header("SFX Keys")]
+        [SerializeField] private string _loopSfxKey = "AbilityImpactPlungeLoop";
+        [SerializeField] private string _landSfxKey = "AbilityImpactPlunge";
+
         [Header("Squash & Stretch")]
         [SerializeField] private Transform _viewContainer;
         [SerializeField] private float _stretchY = 1.4f;
@@ -33,15 +38,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         [SerializeField] private float _squashDuration = 0.15f;
         [SerializeField] private float _lerpSpeed = 12f;
 
+        private IAudioService _audioService;
         private IReadOnlyVariable<bool> _isPlunging;
         private IReadOnlyVariable<bool> _isGrounded;
 
         private float _flightTimer;
         private bool _isSquashing;
         private Vector3 _defaultScale;
+        private string _activeLoopKey;
 
         private IDisposable _plungeDisposable;
         private IDisposable _groundedDisposable;
+
+        public void Construct(IAudioService audioService)
+        {
+            _audioService = audioService;
+        }
 
         private void OnValidate() => _animator ??= GetComponent<Animator>();
 
@@ -77,6 +89,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             {
                 _flightTimer = 0f;
                 _airConePS?.Play();
+
+                // Запускаем зацикленный звук падения по ключу
+                _activeLoopKey = _loopSfxKey;
+                _audioService.PlaySfxLoop(_activeLoopKey, transform.position);
             }
             else
             {
@@ -86,7 +102,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private void OnGroundedChanged(bool oldValue, bool grounded)
         {
-            // Если коснулись земли и до этого падали хотя бы чуть-чуть
             if (grounded && _flightTimer > 0.05f)
             {
                 float impactRatio = Mathf.Clamp(_flightTimer / _fullPowerTime, 0.2f, 1.5f);
@@ -104,10 +119,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
                     _impactPS.Play();
                 }
 
+                // Воспроизводим звук приземления (выберет случайный клип из массива внутри SoundData)
+                _audioService.PlaySfx(_landSfxKey, transform.position);
+
                 StartSquash();
                 StopFlightEffects();
 
-                // Сбрасываем таймер, чтобы эффект не сработал повторно без нового Plunge
                 _flightTimer = 0f;
             }
         }
@@ -121,7 +138,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             }
 
             float fireRatio = Mathf.InverseLerp(0.4f, 1.0f, ratio);
-
             foreach (var ps in _fireCones)
             {
                 if (ps == null) continue;
@@ -165,7 +181,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             _viewContainer.localScale = squashScale;
 
             float elapsed = 0;
-
             while (elapsed < _squashDuration)
             {
                 elapsed += Time.deltaTime;
@@ -181,15 +196,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         private void StopFlightEffects()
         {
             _airConePS?.Stop();
+            foreach (var ps in _fireCones) ps?.Stop();
 
-            foreach (var ps in _fireCones)
-                ps?.Stop();
+            if (!string.IsNullOrEmpty(_activeLoopKey))
+            {
+                _audioService.StopSfx(_activeLoopKey);
+                _activeLoopKey = null;
+            }
         }
 
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
-
             StopFlightEffects();
             _plungeDisposable?.Dispose();
             _groundedDisposable?.Dispose();
