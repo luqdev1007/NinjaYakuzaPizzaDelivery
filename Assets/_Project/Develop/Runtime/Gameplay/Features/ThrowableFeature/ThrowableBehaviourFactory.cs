@@ -9,34 +9,38 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
     public class ThrowableBehaviourFactory : IThrowableBehaviourFactory
     {
         private readonly ICoroutinesPerformer _coroutinesPerformer;
-        private readonly DropLootService _dropLootService;
         private readonly ConfigsProviderService _configsProviderService;
 
         public ThrowableBehaviourFactory(
             ICoroutinesPerformer coroutinesPerformer, 
-            DropLootService dropLootService, 
             ConfigsProviderService configsProviderService)
         {
             _coroutinesPerformer = coroutinesPerformer;
-            _dropLootService = dropLootService;
             _configsProviderService = configsProviderService;
         }
 
-        public ThrowableProjectile Create(ThrowableConfig config, Rigidbody2D rigidbody, Transform transform)
+        public ThrowableProjectile Create(ThrowableConfig config)
         {
             return config switch
             {
                 GrappleHookConfig grappleConfig => new GrappleHookProjectile(
                     grappleConfig, _coroutinesPerformer),
 
+                    /*
                 ShurikenConfig shurikenConfig => new ShurikenProjectile(
                     shurikenConfig, _coroutinesPerformer, _configsProviderService, _dropLootService),
+                    */
 
                 SleepDartConfig dartConfig => new SleepDartProjectile(
                     dartConfig, _coroutinesPerformer),
 
                 _ => null
             };
+        }
+
+        public object Create(ThrowableConfig throwableConfig, Rigidbody2D rigidbody, Transform transform)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

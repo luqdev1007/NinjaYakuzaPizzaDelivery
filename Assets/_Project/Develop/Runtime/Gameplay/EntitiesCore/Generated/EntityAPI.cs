@@ -794,6 +794,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentMovement() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentGrapple IntentGrappleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentGrapple>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IntentGrapple => IntentGrappleC.Value;
+
+		public bool TryGetIntentGrapple(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentGrapple component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIntentGrapple()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentGrapple() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIntentGrapple(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentGrapple() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentJump IntentJumpC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentJump>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IntentJump => IntentJumpC.Value;
@@ -936,6 +960,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowRequest(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ThrowRequest() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleHookTransform GrappleHookTransformC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleHookTransform>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Transform> GrappleHookTransform => GrappleHookTransformC.Value;
+
+		public bool TryGetGrappleHookTransform(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Transform> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleHookTransform component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Transform>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGrappleHookTransform()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleHookTransform() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Transform>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGrappleHookTransform(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Transform> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleHookTransform() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleMinDistance GrappleMinDistanceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleMinDistance>();

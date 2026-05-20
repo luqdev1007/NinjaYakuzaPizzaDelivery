@@ -19,22 +19,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
         [SerializeField] private float _waveFrequency = 2f;
         [SerializeField] private float _straightenSpeed = 5f;
 
-        private IReadOnlyVariable<bool> _isThrowing;
-        private IDisposable _isThrowingDisposable;
+        private IReadOnlyVariable<bool> _isGrappling;
+        private IReadOnlyVariable<Transform> _hookTransform;
+        private IReadOnlyVariable<Vector3> _anchorPoint;
 
-        private Transform _hookTransform;
-        private Vector3? _staticTargetPoint; // Для фиксации веревки, если снаряд удален
+        private IDisposable _isGrapplingDisposable;
         private float _animationTime;
 
-        private void OnValidate()
-        {
-            _lineRenderer ??= GetComponent<LineRenderer>();
-        }
+        private void OnValidate() => _lineRenderer ??= GetComponent<LineRenderer>();
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            // _isThrowing = entity.IsThrowing;
-            _isThrowingDisposable = _isThrowing.Subscribe(OnIsThrowingChanged);
+            _isGrappling = entity.IsGrappling;
+            _hookTransform = entity.GrappleHookTransform;
+            _anchorPoint = entity.GrappleAnchorPoint;
+
+            _isGrapplingDisposable = _isGrappling.Subscribe(OnIsGrapplingChanged);
 
             _lineRenderer.positionCount = _precision;
             _lineRenderer.enabled = false;
@@ -43,40 +43,35 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
-            _isThrowingDisposable?.Dispose();
+            _isGrapplingDisposable?.Dispose();
         }
 
-        public void SetHookTransform(Transform hookTransform)
+        private void OnIsGrapplingChanged(bool oldValue, bool value)
         {
-            _hookTransform = hookTransform;
-            _staticTargetPoint = null;
-            _animationTime = 0;
-            _lineRenderer.enabled = true;
-        }
-
-        public void FixateToPoint(Vector3 worldPoint)
-        {
-            _staticTargetPoint = worldPoint;
-            _hookTransform = null;
-        }
-
-        public void ClearHookTransform()
-        {
-            _hookTransform = null;
-            _staticTargetPoint = null;
-            _lineRenderer.enabled = false;
+            _lineRenderer.enabled = value;
+            if (value)
+            {
+                _animationTime = 0f; // Сбрасываем таймер анимации волны при новом выстреле
+            }
         }
 
         private void LateUpdate()
         {
-            if (!_lineRenderer.enabled || _ropeOrigin == null) return;
+            if (!_lineRenderer.enabled || _ropeOrigin == null || !_isGrappling.Value)
+                return;
 
             Vector3 targetPos;
-            if (_hookTransform != null)
-                targetPos = _hookTransform.position;
-            else if (_staticTargetPoint.HasValue)
-                targetPos = _staticTargetPoint.Value;
-            else return;
+
+            // Если крюк ещё летит — привязываемся к его трансформу
+            if (_hookTransform.Value != null)
+            {
+                targetPos = _hookTransform.Value.position;
+            }
+            // Если прилетел — берём точку зацепа из параметров симуляции
+            else
+            {
+                targetPos = _anchorPoint.Value;
+            }
 
             _animationTime += Time.deltaTime * _straightenSpeed;
             DrawRope(_ropeOrigin.position, targetPos);
@@ -84,7 +79,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         private void DrawRope(Vector3 startPos, Vector3 endPos)
         {
-            // Рассчитываем направление перпендикулярное веревке для более естественного смещения
             Vector3 direction = endPos - startPos;
             Vector3 upDir = Vector3.Cross(direction, Vector3.forward).normalized;
             if (upDir == Vector3.zero) upDir = Vector3.up;
@@ -96,26 +90,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
                 if (_animationTime < 1f)
                 {
-                    // Используем Sin для мягкого затухания амплитуды к краям веревки
                     float edgeFade = Mathf.Sin(delta * Mathf.PI);
-
-                    // Вычисляем волну (добавим Time.time для небольшого движения в полете)
                     float wave = Mathf.Sin(delta * _waveFrequency * Mathf.PI + Time.time) * _waveAmplitude;
-
-                    // Усиливаем влияние анимации (используем квадратичное затухание для резкости)
                     float multiplier = edgeFade * Mathf.Pow(1f - _animationTime, 2);
-
-                    // Смещаем позицию по перпендикуляру, а не просто вверх
                     pos += upDir * wave * multiplier;
                 }
 
                 _lineRenderer.SetPosition(i, pos);
             }
-        }
-
-        private void OnIsThrowingChanged(bool oldValue, bool value)
-        {
-            if (!value) ClearHookTransform();
         }
     }
 }

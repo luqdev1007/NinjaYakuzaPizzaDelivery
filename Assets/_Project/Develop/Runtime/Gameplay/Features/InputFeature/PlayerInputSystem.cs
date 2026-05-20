@@ -14,6 +14,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
         private ReactiveVariable<bool> _intentDash;
         private ReactiveVariable<bool> _intentSlide;
         private ReactiveVariable<bool> _intentAttack;
+        private ReactiveVariable<bool> _intentGrapple;
 
         public PlayerInputSystem(IInputService inputService)
         {
@@ -27,6 +28,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
             _intentDash = entity.IntentDash;
             _intentSlide = entity.IntentSlide;
             _intentAttack = entity.IntentAttack;
+            _intentGrapple = entity.IntentGrapple;
         }
 
         public void OnUpdate(float deltaTime)
@@ -40,6 +42,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
             _intentAttack.Value = _inputService.IsAttackKeyHeld;
 
             _intentSlide.Value = _inputService.IsSlideKeyHeld;
+
+            _intentGrapple.Value = _inputService.IsGrappleKeyHeld;
         }
     }
 }

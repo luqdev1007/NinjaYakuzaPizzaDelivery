@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump;
@@ -11,9 +12,11 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Plunge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope;
+using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Visual;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
@@ -130,7 +133,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddIntentJump()
                 .AddIntentDash()
                 .AddIntentSlide()
-                .AddIntentAttack() 
+                .AddIntentAttack()
+                .AddIntentGrapple()
 
                 // spawn
                 .AddInSpawnProcess()
@@ -243,6 +247,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddWallHangSlideSpeed(new ReactiveVariable<float>(config.WallHang.SlideSpeed))
                 .AddWallJumpForce(new ReactiveVariable<Vector2>(config.WallHang.JumpForce))
 
+                // grapple
+                .AddIsGrappling()
+                .AddGrappleHookTransform()
+                .AddGrappleAnchorPoint()
                 ;
 
             /*
@@ -428,6 +436,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.AirJumpsCount.Value > 0))
                 .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
                 .Add(new FuncCondition(() => entity.IsWallJumping.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
                 .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
                 .Add(new FuncCondition(() => entity.Rigidbody.linearVelocity.y >= entity.FallActionThreshold.Value))
@@ -437,9 +446,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsSliding.Value == false))
-                .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
                 .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
                 .Add(new FuncCondition(() =>
                 entity.IsGliding.Value 
                 || entity.Rigidbody.linearVelocity.y < entity.FallActionThreshold.Value));
@@ -452,6 +462,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
                 .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() =>
                     entity.IsGrounded.Value ||
@@ -502,6 +513,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
+            ICompositeCondition canGrapple = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
+
 
             entity
                 .AddCanPlunge(canPlunge)
@@ -518,6 +536,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddCanSlopeJump(canSlopeJump)
                 .AddCanGlide(canGlide)
                 .AddCanWallHang(canWallHang)
+                .AddCanGrapple(canGrapple)
                 ;
 
             /*
@@ -662,6 +681,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         }
         private void AddHeroSystems(Entity entity, MainHeroConfig config)
         {
+            GrappleHookConfig grappleConfig = config.Throwables.GrappleConfig;
+
             entity
                 // common
                 .AddSystem(new PlayerInputSystem(_inputService)) 
@@ -698,6 +719,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // wall hang
                 .AddSystem(new WallHangSystem())
+
+                // grapple
+                .AddSystem(new GrappleSystem(grappleConfig, _coroutinesPerformer))
 
                 // visual
                 .AddSystem(new FlipDirectionSystem()) 

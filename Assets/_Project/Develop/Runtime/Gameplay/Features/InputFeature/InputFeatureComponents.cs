@@ -9,6 +9,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
         public ReactiveVariable<Vector2> Value;
     }
 
+    public class IntentGrapple : IEntityComponent
+    {
+        public ReactiveVariable<bool> Value;
+    }
+
     public class IntentJump : IEntityComponent
     {
         public ReactiveVariable<bool> Value;

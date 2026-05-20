@@ -81,7 +81,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
             Vector2 direction = ((Vector2)mousePos - (Vector2)_transform.position).normalized;
 
             var projectile = _factory.Create(_consumables[currentIdx], _rigidbody, _transform);
-            projectile.Launch(_transform.position, direction);
+            // projectile.Launch(_transform.position, direction);
 
             // 5. Сброс флага состояния через короткое время
             _coroutinesPerformer.StartPerform(ResetThrowingFlag());

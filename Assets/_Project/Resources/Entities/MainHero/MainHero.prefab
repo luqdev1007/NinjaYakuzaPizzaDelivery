@@ -54812,6 +54812,7 @@ GameObject:
   - component: {fileID: 1889400767698636184}
   - component: {fileID: 8346949735432408906}
   - component: {fileID: 8783149216885449485}
+  - component: {fileID: 1829829225373891967}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -55186,6 +55187,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _slopeJumpSfxKey: AbilitySlopeJump
+--- !u!114 &1829829225373891967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2274547176414386936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4054e912a29196847949f4aaec68e312, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animator: {fileID: 1274124274879070163}
+  _shootSfxKey: HookShoot
+  _loopSfxKey: HookLoop
+  _breakSfxKey: HookBreak
 --- !u!1 &2305303809177581567
 GameObject:
   m_ObjectHideFlags: 0
@@ -100870,7 +100887,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7086927105626253691
 Transform:
   m_ObjectHideFlags: 0
