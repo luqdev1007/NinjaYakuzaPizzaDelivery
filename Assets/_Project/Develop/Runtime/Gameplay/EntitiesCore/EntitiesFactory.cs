@@ -7,12 +7,12 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.HangWall;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Jump;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Plunge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
-using Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Visual;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
@@ -500,7 +500,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-                // .Add(new FuncCondition(() => entity.InAttackProcess.Value == true))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
 

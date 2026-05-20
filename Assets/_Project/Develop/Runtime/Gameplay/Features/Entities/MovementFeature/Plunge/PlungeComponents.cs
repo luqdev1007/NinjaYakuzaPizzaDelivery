@@ -2,7 +2,7 @@
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Plunge
 {
     public class CanPlunge : IEntityComponent
     {
@@ -39,7 +39,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         public ReactiveVariable<float> Value;
     }
 
-    public class PlungeLandImpactDamageMin: IEntityComponent
+    public class PlungeLandImpactDamageMin : IEntityComponent
     {
         public ReactiveVariable<float> Value;
     }

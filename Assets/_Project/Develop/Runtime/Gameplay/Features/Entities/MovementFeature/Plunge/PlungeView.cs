@@ -6,7 +6,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Plunge
 {
     public class PlungeView : EntityView, IRequireAudioService
     {
@@ -70,7 +70,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private void Update()
         {
-            if (!_isPlunging.Value) 
+            if (!_isPlunging.Value)
                 return;
 
             float currentSpeed = Mathf.Abs(_linkedEntity.Rigidbody.linearVelocity.y);
@@ -137,22 +137,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
             foreach (var ps in _fireCones)
             {
-                if (ps == null) 
+                if (ps == null)
                     continue;
 
                 var emission = ps.emission;
                 emission.rateOverTime = Mathf.Lerp(0, _maxFireEmission, fireRatio);
 
-                if (fireRatio > 0.01f && !ps.isPlaying) 
+                if (fireRatio > 0.01f && !ps.isPlaying)
                     ps.Play();
-                else if (fireRatio <= 0.01f && ps.isPlaying) 
+                else if (fireRatio <= 0.01f && ps.isPlaying)
                     ps.Stop();
             }
         }
 
         private void HandleStretch()
         {
-            if (_viewContainer == null || _isSquashing) 
+            if (_viewContainer == null || _isSquashing)
                 return;
 
             Vector3 targetScale = new Vector3(
@@ -200,7 +200,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         {
             _airConePS?.Stop();
 
-            foreach (var ps in _fireCones) 
+            foreach (var ps in _fireCones)
                 ps?.Stop();
 
             if (!string.IsNullOrEmpty(_activeLoopKey))

@@ -4,7 +4,7 @@ using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Plunge
 {
     public class PlungeSystem : IInitializableSystem, IUpdatableSystem
     {
@@ -37,7 +37,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         {
             if (_isPlunging.Value)
             {
-                UpdatePlunge(deltaTime); 
+                UpdatePlunge(deltaTime);
                 return;
             }
 
