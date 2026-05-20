@@ -9,6 +9,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         public ICompositeCondition Value;
     }
 
+    public class PlungeAccelerationMultiplier : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+    public class MinPlungeImpactSpeedThreshold : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+    public class PlungeImpactEvent : IEntityComponent
+    {
+        public ReactiveEvent<float> Value;
+    }
+
     public class IsPlunging : IEntityComponent
     {
         public ReactiveVariable<bool> Value = new();

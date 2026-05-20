@@ -230,7 +230,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // plunge
                 .AddIsPlunging()
+                .AddPlungeAccelerationMultiplier(new ReactiveVariable<float>(config.Plunge.AccelerationMultiplier))
                 .AddPlungeSpeed(new ReactiveVariable<float>(config.Plunge.Speed))
+                .AddPlungeImpactEvent(new ReactiveEvent<float>())
+                .AddMinPlungeImpactSpeedThreshold(new ReactiveVariable<float>(config.Plunge.MinImpactSpeedThreshold))
 
                 // wall hang
                 .AddWallHangLayer(config.WallHang.Layer)

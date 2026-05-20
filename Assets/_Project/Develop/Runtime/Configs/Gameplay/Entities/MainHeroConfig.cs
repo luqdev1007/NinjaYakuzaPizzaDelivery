@@ -129,6 +129,8 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField] public float DamageRange { get; private set; } = 3f;
         [field: SerializeField] public float Damage { get; private set; } = 10f;
         [field: SerializeField] public float KnockbackForce { get; private set; } = 5f;
+        [field: SerializeField] public float MinImpactSpeedThreshold { get; private set; } = 5f;
+        [field: SerializeField] public float AccelerationMultiplier { get; private set; } = 5f;
     }
 
     [Serializable]

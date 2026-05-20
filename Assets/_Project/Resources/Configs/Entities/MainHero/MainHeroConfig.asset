@@ -75,6 +75,8 @@ MonoBehaviour:
     <DamageRange>k__BackingField: 3
     <Damage>k__BackingField: 10
     <KnockbackForce>k__BackingField: 5
+    <MinImpactSpeedThreshold>k__BackingField: 12
+    <AccelerationMultiplier>k__BackingField: 6
   <Slope>k__BackingField:
     <MinAngle>k__BackingField: 15
     <MaxAngle>k__BackingField: 75

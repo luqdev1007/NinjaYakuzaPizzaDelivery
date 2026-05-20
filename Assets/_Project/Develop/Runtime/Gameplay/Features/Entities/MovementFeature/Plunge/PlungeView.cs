@@ -19,8 +19,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         [SerializeField] private ParticleSystem _airConePS;
         [SerializeField] private ParticleSystem[] _fireCones;
 
-        [Tooltip("Время до достижения максимальной силы эффектов")]
-        [SerializeField] private float _fullPowerTime = 0.5f;
+        [Tooltip("Устарело: теперь все зависит от физической скорости персонажа")]
         [SerializeField] private float _maxAirEmission = 40f;
         [SerializeField] private float _maxFireEmission = 30f;
 
@@ -39,16 +38,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         [SerializeField] private float _lerpSpeed = 12f;
 
         private IAudioService _audioService;
+        private Entity _linkedEntity;
         private IReadOnlyVariable<bool> _isPlunging;
-        private IReadOnlyVariable<bool> _isGrounded;
 
-        private float _flightTimer;
         private bool _isSquashing;
         private Vector3 _defaultScale;
         private string _activeLoopKey;
 
         private IDisposable _plungeDisposable;
-        private IDisposable _groundedDisposable;
+        private IDisposable _impactDisposable;
 
         public void Construct(IAudioService audioService)
         {
@@ -59,25 +57,35 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         protected override void OnEntityStartedWork(Entity entity)
         {
+            _linkedEntity = entity;
             _isPlunging = entity.IsPlunging;
-            _isGrounded = entity.IsGrounded;
 
             _defaultScale = _viewContainer != null ? _viewContainer.localScale : Vector3.one;
 
             _plungeDisposable = _isPlunging.Subscribe(OnPlungeChanged);
-            _groundedDisposable = _isGrounded.Subscribe(OnGroundedChanged);
+            _impactDisposable = _linkedEntity.PlungeImpactEvent.Subscribe(OnPlungeImpact);
 
             _animator.SetBool(IsPlungingKey, _isPlunging.Value);
         }
 
         private void Update()
         {
-            if (!_isPlunging.Value) return;
+            if (!_isPlunging.Value) 
+                return;
 
-            _flightTimer += Time.deltaTime;
-            float ratio = Mathf.Clamp01(_flightTimer / _fullPowerTime);
+            float currentSpeed = Mathf.Abs(_linkedEntity.Rigidbody.linearVelocity.y);
+            float minImpactSpeed = _linkedEntity.MinPlungeImpactSpeedThreshold.Value;
+            float maxSpeed = _linkedEntity.PlungeSpeed.Value;
 
-            UpdateVFXPower(ratio);
+            float airRatio = Mathf.Clamp01(currentSpeed / maxSpeed);
+
+            float fireRatio = 0f;
+            if (currentSpeed > minImpactSpeed)
+            {
+                fireRatio = Mathf.Clamp01((currentSpeed - minImpactSpeed) / (maxSpeed - minImpactSpeed));
+            }
+
+            UpdateVFXPower(airRatio, fireRatio);
             HandleStretch();
         }
 
@@ -87,10 +95,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
             if (isPlunging)
             {
-                _flightTimer = 0f;
                 _airConePS?.Play();
-
-                // Запускаем зацикленный звук падения по ключу
                 _activeLoopKey = _loopSfxKey;
                 _audioService.PlaySfxLoop(_activeLoopKey, transform.position);
             }
@@ -100,59 +105,55 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             }
         }
 
-        private void OnGroundedChanged(bool oldValue, bool grounded)
+        private void OnPlungeImpact(float finalSpeed)
         {
-            if (grounded && _flightTimer > 0.05f)
+            float baseSpeed = _linkedEntity.PlungeSpeed.Value;
+            float impactRatio = Mathf.Clamp(finalSpeed / (baseSpeed > 0 ? baseSpeed : 12f), 0.5f, 2.0f);
+
+            if (_impactPS != null)
             {
-                float impactRatio = Mathf.Clamp(_flightTimer / _fullPowerTime, 0.2f, 1.5f);
+                var main = _impactPS.main;
+                main.startSizeMultiplier = impactRatio;
 
-                if (_impactPS != null)
-                {
-                    var main = _impactPS.main;
-                    main.startSizeMultiplier = impactRatio;
+                var emission = _impactPS.emission;
+                var burst = emission.GetBurst(0);
+                burst.count = new ParticleSystem.MinMaxCurve(10 * impactRatio, 30 * impactRatio);
+                emission.SetBurst(0, burst);
 
-                    var emission = _impactPS.emission;
-                    var burst = emission.GetBurst(0);
-                    burst.count = new ParticleSystem.MinMaxCurve(10 * impactRatio, 30 * impactRatio);
-                    emission.SetBurst(0, burst);
-
-                    _impactPS.Play();
-                }
-
-                // Воспроизводим звук приземления (выберет случайный клип из массива внутри SoundData)
-                _audioService.PlaySfx(_landSfxKey, transform.position);
-
-                StartSquash();
-                StopFlightEffects();
-
-                _flightTimer = 0f;
+                _impactPS.Play();
             }
+
+            _audioService.PlaySfx(_landSfxKey, transform.position);
+            StartSquash();
         }
 
-        private void UpdateVFXPower(float ratio)
+        private void UpdateVFXPower(float airRatio, float fireRatio)
         {
             if (_airConePS != null)
             {
                 var emission = _airConePS.emission;
-                emission.rateOverTime = Mathf.Lerp(0, _maxAirEmission, ratio);
+                emission.rateOverTime = Mathf.Lerp(0, _maxAirEmission, airRatio);
             }
 
-            float fireRatio = Mathf.InverseLerp(0.4f, 1.0f, ratio);
             foreach (var ps in _fireCones)
             {
-                if (ps == null) continue;
+                if (ps == null) 
+                    continue;
 
                 var emission = ps.emission;
                 emission.rateOverTime = Mathf.Lerp(0, _maxFireEmission, fireRatio);
 
-                if (fireRatio > 0.05f && !ps.isPlaying) ps.Play();
-                else if (fireRatio <= 0.05f && ps.isPlaying) ps.Stop();
+                if (fireRatio > 0.01f && !ps.isPlaying) 
+                    ps.Play();
+                else if (fireRatio <= 0.01f && ps.isPlaying) 
+                    ps.Stop();
             }
         }
 
         private void HandleStretch()
         {
-            if (_viewContainer == null || _isSquashing) return;
+            if (_viewContainer == null || _isSquashing) 
+                return;
 
             Vector3 targetScale = new Vector3(
                 _defaultScale.x * (2f - _stretchY),
@@ -164,7 +165,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
 
         private void StartSquash()
         {
-            if (_viewContainer == null) return;
+            if (_viewContainer == null)
+                return;
 
             _isSquashing = true;
             StopAllCoroutines();
@@ -181,6 +183,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
             _viewContainer.localScale = squashScale;
 
             float elapsed = 0;
+
             while (elapsed < _squashDuration)
             {
                 elapsed += Time.deltaTime;
@@ -196,7 +199,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         private void StopFlightEffects()
         {
             _airConePS?.Stop();
-            foreach (var ps in _fireCones) ps?.Stop();
+
+            foreach (var ps in _fireCones) 
+                ps?.Stop();
 
             if (!string.IsNullOrEmpty(_activeLoopKey))
             {
@@ -208,9 +213,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlungeFeature
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
+
             StopFlightEffects();
+
             _plungeDisposable?.Dispose();
-            _groundedDisposable?.Dispose();
+            _impactDisposable?.Dispose();
         }
     }
 }
