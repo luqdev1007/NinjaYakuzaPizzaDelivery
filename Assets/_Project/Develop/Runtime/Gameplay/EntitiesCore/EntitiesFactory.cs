@@ -211,6 +211,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // slope jump
                 .AddBaseSlopeJumpForce(new ReactiveVariable<float>(config.Slope.BaseJumpForce))
                 .AddSlopeJumpForceModifier(new ReactiveVariable<Vector2>(config.Slope.JumpForceModifier))
+                .AddSlopeJumpEvent(new ReactiveEvent<float>())
 
                 // slide
                 .AddIsSliding()

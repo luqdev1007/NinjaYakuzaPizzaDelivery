@@ -9,33 +9,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
     public class SlopeJumpSystem : IInitializableSystem, IUpdatableSystem
     {
         private ICompositeCondition _canSlopeJump;
-
         private ReactiveVariable<bool> _intentJump;
-
         private ReactiveVariable<float> _baseSlopeJumpForce;
+        private ReactiveEvent<float> _slopeJumpEvent;
         private ReactiveVariable<Vector2> _jumpForceModifier;
-
-
         private Rigidbody2D _rigidbody;
-
         private bool _wasJumpIntendedLastFrame;
 
         public void OnInit(Entity entity)
         {
+            _slopeJumpEvent = entity.SlopeJumpEvent;
+
             _canSlopeJump = entity.CanSlopeJump;
-
             _intentJump = entity.IntentJump;
-
             _baseSlopeJumpForce = entity.BaseSlopeJumpForce;
             _jumpForceModifier = entity.SlopeJumpForceModifier;
-
             _rigidbody = entity.Rigidbody;
         }
 
         public void OnUpdate(float deltaTime)
         {
             bool currentJumpIntent = _intentJump.Value;
-
             bool isJumpPressedThisFrame = currentJumpIntent && !_wasJumpIntendedLastFrame;
             _wasJumpIntendedLastFrame = currentJumpIntent;
 
@@ -57,6 +51,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             float targetY = _baseSlopeJumpForce.Value + (Mathf.Abs(currentVelocity.x) * _jumpForceModifier.Value.y);
 
             _rigidbody.linearVelocity = new Vector2(targetX, targetY);
+
+            // Считаем динамический фактор скорости на основе вылета
+            float horizontalSpeedFactor = Mathf.Clamp(Mathf.Abs(targetX) / 15f, 1f, 1.4f);
+
+            // Оповещаем Вьюшку через архитектурный Event на Entity
+            _slopeJumpEvent?.Invoke(horizontalSpeedFactor);
 
             _intentJump.Value = false;
         }

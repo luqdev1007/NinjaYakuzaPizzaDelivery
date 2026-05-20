@@ -80,14 +80,14 @@ MonoBehaviour:
   <Slope>k__BackingField:
     <MinAngle>k__BackingField: 15
     <MaxAngle>k__BackingField: 75
-    <SlipForce>k__BackingField: 14
+    <SlipForce>k__BackingField: 15
     <MaxStableAngle>k__BackingField: 45
-    <BaseSlideSpeed>k__BackingField: 8
-    <SlideAcceleration>k__BackingField: 8
+    <BaseSlideSpeed>k__BackingField: 15
+    <SlideAcceleration>k__BackingField: 30
     <MaxSlideSpeed>k__BackingField: 40
-    <BaseJumpForce>k__BackingField: 10
-    <JumpForceModifier>k__BackingField: {x: 2, y: 2}
-    <MinFallVelocityForAutoSlide>k__BackingField: -20
+    <BaseJumpForce>k__BackingField: 5
+    <JumpForceModifier>k__BackingField: {x: 1, y: 1.2}
+    <MinFallVelocityForAutoSlide>k__BackingField: -30
   <Attack>k__BackingField:
     <ProcessTime>k__BackingField: 0.15
     <DelayTime>k__BackingField: 0.075

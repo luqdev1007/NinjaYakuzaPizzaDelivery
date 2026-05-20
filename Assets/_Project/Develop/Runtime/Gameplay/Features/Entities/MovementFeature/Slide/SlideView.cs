@@ -2,12 +2,13 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using System;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide
 {
-    public class SlideView : EntityView
+    public class SlideView : EntityView, IRequireAudioService
     {
         private static readonly int IsSlidingKey = Animator.StringToHash("IsSliding");
 
@@ -27,6 +28,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         [SerializeField] private float _lerpSpeed = 10f;
         [SerializeField] private float _slopeRotationLerp = 12f;
 
+        [Header("SFX Keys")]
+        [SerializeField] private string _slideKey = "Slide";
+        [SerializeField] private string _slideLoopKey = "SlideLoop";
+
+        private IAudioService _audioService;
         private Entity _entity;
         private Transform _transform;
         private IReadOnlyVariable<bool> _isSliding;
@@ -41,6 +47,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         private IDisposable _stateDisposable;
         private bool _isInitialized;
         private bool _wasSlidingLastFrame;
+        private string _activeLoopKey;
+
+        public void Construct(IAudioService audioService)
+        {
+            _audioService = audioService;
+        }
 
         private void OnValidate() => _animator ??= GetComponent<Animator>();
 
@@ -99,6 +111,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             {
                 _slideTimer = 0f;
                 if (_frictionPS != null) _frictionPS.Play();
+
+                // Выбираем аудио-ключ в зависимости от того, на склоне мы или на ровной поверхности
+                _activeLoopKey = _isOnSlope.Value ? _slideLoopKey : _slideKey;
+                _audioService?.PlaySfxLoop(_activeLoopKey, transform.position);
             }
             else
             {
@@ -128,19 +144,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
                 if (_isOnSlope.Value)
                 {
                     Vector3 worldNormal = _entity.SlopeNormal.Value;
-                    // Переводим в локальные координаты родителя
                     Vector3 localNormal = _transform.InverseTransformDirection(worldNormal);
-
                     targetZ = Mathf.Atan2(localNormal.x, localNormal.y) * -Mathf.Rad2Deg;
                 }
                 else
                 {
-                    // На ровной поверхности наклоняем в сторону, противоположную взгляду
                     float direction = Mathf.Sign(_entity.LookDirectionX.Value);
                     targetZ = -_slideTiltAngle * direction;
 
-                    // Если Flip сделан через поворот родителя по Y (180), локальная ось Z инвертируется в мире.
-                    // Нам нужно скорректировать это для правильного наклона назад.
                     if (_transform.localEulerAngles.y > 90f || _transform.localScale.x < 0f)
                     {
                         targetZ = -targetZ;
@@ -152,7 +163,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             }
             else
             {
-                // Если не скользим и не на склоне — плавно сбрасываем локальный поворот в дефолт
                 if (!_isOnSlope.Value)
                 {
                     _viewContainer.localRotation = Quaternion.Lerp(_viewContainer.localRotation, Quaternion.identity, Time.deltaTime * _lerpSpeed);
@@ -171,6 +181,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         private void StopEffects()
         {
             if (_frictionPS != null) _frictionPS.Stop();
+
+            if (!string.IsNullOrEmpty(_activeLoopKey))
+            {
+                _audioService?.StopSfx(_activeLoopKey);
+                _activeLoopKey = null;
+            }
         }
 
         public override void Cleanup(Entity entity)

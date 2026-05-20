@@ -105,4 +105,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
     {
         public ReactiveVariable<float> Value;
     }
+
+    public class SlopeJumpEvent : IEntityComponent
+    {
+        public ReactiveEvent<float> Value;
+    }
 }
