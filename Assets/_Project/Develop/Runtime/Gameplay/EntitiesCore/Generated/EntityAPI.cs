@@ -3186,13 +3186,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump.AirJumpEvent() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.CanGlide CanGlideC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.CanGlide>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.CanGlide CanGlideC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.CanGlide>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition CanGlide => CanGlideC.Value;
 
 		public bool TryGetCanGlide(out Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.CanGlide component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.CanGlide component);
 			if (result)
 				value = component.Value;
 			else
@@ -3202,16 +3202,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanGlide(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.CanGlide() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.CanGlide() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideGravityScale GlideGravityScaleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideGravityScale>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideGravityScale GlideGravityScaleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideGravityScale>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> GlideGravityScale => GlideGravityScaleC.Value;
 
 		public bool TryGetGlideGravityScale(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideGravityScale component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideGravityScale component);
 			if (result)
 				value = component.Value;
 			else
@@ -3221,21 +3221,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideGravityScale()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideGravityScale() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideGravityScale() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideGravityScale(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideGravityScale() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideGravityScale() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.IsGliding IsGlidingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.IsGliding>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.IsGliding IsGlidingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.IsGliding>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsGliding => IsGlidingC.Value;
 
 		public bool TryGetIsGliding(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.IsGliding component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.IsGliding component);
 			if (result)
 				value = component.Value;
 			else
@@ -3245,21 +3245,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsGliding()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.IsGliding() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.IsGliding() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsGliding(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.IsGliding() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.IsGliding() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideMaxFallSpeed GlideMaxFallSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideMaxFallSpeed>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideMaxFallSpeed GlideMaxFallSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideMaxFallSpeed>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> GlideMaxFallSpeed => GlideMaxFallSpeedC.Value;
 
 		public bool TryGetGlideMaxFallSpeed(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideMaxFallSpeed component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideMaxFallSpeed component);
 			if (result)
 				value = component.Value;
 			else
@@ -3269,21 +3269,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideMaxFallSpeed()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideMaxFallSpeed() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideMaxFallSpeed() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideMaxFallSpeed(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideMaxFallSpeed() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideMaxFallSpeed() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideSpeedDamping GlideSpeedDampingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideSpeedDamping>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideSpeedDamping GlideSpeedDampingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideSpeedDamping>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> GlideSpeedDamping => GlideSpeedDampingC.Value;
 
 		public bool TryGetGlideSpeedDamping(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideSpeedDamping component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideSpeedDamping component);
 			if (result)
 				value = component.Value;
 			else
@@ -3293,21 +3293,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideSpeedDamping()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideSpeedDamping() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideSpeedDamping() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideSpeedDamping(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideSpeedDamping() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideSpeedDamping() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideBounceForce GlideBounceForceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideBounceForce>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideBounceForce GlideBounceForceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideBounceForce>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> GlideBounceForce => GlideBounceForceC.Value;
 
 		public bool TryGetGlideBounceForce(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideBounceForce component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideBounceForce component);
 			if (result)
 				value = component.Value;
 			else
@@ -3317,21 +3317,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideBounceForce()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideBounceForce() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideBounceForce() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideBounceForce(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideBounceForce() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideBounceForce() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideSnapSpeed GlideSnapSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideSnapSpeed>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideSnapSpeed GlideSnapSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideSnapSpeed>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> GlideSnapSpeed => GlideSnapSpeedC.Value;
 
 		public bool TryGetGlideSnapSpeed(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideSnapSpeed component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideSnapSpeed component);
 			if (result)
 				value = component.Value;
 			else
@@ -3341,21 +3341,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideSnapSpeed()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideSnapSpeed() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideSnapSpeed() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideSnapSpeed(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideSnapSpeed() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideSnapSpeed() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideSnapDuration GlideSnapDurationC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideSnapDuration>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideSnapDuration GlideSnapDurationC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideSnapDuration>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> GlideSnapDuration => GlideSnapDurationC.Value;
 
 		public bool TryGetGlideSnapDuration(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideSnapDuration component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideSnapDuration component);
 			if (result)
 				value = component.Value;
 			else
@@ -3365,21 +3365,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideSnapDuration()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideSnapDuration() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideSnapDuration() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideSnapDuration(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideSnapDuration() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideSnapDuration() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideHorizontalDrag GlideHorizontalDragC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideHorizontalDrag>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideHorizontalDrag GlideHorizontalDragC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideHorizontalDrag>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> GlideHorizontalDrag => GlideHorizontalDragC.Value;
 
 		public bool TryGetGlideHorizontalDrag(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideHorizontalDrag component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideHorizontalDrag component);
 			if (result)
 				value = component.Value;
 			else
@@ -3389,12 +3389,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideHorizontalDrag()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideHorizontalDrag() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideHorizontalDrag() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGlideHorizontalDrag(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature.GlideHorizontalDrag() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider.GlideHorizontalDrag() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.BodyContactDamage BodyContactDamageC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.BodyContactDamage>();

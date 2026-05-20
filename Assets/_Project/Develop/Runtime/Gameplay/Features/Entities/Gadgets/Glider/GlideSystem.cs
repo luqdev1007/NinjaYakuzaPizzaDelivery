@@ -2,17 +2,15 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
-using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move;
 using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider
 {
     public class GlideSystem : IInitializableSystem, IUpdatableSystem
     {
         private ICompositeCondition _canGlide;
         private ReactiveVariable<bool> _intentJump;
         private ReactiveVariable<bool> _isGliding;
-        private ReactiveVariable<MovementStates> _movementState;
         private ReactiveVariable<float> _baseGravityScale;
 
         private ReactiveVariable<float> _glideMaxFallSpeed;
@@ -26,22 +24,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         private float _snapTimer;
         private bool _isSnapActive;
 
-        // Таймер для задержки активации глайда
         private float _holdTimer;
-        private const float GlideActivationDelay = 0.15f;
+
+        private const float GlideActivationDelay = 0.15f; // config?
 
         public void OnInit(Entity entity)
         {
             _canGlide = entity.CanGlide;
+
             _intentJump = entity.IntentJump;
+
             _isGliding = entity.IsGliding;
-            _movementState = entity.CurrentMovementState;
+
             _baseGravityScale = entity.BaseGravityScale;
 
             _glideMaxFallSpeed = entity.GlideMaxFallSpeed;
             _glideSpeedDamping = entity.GlideSpeedDamping;
+
             _glideSnapSpeed = entity.GlideSnapSpeed;
             _glideSnapDuration = entity.GlideSnapDuration;
+
             _glideHorizontalDrag = entity.GlideHorizontalDrag;
             _glideGravityScale = entity.GlideGravityScale;
 
@@ -50,10 +52,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
 
         public void OnUpdate(float deltaTime)
         {
-            // Базовая проверка: зажат ли пробел и выполняются ли системные условия (не на земле, нет даша и т.д.)
             bool basicConditionsMet = _intentJump.Value && _canGlide.Evaluate();
 
-            // Принудительный сброс, если летим вверх (от прыжка или батута)
             if (_rigidbody.linearVelocity.y > 0.1f)
             {
                 basicConditionsMet = false;
@@ -63,7 +63,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
             {
                 if (!_isGliding.Value)
                 {
-                    // Если еще не глайдим — копим таймер удержания кнопки
                     _holdTimer += deltaTime;
 
                     if (_holdTimer >= GlideActivationDelay)
@@ -73,13 +72,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
                 }
                 else
                 {
-                    // Если уже вовсю летим — обрабатываем физику парения
                     ProcessGlidePhysics(deltaTime);
                 }
             }
             else
             {
-                // Если условия нарушены или отпущена кнопка — полностью гасим стейт и обнуляем холд-таймер
                 _holdTimer = 0f;
 
                 if (_isGliding.Value)

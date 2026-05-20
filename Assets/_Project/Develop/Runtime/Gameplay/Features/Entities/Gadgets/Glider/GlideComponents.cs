@@ -2,7 +2,7 @@
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider
 {
     public class CanGlide : IEntityComponent
     {
@@ -34,18 +34,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         public ReactiveVariable<float> Value;
     }
 
-    public class GlideSnapSpeed : IEntityComponent 
-    { 
-        public ReactiveVariable<float> Value; 
+    public class GlideSnapSpeed : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
     }
 
-    public class GlideSnapDuration : IEntityComponent 
-    { 
-        public ReactiveVariable<float> Value; 
+    public class GlideSnapDuration : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
     }
 
     public class GlideHorizontalDrag : IEntityComponent
-    { 
+    {
         public ReactiveVariable<float> Value;
     }
 }

@@ -1,30 +1,43 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
-using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
 {
-    public class GlideView : EntityView
+    public class GlideView : EntityView, IRequireAudioService
     {
         private static readonly int IsGlidingKey = Animator.StringToHash("IsGliding");
 
-        [Header("VFX")]
+        [Header("VFX Components")]
         [SerializeField] private Animator _animator;
         [SerializeField] private ParticleSystem _airParticlesPS;
         [SerializeField] private Transform _viewContainer;
+
+        [Header("Audio Settings")]
+        [SerializeField] private string _startGlidePrefix = "GlideStart";
+        [SerializeField] private string _loopGlidePrefix = "GlideLoop";
+        [SerializeField] private string _endGlidePrefix = "GlideEnd"; // Поменял дефолт на GlideEnd в соответствии с ассетом
 
         [Header("Sway Settings")]
         [SerializeField] private float _swayAngle = 5f;
         [SerializeField] private float _swaySpeed = 2f;
         [SerializeField] private float _swayLerpSpeed = 5f;
 
+        private IAudioService _audioService;
         private IReadOnlyVariable<bool> _isGliding;
         private IDisposable _isGlidingDisposable;
 
         private bool _isCurrentlyGliding;
         private float _swayTimer;
+        private string _cachedLoopKey;
+
+        public void Construct(IAudioService audioService)
+        {
+            _audioService = audioService;
+        }
 
         private void OnValidate()
         {
@@ -54,18 +67,48 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
             _isCurrentlyGliding = isGliding;
             _swayTimer = 0f;
 
-            _animator.SetBool(IsGlidingKey, isGliding);
+            if (_animator != null)
+                _animator.SetBool(IsGlidingKey, isGliding);
+
+            if (_airParticlesPS != null)
+            {
+                if (isGliding) _airParticlesPS.Play();
+                else _airParticlesPS.Stop();
+            }
+
+            HandleAudio(isGliding);
+        }
+
+        private void HandleAudio(bool isGliding)
+        {
+            if (_audioService == null) return;
+
+            string startKey = _startGlidePrefix;
+            string loopKey = _loopGlidePrefix;
+            string endKey = _endGlidePrefix;
 
             if (isGliding)
-                _airParticlesPS.Play();
+            {
+                _audioService.PlaySfx(startKey);
+                _audioService.PlaySfxLoop(loopKey);
+                _cachedLoopKey = loopKey;
+            }
             else
-                _airParticlesPS.Stop();
+            {
+                if (!string.IsNullOrEmpty(_cachedLoopKey))
+                {
+                    _audioService.StopSfx(_cachedLoopKey);
+                    _cachedLoopKey = null;
+                    _audioService.PlaySfx(endKey);
+                }
+            }
         }
 
         private void HandleSway()
         {
-            float targetZ = 0f;
+            if (_viewContainer == null) return;
 
+            float targetZ = 0f;
             if (_isCurrentlyGliding)
             {
                 _swayTimer += Time.deltaTime * _swaySpeed;
@@ -83,6 +126,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature
         {
             base.Cleanup(entity);
             _isGlidingDisposable?.Dispose();
+
+            if (!string.IsNullOrEmpty(_cachedLoopKey))
+            {
+                _audioService?.StopSfx(_cachedLoopKey);
+                _cachedLoopKey = null;
+            }
         }
     }
 }

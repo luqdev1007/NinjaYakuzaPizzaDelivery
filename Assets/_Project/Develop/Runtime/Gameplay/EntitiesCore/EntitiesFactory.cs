@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Dash;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.HangWall;
@@ -10,7 +11,6 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Plunge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope;
-using Assets._Project.Develop.Runtime.Gameplay.Features.GlideFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;

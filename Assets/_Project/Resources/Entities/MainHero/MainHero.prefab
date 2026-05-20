@@ -55118,6 +55118,9 @@ MonoBehaviour:
   _animator: {fileID: 1274124274879070163}
   _airParticlesPS: {fileID: 425958346411598012}
   _viewContainer: {fileID: 7204672871045459169}
+  _startGlidePrefix: GlideStart
+  _loopGlidePrefix: GlideLoop
+  _endGlidePrefix: GlideEnd
   _swayAngle: 5
   _swaySpeed: 2
   _swayLerpSpeed: 5
