@@ -3,7 +3,9 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
+using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Dash;
@@ -16,9 +18,11 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature
 using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Visual;
+using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -516,18 +520,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
 
             ICompositeCondition canPlunge = new CompositeCondition()
-                  .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                  .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-                  .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
-                  .Add(new FuncCondition(() => entity.IsDashing.Value == false)) 
-                  .Add(new FuncCondition(() => entity.IsWallJumping.Value == false)) 
-                  .Add(new FuncCondition(() => entity.IsGliding.Value == false));
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false)) 
+                .Add(new FuncCondition(() => entity.IsWallJumping.Value == false)) 
+                .Add(new FuncCondition(() => entity.IsGliding.Value == false));
 
             ICompositeCondition canWallHang = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.InAttackProcess.Value == false)) 
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
             ICompositeCondition canGrapple = new CompositeCondition()
@@ -539,6 +544,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             ICompositeCondition canStartAttack = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsWallHanging.Value == false)) 
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
                 .Add(new FuncCondition(() => entity.IsSliding.Value == false))
@@ -759,6 +765,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem())
 
+                 // apply damage
+                 /*
+                .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new BodyContactDetectingSystem())
+                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
+                .AddSystem(new DealDamageOnContactSystem())
+                 */
+
                 // visual
                 .AddSystem(new FlipDirectionSystem()) 
 
@@ -874,14 +888,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMoveSpeed(new ReactiveVariable<float>(ghostConfig.MovementSpeed))
 
                 // Combat
+                .AddTakeDamageRequest()
                 .AddTakeDamageEvent()
-                // .AddBodyContactDamage(new ReactiveVariable<float>(ghostConfig.ContactDamage))
-                // .AddContactsDetectingMask(LayersAPI.LayerMaskCharacters)
-                // .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
-                // .AddContactEntitiesBuffer(new Buffer<Entity>(16))
-                // .AddTakeDamageRequest()
-                // .AddDamageCooldown(new ReactiveVariable<float>(ghostConfig.DamageCooldown)) 
-                // .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
+
+                .AddBodyContactDamage(new ReactiveVariable<float>(ghostConfig.ContactDamage))
+                .AddContactsDetectingMask(ghostConfig.ContactLayerMask)
+                .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
+                .AddContactEntitiesBuffer(new Buffer<Entity>(16))
+
+                .AddDamageCooldown(new ReactiveVariable<float>(ghostConfig.DamageCooldown)) 
+                .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
                
                 // LifeCycle
                 .AddMaxHealth(new ReactiveVariable<float>(ghostConfig.MaxHealth))
@@ -896,19 +912,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddIsGrappledTarget()
                 ;
 
-            // — Условия —
 
+            // — Условия —
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappledTarget.Value == false))
                 ;
 
-            /*
             ICompositeCondition canApplyDamage = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
                 ;
-            */
 
             ICompositeCondition canFlip = new CompositeCondition()
                 .Add(new FuncCondition(() => true))
@@ -924,23 +938,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 ;
 
             entity
+                // .AddCanPhysicalyInteract(canApplyDamage)
+
                 .AddCanMove(canMove)
                 .AddCanFlip(canFlip)
-                // .AddCanPhysicalyInteract(canApplyDamage)
-                // .AddCanApplyDamage(canApplyDamage)
+                .AddCanApplyDamage(canApplyDamage)
                 .AddMustDie(mustDie)
                 .AddMustSelfRelease(mustSelfRelease)
                 ;
 
             entity
                 // .AddSystem(new PhysicsStabilizationSystem())
-
-                // .AddSystem(new ApplyDamageSystem())
                 // .AddSystem(new DamageKnockbackSystem())
 
-                // .AddSystem(new BodyContactDetectingSystem())
-                // .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
-                // .AddSystem(new DealDamageOnContactSystem())
+                .AddSystem(new ApplyDamageSystem())
+
+                .AddSystem(new BodyContactDetectingSystem())
+                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
+                .AddSystem(new DealDamageOnContactSystem())
 
                 .AddSystem(new TransformMovementSystem())
                 .AddSystem(new FlipDirectionSystem())

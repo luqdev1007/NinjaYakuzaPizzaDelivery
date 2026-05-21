@@ -18,6 +18,10 @@ MonoBehaviour:
   <AngularDrag>k__BackingField: 2
   <DirectionChangeCooldown>k__BackingField: 2
   <MaxHealth>k__BackingField: 10
+  <DamageCooldown>k__BackingField: 0.1
   <DeathProcessTime>k__BackingField: 0.2
   <ContactDamage>k__BackingField: 1
+  <ContactLayerMask>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 128
   <LootTable>k__BackingField: {fileID: 11400000, guid: a54cc7243b8c3744991f591301f01020, type: 2}

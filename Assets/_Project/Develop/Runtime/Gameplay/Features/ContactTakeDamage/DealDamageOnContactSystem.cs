@@ -18,14 +18,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage
 
         public void OnInit(Entity entity)
         {
-            /*
             _entity = entity;
             _contacts = entity.ContactEntitiesBuffer;
             _baseDamage = entity.BodyContactDamage;
             _rigidbody = entity.Rigidbody;
 
             _processedEntities = new List<Entity>(_contacts.Items.Length);
-            */
         }
 
         public void OnUpdate(float deltaTime)

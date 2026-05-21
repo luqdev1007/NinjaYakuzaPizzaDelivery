@@ -22,6 +22,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 
         [Header("Combat")]
         [field: SerializeField] public float ContactDamage { get; private set; } = 1f;
+        [field: SerializeField] public LayerMask ContactLayerMask { get; private set; }
 
         [Header("Loot")]
         [field: SerializeField] public LootTableConfig LootTable { get; private set; }

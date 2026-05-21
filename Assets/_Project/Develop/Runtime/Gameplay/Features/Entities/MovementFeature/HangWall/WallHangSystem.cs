@@ -19,6 +19,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
         private ReactiveVariable<bool> _intentAttack;
         private ReactiveVariable<bool> _intentJump;
+        private ReactiveVariable<bool> _inAttackProcess; 
 
         private Rigidbody2D _rigidbody;
         private Transform _transform;
@@ -26,22 +27,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         public void OnInit(Entity entity)
         {
             _canWallHang = entity.CanWallHang;
-
             _wallHangLayer = entity.WallHangLayer;
-
             _isWallHanging = entity.IsWallHanging;
-
             _wallDirection = entity.WallDirection;
-
             _wallHangSlideSpeed = entity.WallHangSlideSpeed;
             _wallJumpForce = entity.WallJumpForce;
 
             _intentAttack = entity.IntentAttack;
             _intentJump = entity.IntentJump;
+            _inAttackProcess = entity.InAttackProcess;
 
             _rigidbody = entity.Rigidbody;
             _transform = entity.Transform;
-
             _defaultGravityScale = entity.BaseGravityScale;
         }
 
@@ -61,7 +58,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
         private void TryStartWallHang()
         {
-            Vector2 forward = _transform.right;
+            Vector2 forward = _transform.right; 
             Vector2 checkOrigin = (Vector2)_transform.position + forward * 0.3f;
             Collider2D hit = Physics2D.OverlapCircle(checkOrigin, 0.15f, _wallHangLayer);
 
@@ -70,6 +67,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
             _isWallHanging.Value = true;
             _wallDirection.Value = forward.x > 0 ? 1f : -1f;
+
+            _inAttackProcess.Value = false;
 
             _rigidbody.gravityScale = 0f;
             _rigidbody.linearVelocity = Vector2.zero;
