@@ -2,7 +2,6 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
-using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
@@ -10,43 +9,32 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
     {
         private ReactiveEvent _attackDelayEndEvent;
         private ReactiveEvent _startAttackEvent;
-
         private ReactiveVariable<float> _delay;
         private ReactiveVariable<float> _attackProcessCurrentTime;
-
-        private bool _alreadyAttacked;
 
         private IDisposable _timerDisposable;
         private IDisposable _startAttackDisposable;
 
+        private bool _alreadyAttacked;
+
         public void OnInit(Entity entity)
         {
-            /*
             _attackDelayEndEvent = entity.AttackDelayEndEvent;
             _startAttackEvent = entity.StartAttackEvent;
-
             _delay = entity.AttackDelayTime;
             _attackProcessCurrentTime = entity.AttackProcessCurrentTime;
-            */
 
             _timerDisposable = _attackProcessCurrentTime.Subscribe(OnTimerChanged);
             _startAttackDisposable = _startAttackEvent.Subscribe(OnStartAttack);
         }
 
-        public void OnDispose()
+        private void OnTimerChanged(float old, float currentTime)
         {
-            _timerDisposable.Dispose();
-            _startAttackDisposable.Dispose();
-        }
-
-        private void OnTimerChanged(float arg1, float currentTime)
-        {
-            if (_alreadyAttacked)
+            if (_alreadyAttacked) 
                 return;
 
             if (currentTime >= _delay.Value)
             {
-                // Debug.Log("Delay before attack is end");
                 _attackDelayEndEvent.Invoke();
                 _alreadyAttacked = true;
             }
@@ -57,5 +45,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             _alreadyAttacked = false;
         }
 
+        public void OnDispose()
+        {
+            _timerDisposable?.Dispose();
+            _startAttackDisposable?.Dispose();
+        }
     }
 }

@@ -2,11 +2,10 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
-using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
-    public class EndAttackSystem : IInitializableSystem, IDisposable
+    public class EndAttackSystem : IInitializableSystem, IDisposableSystem
     {
         private ReactiveEvent _endAttackEvent;
         private ReactiveVariable<bool> _inAttackProcess;
@@ -17,31 +16,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         public void OnInit(Entity entity)
         {
-            /*
             _endAttackEvent = entity.EndAttackEvent;
             _inAttackProcess = entity.InAttackProcess;
             _attackProcessInitialTime = entity.AttackProcessInitialTime;
             _attackProcessCurrentTime = entity.AttackProcessCurrentTime;
 
             _timerDisposable = _attackProcessCurrentTime.Subscribe(OnTimerChanged);
-            */
         }
 
-        public void Dispose()
+        private void OnTimerChanged(float old, float currentTime)
         {
-            _timerDisposable.Dispose();
-        }
-
-        private void OnTimerChanged(float arg1, float currentTime)
-        {
-            if (TimerIsDone(currentTime))
+            if (_inAttackProcess.Value && currentTime >= _attackProcessInitialTime.Value)
             {
-                // Debug.Log("End of attack");
                 _inAttackProcess.Value = false;
                 _endAttackEvent.Invoke();
             }
         }
 
-        private bool TimerIsDone(float currentTime) => currentTime >= _attackProcessInitialTime.Value;
+        public void OnDispose()
+        {
+            _timerDisposable?.Dispose();
+        }
     }
 }

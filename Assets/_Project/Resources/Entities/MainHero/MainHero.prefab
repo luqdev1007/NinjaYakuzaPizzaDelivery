@@ -54813,6 +54813,7 @@ GameObject:
   - component: {fileID: 8346949735432408906}
   - component: {fileID: 8783149216885449485}
   - component: {fileID: 1829829225373891967}
+  - component: {fileID: 4507239278803714997}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -55203,6 +55204,24 @@ MonoBehaviour:
   _shootSfxKey: HookShoot
   _loopSfxKey: HookLoop
   _breakSfxKey: HookBreak
+--- !u!114 &4507239278803714997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2274547176414386936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9fa85af5caf30a4292c3728714c1912, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animator: {fileID: 1274124274879070163}
+  _attackAnimationClip: {fileID: 7400000, guid: a456fbe13b2c80444b359fffdd65481a, type: 2}
+  _slashParticles:
+  - {fileID: 195415887643757542}
+  - {fileID: 4561348815981717997}
+  - {fileID: 4627911084152384592}
 --- !u!1 &2305303809177581567
 GameObject:
   m_ObjectHideFlags: 0

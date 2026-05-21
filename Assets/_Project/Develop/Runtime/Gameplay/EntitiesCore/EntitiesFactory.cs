@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Dash;
@@ -251,6 +252,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddIsGrappling()
                 .AddGrappleHookTransform()
                 .AddGrappleAnchorPoint()
+
+                // attack
+                .AddStartAttackEvent(new ReactiveEvent())
+                .AddEndAttackEvent(new ReactiveEvent())
+                .AddAttackDelayEndEvent(new ReactiveEvent())
+                .AddSuccessfulHitEvent(new ReactiveEvent())
+                .AddInAttackProcess(new ReactiveVariable<bool>(false))
+                .AddInAttackCooldown(new ReactiveVariable<bool>(false))
+                .AddAttackProcessInitialTime(new ReactiveVariable<float>(config.Attack.ProcessTime))
+                .AddAttackProcessCurrentTime(new ReactiveVariable<float>(0f))
+                .AddAttackCooldownInitialTime(new ReactiveVariable<float>(config.Attack.Cooldown))
+                .AddAttackCooldownCurrentTime(new ReactiveVariable<float>(0f))
+                .AddAttackDelayTime(new ReactiveVariable<float>(config.Attack.DelayTime))
+                .AddAttackDamage(new ReactiveVariable<float>(config.Attack.Damage))
+                .AddAttackRange(new ReactiveVariable<float>(config.Attack.Range))
+                .AddAttackHitMask(new ReactiveVariable<LayerMask>(config.Attack.EnemyMask))
                 ;
 
             /*
@@ -520,6 +537,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
+            ICompositeCondition canStartAttack = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsGliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.InAttackProcess.Value == false))
+                .Add(new FuncCondition(() => entity.InAttackCooldown.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
             entity
                 .AddCanPlunge(canPlunge)
@@ -537,6 +564,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddCanGlide(canGlide)
                 .AddCanWallHang(canWallHang)
                 .AddCanGrapple(canGrapple)
+                .AddCanStartAttack(canStartAttack)
                 ;
 
             /*
@@ -722,6 +750,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // grapple
                 .AddSystem(new GrappleSystem(grappleConfig, _coroutinesPerformer))
+
+                // attack
+                .AddSystem(new StartAttackSystem())
+                .AddSystem(new AttackProcessTimerSystem())
+                .AddSystem(new AttackDelayEndTriggerSystem())
+                .AddSystem(new MeleeAttackHitSystem())
+                .AddSystem(new EndAttackSystem())
+                .AddSystem(new AttackCooldownTimerSystem())
 
                 // visual
                 .AddSystem(new FlipDirectionSystem()) 

@@ -2,11 +2,12 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using System;
 using UnityEngine;
+using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
     [RequireComponent(typeof(Animator))]
-    public class AttackView : EntityView
+    public class AttackView : EntityView, IRequireAudioService
     {
         private static readonly int AttackTrigger = Animator.StringToHash("Attack");
         private static readonly int SpeedMultiplierKey = Animator.StringToHash("AttackAnimationSpeedMultiplier");
@@ -18,14 +19,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         [Header("VFX")]
         [SerializeField] private ParticleSystem[] _slashParticles;
 
+        [Header("SFX Keys")]
+        [SerializeField] private string _attackSfxKey = "AttackExecute";
+
         private Transform _rootTransform;
         private int _currentSlashIndex;
+        private IAudioService _audioService;
 
         private IDisposable _inAttackProcessDisposable;
         private IDisposable _attackHitDisposable;
-        private IDisposable _successfulHitDisposable;
+
+        // private IDisposable _successfulHitDisposable; // задел под хит-эффект/звук попадания по мясу
 
         private void OnValidate() => _animator ??= GetComponent<Animator>();
+
+        public void Construct(IAudioService audioService)
+        {
+            _audioService = audioService;
+        }
 
         protected override void OnEntityStartedWork(Entity entity)
         {
@@ -49,17 +60,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             }
         }
 
-        private void OnAttackMoment() => PlaySlashEffect();
-
+        private void OnAttackMoment()
+        {
+            PlaySlashEffect();
+            _audioService?.PlaySfx(_attackSfxKey, transform.position);
+        }
 
         private void PlaySlashEffect()
         {
+            if (_slashParticles == null || _slashParticles.Length == 0)
+                return;
+
             ParticleSystem activeSlash = _slashParticles[_currentSlashIndex];
 
             if (activeSlash != null)
             {
+                float yRotation = _rootTransform.localRotation.eulerAngles.y;
+                float direction = Mathf.Abs(yRotation - 180f) < 1f ? -1f : 1f;
+
                 Vector3 effectScale = activeSlash.transform.localScale;
-                effectScale.x = _rootTransform.localScale.x > 0 ? 1f : -1f;
+                effectScale.x = Mathf.Abs(effectScale.x) * direction;
                 activeSlash.transform.localScale = effectScale;
 
                 activeSlash.Stop();
@@ -75,7 +95,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
             _inAttackProcessDisposable?.Dispose();
             _attackHitDisposable?.Dispose();
-            _successfulHitDisposable?.Dispose();
         }
     }
 }
