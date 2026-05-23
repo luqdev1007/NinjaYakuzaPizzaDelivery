@@ -7,6 +7,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Combat.HitImpact;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Attack;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Dash;
@@ -17,6 +18,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.HitStop;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature;
@@ -288,6 +290,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddAttackInvulnerabilityDuration(new ReactiveVariable<float>(config.Attack.InvulnerabilityDuration))
                 .AddAttackInvulnerabilityTimer()
                 .AddIsAttackInvulnerable()
+
+                // new hit stop
+                .AddAttackHitStopDuration(new ReactiveVariable<float>(config.Attack.HitStopDuration))
+                .AddAttackHitStopScale(new ReactiveVariable<float>(config.Attack.HitStopScale))
 
                 // body contact
                 .AddContactsDetectingMask(config.ContactLayerMask)
@@ -656,6 +662,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem())
                 .AddSystem(new AttackInvulnerabilitySystem())
+
+                // new
+                .AddSystem(new HitStopSystem(_container.Resolve<HitStopService>()))
 
                 // juggle
                 .AddSystem(new AerialHitSuspensionSystem())

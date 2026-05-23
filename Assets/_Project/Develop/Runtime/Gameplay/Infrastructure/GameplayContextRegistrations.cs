@@ -7,6 +7,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
+using Assets._Project.Develop.Runtime.Gameplay.Features.HitStop;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LevelResultsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
@@ -78,9 +79,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateStyleEvaluator);
             container.RegisterAsSingle(CreateSecretChestCollectService);
             container.RegisterAsSingle(CreateLevelResultService);
+            // new
+            container.RegisterAsSingle(CreateHitStopService);
 
             // Camera
             container.RegisterAsSingle(CreateCameraService);
+        }
+
+
+        private static HitStopService CreateHitStopService(DIContainer container)
+        {
+            return new HitStopService();
         }
 
         private static CameraService CreateCameraService(DIContainer container)

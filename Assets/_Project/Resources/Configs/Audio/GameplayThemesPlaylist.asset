@@ -20,4 +20,6 @@ MonoBehaviour:
     Volume: 1
   - Clip: {fileID: 8300000, guid: e48048fdadbe0874a85f9142e1fcc511, type: 3}
     Volume: 1
+  - Clip: {fileID: 8300000, guid: 01be0880538d72d47b8c91fa19900d66, type: 3}
+    Volume: 1
   Shuffle: 1
