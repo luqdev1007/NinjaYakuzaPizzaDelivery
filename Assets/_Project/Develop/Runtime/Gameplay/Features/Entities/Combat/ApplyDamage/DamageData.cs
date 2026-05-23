@@ -4,5 +4,6 @@ public struct DamageData
 {
     public float Amount;
     public Vector2 SourcePosition;
-    public DamageType Type; 
+    public Vector2 KnockbackForce;
+    public DamageType Type;
 }

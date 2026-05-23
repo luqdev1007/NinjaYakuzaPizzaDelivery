@@ -26,5 +26,6 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 
         [Header("Loot")]
         [field: SerializeField] public LootTableConfig LootTable { get; private set; }
+        [field: SerializeField] public float KnockbackTimer { get; private set; }
     }
 }

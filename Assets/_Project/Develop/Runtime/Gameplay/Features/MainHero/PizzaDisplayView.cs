@@ -12,7 +12,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         [SerializeField] private List<GameObject> _pizzaSlices;
         [SerializeField] private ParticleSystem _cheeseDripEffect;
         [SerializeField] private Rigidbody2D _rigidbody;
-        [SerializeField] private LivesCountView _livesUI;
+        // [SerializeField] private LivesCountView _livesUI;
 
         private int _currentVisibleSlices;
         private Entity _linkedEntity;
@@ -23,7 +23,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             if (_linkedEntity == null)
                 return;
 
-            float heroVelocityX = 0;// _linkedEntity.Rigidbody.linearVelocity.x;
+            float heroVelocityX = _linkedEntity.Rigidbody.linearVelocity.x;
 
             if (Mathf.Abs(heroVelocityX) > 0.1f)
             {
@@ -62,7 +62,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
             _cheeseDripEffect.Play();
 
-            _livesUI.Show(_currentVisibleSlices - 1);
+            // _livesUI.Show(_currentVisibleSlices - 1);
         }
 
         internal void Initialize(Entity entity)

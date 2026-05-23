@@ -285,7 +285,7 @@ MonoBehaviour:
   _spriteRenderer: {fileID: 2858558461669107319}
   _flashColor: {r: 1, g: 1, b: 1, a: 1}
   _flashDuration: 0.2
-  _soundConfig: {fileID: 11400000, guid: 3fe1dd43082e9764082798baaadf0371, type: 2}
+  _takeDamageSfxKey: TakeDamageGhost
 --- !u!114 &1130839634098478934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,7 +299,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 1784155885393087696}
-  _deathSoundConfig: {fileID: 11400000, guid: 0ce3b83aeace7a24b950cdfa961228fd, type: 2}
 --- !u!114 &6732775899153542305
 MonoBehaviour:
   m_ObjectHideFlags: 0

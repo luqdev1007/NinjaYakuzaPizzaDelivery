@@ -22,21 +22,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.SceneManagement
 
         private readonly List<string> _loadingHints = new List<string>
         {
-            "A $3.50 tip is a great start for a novice ninja",
-            "The cake is a lie, but the pizza is real",
-            "Beware of spooky red ghosts",
-            "Short or long click near any wall to hang on it",
-            "Hold the jump key to control your jump height",
-            "You have double jumps! They refresh once you touch the ground",
-            "Slopes are perfect for sliding",
-            "Dashing makes you invulnerable for a few seconds",
-            "I’m not superstitious, but I am a little stitious about delivery times",
-            "I want customers to be afraid of how much they love my pizza",
-            "You miss 100% of the pizzas you don't bake. — Michael Scott",
-            "A real ninja never quits. Unless his shift is over",
-            "Is a pepperoni slice a deadly shuriken? Only if you believe in yourself",
-            "Business is like a katana. If you hold it by the wrong end, you’re gonna have a bad day",
-            "You can grapple your own slash projectile or ride it and jump it! have fun!"
+            "DOWNLOAD 'OST SAMURAI X' FOR BACKGROUND MUSIC",
         };
 
         public SceneSwitcherService(

@@ -11,7 +11,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 
         public override void Register(Entity entity)
         {
-            // entity.AddDisableCollidersOnDeath(_colliders);
+            entity.AddDisableCollidersOnDeath(_colliders);
         }
     }
 }

@@ -40,7 +40,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage
                 {
                     _processedEntities.Add(contactEntity);
 
-                    EntitiesHelper.TryTakeDamageFrom(_entity, contactEntity, finalDamage);
+                    // EntitiesHelper.TryTakeDamageFrom(_entity, contactEntity, finalDamage);
+                    EntitiesHelper.TryTakeDamageFrom(_entity, contactEntity, _entity.BodyContactDamage.Value);
                 }
             }
 

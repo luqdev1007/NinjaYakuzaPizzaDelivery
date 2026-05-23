@@ -1,12 +1,13 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Utilities.AudioManagment; // Добавлено
 using UnityEngine;
 using System;
 using DG.Tweening;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
 {
-    public class ApplyDamageView : EntityView
+    public class ApplyDamageView : EntityView, IRequireAudioService // Подключаем интерфейс
     {
         [Header("Damage VFX")]
         [SerializeField] private ParticleSystem _applyDamageEffectPrefab;
@@ -18,8 +19,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
         [SerializeField] private Color _flashColor = Color.white;
         [SerializeField] private float _flashDuration = 0.1f;
 
+        [Header("SFX Keys")] // Добавлено для настройки звука получения урона
+        [SerializeField] private string _takeDamageSfxKey = "TakeDamage";
+
         private IDisposable _damageEventDisposable;
         private Color _originalColor;
+        private IAudioService _audioService; // Ссылка на сервис звука
+
+        public void Construct(IAudioService audioService)
+        {
+            _audioService = audioService;
+        }
 
         protected override void OnEntityStartedWork(Entity entity)
         {
@@ -39,6 +49,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
         {
             SpawnDamageParticles();
             PlayFlashEffect();
+            PlayDamageSound(); // Триггерим звук
         }
 
         private void PlayFlashEffect()
@@ -57,6 +68,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
 
             var main = vfx.main;
             main.stopAction = _vfxStopAction;
+        }
+
+        private void PlayDamageSound()
+        {
+            // Воспроизводим 3D-звук в точке получения урона (на позиции вьюшки)
+            _audioService?.PlaySfx(_takeDamageSfxKey, transform.position);
         }
     }
 }

@@ -5,6 +5,16 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
 {
+    public class KnockbackInitialTimer : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+
+    public class KnockbackTimer : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
 
     public class BaseGravityScale : IEntityComponent
     {

@@ -16,6 +16,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private ReactiveEvent _successfulHitEvent;
         private ReactiveVariable<float> _attackRange;
         private ReactiveVariable<float> _attackDamage;
+        private ReactiveVariable<Vector2> _attackKnockback;
         private ReactiveVariable<LayerMask> _enemyMask;
 
         public void OnInit(Entity entity)
@@ -25,6 +26,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             _attackRange = _entity.AttackRange;
             _attackDamage = _entity.AttackDamage;
             _enemyMask = _entity.AttackHitMask;
+            _attackKnockback = _entity.AttackKnocback;
 
             _attackDelayEndDisposable = _entity.AttackDelayEndEvent.Subscribe(OnAttackHit);
         }
@@ -60,11 +62,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         {
             if (target.HasComponent<TakeDamageRequest>())
             {
+                float direction = Mathf.Abs(_entity.Transform.localRotation.eulerAngles.y - 180f) < 1f ? -1f : 1f;
+                Vector2 appliedKnockback = new Vector2(_attackKnockback.Value.x * direction, _attackKnockback.Value.y);
+
                 var damageData = new DamageData
                 {
                     Amount = _attackDamage.Value,
-                    SourcePosition = position
+                    SourcePosition = position,
+                    KnockbackForce = appliedKnockback 
                 };
+
                 target.TakeDamageRequest.Invoke(damageData);
             }
         }

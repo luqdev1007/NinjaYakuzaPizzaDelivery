@@ -5,6 +5,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Combat.HitImpact;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump;
@@ -18,9 +19,9 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature
 using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Visual;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
@@ -272,6 +273,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddAttackDamage(new ReactiveVariable<float>(config.Attack.Damage))
                 .AddAttackRange(new ReactiveVariable<float>(config.Attack.Range))
                 .AddAttackHitMask(new ReactiveVariable<LayerMask>(config.Attack.EnemyMask))
+                .AddAttackKnocback(new ReactiveVariable<Vector2>(config.Attack.AttackKnockback))
+
+                // juggle
+                .AddAerialHangForce(new ReactiveVariable<Vector2>(config.Attack.AerialHangForce))
+
+                // apply damage
+                .AddTakeDamageRequest()
+                .AddTakeDamageEvent()
+
+                // body contact
+                .AddContactsDetectingMask(config.ContactLayerMask)
+                .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
+                .AddContactEntitiesBuffer(new Buffer<Entity>(16))
                 ;
 
             /*
@@ -554,6 +568,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.InAttackCooldown.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
+            ICompositeCondition canApplyDamage = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
+                // .Add(new FuncCondition(() => entity.IsAttackInvulnerable.Value == false))
+                // .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
+
+
             entity
                 .AddCanPlunge(canPlunge)
                 .AddCanMove(canMove)
@@ -571,147 +594,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddCanWallHang(canWallHang)
                 .AddCanGrapple(canGrapple)
                 .AddCanStartAttack(canStartAttack)
+                .AddCanApplyDamage(canApplyDamage)
                 ;
-
-            /*
-        // — движение —
-        ICompositeCondition canMove = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.IsDead.Value == false))
-            .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-            .Add(new FuncCondition(() => entity.IsSliding.Value == false))
-            .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
-            .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-            .Add(new FuncCondition(() => entity.WallJumpLockTimer.Value <= 0));
-
-        ICompositeCondition canFlip = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
-            .Add(new FuncCondition(() => entity.IsSliding.Value == false))
-            .Add(new FuncCondition(() => entity.IsDead.Value == false))
-            .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-            .Add(new FuncCondition(() => entity.WallJumpLockTimer.Value <= 0));
-
-        // — прыжок —
-        ICompositeCondition canJump = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.IsDead.Value == false))
-            .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-            .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-            .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-            .Add(new FuncCondition(() => entity.JumpsAvailable.Value > 0));
-
-        // — рывок —
-        ICompositeCondition canDash = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.IsDead.Value == false))
-            .Add(new FuncCondition(() => entity.IsSliding.Value == false))
-            .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
-            .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-            .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-            .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-            .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-            .Add(new FuncCondition(() =>
-                entity.IsGrounded.Value ||
-                entity.Rigidbody.linearVelocity.y >= entity.MinFallVelocityForAction.Value));
-
-        // — планирование —
-        ICompositeCondition canGlide = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.IsDead.Value == false))
-            .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
-            .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-            .Add(new FuncCondition(() => entity.IsThrowing.Value == false))
-            .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-            .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-            .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
-
-        // — атака —
-        ICompositeCondition canStartAttack = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.IsDead.Value == false))
-            .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-            .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-            .Add(new FuncCondition(() => entity.IsSliding.Value == false))
-            .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
-            .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-            .Add(new FuncCondition(() => entity.InAttackProcess.Value == false))
-            .Add(new FuncCondition(() => entity.InAttackCooldown.Value == false))
-            .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
-
-        ICompositeCondition mustCancelAttack = new CompositeCondition(LogicOperations.Or)
-            .Add(new FuncCondition(() => entity.IsDead.Value == true))
-            .Add(new FuncCondition(() => entity.IsGrappling.Value == true))
-            .Add(new FuncCondition(() => entity.IsWallHanging.Value == true))
-            .Add(new FuncCondition(() => entity.IsPlunging.Value == true));
-
-        // — броски —
-        ICompositeCondition canGrapple = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.IsDead.Value == false))
-            .Add(new FuncCondition(() => entity.IsThrowing.Value == false))
-            .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-            .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-            .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-            .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
-
-        // — вис на стене —
-        ICompositeCondition canWallHang = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.IsDead.Value == false))
-            .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
-            .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-            .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-            .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-            .Add(new FuncCondition(() => entity.InAttackProcess.Value == true))
-            .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
-
-        // — слайд —
-        ICompositeCondition canSlide = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.IsDead.Value == false))
-            .Add(new FuncCondition(() => entity.IsSliding.Value == false))
-            .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
-            .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-            .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-            .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
-            .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
-
-        // — пике —
-        ICompositeCondition canPlunge = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.IsDead.Value == false))
-            .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
-            .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
-            .Add(new FuncCondition(() => entity.IsGliding.Value == false))
-            .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
-            .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
-            .Add(new FuncCondition(() => entity.Rigidbody.linearVelocityY < config.FallVelocityThreshold)) // new
-            .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
-
-        // — жизненный цикл —
-        ICompositeCondition mustDie = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
-
-        ICompositeCondition mustSelfRelease = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.IsDead.Value == true))
-            .Add(new FuncCondition(() => entity.InDeathProcess.Value == false));
-
-        ICompositeCondition canApplyDamage = new CompositeCondition()
-            .Add(new FuncCondition(() => entity.IsDead.Value == false))
-            .Add(new FuncCondition(() => entity.IsDashing.Value == false))
-            .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
-            .Add(new FuncCondition(() => entity.IsAttackInvulnerable.Value == false))
-            .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
-            .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
-
-        entity
-            .AddCanMove(canMove)
-            .AddCanFlip(canFlip)
-            .AddCanJump(canJump)
-            .AddCanDash(canDash)
-            .AddCanGlide(canGlide)
-            .AddCanStartAttack(canStartAttack)
-            .AddMustCancelAttack(mustCancelAttack)
-            .AddCanGrapple(canGrapple)
-            .AddCanWallHang(canWallHang)
-            .AddCanSlide(canSlide)
-            .AddCanPlunge(canPlunge)
-            .AddMustDie(mustDie)
-            .AddMustSelfRelease(mustSelfRelease)
-            .AddCanApplyDamage(canApplyDamage)
-            ;
-        */
         }
         private void AddHeroSystems(Entity entity, MainHeroConfig config)
         {
@@ -765,13 +649,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem())
 
+                // juggle
+                .AddSystem(new AerialHitSuspensionSystem())
+
                  // apply damage
-                 /*
                 .AddSystem(new ApplyDamageSystem())
+
+                // тело ниндзя - смертельное оружие, но пока нет...
                 .AddSystem(new BodyContactDetectingSystem())
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
-                .AddSystem(new DealDamageOnContactSystem())
-                 */
+                 // .AddSystem(new DealDamageOnContactSystem())
+                 .AddSystem(new DisableCollidersOnDeathSystem())
 
                 // visual
                 .AddSystem(new FlipDirectionSystem()) 
@@ -785,52 +673,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 ;
 
                 /*
-                .AddSystem(new GlideSystem())
-                .AddSystem(new WallHangSystem())
-                .AddSystem(new SlideSystem(_coroutinesPerformer))
-
-                .AddSystem(new PlungeSystem())
-
-                .AddSystem(new SlopeSystem())
-
-                // — броски (Хук отдельно на ПКМ) —
-                .AddSystem(new GrappleSystem(
-                    coroutinesPerformer,
-                    config.Throwables.GrappleConfig,
-                    throwableBehaviourFactory,
-                    audioService))
-
                 // — инвентарь (Сюрикены/Дротики на Q + Колесико) —
                 .AddSystem(new InventorySystem(
                     consumables,
                     throwableBehaviourFactory,
                     coroutinesPerformer)) 
-
-                // wall jump
-                .AddSystem(new WallJumpSystem())
-
-                // combat
-                // body of ninja is mortal too
-                .AddSystem(new BodyContactDetectingSystem())
-                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
-                .AddSystem(new DealDamageOnContactSystem())
-
-                // — атака —
-                .AddSystem(new AttackCancelSystem())
-                .AddSystem(new StartAttackSystem(_coroutinesPerformer))
-                .AddSystem(new AttackProcessTimerSystem())
-                .AddSystem(new AttackDelayEndTriggerSystem())
-                .AddSystem(new EndAttackSystem())
-                .AddSystem(new AttackCooldownTimerSystem())
-                .AddSystem(new AttackInvulnerabilitySystem())
-
-                .AddSystem(new MeleeAttackHitSystem())
-
-                // — урон / жизненный цикл —
-                .AddSystem(new ApplyDamageSystem())
-                .AddSystem(new DamageKnockbackSystem())
-                .AddSystem(new DeathSystem())
-                .AddSystem(new DeathProcessTimerSystem())
+   
 
                                 // лут
                 .AddSystem(new LootMagnetSystem(_collidersRegistryService))
@@ -876,6 +724,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             entity
                 // Common
                 .AddLookDirectionX(new ReactiveVariable<float>(1))
+                .AddKnockbackTimer(new ReactiveVariable<float>(ghostConfig.KnockbackTimer))
+                .AddKnockbackInitialTimer(new ReactiveVariable<float>(ghostConfig.KnockbackTimer))
 
                 // Physics
                 .AddLinearDrag(new ReactiveVariable<float>(ghostConfig.LinearDrag))
@@ -917,11 +767,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappledTarget.Value == false))
+                .Add(new FuncCondition(() => entity.KnockbackInitialTimer.Value < entity.KnockbackTimer.Value))
                 ;
 
             ICompositeCondition canApplyDamage = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
+                // .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
                 ;
 
             ICompositeCondition canFlip = new CompositeCondition()
@@ -937,9 +788,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.InDeathProcess.Value == false))
                 ;
 
-            entity
-                // .AddCanPhysicalyInteract(canApplyDamage)
+            ICompositeCondition canPhysicallyInteract = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false));
 
+            entity
+                .AddCanPhysicalyInteract(canPhysicallyInteract)
                 .AddCanMove(canMove)
                 .AddCanFlip(canFlip)
                 .AddCanApplyDamage(canApplyDamage)
@@ -948,8 +801,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 ;
 
             entity
-                // .AddSystem(new PhysicsStabilizationSystem())
-                // .AddSystem(new DamageKnockbackSystem())
+
+                .AddSystem(new DamageKnockbackTimerSystem())
+                .AddSystem(new DamageKnockbackSystem())
 
                 .AddSystem(new ApplyDamageSystem())
 
@@ -957,8 +811,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
                 .AddSystem(new DealDamageOnContactSystem())
 
-                .AddSystem(new TransformMovementSystem())
+
+                .AddSystem(new PhysicsStabilizationSystem())
+                .AddSystem(new SimpleRigidbodyMovementSystem())
                 .AddSystem(new FlipDirectionSystem())
+
+                .AddSystem(new DisableCollidersOnDeathSystem())
                 .AddSystem(new DeathSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
                 ;

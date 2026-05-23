@@ -30,6 +30,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         public ReactiveVariable<Vector2> Value = new();
     }
 
+    public class AttackKnocback : IEntityComponent
+    {
+        public ReactiveVariable<Vector2> Value = new();
+    }
+
+    
+
     public class AirHitBounceModifiers : IEntityComponent
     {
         public ReactiveVariable<Vector2> Value = new();

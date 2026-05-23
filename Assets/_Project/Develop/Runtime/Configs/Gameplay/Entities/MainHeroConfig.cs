@@ -13,6 +13,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField] public float BaseBodyContactDamage { get; private set; } = 1f;
         [field: SerializeField] public float FallActionThreshold { get; private set; } = -2f;
         [field: SerializeField] public LayerMask GroundMask { get; private set; }
+        [field: SerializeField] public LayerMask ContactLayerMask { get; private set; }
 
         [Header("Settings")]
         [field: SerializeField] public MovementSettings Movement { get; private set; } = new();
@@ -170,6 +171,8 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [Header("Hit Stop")]
         [field: SerializeField, Range(0f, 1f)] public float HitStopScale { get; private set; } = 0.05f;
         [field: SerializeField, Range(0f, 0.5f)] public float HitStopDuration { get; private set; } = 0.15f;
+        [field: SerializeField] public Vector2 AttackKnockback { get; private set; } = new Vector2(1f, 2f);
+        [field: SerializeField] public Vector2 AerialHangForce { get; private set; } = new Vector2(1f, 4);
     }
 
     [Serializable]

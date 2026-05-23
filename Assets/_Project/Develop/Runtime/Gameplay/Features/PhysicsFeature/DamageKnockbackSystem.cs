@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using UnityEngine;
 
@@ -9,36 +10,33 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
     {
         private Entity _entity;
         private IDisposable _takeDamageEvent;
+        private ReactiveVariable<float> _knockbackInitialTimer;
 
         public void OnInit(Entity entity)
         {
             _entity = entity;
-            // _takeDamageEvent = entity.TakeDamageEvent.Subscribe(OnTakeDamage);
+
+            _knockbackInitialTimer = entity.KnockbackInitialTimer;
+
+            _takeDamageEvent = entity.TakeDamageEvent.Subscribe(OnTakeDamage);
         }
 
         private void OnTakeDamage(DamageData damage)
         {
-            /*
             if (_entity.Rigidbody == null)
                 return;
 
-            // Определяем направление (противоположное взгляду)
-            float lookDirection = Mathf.Sign(_entity.Transform.localScale.x);
-            float pushDirectionX = -lookDirection;
-
-            // Рассчитываем силу на основе урона
-            // Итоговая сила = База + (Урон * Множитель)
-            float finalForceX = BaseKnockbackX + (damage.Amount * DamageMultiplier);
-            float finalForceY = BaseKnockbackY + (damage.Amount * 0.5f); // По Y добавляем чуть меньше, чтобы не подлетать до потолка
-
-            // Ограничиваем максимальный импульс
-            finalForceX = Mathf.Min(finalForceX, MaxForce);
-
             _entity.Rigidbody.linearVelocity = Vector2.zero;
 
-            Vector2 impulse = new Vector2(pushDirectionX * finalForceX, finalForceY);
-            _entity.Rigidbody.AddForce(impulse, ForceMode2D.Impulse);
-            */
+            float pushDirectionX = _entity.Transform.position.x >= damage.SourcePosition.x ? 1f : -1f;
+            Vector2 arcDirection = new Vector2(pushDirectionX * 1.2f, 1.0f).normalized;
+
+            float forceMagnitude = damage.KnockbackForce.magnitude;
+
+            Vector2 finalArcForce = arcDirection * forceMagnitude;
+
+            _knockbackInitialTimer.Value = 0; 
+            _entity.Rigidbody.AddForce(finalArcForce, ForceMode2D.Impulse);
         }
 
         public void OnDispose() => _takeDamageEvent?.Dispose();
