@@ -5,6 +5,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using System;
 using UnityEngine;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
@@ -58,8 +59,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             }
         }
 
-        private void ApplyDamage(Entity target, Vector2 position)
+        private bool ApplyDamage(Entity target, Vector2 position)
         {
+            /*
+            // Если цель мертва или в процессе смерти, то не считаем это за успешный хит
+            if (target.HasComponent<IsDead>() && target.IsDead.Value)
+                return false;
+            */
+
             if (target.HasComponent<TakeDamageRequest>())
             {
                 float direction = Mathf.Abs(_entity.Transform.localRotation.eulerAngles.y - 180f) < 1f ? -1f : 1f;
@@ -69,11 +76,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
                 {
                     Amount = _attackDamage.Value,
                     SourcePosition = position,
-                    KnockbackForce = appliedKnockback 
+                    KnockbackForce = appliedKnockback
                 };
 
                 target.TakeDamageRequest.Invoke(damageData);
+                return true; 
             }
+
+            return false;
         }
 
         public void OnDispose()
