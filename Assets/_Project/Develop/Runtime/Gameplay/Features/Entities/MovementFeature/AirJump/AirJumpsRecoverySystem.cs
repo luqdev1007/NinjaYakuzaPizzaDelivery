@@ -26,7 +26,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             if (_mustRestoreAirJumpsCount.Evaluate())
             {
                 _airJumpsCount.Value = _airJumpsMaxCount.Value;
-                Debug.Log($"Air jumps restored: {_airJumpsCount.Value}/{_airJumpsMaxCount.Value}");
+                // Debug.Log($"Air jumps restored: {_airJumpsCount.Value}/{_airJumpsMaxCount.Value}");
             }
         }
     }

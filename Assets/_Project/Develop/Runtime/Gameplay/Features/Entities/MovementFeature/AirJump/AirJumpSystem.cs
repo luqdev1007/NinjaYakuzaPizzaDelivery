@@ -99,7 +99,7 @@ public partial class AirJumpSystem : IInitializableSystem, IUpdatableSystem
 
         _airJumpEvent?.Invoke();
         _airJumpsCount.Value--;
-        Debug.Log($"air jump event! Left jumps: {_airJumpsCount.Value}");
+        // Debug.Log($"air jump event! Left jumps: {_airJumpsCount.Value}");
 
         _isCharging = false;
     }

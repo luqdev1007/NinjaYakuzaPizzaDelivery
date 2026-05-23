@@ -38,7 +38,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
             _audioService?.PlaySfx(_airJumpSfxKey, transform.position);
 
-            Debug.Log("Air jump vfx and sfx event!");
+            // Debug.Log("Air jump vfx and sfx event!");
         }
 
         private void Update()
