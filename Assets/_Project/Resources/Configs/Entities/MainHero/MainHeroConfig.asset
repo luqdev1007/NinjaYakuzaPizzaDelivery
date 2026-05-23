@@ -106,12 +106,13 @@ MonoBehaviour:
     <AirHitBounceModifiers>k__BackingField: {x: 1, y: 2}
     <HitStopScale>k__BackingField: 0.05
     <HitStopDuration>k__BackingField: 0.15
-    <AttackKnockback>k__BackingField: {x: 0.5, y: 2}
-    <AerialHangForce>k__BackingField: {x: 1, y: 4}
+    <AttackKnockback>k__BackingField: {x: 6, y: 8}
+    <AerialHangForce>k__BackingField: {x: 4, y: 8}
   <LifeCycle>k__BackingField:
     <MaxHealth>k__BackingField: 5
     <DeathProcessTime>k__BackingField: 1.5
     <SpawnProcessTime>k__BackingField: 1
+    <DamageCooldown>k__BackingField: 1
   <Throwables>k__BackingField:
     <GrappleConfig>k__BackingField: {fileID: 11400000, guid: 6443bd3d003d36342a2d702adbc37789, type: 2}
     <ShurikenConfig>k__BackingField: {fileID: 11400000, guid: b348a5f78cee93b4cbdd19f8eead08a4, type: 2}

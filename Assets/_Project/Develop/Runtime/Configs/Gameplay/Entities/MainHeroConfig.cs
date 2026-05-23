@@ -181,6 +181,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField] public float MaxHealth { get; private set; } = 5f;
         [field: SerializeField] public float DeathProcessTime { get; private set; } = 1.5f;
         [field: SerializeField] public float SpawnProcessTime { get; private set; } = 1f;
+        [field: SerializeField] public float DamageCooldown { get; private set; } = 0.5f;
     }
 
     [Serializable]

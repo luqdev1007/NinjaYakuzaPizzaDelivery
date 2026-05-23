@@ -281,6 +281,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // apply damage
                 .AddTakeDamageRequest()
                 .AddTakeDamageEvent()
+                .AddDamageCooldown(new ReactiveVariable<float>(config.LifeCycle.DamageCooldown))
+                .AddDamageCooldownTimer()
+
+                // attack effects
+                .AddAttackInvulnerabilityDuration(new ReactiveVariable<float>(config.Attack.InvulnerabilityDuration))
+                .AddAttackInvulnerabilityTimer()
+                .AddIsAttackInvulnerable()
 
                 // body contact
                 .AddContactsDetectingMask(config.ContactLayerMask)
@@ -572,8 +579,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
                 .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
-                // .Add(new FuncCondition(() => entity.IsAttackInvulnerable.Value == false))
-                // .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
+                .Add(new FuncCondition(() => entity.IsAttackInvulnerable.Value == false))
+                .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
 
@@ -648,12 +655,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new MeleeAttackHitSystem())
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem())
+                .AddSystem(new AttackInvulnerabilitySystem())
 
                 // juggle
                 .AddSystem(new AerialHitSuspensionSystem())
 
                  // apply damage
                 .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new ApplyDamageCooldownSystem())
 
                 // тело ниндзя - смертельное оружие, но пока нет...
                 .AddSystem(new BodyContactDetectingSystem())

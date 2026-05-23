@@ -25,6 +25,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         public ReactiveVariable<float> Value = new();
     }
 
+    public class IsAttackInvulnerable : IEntityComponent
+    {
+        public ReactiveVariable<bool> Value;
+    }
+
     public class GroundHitBounceModifiers : IEntityComponent
     {
         public ReactiveVariable<Vector2> Value = new();
