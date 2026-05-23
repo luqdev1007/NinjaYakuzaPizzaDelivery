@@ -1,23 +1,29 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
+using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.HitStop;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Attack
 {
     public class HitStopSystem : IInitializableSystem, IDisposableSystem
     {
         private readonly HitStopService _hitStopService;
+        private readonly CameraService _cameraService;
 
         private IDisposable _hitDisposable;
 
         private ReactiveVariable<float> _hitStopDuration;
         private ReactiveVariable<float> _hitStopScale;
 
-        public HitStopSystem(HitStopService hitStopService)
+        private float _nextAllowedHitStopTime;
+
+        public HitStopSystem(HitStopService hitStopService, CameraService cameraService)
         {
             _hitStopService = hitStopService;
+            _cameraService = cameraService;
         }
 
         public void OnInit(Entity entity)
@@ -30,7 +36,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Atta
 
         private void OnSuccessfulHit()
         {
-            _hitStopService.PlayHitStop(_hitStopDuration.Value, _hitStopScale.Value);
+            if (Time.unscaledTime < _nextAllowedHitStopTime)
+                return;
+
+            float duration = _hitStopDuration.Value;
+
+            _hitStopService.PlayHitStop(duration, _hitStopScale.Value);
+            _cameraService.GenerateHitShake(forceMultiplier: 100f);
+
+            _nextAllowedHitStopTime = Time.unscaledTime + (duration * 1.2f);
         }
 
         public void OnDispose()

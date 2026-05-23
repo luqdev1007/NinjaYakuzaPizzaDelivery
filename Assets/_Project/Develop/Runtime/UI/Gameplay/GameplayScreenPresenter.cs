@@ -73,6 +73,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
         private void OnRestartButtonClicked()
         {
+            _inputArgs.IsRestart = true;
             _coroutinesPerformer.StartPerform(_sceneSwitcherService.ProcessingSwitchTo(Scenes.Gameplay, _inputArgs));
             _walletService.RollbackSessionLoot();
         }

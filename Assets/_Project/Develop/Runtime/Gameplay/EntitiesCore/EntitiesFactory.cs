@@ -5,6 +5,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
+using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Combat.HitImpact;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Attack;
@@ -664,7 +665,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new AttackInvulnerabilitySystem())
 
                 // new
-                .AddSystem(new HitStopSystem(_container.Resolve<HitStopService>()))
+                .AddSystem(new HitStopSystem(_container.Resolve<HitStopService>(), _container.Resolve<CameraService>()))
 
                 // juggle
                 .AddSystem(new AerialHitSuspensionSystem())
