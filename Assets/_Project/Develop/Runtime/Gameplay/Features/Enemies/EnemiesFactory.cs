@@ -43,7 +43,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
                     throw new ArgumentException($"Not support {config.GetType()} type config");
             }
 
-            // entity.AddTeam(new ReactiveVariable<Teams>(Teams.Enemies)); 
+            entity.AddTeam(new ReactiveVariable<Teams>(Teams.Enemies)); 
 
             _entitiesLifeContext.Add(entity);
 

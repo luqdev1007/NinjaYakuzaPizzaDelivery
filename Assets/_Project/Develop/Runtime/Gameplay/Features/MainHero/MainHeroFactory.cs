@@ -36,9 +36,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 
             Entity entity = _entitiesFactory.CreateHero(at, config);
 
-            // entity
-                //.AddIsMainHero()
-                //.AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
+            entity
+                .AddIsMainHero()
+                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
 
             // entity.AddCurrentTarget();
             // _brainsFactory.CreateMainHeroBrain(entity, new NearestDamagableTargetSelector(entity));
@@ -46,11 +46,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             _entitiesLifeContext.Add(entity);
 
             return entity;
-        }
-
-        internal Entity Create(object startPlayerPosition)
-        {
-            throw new NotImplementedException();
         }
     }
 }
