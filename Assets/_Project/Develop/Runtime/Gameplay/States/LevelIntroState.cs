@@ -2,7 +2,8 @@
 using Assets._Project.Develop.Runtime.UI.Dialog;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilities.StateMachineCore;
-using Assets._Project.Develop.Runtime.Configs.Dialog; 
+using Assets._Project.Develop.Runtime.Configs.Dialog;
+using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
 {
@@ -13,6 +14,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
         private readonly GameplayUIRoot _uiRoot;
         private readonly DialogConfig _dialogConfig;
 
+        private readonly bool _isRestart; // <-- ДОБАВЛЯЕМ ПОЛЕ
+
         private DialogPresenter _activeDialog;
         private bool _isFinished;
 
@@ -22,18 +25,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
             CameraService cameraService,
             GameplayPopupService popupService,
             GameplayUIRoot uiRoot,
-            DialogConfig dialogConfig)
+            DialogConfig dialogConfig,
+            bool isRestart)
         {
             _cameraService = cameraService;
             _popupService = popupService;
             _uiRoot = uiRoot;
             _dialogConfig = dialogConfig;
+            _isRestart = isRestart;
         }
 
         public override void Enter()
         {
             base.Enter();
             _isFinished = false;
+
+            if (_isRestart)
+            {
+                _isFinished = true;
+                return;
+            }
 
             _uiRoot.HUDLayer.gameObject.SetActive(false);
             _cameraService.SetState(CameraState.Intro);

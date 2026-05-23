@@ -42,6 +42,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
             _isConfirmed = false;
             _cameraService.SetState(CameraState.Scouting);
 
+            _inputService.IsEnabled = true;
 
             _activeHint = _popupService.OpenHint("WASD - Move, Wheel - Zoom, Shift - Boost\nPress 'T' to start");
             _activeHint.Initialize();

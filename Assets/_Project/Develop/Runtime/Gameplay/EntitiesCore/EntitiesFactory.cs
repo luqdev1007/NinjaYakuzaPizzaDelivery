@@ -659,7 +659,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new BodyContactDetectingSystem())
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
                  // .AddSystem(new DealDamageOnContactSystem())
-                 .AddSystem(new DisableCollidersOnDeathSystem())
 
                 // visual
                 .AddSystem(new FlipDirectionSystem()) 

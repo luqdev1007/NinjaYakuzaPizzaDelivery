@@ -101913,7 +101913,6 @@ GameObject:
   - component: {fileID: 4920776052621911356}
   - component: {fileID: 1212244869872948565}
   - component: {fileID: 6996375318809973891}
-  - component: {fileID: 2052377712838809165}
   m_Layer: 7
   m_Name: MainHero
   m_TagString: Untagged
@@ -102055,20 +102054,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1ca2dd0aa1637e48abea4b738e80510, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2052377712838809165
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7466669898929897691}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb669c786e0b3444987394de19f9f8d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _colliders:
-  - {fileID: 3123669723753026670}
 --- !u!1 &7568106816534246865
 GameObject:
   m_ObjectHideFlags: 0
