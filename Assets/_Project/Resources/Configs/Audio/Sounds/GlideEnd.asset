@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GlideEnd
   m_EditorClassIdentifier: 
   Key: GlideEnd
-  Volume: 0.245
+  Volume: 0.173
   Group: {fileID: -3705572875233171632, guid: 07979af4c966f0b4e82620b1c1202d9d, type: 2}
   Clips:
   - {fileID: 8300000, guid: c255035ed0e9a2a46aa10963493d6a3f, type: 3}

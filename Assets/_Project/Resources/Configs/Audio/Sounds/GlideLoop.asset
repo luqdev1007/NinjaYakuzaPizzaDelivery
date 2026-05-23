@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GlideLoop
   m_EditorClassIdentifier: 
   Key: GlideLoop
-  Volume: 0.149
+  Volume: 0.126
   Group: {fileID: -3705572875233171632, guid: 07979af4c966f0b4e82620b1c1202d9d, type: 2}
   Clips:
   - {fileID: 8300000, guid: a1ad270a82b5d8c49b8f56710d81ae00, type: 3}

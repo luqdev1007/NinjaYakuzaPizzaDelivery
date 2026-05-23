@@ -24,7 +24,7 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         private bool _isHolding;
         private bool _isEnding;
 
-        private const float SkipHoldDuration = 1.2f;
+        private const float SkipHoldDuration = 0.6f;
 
         public DialogPresenter(
             DialogDisplayView view,

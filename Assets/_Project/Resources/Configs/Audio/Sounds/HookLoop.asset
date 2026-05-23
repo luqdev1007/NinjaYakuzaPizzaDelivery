@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: HookLoop
   m_EditorClassIdentifier: 
   Key: HookLoop
-  Volume: 1
+  Volume: 0.118
   Group: {fileID: -3705572875233171632, guid: 07979af4c966f0b4e82620b1c1202d9d, type: 2}
   Clips:
   - {fileID: 8300000, guid: 9ed6e0135073fbe44bb9d18e0c490bc4, type: 3}

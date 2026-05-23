@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: HookShoot
   m_EditorClassIdentifier: 
   Key: HookShoot
-  Volume: 1
+  Volume: 0.118
   Group: {fileID: -3705572875233171632, guid: 07979af4c966f0b4e82620b1c1202d9d, type: 2}
   Clips:
   - {fileID: 8300000, guid: d183683fdc2885a42a3220abd9edf767, type: 3}

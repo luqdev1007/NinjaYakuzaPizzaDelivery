@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: HookBreak
   m_EditorClassIdentifier: 
   Key: HookBreak
-  Volume: 1
+  Volume: 0.165
   Group: {fileID: -3705572875233171632, guid: 07979af4c966f0b4e82620b1c1202d9d, type: 2}
   Clips:
   - {fileID: 8300000, guid: 83e7ea37000300547885d3199cb3e26f, type: 3}

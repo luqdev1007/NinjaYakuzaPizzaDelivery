@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GlideStart
   m_EditorClassIdentifier: 
   Key: GlideStart
-  Volume: 0.171
+  Volume: 0.11
   Group: {fileID: -3705572875233171632, guid: 07979af4c966f0b4e82620b1c1202d9d, type: 2}
   Clips:
   - {fileID: 8300000, guid: c2a9d3840fc78ce48a3a02e36183244b, type: 3}
