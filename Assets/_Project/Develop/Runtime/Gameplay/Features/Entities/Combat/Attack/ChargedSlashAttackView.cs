@@ -23,15 +23,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         [SerializeField] private float _minEmissionRate = 5f;
         [SerializeField] private float _maxEmissionRate = 100f;
 
-        [Header("SFX Keys")]
+        [Header("SFX Keys & Settings")]
         [SerializeField] private string _chargeStartSfxKey = "ChargeStart";
         [SerializeField] private string _chargeShootSfxKey = "ChargeShoot";
+
+        [Tooltip("Задержка перед воспроизведением звука чарджа, чтобы отсечь микроклики")]
+        [SerializeField] private float _chargeSfxDelay = 0.15f;
 
         private IReadOnlyVariable<float> _chargeSlashAttackCurrentTimer;
         private IReadOnlyVariable<float> _chargeSlashAttackRequiredTimer;
 
         private IAudioService _audioService;
         private bool _isCharging;
+        private bool _hasPlayedChargeSfx;
 
         private IDisposable _isChargingDisposable;
         private IDisposable _spawnSlashDisposable;
@@ -61,6 +65,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
                 float progress = requiredTimer > 0f ? Mathf.Clamp01(currentTimer / requiredTimer) : 1f;
 
                 UpdateChargeEmission(progress);
+
+                if (!_hasPlayedChargeSfx && currentTimer >= _chargeSfxDelay)
+                {
+                    _audioService?.PlaySfx(_chargeStartSfxKey, transform.position);
+                    _hasPlayedChargeSfx = true;
+                }
             }
         }
 
@@ -70,9 +80,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
             if (current)
             {
+                _hasPlayedChargeSfx = false; 
                 UpdateChargeEmission(0f);
                 _chargingVfx.Play();
-                _audioService?.PlaySfx(_chargeStartSfxKey, transform.position);
             }
             else
             {
@@ -104,6 +114,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             _spawnSlashDisposable?.Dispose();
 
             _isCharging = false;
+            _hasPlayedChargeSfx = false;
             _chargingVfx.Stop();
         }
     }
