@@ -44,6 +44,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 78a1089d093779346bff348ffbf57177, type: 2}
   - {fileID: 11400000, guid: e7faa6d137f385e44b87a18db96337aa, type: 2}
   - {fileID: 11400000, guid: 86f1be427cfbeba47970013613b0ad3a, type: 2}
+  - {fileID: 11400000, guid: 5c20f976dc262fb478d9f471584b702a, type: 2}
   Musics: []
   Playlists:
   - {fileID: 11400000, guid: da7b10a3442f927479af57185bff26b7, type: 2}

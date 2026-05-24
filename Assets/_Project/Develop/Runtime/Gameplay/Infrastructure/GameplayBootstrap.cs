@@ -37,9 +37,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             }
 
             _inputArgs = gameplayInputArgs;
-
-            // Раньше здесь вызывался GameplayContextRegistrations.Process с null. 
-            // ТЕПЕРЬ МЫ ЭТОГО НЕ ДЕЛАЕМ.
         }
 
         public override IEnumerator Initialize()
@@ -48,6 +45,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             LevelConfig levelConfig = configsProvider.GetConfig<LevelsListConfig>().GetBy(_inputArgs.LevelNumber);
 
             GameObject levelHolder = GameObject.FindWithTag("LevelHolder");
+
             if (levelHolder == null)
                 throw new NullReferenceException("LevelHolder not found");
 
@@ -72,15 +70,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             // 6. Спавним начальных сущностей
             var enemiesFactory = _container.Resolve<EnemiesFactory>();
-            var lootFactory = _container.Resolve<LootFactory>();
 
             foreach (var enemyData in _sceneContext.Enemies)
                 enemiesFactory.Create(enemyData.Position, enemyData.Config);
-
-            /*
-            foreach (var chestPos in _sceneContext.Chests)
-                lootFactory.CreateSecretChest(chestPos);
-            */
 
             yield break;
         }
@@ -89,10 +81,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         {
             IAudioService audioService = _container.Resolve<IAudioService>();
 
-            // Можно брать ключ прямо из конфига уровня, если добавишь туда поле string MusicKey
-            // audioService.PlayMusic(levelConfig.MusicKey); 
-
-            audioService.PlayPlaylist("Gameplay_Playlist");
+            if (_inputArgs.IsRestart == false)
+                audioService.PlayPlaylist("Gameplay_Playlist");
 
             _gameplayStatesContext.Run();
         }

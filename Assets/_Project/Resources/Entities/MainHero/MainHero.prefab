@@ -59827,6 +59827,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 1274124274879070163}
+  _deathSfxKey: MainHeroDeath
 --- !u!114 &2668767352308528835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60163,6 +60164,7 @@ MonoBehaviour:
   _maxEmissionRate: 100
   _chargeStartSfxKey: ChargeStart
   _chargeShootSfxKey: ChargeShoot
+  _chargeSfxDelay: 0.15
 --- !u!1 &2305303809177581567
 GameObject:
   m_ObjectHideFlags: 0
