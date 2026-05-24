@@ -42,7 +42,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Atta
             float duration = _hitStopDuration.Value;
 
             _hitStopService.PlayHitStop(duration, _hitStopScale.Value);
-            _cameraService.GenerateHitShake(forceMultiplier: 100f);
+            _cameraService.GenerateHitShake(forceMultiplier: 2f);
 
             _nextAllowedHitStopTime = Time.unscaledTime + (duration * 1.2f);
         }
