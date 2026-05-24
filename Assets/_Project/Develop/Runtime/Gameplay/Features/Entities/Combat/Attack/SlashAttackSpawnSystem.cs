@@ -14,6 +14,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private Transform _shootPoint;
         private Entity _owner;
 
+        private Rigidbody2D _rigidbody;
+
+        private ReactiveVariable<Vector2> _recoilForce;
+
         private IDisposable _disposable;
 
         public SlashAttackSpawnSystem(ProjectileFactory projectileFactory)
@@ -25,12 +29,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         {
             _owner = entity;
             _shootPoint = entity.ShootPoint;
+
+            _rigidbody = entity.Rigidbody;
+            _recoilForce = entity.RecoilForce;
+
             _disposable = entity.SpawnChargedSlashAtackEvent.Subscribe(SpawnSlashProjectile);
         }
 
         private void SpawnSlashProjectile()
         {
             _projectileFactory.CreateChargedSlashProjectile(_shootPoint, _owner);
+            ApplyRecoil();
+        }
+
+        private void ApplyRecoil()
+        {
+            float lookDir = _owner.LookDirectionX.Value;
+
+            Vector2 recoilForce = new Vector2(-lookDir * _recoilForce.Value.x, _recoilForce.Value.y);
+
+            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocityX, 0f);
+            _rigidbody.AddForce(recoilForce, ForceMode2D.Impulse);
         }
 
         public void OnDispose()

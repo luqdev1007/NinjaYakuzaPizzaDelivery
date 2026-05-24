@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
+    public class RecoilForce : IEntityComponent
+    {
+        public ReactiveVariable<Vector2> Value;
+    }
+
     public class ChargeSlashAttackRequiredTimer : IEntityComponent
     {
         public ReactiveVariable<float> Value;

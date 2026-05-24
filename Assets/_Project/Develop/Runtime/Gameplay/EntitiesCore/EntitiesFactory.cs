@@ -240,6 +240,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddAttackHitStopScale(new ReactiveVariable<float>(config.Attack.HitStopScale))
 
                 // charged slash attack
+                .AddRecoilForce(new ReactiveVariable<Vector2>(config.Attack.RecoilForce))
                 .AddIsChargingSlashAttack()
                 .AddSpawnChargedSlashAtackEvent()
                 .AddChargeSlashAttackCurrentTimer()

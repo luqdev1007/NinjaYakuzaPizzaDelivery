@@ -173,6 +173,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField, Range(0f, 0.5f)] public float HitStopDuration { get; private set; } = 0.15f;
         [field: SerializeField] public Vector2 AttackKnockback { get; private set; } = new Vector2(1f, 2f);
         [field: SerializeField] public Vector2 AerialHangForce { get; private set; } = new Vector2(1f, 4);
+        [field: SerializeField] public Vector2 RecoilForce { get; private set; } = new Vector2(10f, 20f);
         [field: SerializeField, Range(0f, 100f)] public float DoubleAttackChance { get; private set; } = 45f;
         [field: SerializeField] public float DoubleAttackCooldown { get; private set; } = 0.2f;
         [field: SerializeField] public float SlashAttackChargeRequiredTime { get; private set; } = 0.2f;
