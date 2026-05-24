@@ -16,7 +16,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         private IReadOnlyVariable<bool> _isMoving;
 
         private IDisposable _isMovingChangedDisposable;
-
+        
         private void OnValidate()
         {
             _animator ??= GetComponent<Animator>();

@@ -9,24 +9,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
 {
     public class ExtraJumpSystem : IInitializableSystem, IUpdatableSystem
     {
-        private ICompositeCondition _canJump;
+        private ICompositeCondition _canExtraJump;
 
         private ReactiveVariable<bool> _intentJump;
 
         private ReactiveVariable<float> _jumpForce;
         private ReactiveVariable<float> _jumpForceMax;
-
-        private ReactiveVariable<int> _maxExtraJumps;
-        private ReactiveVariable<int> _extraJumpsAvailable;
-
+        private ReactiveVariable<float> _jumpChargeTime;
         private ReactiveVariable<float> _airJumpMultiplier;
+        private ReactiveVariable<int> _extraJumpsAvailable;
 
         private Rigidbody2D _rigidbody;
 
-        // extras
-        private bool _isCharging;
-        private ReactiveVariable<float> _jumpChargeTime;
         private float _chargeTimer;
+        private bool _isCharging;
         private bool _wasJumpIntendedLastFrame;
 
         private float _jumpBufferTimer;
@@ -34,19 +30,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
 
         public void OnInit(Entity entity)
         {
-            _canJump = entity.CanJump;
+            _canExtraJump = entity.CanExtraJump;
 
             _intentJump = entity.IntentJump;
 
             _jumpForce = entity.JumpForce;
             _jumpForceMax = entity.JumpForceMax;
+            _jumpChargeTime = entity.JumpChargeTime;
 
             _airJumpMultiplier = entity.AirJumpMultiplier;
-
-                /*
-            _maxExtraJumps = entity.MaxExtraJumps;
             _extraJumpsAvailable = entity.ExtraJumpsAvailable;
-                */
 
             _rigidbody = entity.Rigidbody;
         }
@@ -64,12 +57,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
             else
                 _jumpBufferTimer -= deltaTime;
 
-            Debug.Log("canJump is" + _canJump.Evaluate());
-
-            if (_jumpBufferTimer > 0 && _canJump.Evaluate() && !_isCharging)
+            if (_jumpBufferTimer > 0 && _canExtraJump.Evaluate() && !_isCharging)
             {
                 _isCharging = true;
-                Debug.Log("charging is true");
                 _chargeTimer = 0;
                 _jumpBufferTimer = 0;
             }
@@ -77,7 +67,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
             if (_isCharging && isJumpIntented)
             {
                 _chargeTimer = Mathf.Min(_chargeTimer + deltaTime, _jumpChargeTime.Value);
-                Debug.Log("charge timer is" + _chargeTimer);
             }
 
             if (_isCharging && isJumpReleased)
@@ -92,12 +81,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
             float verticalForce = Mathf.Lerp(_jumpForce.Value, _jumpForceMax.Value, chargeRatio);
 
             _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, 0f);
-            _rigidbody.AddForce(Vector2.up * verticalForce, ForceMode2D.Impulse);
+            _rigidbody.AddForce(Vector2.up * verticalForce * _airJumpMultiplier.Value, ForceMode2D.Impulse);
 
             _extraJumpsAvailable.Value--;
+            Debug.Log("extra jump");
 
             _isCharging = false;
-            Debug.Log("ExtraJumpExecuted");
         }
     }
 }

@@ -21,17 +21,17 @@ MonoBehaviour:
   <JumpForceBase>k__BackingField: 10
   <JumpForceMax>k__BackingField: 20
   <JumpChargeTime>k__BackingField: 0.3
-  <DashForceMin>k__BackingField: 20
-  <DashForceMax>k__BackingField: 30
+  <DashForceMin>k__BackingField: 50
+  <DashForceMax>k__BackingField: 80
   <DashChargeTime>k__BackingField: 0.3
-  <DashCooldown>k__BackingField: 2
+  <DashCooldown>k__BackingField: 1
   <DashDuration>k__BackingField: 0.25
   <AirDashMultiplier>k__BackingField: 1
   <AirDashVerticalBoost>k__BackingField: 2
   <DashDamage>k__BackingField: 0
   <DashHitboxSize>k__BackingField: {x: 0, y: 0}
   <SlideDuration>k__BackingField: 0.2
-  <SlideSpeed>k__BackingField: 15
+  <SlideSpeed>k__BackingField: 35
   <GroundMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 256

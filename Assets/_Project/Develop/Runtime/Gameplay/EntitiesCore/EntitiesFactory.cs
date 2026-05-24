@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
@@ -60,6 +61,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // jump
                 .AddMaxExtraJumps(new ReactiveVariable<int>(config.MaxExtraJumps))
                 .AddExtraJumpsAvailable(new ReactiveVariable<int>(config.MaxExtraJumps))
+                .AddAirJumpMultiplier(new ReactiveVariable<float>(config.AirJumpMultiplier))
                 .AddJumpForce(new ReactiveVariable<float>(config.JumpForceBase))
                 .AddJumpForceMax(new ReactiveVariable<float>(config.JumpForceMax))
                 .AddJumpChargeTime(new ReactiveVariable<float>(config.JumpChargeTime))
@@ -121,9 +123,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                     .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
                     .Add(new FuncCondition(() => entity.MinFallVelocityForAction.Value < entity.Rigidbody.linearVelocityY))
                     .Add(new FuncCondition(() => entity.IsSliding.Value == false))
+                    .Add(new FuncCondition(() => entity.ExtraJumpsAvailable.Value > 0))
                     ;
 
-                entity.AddCanExtraJump(canJump);
+                entity.AddCanExtraJump(canExtraJump);
 
                 // dash condition
                 ICompositeCondition canDash = new CompositeCondition()
@@ -146,15 +149,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // must restore extra jumps conditions
                 ICompositeCondition mustRestoreExtraJumps = new CompositeCondition()
                     .Add(new FuncCondition(() => entity.IsGrounded.Value == true))
-                    .Add(new FuncCondition(() => entity.ExtraJumpsAvailable.Value != entity.MaxExtraJumps.Value))
+                    .Add(new FuncCondition(() => entity.ExtraJumpsAvailable.Value < entity.MaxExtraJumps.Value))
                     ;
-                entity.AddMustRestoreExtraJumps(mustRestoreExtraJumps);
 
-                // glide condition
-                ICompositeCondition canGlide = new CompositeCondition()
-                    .Add(new FuncCondition(() => entity.IsGrounded.Value == false))
-                    ;
-                entity.AddCanGlide(canGlide);
+                entity.AddMustRestoreExtraJumps(mustRestoreExtraJumps);
 
                 // systems
                 entity
@@ -163,7 +161,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                     .AddSystem(new RigidbodyMovementSystem())
                     .AddSystem(new JumpSystem())
                     .AddSystem(new SlideSystem(coroutinesPerformer))
-                    // .AddSystem(new DashSystem(coroutinesPerformer))
+                    .AddSystem(new ExtraJumpSystem())
+                    .AddSystem(new RestoreExtraJumpsSystem())
+                    .AddSystem(new FlipDirectionSystem())
+                    .AddSystem(new DashSystem(coroutinesPerformer))
             ;
 
             return entity;

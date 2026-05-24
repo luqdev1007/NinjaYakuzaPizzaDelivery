@@ -14,10 +14,9 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 {
-    public class DashSystem : IInitializableSystem, IUpdatableSystem, IDisposableSystem
+    public class DashSystem : IInitializableSystem, IUpdatableSystem
     {
         private readonly ICoroutinesPerformer _coroutinesPerformer;
-        private LayerMask _enemyMask;
 
         private ICompositeCondition _canDash;
 
@@ -32,13 +31,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
         private ReactiveVariable<float> _dashDuration;
 
         private ReactiveVariable<bool> _intentDash;
-        private bool _wasDashIntendedLastFrame;
 
         private ReactiveVariable<float> _airDashMultiplier;
         private ReactiveVariable<float> _airDashVerticalBoost;
-
-        private ReactiveVariable<float> _dashDamage;
-        private ReactiveVariable<Vector2> _dashHitboxSize;
 
         private Rigidbody2D _rigidbody;
         private Transform _transform;
@@ -47,6 +42,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
         private float _cooldownTimer;
         private float _dashBufferTimer;
         private bool _isCharging;
+        private bool _wasDashIntendedLastFrame;
 
         private const float DashBufferTime = 0.1f;
 
@@ -57,8 +53,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 
         public void OnInit(Entity entity)
         {
-            _enemyMask = LayersAPI.LayerMaskEnemies;
-
             _canDash = entity.CanDash;
             _isDashing = entity.IsDashing;
             _isGrounded = entity.IsGrounded;
@@ -73,9 +67,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
 
             _airDashMultiplier = entity.AirDashMultiplier;
             _airDashVerticalBoost = entity.AirDashVerticalBoost;
-
-            _dashDamage = entity.DashDamage;
-            _dashHitboxSize = entity.DashHitboxSize;
 
             _intentDash = entity.IntentDash;
 
@@ -129,7 +120,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
             float duration = _dashDuration.Value;
             float gravityScale = _rigidbody.gravityScale;
 
-            _rigidbody.gravityScale = 0f;
+            //_rigidbody.gravityScale = 0f;
 
             if (inAir)
                 _rigidbody.linearVelocity = new Vector2(
@@ -154,13 +145,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DashFeature
             }
 
             _rigidbody.linearVelocity = new Vector2(0f, _rigidbody.linearVelocity.y);
-            _rigidbody.gravityScale = gravityScale;
+            //_rigidbody.gravityScale = gravityScale;
             _isDashing.Value = false;
-        }
-
-        public void OnDispose()
-        {
-            throw new NotImplementedException();
         }
     }
 }

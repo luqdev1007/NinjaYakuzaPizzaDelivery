@@ -26,10 +26,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JumpFeature
         {
             if (_mustRestoreExtraJumps.Evaluate())
             {
-                Debug.Log("Restoring Jumps");
-                Debug.Log("Available Jumps was " + _extraJumpsAvailable.Value);
                 _extraJumpsAvailable.Value = _maxExtraJumps.Value;
-                Debug.Log("Available Jumps now is " + _extraJumpsAvailable.Value + ", which is the maximum");
             }
         }
     }
