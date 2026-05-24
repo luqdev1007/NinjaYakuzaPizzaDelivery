@@ -6,6 +6,10 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 {
+    public class LifeTime : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
 
     public class HealthBarPoint : IEntityComponent
     {

@@ -1,25 +1,24 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 {
-    public class AutoDeleteTimerSystem : IInitializableSystem, IUpdatableSystem
+    public class TimedLifeTimeSystem : IInitializableSystem, IUpdatableSystem
     {
-        private Entity _entity;
+        private ReactiveVariable<float> _lifeTime;
 
         public void OnInit(Entity entity)
         {
-            _entity = entity;
+            _lifeTime = entity.LifeTime;
         }
 
         public void OnUpdate(float deltaTime)
         {
-            /*
-            if (_entity.AutoDeleteCurrentTime.Value > 0)
+            if (_lifeTime.Value > 0)
             {
-                _entity.AutoDeleteCurrentTime.Value -= deltaTime;
+                _lifeTime.Value -= deltaTime;
             }
-            */
         }
     }
 }

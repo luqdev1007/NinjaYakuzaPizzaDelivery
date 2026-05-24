@@ -12,6 +12,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LevelResultsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
@@ -61,6 +62,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateMainHeroFactory);
             container.RegisterAsSingle(CreateEnemiesFactory);
             container.RegisterAsSingle(CreateStagesFactory);
+            container.RegisterAsSingle(CreateProjectileFactory);
 
             // Level Systems
             container.RegisterAsSingle(CreateStageProviderService);
@@ -86,6 +88,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateCameraService);
         }
 
+        private static ProjectileFactory CreateProjectileFactory(DIContainer container)
+        {
+            return new ProjectileFactory(container);
+        }
 
         private static HitStopService CreateHitStopService(DIContainer container)
         {

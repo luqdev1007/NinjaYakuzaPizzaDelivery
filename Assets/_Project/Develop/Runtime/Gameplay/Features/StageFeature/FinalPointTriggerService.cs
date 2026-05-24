@@ -36,7 +36,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
 
             FinalPointPosition = at;
             _nextStageTrigger = _entitiesFactory.CreateContactTrigger(at);
-            // _nextStageTriggerContacts = _nextStageTrigger.ContactEntitiesBuffer;
+            _nextStageTriggerContacts = _nextStageTrigger.ContactEntitiesBuffer;
         }
 
         public void Update(float deltaTime)
@@ -63,11 +63,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
             if (_nextStageTrigger == null)
                 return;
 
-            /*
             Transform view = _nextStageTrigger.Transform.Find("View");
+
             if (view != null)
                 view.SetParent(null);
-            */
 
             _entitiesLifeContext.Release(_nextStageTrigger);
 

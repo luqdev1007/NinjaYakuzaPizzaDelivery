@@ -108,6 +108,9 @@ MonoBehaviour:
     <HitStopDuration>k__BackingField: 0.15
     <AttackKnockback>k__BackingField: {x: 6, y: 8}
     <AerialHangForce>k__BackingField: {x: 4, y: 8}
+    <DoubleAttackChance>k__BackingField: 50.9
+    <DoubleAttackCooldown>k__BackingField: 1
+    <SlashAttackChargeRequiredTime>k__BackingField: 0.5
   <LifeCycle>k__BackingField:
     <MaxHealth>k__BackingField: 5
     <DeathProcessTime>k__BackingField: 1.5

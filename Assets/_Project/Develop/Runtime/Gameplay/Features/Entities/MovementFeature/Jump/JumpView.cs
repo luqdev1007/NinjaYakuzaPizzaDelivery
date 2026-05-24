@@ -45,8 +45,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _jumpDustPS?.Play();
 
             _audioService?.PlaySfx(_jumpSfxKey, transform.position);
-
-            Debug.Log("On jump!");
         }
 
         private void OnGroundedChanged(bool oldValue, bool value)

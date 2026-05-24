@@ -61,12 +61,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private bool ApplyDamage(Entity target, Vector2 position)
         {
-            /*
-            // Если цель мертва или в процессе смерти, то не считаем это за успешный хит
-            if (target.HasComponent<IsDead>() && target.IsDead.Value)
-                return false;
-            */
-
             if (target.HasComponent<TakeDamageRequest>())
             {
                 float direction = Mathf.Abs(_entity.Transform.localRotation.eulerAngles.y - 180f) < 1f ? -1f : 1f;
@@ -79,7 +73,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
                     KnockbackForce = appliedKnockback
                 };
 
-                target.TakeDamageRequest.Invoke(damageData);
+                target.TakeDamageRequest.Invoke(damageData); 
                 return true; 
             }
 

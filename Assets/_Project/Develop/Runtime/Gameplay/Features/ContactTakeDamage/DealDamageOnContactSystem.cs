@@ -12,7 +12,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage
         private Entity _entity;
         private Buffer<Entity> _contacts;
         private ReactiveVariable<float> _baseDamage;
-        private Rigidbody2D _rigidbody;
 
         private List<Entity> _processedEntities;
 
@@ -21,17 +20,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage
             _entity = entity;
             _contacts = entity.ContactEntitiesBuffer;
             _baseDamage = entity.BodyContactDamage;
-            _rigidbody = entity.Rigidbody;
 
             _processedEntities = new List<Entity>(_contacts.Items.Length);
         }
 
         public void OnUpdate(float deltaTime)
         {
-            float currentSpeed = _rigidbody.linearVelocity.magnitude;
-            float velocityMultiplier = Mathf.Max(1f, currentSpeed * 0.1f);
-            float finalDamage = _baseDamage.Value * velocityMultiplier;
-
             for (int i = 0; i < _contacts.Count; i++)
             {
                 Entity contactEntity = _contacts.Items[i];
@@ -40,7 +34,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage
                 {
                     _processedEntities.Add(contactEntity);
 
-                    // EntitiesHelper.TryTakeDamageFrom(_entity, contactEntity, finalDamage);
                     EntitiesHelper.TryTakeDamageFrom(_entity, contactEntity, _entity.BodyContactDamage.Value);
                 }
             }

@@ -23,6 +23,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.HitStop;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Visual;
@@ -59,70 +60,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _coroutinesPerformer = container.Resolve<ICoroutinesPerformer>();
         }
 
-        // ecs projectile example
-        /*
-        public Entity CreateProjectile(Vector3 position, Vector3 direction, float damage, Entity owner)
-        {
-            Entity entity = CreateEmpty();
-
-            _monoEntitiesFactory.Create(entity, position, "Entities/Projectile");
-
-            entity
-                .AddIsProjectile()
-                .AddOwner(new ReactiveVariable<Entity>(owner))
-                .AddMoveDirection(new ReactiveVariable<Vector3>(direction))
-                .AddMoveSpeed(new ReactiveVariable<float>(25))
-                .AddIsMoving()
-                .AddRotationDirection(new ReactiveVariable<Vector3>(direction))
-                .AddRotationSpeed(new ReactiveVariable<float>(9999))
-                .AddIsDead()
-                .AddContactsDetectingMask(Layers.CharactersMask | Layers.EnviromentMask)
-                .AddContactCollidersBuffer(new Buffer<Collider>(64))
-                .AddContactEntitiesBuffer(new Buffer<Entity>(64))
-                .AddBodyContactDamage(new ReactiveVariable<float>(damage))
-                .AddDeathMask(Layers.EnviromentMask)
-                .AddIsTouchDeathMask()
-                .AddIsTouchAnotherTeam()
-                .AddTeam(new ReactiveVariable<Teams>(owner.Team.Value));
-
-            ICompositeCondition canMove = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false));
-
-            ICompositeCondition canRotate = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false));
-
-            ICompositeCondition mustDie = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsTouchDeathMask.Value), 0)
-                .Add(new FuncCondition(() => entity.IsTouchAnotherTeam.Value), 10, LogicOperations.Or);
-
-            ICompositeCondition mustSelfRelease = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value));
-
-            entity
-                .AddCanMove(canMove)
-                .AddCanRotate(canRotate)
-                .AddMustDie(mustDie)
-                .AddMustSelfRelease(mustSelfRelease);
-
-            entity
-                .AddSystem(new RigidbodyMovementSystem())
-                .AddSystem(new RigidbodyRotationSystem())
-                .AddSystem(new BodyContactsDetectingSystem())
-                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
-                .AddSystem(new DealDamageOnContactSystem())
-                .AddSystem(new DeathMaskTouchDetectorSystem())
-                .AddSystem(new AnotherTeamTouchDetectorSystem())
-                .AddSystem(new DeathSystem())
-                .AddSystem(new DisableCollidersOnDeathSystem())
-                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
-
-            _entitiesLifeContext.Add(entity);
-
-            return entity;
-        }
-        */
-
-        // HERO 
+        // HERO
         public Entity CreateHero(Vector3 position, MainHeroConfig config)
         {
             Entity entity = CreateEmpty();
@@ -292,181 +230,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddAttackInvulnerabilityTimer()
                 .AddIsAttackInvulnerable()
 
-                // new hit stop
+                // double attack
+                .AddDoubleAttackChance(new ReactiveVariable<float>(config.Attack.DoubleAttackChance))
+                .AddDoubleAttackCurrentCooldown()
+                .AddDoubleAttackInitialCooldown(new ReactiveVariable<float>(config.Attack.DoubleAttackCooldown))
+
+                // attack hit stop
                 .AddAttackHitStopDuration(new ReactiveVariable<float>(config.Attack.HitStopDuration))
                 .AddAttackHitStopScale(new ReactiveVariable<float>(config.Attack.HitStopScale))
+
+                // charged slash attack
+                .AddIsChargingSlashAttack()
+                .AddSpawnChargedSlashAtackEvent()
+                .AddChargeSlashAttackCurrentTimer()
+                .AddChargeSlashAttackRequiredTimer(new ReactiveVariable<float>(config.Attack.SlashAttackChargeRequiredTime))
 
                 // body contact
                 .AddContactsDetectingMask(config.ContactLayerMask)
                 .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
                 .AddContactEntitiesBuffer(new Buffer<Entity>(16))
                 ;
-
-            /*
-            entity
-                // — общее —
-                .AddMinFallVelocityForAction(new ReactiveVariable<float>(config.FallVelocityThreshold))
-                .AddIsGrounded()
-                .AddAudio(_container.Resolve<AudioService>())
-                .AddGroundMask(config.GroundMask)
-
-                // — движение —
-                .AddMoveDirection()
-                .AddMoveSpeed(new ReactiveVariable<float>(config.Movement.MoveSpeed))
-                .AddMoveSpeedMin(new ReactiveVariable<float>(config.Movement.MoveSpeedMin))
-                .AddAcceleration(new ReactiveVariable<float>(config.Movement.Acceleration))
-                .AddDeceleration(new ReactiveVariable<float>(config.Movement.Deceleration))
-                .AddIsMoving()
-
-                // — прыжок —
-                .AddJumpForce(new ReactiveVariable<float>(config.Jump.JumpForce))
-                .AddJumpForceMax(new ReactiveVariable<float>(config.Jump.JumpForceMax))
-                .AddJumpChargeTime(new ReactiveVariable<float>(config.Jump.JumpChargeTime))
-                .AddJumpsAvailable(new ReactiveVariable<int>(config.Jump.ExtraJumpsCount))
-                .AddMaxJumps(new ReactiveVariable<int>(config.Jump.ExtraJumpsCount))
-                .AddJumpEvent()
-                .AddDoubleJumpEvent()
-
-                // body contact
-                .AddBodyContactDamage(new ReactiveVariable<float>(config.BaseBodyContactDamage))
-                .AddContactsDetectingMask(LayersAPI.LayerMaskCharacters)
-                .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
-                .AddContactEntitiesBuffer(new Buffer<Entity>(16))
-
-                // wall jump params
-                .AddWallJumpLockTimer(new ReactiveVariable<float>(0f))
-                .AddIsWallJumping(new ReactiveVariable<bool>(false))
-                .AddWallJumpParams(
-                    config.WallJump.VelocityYAbs,
-                    config.WallJump.JumpForce,
-                    config.WallJump.ControlLockDuration
-                )
-
-                // — рывок —
-                .AddIsDashing()
-                .AddDashForceMin(new ReactiveVariable<float>(config.Dash.ForceMin))
-                .AddDashForceMax(new ReactiveVariable<float>(config.Dash.ForceMax))
-                .AddDashChargeTime(new ReactiveVariable<float>(config.Dash.ChargeTime))
-                .AddDashCooldown(new ReactiveVariable<float>(config.Dash.Cooldown))
-                .AddDashDuration(new ReactiveVariable<float>(config.Dash.Duration))
-                .AddAirDashMultiplier(new ReactiveVariable<float>(config.Dash.AirMultiplier))
-                .AddAirDashVerticalBoost(new ReactiveVariable<float>(config.Dash.VerticalBoost))
-                .AddDashDamage(new ReactiveVariable<float>(config.Dash.Damage))
-                .AddDashHitboxSize(new ReactiveVariable<Vector2>(config.Dash.HitboxSize))
-
-                .AddCometDashState(
-                    cometConfig,
-                    new ReactiveVariable<int>(3),
-                    new ReactiveVariable<float>(1f),
-                    new ReactiveVariable<float>(0f)
-                )
-
-                // — планирование —
-                .AddIsGliding()
-                .AddGlideCounterMultiplier(new ReactiveVariable<float>(config.Glide.CounterForceMultiplier))
-                .AddGlideHorizontalDrag(new ReactiveVariable<float>(config.Glide.HorizontalDrag))
-                .AddGlideMaxFallSpeed(new ReactiveVariable<float>(config.Glide.MaxFallSpeed))
-                .AddGlideSpeedDamping(new ReactiveVariable<float>(config.Glide.SpeedDamping))
-                .AddGlideBounceForce(new ReactiveVariable<float>(config.Glide.BounceForce))
-                .AddGlideSnapSpeed(new ReactiveVariable<float>(config.Glide.SnapSpeed))
-                .AddGlideSnapDuration(new ReactiveVariable<float>(config.Glide.SnapDuration))
-
-                // — атака (ОБНОВЛЕНО) —
-                .AddSuccessfulHitEvent()
-                .AddStartAttackRequest()
-                .AddStartAttackEvent()
-                .AddEndAttackEvent()
-                .AddInAttackProcess()
-                .AddAttackProcessInitialTime(new ReactiveVariable<float>(config.Attack.ProcessTime))
-                .AddAttackProcessCurrentTime()
-                .AddAttackDelayTime(new ReactiveVariable<float>(config.Attack.DelayTime))
-                .AddAttackDelayEndEvent()
-                .AddInstantAttackDamage(new ReactiveVariable<float>(config.Attack.Damage))
-                .AddAttackDamage(new ReactiveVariable<float>(config.Attack.Damage))
-                .AddAttackCanceledEvent()
-                .AddAttackCooldownInitialTime(new ReactiveVariable<float>(config.Attack.Cooldown))
-                .AddAttackCooldownCurrentTime()
-                .AddInAttackCooldown()
-                .AddAttackRange(new ReactiveVariable<float>(config.Attack.Range))
-                .AddAttackEnemyMask(new ReactiveVariable<LayerMask>(config.Attack.EnemyMask))
-
-                // Новые параметры сочности и физики из конфига
-                .AddAttackHitStopScale(new ReactiveVariable<float>(config.Attack.HitStopScale))
-                .AddAttackHitStopDuration(new ReactiveVariable<float>(config.Attack.HitStopDuration))
-                .AddAttackHitBounceForce(new ReactiveVariable<float>(config.Attack.HitBounceForce))
-                .AddGroundHitBounceModifiers(new ReactiveVariable<Vector2>(config.Attack.GroundHitBounceModifiers))
-                .AddAirHitBounceModifiers(new ReactiveVariable<Vector2>(config.Attack.AirHitBounceModifiers))
-
-                .AddAttackInvulnerabilityDuration(new ReactiveVariable<float>(config.Attack.InvulnerabilityDuration))
-                .AddAttackInvulnerabilityTimer()
-                .AddIsAttackInvulnerable(new ReactiveVariable<bool>(false))
-
-                // — броски —
-                .AddThrowEvent()
-                .AddIsThrowing()
-                .AddIsGrappling()
-                .AddCurrentThrowableIndex(new ReactiveVariable<int>(0))
-                .AddGrappleCharges(new ReactiveVariable<int>(config.Throwables.GrappleConfig.MaxCharges))
-                .AddShurikenCharges(new ReactiveVariable<int>(config.Throwables.ShurikenConfig.MaxCharges))
-                .AddSleepDartCharges(new ReactiveVariable<int>(config.Throwables.SleepDartConfig.MaxCharges))
-
-                // — вис на стене —
-                .AddIsWallHanging()
-                .AddWallHangLayer(config.WallHang.Layer)
-                .AddWallHangSlideSpeed(new ReactiveVariable<float>(config.WallHang.SlideSpeed))
-                .AddWallJumpForce(new ReactiveVariable<Vector2>(config.WallHang.JumpForce))
-                .AddWallDirection()
-
-                // — слайд —
-                .AddIsSliding()
-                .AddSlideDuration(new ReactiveVariable<float>(config.Slide.Duration))
-                .AddSlideSpeed(new ReactiveVariable<float>(config.Slide.Speed))
-
-                // — пике —
-                .AddIsPlunging()
-                .AddPlungeSpeed(new ReactiveVariable<float>(config.Plunge.Speed))
-                .AddPlungeAOERadius(new ReactiveVariable<float>(config.Plunge.DamageRange))
-                .AddPlungeAOEDamage(new ReactiveVariable<float>(config.Plunge.Damage))
-                .AddPlungeKnockbackForce(new ReactiveVariable<float>(config.Plunge.KnockbackForce))
-
-                // — наклонные поверхности —
-                .AddIsOnSlope()
-                .AddSlopeMask(config.Slope.Mask)
-                .AddSlopeMinAngle(new ReactiveVariable<float>(config.Slope.MinAngle))
-                .AddSlopeMaxAngle(new ReactiveVariable<float>(config.Slope.MaxAngle))
-                .AddSlopeDownhillBaseForce(new ReactiveVariable<float>(config.Slope.DownhillBaseForce))
-                .AddSlopeBoostMultiplier(new ReactiveVariable<float>(config.Slope.BoostMultiplier))
-                .AddSlopeMagnetForce(new ReactiveVariable<float>(config.Slope.MagnetForce))
-                .AddSlopeMaxAccumSpeed(new ReactiveVariable<float>(config.Slope.MaxAccumSpeed))
-                .AddSlopeAccumGainRate(new ReactiveVariable<float>(config.Slope.AccumGainRate))
-                .AddSlopeAccumDecayRate(new ReactiveVariable<float>(config.Slope.AccumDecayRate))
-                .AddSlopeSlideOffDelay(new ReactiveVariable<float>(config.Slope.SlideOffDelay))
-                .AddSlopeMinEjectVelocity(new ReactiveVariable<float>(config.Slope.MinEjectVelocity))
-                .AddSlopeEjectForceMultiplier(new ReactiveVariable<float>(config.Slope.EjectForceMultiplier))
-                .AddSlopeAutoSlidePush(new ReactiveVariable<float>(config.Slope.AutoSlidePush))
-                .AddSlopeJumpForce(new ReactiveVariable<Vector2>(config.Slope.JumpForce))
-                .AddSlopeAccumSpeed(new ReactiveVariable<float>(0f))
-
-                // лут
-                .AddCollectRange(new ReactiveVariable<float>(config.LootCollectRange))
-                .AddLootPickedEvent(new ReactiveEvent<LootType>())
-
-                // — жизненный цикл —
-                .AddMaxHealth(new ReactiveVariable<float>(config.LifeCycle.MaxHealth))
-                .AddCurrentHealth(new ReactiveVariable<float>(config.LifeCycle.MaxHealth))
-                .AddIsDead()
-                .AddInDeathProcess()
-                .AddDeathProcessInitialTime(new ReactiveVariable<float>(config.LifeCycle.DeathProcessTime))
-                .AddDeathProcessCurrentTime()
-                .AddTakeDamageRequest()
-                .AddTakeDamageEvent()
-                .AddDamageCooldown(new ReactiveVariable<float>(1.0f))
-                .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
-                .AddSpawnInitialTime(new ReactiveVariable<float>(config.LifeCycle.SpawnProcessTime))
-                .AddSpawnCurrentTime()
-                .AddInSpawnProcess()
-                ;
-            */
         }
         private void AddHeroConditions(Entity entity, MainHeroConfig config)
         {
@@ -504,7 +287,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 || entity.Rigidbody.linearVelocity.y < entity.FallActionThreshold.Value));
 
             ICompositeCondition mustRestoreAirJumpsCount_mustRestoreAirJumpsCount = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsGrounded.Value))
+                .Add(new FuncCondition(() => entity.IsGrounded.Value 
+                || entity.IsWallHanging.Value 
+                || entity.IsGliding.Value)) // new!
                 .Add(new FuncCondition(() => entity.AirJumpsCount.Value < entity.AirJumpsMaxCount.Value));
 
             ICompositeCondition canDash = new CompositeCondition()
@@ -533,6 +318,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrounded.Value == true))
                 .Add(new FuncCondition(() => entity.IsOnSlope.Value == false))
+                .Add(new FuncCondition(() => entity.IsMoving.Value == true)) // new!
                 .Add(new FuncCondition(() => entity.IsDead.Value == false));
 
             ICompositeCondition canSlopeSlip = new CompositeCondition()
@@ -580,6 +366,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
                 .Add(new FuncCondition(() => entity.InAttackProcess.Value == false))
                 .Add(new FuncCondition(() => entity.InAttackCooldown.Value == false))
+                .Add(new FuncCondition(() => entity.IsChargingSlashAttack.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
             ICompositeCondition canApplyDamage = new CompositeCondition()
@@ -590,6 +377,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
+            ICompositeCondition canDoubleAttack = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.DoubleAttackCurrentCooldown.Value <= 0))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
+                .Add(new FuncCondition(() => entity.IsGliding.Value == false));
+
+            ICompositeCondition canChargeSlashAttack = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
+                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
+                .Add(new FuncCondition(() => entity.InAttackProcess.Value == false));
 
             entity
                 .AddCanPlunge(canPlunge)
@@ -609,6 +416,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddCanGrapple(canGrapple)
                 .AddCanStartAttack(canStartAttack)
                 .AddCanApplyDamage(canApplyDamage)
+                .AddCanDoubleAttack(canDoubleAttack)
+                .AddCanChargeSlashAttack(canChargeSlashAttack)
                 ;
         }
         private void AddHeroSystems(Entity entity, MainHeroConfig config)
@@ -664,8 +473,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new AttackCooldownTimerSystem())
                 .AddSystem(new AttackInvulnerabilitySystem())
 
-                // new
+                // attack effects
                 .AddSystem(new HitStopSystem(_container.Resolve<HitStopService>(), _container.Resolve<CameraService>()))
+                .AddSystem(new DoubleAttackSystem())
+                .AddSystem(new DoubleAttackCooldownSystem())
+
+                // slash attack
+                .AddSystem(new SlashAttackChargeSystem())
+                .AddSystem(new SlashAttackSpawnSystem(_container.Resolve<ProjectileFactory>()))
 
                 // juggle
                 .AddSystem(new AerialHitSuspensionSystem())
@@ -677,7 +492,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // тело ниндзя - смертельное оружие, но пока нет...
                 .AddSystem(new BodyContactDetectingSystem())
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
-                 // .AddSystem(new DealDamageOnContactSystem())
+                 //.AddSystem(new DealDamageOnContactSystem())
 
                 // visual
                 .AddSystem(new FlipDirectionSystem()) 
@@ -703,11 +518,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new LootDistanceCollectSystem(_entitiesLifeContext))
                 */
         }
-        // HERO 
 
+
+        // SCRIPTED OBJECTS
         public Entity CreateContactTrigger(Vector3 position)
         {
-            /*
             Entity entity = CreateEmpty();
             _monoEntitiesFactory.Create(entity, position, "Entities/Common/FinalPointTrigger");
 
@@ -723,16 +538,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 ;
 
             _entitiesLifeContext.Add(entity);
-            return entity;
-            */
 
-            return null;
+            return entity;
         }
 
-        // HELPERS 
-        private Entity CreateEmpty() => new Entity();
 
-        // ENEMIES
+        // CREATURES
         public Entity CreateGhost(Vector3 at, GhostConfig ghostConfig)
         {
             Entity entity = CreateEmpty();
@@ -859,6 +670,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             return entity;
         }
 
+
+        // HELPERS 
+        private Entity CreateEmpty() => new Entity();
+
+
+        // _______________________________________________________________________
+        // REWORK ________________
         public Entity CreateSlime(Vector3 at, SlimeConfig slimeConfig)
         {
             /*
@@ -1067,80 +885,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             return null;
         }
-
-        // PROJECTILES
-        public Entity CreateChargedSlashProjectile(Transform parent, float damage, Vector2 direction, Entity owner)
-        {
-            /*
-            Entity entity = CreateEmpty();
-
-            MonoEntity mono = _monoEntitiesFactory.Create(entity, parent, "Entities/Projectiles/ChargedSlashProjectile");
-
-            ParticleSystem slashEffectPS = mono.transform.GetComponentInChildren<ParticleSystem>();
-
-            Vector3 localScale = parent.parent.localScale;
-            localScale.y = 1.5f;
-            localScale.x *= -1;
-            slashEffectPS.transform.localScale = localScale;
-
-            mono.transform.SetParent(null);
-
-            float minSpeed = 20;
-            float impulseSpeed = Mathf.Abs(owner.Rigidbody.linearVelocityX) * 2;
-            impulseSpeed = minSpeed; //  Mathf.Max(minSpeed, impulseSpeed);
-
-            entity
-                .AddAutoDeleteCurrentTime(new ReactiveVariable<float>(3f))
-                .AddAutoDeleteInitialTime(new ReactiveVariable<float>(3f))
-
-                .AddMoveDirection(new ReactiveVariable<Vector2>(direction))
-                .AddIsMoving()
-                .AddMoveSpeed(new ReactiveVariable<float>(impulseSpeed))
-
-                .AddContactCollidersBuffer(new Buffer<Collider2D>(64))
-                .AddContactEntitiesBuffer(new Buffer<Entity>(64))
-                .AddBodyContactDamage(new ReactiveVariable<float>(damage))
-                .AddContactsDetectingMask(LayersAPI.LayerMaskEnemies)
-
-                .AddChargedSlashProjectileTag()
-
-                /*
-                .AddTeam(owner.Team)
-
-                .AddDeathMask(LayersAPI.LayerMaskEnemies)
-                .AddIsTouchDeathMask()
-                .AddIsTouchAnotherTeam()
-                ;
-
-            ICompositeCondition canMove = new CompositeCondition()
-                .Add(new FuncCondition(() => true))
-                ;
-
-            ICompositeCondition mustSelfRelease = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.AutoDeleteCurrentTime.Value <= 0))
-                ;
-
-            entity
-                .AddCanMove(canMove)
-                .AddMustSelfRelease(mustSelfRelease);
-
-            entity
-                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
-                .AddSystem(new BodyContactDetectingSystem())
-                .AddSystem(new DealDamageOnContactSystem())
-
-                .AddSystem(new SimpleRigidbodyMovementSystem())
-                .AddSystem(new AutoDeleteTimerSystem())
-                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
-
-            _entitiesLifeContext.Add(entity);
-
-            Debug.Log("Created, timer: " + entity.AutoDeleteCurrentTime.Value);
-
-            return entity;
-            */
-
-                return null;
-        }
+        // _______________________________________________________________________
+        // REWORK ________________
     }
 }

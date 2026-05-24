@@ -1,0 +1,95 @@
+﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
+using Assets._Project.Develop.Runtime.Utilities.Conditions;
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using Assets._Project.Develop.Runtime.Utilities;
+using UnityEngine;
+using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
+{
+    public class ProjectileFactory
+    {
+        private readonly DIContainer _container;
+
+        private readonly EntitiesLifeContext _entitiesLifeContext;
+        private readonly MonoEntitiesFactory _monoEntitiesFactory;
+        private readonly CollidersRegistryService _collidersRegistryService;
+        private readonly ICoroutinesPerformer _coroutinesPerformer;
+
+        public ProjectileFactory(DIContainer container)
+        {
+            _container = container;
+
+            _entitiesLifeContext = container.Resolve<EntitiesLifeContext>();
+            _monoEntitiesFactory = container.Resolve<MonoEntitiesFactory>();
+            _collidersRegistryService = container.Resolve<CollidersRegistryService>();
+            _coroutinesPerformer = container.Resolve<ICoroutinesPerformer>();
+        }
+
+        public Entity CreateChargedSlashProjectile(Transform parent, Entity owner)
+        {
+            // settings (config)
+            string prefabPath = "Entities/Projectiles/ChargedSlashProjectile";
+            float damage = 10;
+            float speed = 15;
+            float lifeTime = 2;
+            LayerMask hitMask = LayersAPI.LayerMaskEnemies;
+
+            Entity entity = new Entity();
+
+            MonoEntity mono = _monoEntitiesFactory.Create(entity, parent, prefabPath);
+            mono.transform.SetParent(null);
+
+            entity
+                .AddMoveDirection(new ReactiveVariable<Vector2>(new Vector2(owner.LookDirectionX.Value, 0)))
+                .AddLookDirectionX()
+                .AddIsMoving()
+                .AddMoveSpeed(new ReactiveVariable<float>(speed))
+
+                .AddLifeTime(new ReactiveVariable<float>(lifeTime))
+
+                .AddBodyContactDamage(new ReactiveVariable<float>(damage))
+
+                .AddContactsDetectingMask(hitMask)
+                .AddContactCollidersBuffer(new Buffer<Collider2D>(64))
+                .AddContactEntitiesBuffer(new Buffer<Entity>(64))
+
+                .AddTeam(owner.Team)
+                ;
+
+            ICompositeCondition canMove = new CompositeCondition()
+                .Add(new FuncCondition(() => true))
+                ;
+
+            ICompositeCondition mustSelfRelease = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.LifeTime.Value <= 0))
+                ;
+
+            entity
+                .AddCanMove(canMove)
+                .AddMustSelfRelease(mustSelfRelease);
+
+            entity
+                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
+                .AddSystem(new BodyContactDetectingSystem())
+                .AddSystem(new DealDamageOnContactSystem())
+
+                .AddSystem(new TransformMovementSystem())
+
+                .AddSystem(new TimedLifeTimeSystem())
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
+
+            _entitiesLifeContext.Add(entity);
+
+            return entity;
+        }
+    }
+}

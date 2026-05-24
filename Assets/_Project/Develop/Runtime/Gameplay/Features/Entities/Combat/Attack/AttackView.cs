@@ -21,7 +21,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         [Header("SFX Keys")]
         [SerializeField] private string _attackSfxKey = "AttackExecute";
-        [SerializeField] private string _hitSfxKey = "AttackHitImpact"; // <-- Ключ для сочного звука попадания!
+        [SerializeField] private string _hitSfxKey = "AttackHitImpact"; 
 
         private Transform _rootTransform;
         private int _currentSlashIndex;
@@ -29,7 +29,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private IDisposable _inAttackProcessDisposable;
         private IDisposable _attackHitDisposable;
-        private IDisposable _successfulHitDisposable; // <-- Раскомментировали!
+        private IDisposable _successfulHitDisposable; 
 
         private void OnValidate() => _animator ??= GetComponent<Animator>();
 
@@ -50,12 +50,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
             _inAttackProcessDisposable = entity.InAttackProcess.Subscribe(OnAttackProcessChanged);
             _attackHitDisposable = entity.AttackDelayEndEvent.Subscribe(OnAttackMoment);
-
-            // Подписываемся на ивент успешного попадания, если он сгенерирован в API
-            if (entity.HasComponent<SuccessfulHitEvent>())
-            {
-                _successfulHitDisposable = entity.SuccessfulHitEvent.Subscribe(OnSuccessfulHit);
-            }
+            _successfulHitDisposable = entity.SuccessfulHitEvent.Subscribe(OnSuccessfulHit);
         }
 
         private void OnAttackProcessChanged(bool old, bool current)
@@ -69,12 +64,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private void OnAttackMoment()
         {
             PlaySlashEffect();
-            _audioService?.PlaySfx(_attackSfxKey, transform.position); // Вжух катаны!
+            _audioService?.PlaySfx(_attackSfxKey, transform.position);
         }
 
         private void OnSuccessfulHit()
         {
-            // Срабатывает ТОЛЬКО когда лезвие встретило лицо призрака
             _audioService?.PlaySfx(_hitSfxKey, transform.position);
         }
 
@@ -107,7 +101,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
             _inAttackProcessDisposable?.Dispose();
             _attackHitDisposable?.Dispose();
-            _successfulHitDisposable?.Dispose(); // <-- Не забываем чистить за собой
+            _successfulHitDisposable?.Dispose();
         }
     }
 }

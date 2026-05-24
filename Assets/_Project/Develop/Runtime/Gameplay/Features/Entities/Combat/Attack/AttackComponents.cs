@@ -5,9 +5,55 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
+    public class ChargeSlashAttackRequiredTimer : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+    public class ChargeSlashAttackCurrentTimer : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+    public class IsChargingSlashAttack : IEntityComponent
+    {
+        public ReactiveVariable<bool> Value;
+    }
+
+    public class SpawnChargedSlashAtackEvent : IEntityComponent
+    {
+        public ReactiveEvent Value;
+    }
+
+    public class CanChargeSlashAttack : IEntityComponent
+    {
+        public ICompositeCondition Value;
+    }
+
+
     public class SuccessfulHitEvent : IEntityComponent
     {
         public ReactiveEvent Value = new();
+    }
+
+    public class CanDoubleAttack : IEntityComponent
+    {
+        public ICompositeCondition Value;
+    }
+
+    public class DoubleAttackInitialCooldown: IEntityComponent
+    {
+        public ReactiveVariable<float> Value = new();
+    }
+
+    public class DoubleAttackCurrentCooldown : IEntityComponent
+    {
+        public ReactiveVariable<float> Value = new();
+    }
+
+    public class DoubleAttackChance : IEntityComponent
+    {
+        public ReactiveVariable<float> Value = new();
     }
 
     public class AttackHitStopScale : IEntityComponent
