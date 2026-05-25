@@ -29,6 +29,7 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             {ViewIDs.MainMenuScreenView, "UI/MainMenu/MainMenuScreenView" },
             {ViewIDs.LevelsMenuPopup, "UI/MainMenu/LevelsMenuPopup" },
             {ViewIDs.LevelTile, "UI/MainMenu/LevelTile" },
+            {ViewIDs.LoadMusicPopupView, "UI/MainMenu/LoadMusicPopupView" },
 
             // Game Settings
             { ViewIDs.AudioSettingsPopupView, "UI/GameSettings/AudioSettingsPopupView" },

@@ -29,9 +29,13 @@ namespace Assets._Project.Develop.Runtime.UI.Core
         public const string LanguageSettingsPopupView = nameof(LanguageSettingsPopupView);
         public const string KeyBindingsSettingsPopupView = nameof(KeyBindingsSettingsPopupView);
 
+        // music
+        public const string LoadMusicPopupView = nameof(LoadMusicPopupView);
+
         // not used
         public const string SimpleHealthBar = nameof(SimpleHealthBar);
         public const string MainHeroHealthBar = nameof(MainHeroHealthBar);   
         public const string LootFeedbackView = nameof(LootFeedbackView);
+
     }
 }

@@ -24,7 +24,8 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
             return new MainMenuPopupService(
                 container.Resolve<ViewsFactory>(),
                 container.Resolve<ProjectPresentersFactory>(),
-                container.Resolve<MainMenuUIRoot>()
+                container.Resolve<MainMenuUIRoot>(),
+                container.Resolve<MainMenuPresentersFactory>()
                 );
         }
 

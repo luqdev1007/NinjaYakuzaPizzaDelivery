@@ -10,7 +10,6 @@ public class MainMenuScreenView : MonoBehaviour, IView
     [field: SerializeField] public DojoView DojoView { get; private set; }
     [field: SerializeField] public LeaderboardView LeaderBoardView { get; private set; }
     [field: SerializeField] public ShopView ShopView { get; private set; }
-    [field: SerializeField] public ExtrasView ExtrasView { get; private set; }
 
     [Header("Meta")]
     [field: SerializeField] public IconTextListView WalletView { get; private set; }
@@ -20,7 +19,7 @@ public class MainMenuScreenView : MonoBehaviour, IView
     [Header("Side Utilities Buttons")]
     [field: SerializeField] public Button OpenGameSettingsButton { get; private set; }
     [field: SerializeField] public Button OpenShopButton { get; private set; }
-    [field: SerializeField] public Button OpenExtrasButton { get; private set; }
+    [field: SerializeField] public Button OpenMusicLoaderPopupButton { get; private set; }
 
 
     [Header("Gameplay Buttons")]

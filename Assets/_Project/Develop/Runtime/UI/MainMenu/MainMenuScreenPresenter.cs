@@ -57,7 +57,7 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
 
             _view.OpenShopButton.onClick.AddListener(OnOpenShopButtonClicked);
 
-            _view.OpenExtrasButton.onClick.AddListener(OnOpenExtrasButtonClicked);
+            _view.OpenMusicLoaderPopupButton.onClick.AddListener(OnOpenLoadMusicPopupViewButtonClicked);
 
             _walletPresenter = _presentersFactory.CreateWalletPresenter(_view.WalletView);
             _disposables.Add(_walletPresenter);
@@ -65,9 +65,9 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             _walletPresenter.Initialize();
         }
 
-        private void OnOpenExtrasButtonClicked()
+        private void OnOpenLoadMusicPopupViewButtonClicked()
         {
-            _view.ExtrasView.gameObject.SetActive(true);
+            _mainMenupopupService.OpenLoadMusicPopupView();
         }
 
         private void OnOpenShopButtonClicked()
@@ -101,7 +101,7 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
 
             _view.OpenShopButton.onClick.RemoveListener(OnOpenShopButtonClicked);
 
-            _view.OpenExtrasButton.onClick.RemoveListener(OnOpenExtrasButtonClicked);
+            _view.OpenMusicLoaderPopupButton.onClick.RemoveListener(OnOpenLoadMusicPopupViewButtonClicked);
 
             foreach (var disposable in _disposables)
                 disposable.Dispose();
