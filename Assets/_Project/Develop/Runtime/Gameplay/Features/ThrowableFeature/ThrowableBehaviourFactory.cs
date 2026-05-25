@@ -19,7 +19,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             _configsProviderService = configsProviderService;
         }
 
-        public ThrowableProjectile Create(ThrowableConfig config)
+        public ThrowableProjectile Create(ThrowableItemConfig config)
         {
             return config switch
             {
@@ -38,7 +38,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
             };
         }
 
-        public object Create(ThrowableConfig throwableConfig, Rigidbody2D rigidbody, Transform transform)
+        public object Create(ThrowableItemConfig throwableConfig, Rigidbody2D rigidbody, Transform transform)
         {
             throw new System.NotImplementedException();
         }

@@ -15,6 +15,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
         private ReactiveVariable<bool> _intentSlide;
         private ReactiveVariable<bool> _intentAttack;
         private ReactiveVariable<bool> _intentGrapple;
+        private ReactiveVariable<bool> _intentUseItem;
+        private ReactiveVariable<float> _intentSwitchItemDelta;
+        private ReactiveVariable<Vector2> _intentAimDirection;
+
+        private Transform _playerTransform;
 
         public PlayerInputSystem(IInputService inputService)
         {
@@ -29,6 +34,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
             _intentSlide = entity.IntentSlide;
             _intentAttack = entity.IntentAttack;
             _intentGrapple = entity.IntentGrapple;
+            _intentUseItem = entity.IntentUseItem;
+            _intentSwitchItemDelta = entity.IntentSwitchItemDelta;
+            _intentAimDirection = entity.IntentAimDirection;
+
+            _playerTransform = entity.Transform;
         }
 
         public void OnUpdate(float deltaTime)
@@ -44,6 +54,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
             _intentSlide.Value = _inputService.IsSlideKeyHeld;
 
             _intentGrapple.Value = _inputService.IsGrappleKeyHeld;
+
+            _intentUseItem.Value = _inputService.IsThrowKeyPressed;
+
+            _intentSwitchItemDelta.Value = _inputService.MouseScrollDelta;
+
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            _intentAimDirection.Value = ((Vector2)mousePos - (Vector2)_playerTransform.position).normalized;
         }
     }
 }

@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
+using Assets._Project.Develop.Runtime.Configs.Inventory;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
@@ -21,6 +22,8 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature
 using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.HitStop;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Inventory;
+using Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles;
@@ -29,6 +32,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Visual;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
+using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
@@ -82,6 +86,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddIntentSlide()
                 .AddIntentAttack()
                 .AddIntentGrapple()
+                .AddIntentUseItem()
+                .AddIntentSwitchItemDelta()
+                .AddIntentAimDirection()
 
                 // spawn
                 .AddInSpawnProcess()
@@ -250,8 +257,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddContactsDetectingMask(config.ContactLayerMask)
                 .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
                 .AddContactEntitiesBuffer(new Buffer<Entity>(16))
-                ;
+
+                // inventory
+                .AddCurrentItemIndex()
+                .AddIsUsingItem()
+                .AddItemUsedEvent()
+            ;
         }
+
         private void AddHeroConditions(Entity entity, MainHeroConfig config)
         {
             ICompositeCondition canMove = new CompositeCondition()
@@ -495,6 +508,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
                  //.AddSystem(new DealDamageOnContactSystem())
 
+                // inventory
+                .AddSystem(new InventorySystem(
+                    _container.Resolve<ConfigsProviderService>().GetConfig<PlayerInventoryConfig>().StartingConsumables,
+                    _container.Resolve<ProjectileFactory>(), 
+                    _coroutinesPerformer))
+
                 // visual
                 .AddSystem(new FlipDirectionSystem()) 
 
@@ -505,19 +524,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // — последней всегда —
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext)) 
                 ;
-
-                /*
-                // — инвентарь (Сюрикены/Дротики на Q + Колесико) —
-                .AddSystem(new InventorySystem(
-                    consumables,
-                    throwableBehaviourFactory,
-                    coroutinesPerformer)) 
-   
-
-                                // лут
-                .AddSystem(new LootMagnetSystem(_collidersRegistryService))
-                .AddSystem(new LootDistanceCollectSystem(_entitiesLifeContext))
-                */
         }
 
 

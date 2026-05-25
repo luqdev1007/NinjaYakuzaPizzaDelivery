@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Style;
+using Assets._Project.Develop.Runtime.Configs.Inventory;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
@@ -33,6 +34,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
             { typeof(StyleActionsConfig), "Configs/Gameplay/Style/StyleActionsConfig" },
 
             { typeof(AudioLibrary), "Configs/Audio/AudioLibrary" },
+
+            { typeof(PlayerInventoryConfig), "Configs/PlayerData/PlayerInventoryConfig" },
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)

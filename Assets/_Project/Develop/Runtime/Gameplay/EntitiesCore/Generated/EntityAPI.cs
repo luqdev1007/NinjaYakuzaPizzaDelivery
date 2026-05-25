@@ -842,6 +842,150 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.DisableCollidersOnDeath() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.CurrentItemIndex CurrentItemIndexC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.CurrentItemIndex>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32> CurrentItemIndex => CurrentItemIndexC.Value;
+
+		public bool TryGetCurrentItemIndex(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.CurrentItemIndex component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCurrentItemIndex()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.CurrentItemIndex() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCurrentItemIndex(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.CurrentItemIndex() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.IsUsingItem IsUsingItemC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.IsUsingItem>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsUsingItem => IsUsingItemC.Value;
+
+		public bool TryGetIsUsingItem(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.IsUsingItem component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsUsingItem()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.IsUsingItem() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsUsingItem(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.IsUsingItem() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.ItemUsedEvent ItemUsedEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.ItemUsedEvent>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Configs.Inventory.InventoryItemConfig> ItemUsedEvent => ItemUsedEventC.Value;
+
+		public bool TryGetItemUsedEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Configs.Inventory.InventoryItemConfig> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.ItemUsedEvent component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Configs.Inventory.InventoryItemConfig>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddItemUsedEvent()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.ItemUsedEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Configs.Inventory.InventoryItemConfig>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddItemUsedEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Configs.Inventory.InventoryItemConfig> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.ItemUsedEvent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentUseItem IntentUseItemC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentUseItem>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IntentUseItem => IntentUseItemC.Value;
+
+		public bool TryGetIntentUseItem(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentUseItem component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIntentUseItem()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentUseItem() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIntentUseItem(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentUseItem() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentSwitchItemDelta IntentSwitchItemDeltaC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentSwitchItemDelta>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> IntentSwitchItemDelta => IntentSwitchItemDeltaC.Value;
+
+		public bool TryGetIntentSwitchItemDelta(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentSwitchItemDelta component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIntentSwitchItemDelta()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentSwitchItemDelta() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIntentSwitchItemDelta(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentSwitchItemDelta() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentAimDirection IntentAimDirectionC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentAimDirection>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> IntentAimDirection => IntentAimDirectionC.Value;
+
+		public bool TryGetIntentAimDirection(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentAimDirection component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIntentAimDirection()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentAimDirection() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIntentAimDirection(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentAimDirection() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentMovement IntentMovementC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentMovement>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> IntentMovement => IntentMovementC.Value;

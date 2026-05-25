@@ -4,6 +4,21 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
 {
+    public class IntentUseItem : IEntityComponent
+    {
+        public ReactiveVariable<bool> Value;
+    }
+
+    public class IntentSwitchItemDelta : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+    public class IntentAimDirection : IEntityComponent
+    {
+        public ReactiveVariable<Vector2> Value;
+    }
+
     public class IntentMovement : IEntityComponent
     {
         public ReactiveVariable<Vector2> Value;

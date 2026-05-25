@@ -7,7 +7,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 {
     public class GrappleHookProjectile : ThrowableProjectile
     {
-        public GrappleHookProjectile(ThrowableConfig config, ICoroutinesPerformer coroutinesPerformer) : base(config, coroutinesPerformer)
+        public GrappleHookProjectile(ThrowableItemConfig config, ICoroutinesPerformer coroutinesPerformer) : base(config, coroutinesPerformer)
         {
         }
 

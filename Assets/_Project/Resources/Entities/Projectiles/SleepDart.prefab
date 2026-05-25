@@ -10,6 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 9149136461966063769}
   - component: {fileID: 4083890442454287136}
+  - component: {fileID: -1089029508667321856}
+  - component: {fileID: -3590663363855982978}
+  - component: {fileID: -6231409511154530044}
   m_Layer: 0
   m_Name: SleepDart
   m_TagString: Untagged
@@ -69,6 +72,43 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0.2, y: 0}
   m_Radius: 0.05
+--- !u!114 &-1089029508667321856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4515698775160146404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1ca2dd0aa1637e48abea4b738e80510, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-3590663363855982978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4515698775160146404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67724dfb90076e747b00b0871cf52777, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _body: {fileID: 4083890442454287136}
+--- !u!114 &-6231409511154530044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4515698775160146404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d897167fbf1ed246b454abeaeb666f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7513257466094933306
 GameObject:
   m_ObjectHideFlags: 0

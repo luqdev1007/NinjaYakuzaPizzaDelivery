@@ -14,11 +14,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
 
         public void OnInit(Entity entity)
         {
-            /*
             _contacts = entity.ContactCollidersBuffer;
             _isTouchDeathMask = entity.IsTouchDeathMask;
             _deathMask = entity.DeathMask;
-            */
         }
 
         public void OnUpdate(float deltaTime)

@@ -299,6 +299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 1784155885393087696}
+  _deathSfxKey: GhostDeath
 --- !u!114 &6732775899153542305
 MonoBehaviour:
   m_ObjectHideFlags: 0

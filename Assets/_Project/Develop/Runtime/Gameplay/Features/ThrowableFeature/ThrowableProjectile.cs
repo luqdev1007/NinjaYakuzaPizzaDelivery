@@ -11,10 +11,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
     {
         public event Action OnCompleted;
         protected readonly ICoroutinesPerformer CoroutinesPerformer;
-        protected readonly ThrowableConfig Config;
+        protected readonly ThrowableItemConfig Config;
         public GameObject Instance { get; protected set; }
 
-        protected ThrowableProjectile(ThrowableConfig config, ICoroutinesPerformer coroutinesPerformer)
+        protected ThrowableProjectile(ThrowableItemConfig config, ICoroutinesPerformer coroutinesPerformer)
         {
             Config = config;
             CoroutinesPerformer = coroutinesPerformer;

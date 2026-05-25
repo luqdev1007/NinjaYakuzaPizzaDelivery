@@ -12,6 +12,8 @@ using UnityEngine;
 using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
+using System;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
 {
@@ -90,6 +92,63 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
             _entitiesLifeContext.Add(entity);
 
             return entity;
+        }
+
+        public void CreateThrowableProjectile(ThrowableItemConfig throwableConfig, Transform parent, Vector2 aimDirection, Entity playerEntity)
+        {
+            Entity entity = new Entity();
+
+            MonoEntity mono = _monoEntitiesFactory.Create(entity, parent, throwableConfig.PrefabPath);
+            Vector3 startPosition = mono.transform.position;
+            mono.transform.SetParent(null);
+
+            float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
+            mono.transform.rotation = Quaternion.Euler(0, 0, angle);
+
+            entity
+                .AddMoveDirection(new ReactiveVariable<Vector2>(aimDirection))
+                .AddLookDirectionX()
+                .AddIsMoving()
+                .AddMoveSpeed(new ReactiveVariable<float>(throwableConfig.ProjectileSpeed))
+
+                .AddContactsDetectingMask(throwableConfig.HitMask)
+                .AddContactCollidersBuffer(new Buffer<Collider2D>(64))
+                .AddContactEntitiesBuffer(new Buffer<Entity>(64))
+
+                .AddTeam(playerEntity.Team);
+
+            ICompositeCondition canMove = new CompositeCondition()
+                .Add(new FuncCondition(() => true));
+
+            ICompositeCondition mustSelfRelease = new CompositeCondition(LogicOperations.Or)
+                .Add(new FuncCondition(() => Vector3.Distance(startPosition, entity.Transform.position) >= throwableConfig.MaxFlyDistance));
+
+            entity
+                .AddCanMove(canMove)
+                .AddMustSelfRelease(mustSelfRelease);
+
+            entity
+                .AddSystem(new TransformMovementSystem())                                  
+                .AddSystem(new BodyContactDetectingSystem())                        
+                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService)); 
+
+            if (throwableConfig is ShurikenConfig shurikenConfig)
+            {
+                entity
+                    .AddBodyContactDamage(new ReactiveVariable<float>(shurikenConfig.Damage))
+                    .AddIsTouchDeathMask()
+                    .AddDeathMask(shurikenConfig.HitMask);
+
+                mustSelfRelease.Add(new FuncCondition(() => entity.IsTouchDeathMask.Value == true));
+
+                entity
+                    .AddSystem(new DealDamageOnContactSystem())        
+                    .AddSystem(new DeathMaskTouchDetectorSystem());     
+            }
+
+            entity.AddSystem(new SelfReleaseSystem(_entitiesLifeContext)); 
+
+            _entitiesLifeContext.Add(entity);
         }
     }
 }

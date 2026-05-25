@@ -10,6 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8129873246518106142}
   - component: {fileID: 2671290148004801115}
+  - component: {fileID: 2622738052670680028}
+  - component: {fileID: 6962771025801443958}
+  - component: {fileID: -8089840576692484153}
   m_Layer: 0
   m_Name: Shuriken
   m_TagString: Untagged
@@ -69,6 +72,43 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.15
+--- !u!114 &2622738052670680028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6967451337454064976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67724dfb90076e747b00b0871cf52777, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _body: {fileID: 2671290148004801115}
+--- !u!114 &6962771025801443958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6967451337454064976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1ca2dd0aa1637e48abea4b738e80510, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-8089840576692484153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6967451337454064976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d897167fbf1ed246b454abeaeb666f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7173585191248981246
 GameObject:
   m_ObjectHideFlags: 0
@@ -166,7 +206,7 @@ AudioSource:
   m_GameObject: {fileID: 7173585191248981246}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 24300002, guid: e7b1c55e55087104495ee70cb41a2e04, type: 2}
+  OutputAudioMixerGroup: {fileID: -3705572875233171632, guid: 07979af4c966f0b4e82620b1c1202d9d, type: 2}
   m_audioClip: {fileID: 8300000, guid: 1b9aadbd39e8b784da2957c311aba3b3, type: 3}
   m_Resource: {fileID: 8300000, guid: 1b9aadbd39e8b784da2957c311aba3b3, type: 3}
   m_PlayOnAwake: 1

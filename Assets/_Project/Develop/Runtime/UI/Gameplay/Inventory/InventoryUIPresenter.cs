@@ -30,7 +30,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Inventory
         [SerializeField] private float _fadeDuration = 0.15f;
         [SerializeField] private float _displayDuration = 1.5f;
         [SerializeField] private float _animDelay = 0.25f; // Уменьшил для отзывчивости
-        [SerializeField] private ThrowableConfig[] _consumables;
+        [SerializeField] private ThrowableItemConfig[] _consumables;
 
         private Sequence _fadeSequence;
         private Sequence _switchSequence;

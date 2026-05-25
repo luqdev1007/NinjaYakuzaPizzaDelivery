@@ -7,7 +7,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature
 {
     public class SleepDartProjectile : ThrowableProjectile
     {
-        public SleepDartProjectile(ThrowableConfig config, ICoroutinesPerformer coroutinesPerformer)
+        public SleepDartProjectile(ThrowableItemConfig config, ICoroutinesPerformer coroutinesPerformer)
             : base(config, coroutinesPerformer) { }
 
         protected override void OnHitAtPoint(Vector2 point, Collider2D hit)

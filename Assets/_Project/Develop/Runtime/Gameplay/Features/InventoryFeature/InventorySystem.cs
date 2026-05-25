@@ -1,8 +1,9 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
+using Assets._Project.Develop.Runtime.Configs.Inventory;
+using Assets._Project.Develop.Runtime.Configs.Inventory.Potions;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
-using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System.Collections;
@@ -13,96 +14,131 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
 {
     public class InventorySystem : IInitializableSystem, IUpdatableSystem
     {
-        private readonly ThrowableConfig[] _consumables;
-        private readonly IThrowableBehaviourFactory _factory;
+        private readonly InventoryItemConfig[] _consumables;
+        private readonly ProjectileFactory _projectileFactory;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
 
-        private ReactiveEvent _throwEvent;
-        private ReactiveVariable<int> _currentIndex;
-        private ReactiveVariable<bool> _isThrowing;
-        private Transform _transform;
-        private Rigidbody2D _rigidbody;
+        private Entity _playerEntity;
 
-        private Dictionary<int, ReactiveVariable<int>> _chargesMap;
+        private ReactiveVariable<bool> _intentUseItem;
+        private ReactiveVariable<float> _intentSwitchItemDelta;
+        private ReactiveVariable<Vector2> _intentAimDirection;
 
-        public InventorySystem(ThrowableConfig[] consumables, IThrowableBehaviourFactory factory, ICoroutinesPerformer coroutinesPerformer)
+        private ReactiveVariable<int> _currentItemIndex;
+        private ReactiveVariable<bool> _isUsingItem;
+        private ReactiveEvent<InventoryItemConfig> _itemUsedEvent;
+
+        private List<ReactiveVariable<int>> _chargesList;
+
+        public InventorySystem(
+            InventoryItemConfig[] consumables,
+            ProjectileFactory projectileFactory,
+            ICoroutinesPerformer coroutinesPerformer)
         {
             _consumables = consumables;
-            _factory = factory;
+            _projectileFactory = projectileFactory;
             _coroutinesPerformer = coroutinesPerformer;
         }
 
         public void OnInit(Entity entity)
         {
-            /*
-            _currentIndex = entity.CurrentThrowableIndex;
-            _isThrowing = entity.IsThrowing;
-            _transform = entity.Transform;
-            _rigidbody = entity.Rigidbody;
+            _playerEntity = entity;
 
-            // Событие для визуализации мгновенного броска (триггера)
-            _throwEvent = entity.ThrowEvent;
+            _intentUseItem = entity.IntentUseItem;
+            _intentSwitchItemDelta = entity.IntentSwitchItemDelta;
+            _intentAimDirection = entity.IntentAimDirection;
 
-            _chargesMap = new Dictionary<int, ReactiveVariable<int>>
+            _currentItemIndex = entity.CurrentItemIndex;
+            _isUsingItem = entity.IsUsingItem;
+            _itemUsedEvent = entity.ItemUsedEvent;
+
+            _chargesList = new List<ReactiveVariable<int>>();
+
+            for (int i = 0; i < _consumables.Length; i++)
             {
-                { 0, entity.ShurikenCharges },
-                { 1, entity.SleepDartCharges }
-            };
-            */
+                _chargesList.Add(new ReactiveVariable<int>(_consumables[i].MaxCharges));
+            }
         }
 
         public void OnUpdate(float deltaTime)
         {
-            HandleScroll();
+            HandleSwitchItem();
 
-            // if (_inputService.IsThrowKeyPressed)
+            if (_intentUseItem.Value)
             {
-                TryThrow();
+                TryUseActiveItem();
             }
         }
 
-        private void TryThrow()
+        private void TryUseActiveItem()
         {
-            int currentIdx = _currentIndex.Value;
+            if (_isUsingItem.Value)
+                return;
 
-            if (_chargesMap[currentIdx].Value <= 0) return;
+            int currentIndex = _currentItemIndex.Value;
 
-            // 1. Тратим заряд
-            _chargesMap[currentIdx].Value--;
+            if (_chargesList[currentIndex].Value <= 0) 
+                return;
 
-            // 2. Включаем общее состояние броска (для логики или зацикленных анимаций)
-            _isThrowing.Value = true;
+            InventoryItemConfig activeConfig = _consumables[currentIndex];
 
-            // 3. Вызываем событие импульса (для триггера в Animator)
-            _throwEvent?.Invoke();
+            _chargesList[currentIndex].Value--;
+            _isUsingItem.Value = true;
 
-            // 4. Логика полета
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 direction = ((Vector2)mousePos - (Vector2)_transform.position).normalized;
+            _itemUsedEvent?.Invoke(activeConfig);
 
-            var projectile = _factory.Create(_consumables[currentIdx], _rigidbody, _transform);
-            // projectile.Launch(_transform.position, direction);
+            Vector2 aimDirection = _intentAimDirection.Value;
 
-            // 5. Сброс флага состояния через короткое время
-            _coroutinesPerformer.StartPerform(ResetThrowingFlag());
+            if (activeConfig is ThrowableItemConfig throwableConfig)
+            {
+                _projectileFactory.CreateThrowableProjectile(throwableConfig, _playerEntity.ShootPoint, aimDirection, _playerEntity);
+            }
+            else if (activeConfig is PotionItemConfig potionConfig)
+            {
+                ApplyInternalEffect(potionConfig);
+            }
+
+            _coroutinesPerformer.StartPerform(ResetUsingFlag());
         }
 
-        private IEnumerator ResetThrowingFlag()
+        private void ApplyInternalEffect(PotionItemConfig config)
+        {
+            // _playerEntity.AddSpeedBuffModifier(config.SpeedMultiplier);
+            // _playerEntity.AddBuffDuration(config.Duration);
+            Debug.Log($"used {config.name} item");
+        }
+
+        private IEnumerator ResetUsingFlag()
         {
             yield return new WaitForSeconds(0.15f);
-            _isThrowing.Value = false;
+
+            _isUsingItem.Value = false;
         }
 
-        private void HandleScroll()
+        private void HandleSwitchItem()
         {
-            float scroll = 0; //_inputService.MouseScrollDelta;
-            if (Mathf.Abs(scroll) < 0.01f) return;
+            if (_consumables == null || _consumables.Length == 0)
+                return;
 
-            int newIndex = _currentIndex.Value + (scroll > 0 ? 1 : -1);
-            if (newIndex < 0) newIndex = _consumables.Length - 1;
-            if (newIndex >= _consumables.Length) newIndex = 0;
+            float scrollDelta = _intentSwitchItemDelta.Value;
 
-            _currentIndex.Value = newIndex;
+            if (Mathf.Abs(scrollDelta) < 0.01f)
+                return;
+
+            int newIndex = _currentItemIndex.Value + (scrollDelta > 0 ? 1 : -1);
+
+            if (newIndex < 0)
+                newIndex = _consumables.Length - 1;
+
+            if (newIndex >= _consumables.Length)
+                newIndex = 0;
+
+            _currentItemIndex.Value = newIndex;
+
+            InventoryItemConfig activeItem = _consumables[newIndex];
+            string itemName = activeItem != null ? activeItem.name : "Null Config";
+
+            Debug.Log($"<color=#FFD700>[Inventory]</color> Сменили слот на: <b>[{newIndex}]</b> — {itemName} (Тип: {activeItem?.GetType().Name})");
         }
     }
 }
