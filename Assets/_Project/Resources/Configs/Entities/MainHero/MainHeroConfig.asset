@@ -74,6 +74,9 @@ MonoBehaviour:
     <Cooldown>k__BackingField: 0.35
     <HitBoxSize>k__BackingField: {x: 1.5, y: 0.5}
   <Plunge>k__BackingField:
+    <HitLayer>k__BackingField:
+      serializedVersion: 2
+      m_Bits: 512
     <Speed>k__BackingField: 25
     <DamageRange>k__BackingField: 3
     <Damage>k__BackingField: 10
@@ -108,6 +111,7 @@ MonoBehaviour:
     <HitStopDuration>k__BackingField: 0.15
     <AttackKnockback>k__BackingField: {x: 6, y: 8}
     <AerialHangForce>k__BackingField: {x: 4, y: 8}
+    <RecoilForce>k__BackingField: {x: 10, y: 20}
     <DoubleAttackChance>k__BackingField: 50.9
     <DoubleAttackCooldown>k__BackingField: 1
     <SlashAttackChargeRequiredTime>k__BackingField: 0.4

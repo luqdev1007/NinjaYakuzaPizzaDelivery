@@ -126,6 +126,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     [Serializable]
     public class PlungeSettings
     {
+        [field: SerializeField] public LayerMask HitLayer { get; private set; }
         [field: SerializeField] public float Speed { get; private set; } = 25f;
         [field: SerializeField] public float DamageRange { get; private set; } = 3f;
         [field: SerializeField] public float Damage { get; private set; } = 10f;

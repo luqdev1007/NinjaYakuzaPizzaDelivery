@@ -10,11 +10,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
         private Buffer<Collider2D> _contacts;
         private Buffer<Entity> _contactsEntities;
 
-        private readonly CollidersRegistryService _colllidersRegistryService;
+        private readonly CollidersRegistryService _collidersRegistryService;
 
-        public BodyContactsEntitiesFilterSystem(CollidersRegistryService colllidersRegistryService)
+        public BodyContactsEntitiesFilterSystem(CollidersRegistryService collidersRegistryService)
         {
-            _colllidersRegistryService = colllidersRegistryService;
+            _collidersRegistryService = collidersRegistryService;
         }
 
         public void OnInit(Entity entity)
@@ -31,7 +31,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
             {
                 Collider2D collider = _contacts.Items[i];
 
-                Entity contactEntity = _colllidersRegistryService.GetBy(collider);
+                Entity contactEntity = _collidersRegistryService.GetBy(collider);
 
                 if (contactEntity != null)
                 {

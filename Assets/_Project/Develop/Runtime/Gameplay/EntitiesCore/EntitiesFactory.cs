@@ -194,6 +194,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddPlungeImpactEvent(new ReactiveEvent<float>())
                 .AddMinPlungeImpactSpeedThreshold(new ReactiveVariable<float>(config.Plunge.MinImpactSpeedThreshold))
 
+                .AddPlungeLandImpactRange(new ReactiveVariable<float>(config.Plunge.DamageRange))
+                .AddPlungeLandImpactDamage(new ReactiveVariable<float>(config.Plunge.Damage))
+                .AddPlungeLandImpactHitMask(config.Plunge.HitLayer)
+
                 // wall hang
                 .AddWallHangLayer(config.WallHang.Layer)
                 .AddIsWallHanging()
@@ -471,6 +475,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // plunge
                 .AddSystem(new PlungeSystem())
+                .AddSystem(new PlungeDamageOnImpactSystem(_collidersRegistryService))
 
                 // wall hang
                 .AddSystem(new WallHangSystem())

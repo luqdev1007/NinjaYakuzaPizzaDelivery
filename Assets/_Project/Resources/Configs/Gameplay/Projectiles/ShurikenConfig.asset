@@ -20,6 +20,6 @@ MonoBehaviour:
   <HitMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 34560
-  <ProjectileSpeed>k__BackingField: 10
-  <MaxFlyDistance>k__BackingField: 8
+  <ProjectileSpeed>k__BackingField: 22
+  <MaxFlyDistance>k__BackingField: 15
   <Damage>k__BackingField: 2

@@ -59,11 +59,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         private void UpdatePlunge(float deltaTime)
         {
             float targetY = -_plungeSpeed.Value;
-
-
             float acceleration = _plungeSpeed.Value * _accelerationMultiplier.Value;
-
             float newVelocityY = Mathf.MoveTowards(_rigidbody.linearVelocity.y, targetY, acceleration * deltaTime);
+
             _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, newVelocityY);
 
             _lastVerticalSpeed = Mathf.Abs(_rigidbody.linearVelocity.y);
@@ -86,6 +84,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             if (_lastVerticalSpeed >= _minImpactSpeedThreshold.Value)
             {
                 _entity.PlungeImpactEvent?.Invoke(_lastVerticalSpeed);
+                Debug.Log("Plunge Impact!");
             }
         }
 

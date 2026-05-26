@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Plunge
 {
@@ -34,12 +35,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         public ReactiveVariable<float> Value;
     }
 
-    public class PlungeLandImpactRangeMin : IEntityComponent
+    public class PlungeLandImpactRange : IEntityComponent
     {
         public ReactiveVariable<float> Value;
     }
 
-    public class PlungeLandImpactDamageMin : IEntityComponent
+    public class PlungeLandImpactDamage : IEntityComponent
     {
         public ReactiveVariable<float> Value;
     }
@@ -47,5 +48,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
     public class PlungeLandImpactKnockbackForceMin : IEntityComponent
     {
         public ReactiveVariable<float> Value;
+    }
+
+    public class PlungeLandImpactHitMask : IEntityComponent
+    {
+        public LayerMask Value;
     }
 }

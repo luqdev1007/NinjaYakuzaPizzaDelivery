@@ -26,4 +26,22 @@ MonoBehaviour:
     Volume: 1
   - Clip: {fileID: 8300000, guid: 9699994004b9bad40b3cc41efb99bfe2, type: 3}
     Volume: 1
+  - Clip: {fileID: 8300000, guid: b3e3b3f25b75b3c4ca6eb643b1c49882, type: 3}
+    Volume: 1
+  - Clip: {fileID: 8300000, guid: 74aff5ec1de85104d983ee3eb1a434c2, type: 3}
+    Volume: 1
+  - Clip: {fileID: 8300000, guid: 73a1ac0a784fd4546910baf9338e4505, type: 3}
+    Volume: 1
+  - Clip: {fileID: 8300000, guid: 65dcb106247208248879c3a8b8737515, type: 3}
+    Volume: 1
+  - Clip: {fileID: 8300000, guid: f5d5bb7e90dc49d48a3ac2437dd24494, type: 3}
+    Volume: 1
+  - Clip: {fileID: 8300000, guid: c2bf934a272d7004f866a40ab068bb44, type: 3}
+    Volume: 1
+  - Clip: {fileID: 8300000, guid: 18842cbf893cf774ca41d74fbf82a75c, type: 3}
+    Volume: 1
+  - Clip: {fileID: 8300000, guid: b9e914032f5062c4b913d4e664338320, type: 3}
+    Volume: 1
+  - Clip: {fileID: 8300000, guid: b49df0d24e02be84eb272d30a59f4eed, type: 3}
+    Volume: 1
   Shuffle: 1
