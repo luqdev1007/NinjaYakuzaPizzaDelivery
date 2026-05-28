@@ -914,6 +914,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.ItemUsedEvent() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.InventoryCharges InventoryChargesC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.InventoryCharges>();
+
+		public System.Collections.Generic.List<Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32>> InventoryCharges => InventoryChargesC.Value;
+
+		public bool TryGetInventoryCharges(out System.Collections.Generic.List<Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32>> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.InventoryCharges component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(System.Collections.Generic.List<Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32>>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddInventoryCharges()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.InventoryCharges() { Value = new System.Collections.Generic.List<Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32>>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddInventoryCharges(System.Collections.Generic.List<Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32>> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.InventoryCharges() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentUseItem IntentUseItemC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentUseItem>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IntentUseItem => IntentUseItemC.Value;

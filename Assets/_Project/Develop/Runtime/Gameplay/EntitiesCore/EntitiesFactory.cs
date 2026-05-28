@@ -10,6 +10,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Combat.HitImpact;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Attack;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Contact;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Dash;
@@ -35,6 +36,7 @@ using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
@@ -266,6 +268,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddCurrentItemIndex()
                 .AddIsUsingItem()
                 .AddItemUsedEvent()
+                .AddInventoryCharges(new List<ReactiveVariable<int>>())
             ;
         }
 
@@ -508,10 +511,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new ApplyDamageSystem())
                 .AddSystem(new ApplyDamageCooldownSystem())
 
-                // тело ниндзя - смертельное оружие, но пока нет...
+                // тело ниндзя - смертельное оружие
                 .AddSystem(new BodyContactDetectingSystem())
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
-                 //.AddSystem(new DealDamageOnContactSystem())
+                .AddSystem(new LethalContactMovementSystem())
 
                 // inventory
                 .AddSystem(new InventorySystem(

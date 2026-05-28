@@ -7,22 +7,19 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
     {
         private void LateUpdate()
         {
-            Vector3 localScale = transform.localScale;
+            if (transform.parent == null)
+                return;
 
-            // Если родитель отзеркален (scale.x < 0), мы инвертируем свой scale, 
-            // чтобы в мировых координатах всегда быть "прямыми"
-            if (transform.parent != null && transform.parent.lossyScale.x < 0)
+            float parentYRotation = transform.parent.eulerAngles.y;
+
+            bool isParentFlipped = Mathf.Abs(Mathf.DeltaAngle(parentYRotation, 180f)) < 1f;
+
+            Vector3 localRotation = transform.localRotation.eulerAngles;
+            float targetLocalY = isParentFlipped ? 180f : 0f;
+
+            if (!Mathf.Approximately(localRotation.y, targetLocalY))
             {
-                if (localScale.x > 0)
-                {
-                    localScale.x *= -1;
-                    transform.localScale = localScale;
-                }
-            }
-            else if (localScale.x < 0)
-            {
-                localScale.x *= -1;
-                transform.localScale = localScale;
+                transform.localRotation = Quaternion.Euler(localRotation.x, targetLocalY, localRotation.z);
             }
         }
     }

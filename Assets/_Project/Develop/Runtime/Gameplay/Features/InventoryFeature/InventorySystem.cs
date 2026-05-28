@@ -52,7 +52,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
             _isUsingItem = entity.IsUsingItem;
             _itemUsedEvent = entity.ItemUsedEvent;
 
-            _chargesList = new List<ReactiveVariable<int>>();
+            _chargesList = entity.InventoryCharges;
+            _chargesList.Clear();
 
             for (int i = 0; i < _consumables.Length; i++)
             {

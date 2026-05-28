@@ -15,7 +15,7 @@ MonoBehaviour:
   <Id>k__BackingField: 123
   <ItemName>k__BackingField: shuriken
   <Icon>k__BackingField: {fileID: 21300000, guid: 5a5954d8f87079c45a43726108fa322b, type: 3}
-  <MaxCharges>k__BackingField: 125
+  <MaxCharges>k__BackingField: 15
   <PrefabPath>k__BackingField: Entities/Projectiles/Shuriken
   <HitMask>k__BackingField:
     serializedVersion: 2

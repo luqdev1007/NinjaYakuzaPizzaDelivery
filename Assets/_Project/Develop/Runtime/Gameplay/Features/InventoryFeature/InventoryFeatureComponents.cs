@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Inventory;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using System.Collections.Generic;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature
 {
@@ -17,5 +18,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature
     public class ItemUsedEvent : IEntityComponent
     {
         public ReactiveEvent<InventoryItemConfig> Value;
+    }
+
+
+    public class InventoryCharges : IEntityComponent
+    {
+        public List<ReactiveVariable<int>> Value;
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using DG.Tweening;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
-using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay
 {
@@ -12,15 +11,13 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         [SerializeField] private List<GameObject> _pizzaSlices;
         [SerializeField] private ParticleSystem _cheeseDripEffect;
         [SerializeField] private Rigidbody2D _rigidbody;
-        // [SerializeField] private LivesCountView _livesUI;
 
         private int _currentVisibleSlices;
         private Entity _linkedEntity;
 
-
         private void FixedUpdate()
         {
-            if (_linkedEntity == null)
+            if (_linkedEntity == null || _linkedEntity.Rigidbody == null)
                 return;
 
             float heroVelocityX = _linkedEntity.Rigidbody.linearVelocity.x;
@@ -31,44 +28,54 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             }
         }
 
-        public void UpdateHealthVisual(float currentHealth, float maxHealth)
+        public int UpdateHealthVisual(float currentHealth, float maxHealth)
         {
-            float healthPercent = currentHealth / maxHealth;
+            float healthPercent = Mathf.Clamp01(currentHealth / maxHealth);
             int targetSlices = Mathf.CeilToInt(healthPercent * _pizzaSlices.Count);
 
-            if (targetSlices < _currentVisibleSlices)
+            // ≈сли прилетело много урона Ч в цикле рон€ем все лишние куски один за другим
+            while (_currentVisibleSlices > targetSlices && _currentVisibleSlices > 0)
             {
                 RemoveSlice();
             }
 
-            _currentVisibleSlices = targetSlices;
+            return _currentVisibleSlices;
         }
 
         private void RemoveSlice()
         {
-            if (_currentVisibleSlices <= 0) 
+            if (_currentVisibleSlices <= 0)
                 return;
 
+            // Ѕерем крайний кусок, уменьшаем счетчик
             GameObject slice = _pizzaSlices[_currentVisibleSlices - 1];
+            _currentVisibleSlices--;
+
+            if (slice == null) return;
 
             slice.transform.SetParent(null);
 
-            var rb = slice.AddComponent<Rigidbody2D>();
+            // Ѕезопасно добавл€ем физику отлетающему куску
+            if (!slice.TryGetComponent<Rigidbody2D>(out var rb))
+            {
+                rb = slice.AddComponent<Rigidbody2D>();
+            }
 
             rb.linearVelocity = new Vector2(Random.Range(-2f, 2f), Random.Range(3f, 5f));
             rb.angularVelocity = Random.Range(-360f, 360f);
 
             slice.transform.DOScale(0, 2f).OnComplete(() => Destroy(slice));
 
-            _cheeseDripEffect.Play();
-
-            // _livesUI.Show(_currentVisibleSlices - 1);
+            if (_cheeseDripEffect != null)
+            {
+                _cheeseDripEffect.Play();
+            }
         }
 
         internal void Initialize(Entity entity)
         {
-            _currentVisibleSlices = _pizzaSlices.Count;
             _linkedEntity = entity;
+            _currentVisibleSlices = _pizzaSlices.Count;
         }
 
         protected override void OnEntityStartedWork(Entity entity)

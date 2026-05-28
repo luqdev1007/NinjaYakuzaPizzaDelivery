@@ -24739,6 +24739,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _pizzaDisplay: {fileID: 6316245206182341566}
+  _livesUI: {fileID: 7872283573397078243}
   _shakeDuration: 0.2
   _shakeStrength: 0.5
 --- !u!114 &6316245206182341566
@@ -60179,6 +60180,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 1274124274879070163}
+  _emptyUseSfxKey: ItemEmpty
 --- !u!1 &2305303809177581567
 GameObject:
   m_ObjectHideFlags: 0
@@ -70495,6 +70497,9 @@ MonoBehaviour:
   _consumables:
   - {fileID: 11400000, guid: b348a5f78cee93b4cbdd19f8eead08a4, type: 2}
   - {fileID: 11400000, guid: 68f6272de285fbb45a2662be663f5263, type: 2}
+  _shakeDuration: 0.3
+  _shakeStrength: 1.2
+  _switchItemSfxKey: InventorySwitch
 --- !u!1 &3133865298558462263
 GameObject:
   m_ObjectHideFlags: 0
@@ -95528,7 +95533,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5888668352669946562
 RectTransform:
   m_ObjectHideFlags: 0

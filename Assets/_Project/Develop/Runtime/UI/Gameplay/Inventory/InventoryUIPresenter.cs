@@ -7,10 +7,11 @@ using System;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
+using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay.Inventory
 {
-    public class InventoryUIPresenter : EntityView
+    public class InventoryUIPresenter : EntityView, IRequireAudioService
     {
         [Header("Main Containers")]
         [SerializeField] private CanvasGroup _mainCanvasGroup;
@@ -29,40 +30,112 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Inventory
         [Header("Settings")]
         [SerializeField] private float _fadeDuration = 0.15f;
         [SerializeField] private float _displayDuration = 1.5f;
-        [SerializeField] private float _animDelay = 0.25f; // Уменьшил для отзывчивости
+        [SerializeField] private float _animDelay = 0.25f;
         [SerializeField] private ThrowableItemConfig[] _consumables;
+
+        [Header("Shake Settings (Empty Use)")]
+        [SerializeField] private float _shakeDuration = 0.4f; 
+        [SerializeField] private float _shakeStrength = 12f;  
+
+        [Header("SFX Keys")]
+        [SerializeField] private string _switchItemSfxKey = "InventorySwitch";
 
         private Sequence _fadeSequence;
         private Sequence _switchSequence;
+        private Tween _shakeTween;
+
         private Entity _entity;
         private List<IDisposable> _chargeSubscriptions = new();
+        private IDisposable _itemIntentDisposable;
+        private IAudioService _audioService;
+
+        private Vector3 _originalFinalViewPosition; 
+
+        public void Construct(IAudioService audioService)
+        {
+            _audioService = audioService;
+        }
 
         protected override void OnEntityStartedWork(Entity entity)
         {
             _entity = entity;
 
+            _originalFinalViewPosition = _itemFinalView.transform.localPosition;
+
             _mainCanvasGroup.alpha = 0;
             ResetToIdleState();
 
-            /*
-            _chargeSubscriptions.Add(_entity.ShurikenCharges.Subscribe((old, val) => RefreshCountText()));
-            _chargeSubscriptions.Add(_entity.SleepDartCharges.Subscribe((old, val) => RefreshCountText()));
+            var charges = _entity.InventoryCharges;
+            for (int i = 0; i < charges.Count; i++)
+            {
+                _chargeSubscriptions.Add(charges[i].Subscribe((old, val) => RefreshCountText()));
+            }
 
-            _entity.CurrentThrowableIndex.Subscribe(OnItemSwitched);
-            */
+            _entity.CurrentItemIndex.Subscribe(OnItemSwitched);
+
+            _itemIntentDisposable = _entity.IntentUseItem.Subscribe(OnUseAttempt);
+
+            RefreshCountText();
+        }
+
+        private void OnUseAttempt(bool oldValue, bool newValue)
+        {
+            if (_entity == null || newValue == false)
+                return;
+
+            int index = _entity.CurrentItemIndex.Value;
+            var chargesList = _entity.InventoryCharges;
+
+            if (chargesList != null && index >= 0 && index < chargesList.Count)
+            {
+                if (chargesList[index].Value <= 0)
+                {
+                    ShowInventory(); 
+                    PlayEmptyShake(); 
+                }
+            }
+        }
+
+        private void PlayEmptyShake()
+        {
+            _itemFinalView.SetActive(true);
+
+            if (_shakeTween != null && _shakeTween.IsActive())
+            {
+                _shakeTween.Kill(true);
+            }
+            _itemFinalView.transform.localPosition = _originalFinalViewPosition;
+
+            Vector3 shakeVector = new Vector3(_shakeStrength, 0f, 0f);
+
+            _shakeTween = _itemFinalView.transform.DOShakePosition(
+                duration: _shakeDuration,
+                strength: shakeVector,
+                vibrato: 14,
+                randomness: 90,
+                snapping: false,
+                fadeOut: true
+            ).OnComplete(() =>
+            {
+                _itemFinalView.transform.localPosition = _originalFinalViewPosition;
+            });
         }
 
         private void OnItemSwitched(int oldIdx, int newIdx)
         {
+            _shakeTween?.Kill(true);
+            _itemFinalView.transform.localPosition = _originalFinalViewPosition;
+
             UpdateIcon(newIdx);
             RefreshCountText();
             ShowInventory();
             PlaySwitchAnimation();
+
+            _audioService?.PlaySfx(_switchItemSfxKey, transform.position);
         }
 
         private void ShowInventory()
         {
-            // Управляем прозрачностью отдельно
             _fadeSequence?.Kill();
             _fadeSequence = DOTween.Sequence();
 
@@ -77,18 +150,16 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Inventory
             _switchSequence?.Kill();
             _switchSequence = DOTween.Sequence();
 
-            // Мгновенная подготовка к новой анимации
             _switchSequence.AppendCallback(() =>
             {
                 _itemFinalView.SetActive(false);
 
-                // Перезапускаем стейты аниматоров, чтобы они не залипали
                 _itemAnimateShow.SetActive(false);
                 _itemAnimateHide.SetActive(false);
                 _itemAnimateShow.SetActive(true);
                 _itemAnimateHide.SetActive(true);
 
-                _showAnimator.Play("ShowItem", -1, 0f); // Прямой запуск стейта вместо триггера
+                _showAnimator.Play("ShowItem", -1, 0f);
                 _hideAnimator.Play("HideItem", -1, 0f);
             });
 
@@ -104,23 +175,35 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Inventory
 
         private void ResetToIdleState()
         {
+            if (_shakeTween != null && _shakeTween.IsActive())
+                return;
+
             _itemFinalView.SetActive(false);
             _itemAnimateShow.SetActive(false);
             _itemAnimateHide.SetActive(false);
         }
 
-        private void UpdateIcon(int index) => _itemIconImage.sprite = _consumables[index].Icon;
+        private void UpdateIcon(int index)
+        {
+            if (index >= 0 && index < _consumables.Length)
+                _itemIconImage.sprite = _consumables[index].Icon;
+        }
 
         private void RefreshCountText()
         {
-            // int index = _entity.CurrentThrowableIndex.Value;
-            // int charges = index == 0 ? _entity.ShurikenCharges.Value : _entity.SleepDartCharges.Value;
-            // _countText.text = charges.ToString();
+            int index = _entity.CurrentItemIndex.Value;
+            var chargesList = _entity.InventoryCharges;
+
+            if (chargesList != null && index >= 0 && index < chargesList.Count)
+            {
+                int currentCharges = chargesList[index].Value;
+                _countText.text = currentCharges.ToString();
+            }
         }
 
         public override void Cleanup(Entity entity)
         {
-            if (this == null) 
+            if (this == null)
                 return;
 
             base.Cleanup(entity);
@@ -128,8 +211,11 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Inventory
             foreach (var sub in _chargeSubscriptions)
                 sub?.Dispose();
 
+            _itemIntentDisposable?.Dispose();
+
             _fadeSequence?.Kill();
             _switchSequence?.Kill();
+            _shakeTween?.Kill();
         }
     }
 }
