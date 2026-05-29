@@ -60,7 +60,7 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 1024
     <SlideSpeed>k__BackingField: 1
-    <JumpForce>k__BackingField: {x: 8, y: 12}
+    <JumpForce>k__BackingField: {x: 8, y: 24}
   <WallJump>k__BackingField:
     <VelocityYAbs>k__BackingField: 5
     <ControlLockDuration>k__BackingField: 0.2

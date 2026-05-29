@@ -15,6 +15,9 @@ using System;
 using System.Collections;
 using UnityEngine;
 using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump;
+using Assets._Project.Develop.Runtime.Utilities.Conditions;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 {
