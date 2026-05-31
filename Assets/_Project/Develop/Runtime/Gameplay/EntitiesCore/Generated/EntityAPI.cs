@@ -480,26 +480,146 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootPickedEvent LootPickedEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootPickedEvent>();
 
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootType> LootPickedEvent => LootPickedEventC.Value;
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTypes> LootPickedEvent => LootPickedEventC.Value;
 
-		public bool TryGetLootPickedEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootType> value)
+		public bool TryGetLootPickedEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTypes> value)
 		{
 			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootPickedEvent component);
 			if (result)
 				value = component.Value;
 			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootType>);
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTypes>);
 			return result;
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootPickedEvent()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootPickedEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootType>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootPickedEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTypes>() }); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootPickedEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootType> value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootPickedEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTypes> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootPickedEvent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootCollectSoundId LootCollectSoundIdC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootCollectSoundId>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.String> LootCollectSoundId => LootCollectSoundIdC.Value;
+
+		public bool TryGetLootCollectSoundId(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.String> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootCollectSoundId component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.String>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootCollectSoundId()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootCollectSoundId() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.String>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootCollectSoundId(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.String> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootCollectSoundId() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootType LootTypeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootType>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTypes> LootType => LootTypeC.Value;
+
+		public bool TryGetLootType(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTypes> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootType component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTypes>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootType()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootType() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTypes>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootType(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootTypes> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootType() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootCount LootCountC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootCount>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32> LootCount => LootCountC.Value;
+
+		public bool TryGetLootCount(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootCount component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootCount()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootCount() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootCount(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootCount() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootIsDropped LootIsDroppedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootIsDropped>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> LootIsDropped => LootIsDroppedC.Value;
+
+		public bool TryGetLootIsDropped(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootIsDropped component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootIsDropped()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootIsDropped() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootIsDropped(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootIsDropped() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootIsCollected LootIsCollectedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootIsCollected>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> LootIsCollected => LootIsCollectedC.Value;
+
+		public bool TryGetLootIsCollected(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootIsCollected component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootIsCollected()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootIsCollected() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootIsCollected(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootIsCollected() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootCollectRange LootCollectRangeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature.LootCollectRange>();

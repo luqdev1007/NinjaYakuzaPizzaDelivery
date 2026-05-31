@@ -1,9 +1,12 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
+using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using UnityEngine;
@@ -35,6 +38,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
             {
                 case GhostConfig ghostConfig:
                     entity = _entitiesFactory.CreateGhost(at, ghostConfig);
+
+                    entity.AddLootIsDropped(new ReactiveVariable<bool>(false));
+
+                    ICompositeCondition canDropLoot = new CompositeCondition()
+                        .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
+
+                    entity.AddCanDropLoot(canDropLoot);
+
+                    LootTableConfig lootTable = ghostConfig.LootTable;
+
+                    entity.AddSystem(new DropLootSystem(
+                        _container.Resolve<DropLootService>(),
+                        lootTable));
 
                     _brainsFactory.CreateGhostBrain(entity);
                     break;

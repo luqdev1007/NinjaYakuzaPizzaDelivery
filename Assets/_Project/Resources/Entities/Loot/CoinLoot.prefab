@@ -5058,6 +5058,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8494828092671358508}
   - component: {fileID: 5976367010685191377}
+  - component: {fileID: 5611691128883810860}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -5094,8 +5095,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _renderers:
-  - {fileID: 0}
+  - {fileID: 981134302260071111}
   _blinkThreshold: 1.5
+--- !u!114 &5611691128883810860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2222785676593234142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8aea9fe196bcad4db0ab88fab02b3be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _soundKey: CoinCollectSound
 --- !u!1 &4875668977205255985
 GameObject:
   m_ObjectHideFlags: 0

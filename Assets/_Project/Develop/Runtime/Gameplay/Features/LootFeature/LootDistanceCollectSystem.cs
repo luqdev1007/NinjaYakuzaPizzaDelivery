@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
-using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
@@ -8,44 +9,73 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
     public class LootDistanceCollectSystem : IInitializableSystem, IUpdatableSystem
     {
         private readonly EntitiesLifeContext _lifeContext;
-        private Entity _hero;
-        private ReactiveVariable<float> _collectDistance = new();
+        private readonly WalletService _walletService;
 
-        public LootDistanceCollectSystem(EntitiesLifeContext lifeContext)
+        private Entity _hero;
+        private float _collectDistance = 0.4f;
+
+        public LootDistanceCollectSystem(EntitiesLifeContext lifeContext, WalletService walletService)
         {
             _lifeContext = lifeContext;
+            _walletService = walletService;
         }
 
         public void OnInit(Entity entity)
         {
             _hero = entity;
-            // _collectDistance.Value = entity.CollectRange.Value * 0.2f;
         }
 
         public void OnUpdate(float deltaTime)
         {
-            if (_lifeContext == null)
-                return;
+            if (_lifeContext == null) return;
 
-            // Vector3 heroPosition = _hero.Transform.position;
+            Vector3 heroPosition = _hero.Transform.position;
 
-            for (int i = 0; i < _lifeContext.Entities.Count; i++)
+            for (int i = _lifeContext.Entities.Count - 1; i >= 0; i--)
             {
-                Entity entity = _lifeContext.Entities[i];
+                Entity lootEntity = _lifeContext.Entities[i];
 
-                /*
-                if (entity.HasComponent<LootTag>() && entity.IsCollected.Value == false && entity.InSpawnProcess.Value == false)
+                if (lootEntity.HasComponent<LootIsCollected>() && lootEntity.HasComponent<InSpawnProcess>())
                 {
-                    float distance = Vector3.Distance(heroPosition, entity.Transform.position);
-
-                    if (distance <= _collectDistance.Value)
+                    if (lootEntity.LootIsCollected.Value == false &&
+                        lootEntity.InSpawnProcess.Value == false)
                     {
-                        entity.IsCollected.Value = true;
-                        Debug.Log($"Лут собран по дистанции!");
+                        float distance = Vector3.Distance(heroPosition, lootEntity.Transform.position);
+
+                        if (distance <= _collectDistance)
+                        {
+                            lootEntity.LootIsCollected.Value = true;
+
+                            ApplyLootReward(lootEntity);
+
+                            _lifeContext.Release(lootEntity);
+
+                            Object.Destroy(lootEntity.Transform.gameObject);
+                        }
                     }
                 }
-                */
             }
+        }
+
+        private void ApplyLootReward(Entity lootEntity)
+        {
+            LootTypes type = lootEntity.LootType.Value;
+            int count = lootEntity.LootCount.Value;
+
+            CurrencyTypes currencyType = MapLootToCurrency(type);
+
+            _walletService.Add(currencyType, count);
+            Debug.Log($"[Loot Пылесос] Схавали лут: {type}, Количество: {count}. Отправлено в кошелек!");
+        }
+
+        private CurrencyTypes MapLootToCurrency(LootTypes lootType)
+        {
+            return lootType switch
+            {
+                LootTypes.SoulShard => CurrencyTypes.SoulShard,
+                LootTypes.Coin => CurrencyTypes.Coins,
+                _ => CurrencyTypes.Coins
+            };
         }
     }
 }

@@ -3,7 +3,9 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI.States;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
@@ -42,14 +44,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 
                 .AddIntentSwitchTarget()
                 .AddIsTargetingActive()
-                .AddCurrentTarget();
+                .AddCurrentTarget()
+
+                .AddLootCollectRange(new ReactiveVariable<float>(config.LootCollectRange))
+                .AddLootPickedEvent()
+                ;
 
             _brainsFactory.CreateMainHeroBrain(entity);
 
-            _entitiesLifeContext.Add(entity);
+            entity
+                .AddSystem(new LootMagnetSystem(_entitiesLifeContext))
+                .AddSystem(new LootDistanceCollectSystem(_entitiesLifeContext, _container.Resolve<WalletService>()))
+                .AddSystem(new TargetingCoreSystem(_entitiesLifeContext));
 
-            TargetingCoreSystem targetingSystem = new TargetingCoreSystem(_entitiesLifeContext);
-            entity.AddSystem(targetingSystem);
+            _entitiesLifeContext.Add(entity);
 
             return entity;
         }

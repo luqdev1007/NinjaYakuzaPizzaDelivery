@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
@@ -9,59 +10,50 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 {
     public class LootMagnetSystem : IInitializableSystem, IUpdatableSystem
     {
-        private CollidersRegistryService _collidersRegistryService;
+        private readonly EntitiesLifeContext _lifeContext;
 
-        public LootMagnetSystem(CollidersRegistryService collidersRegistryService)
-        {
-            _collidersRegistryService = collidersRegistryService;
-        }
-
-        private Entity _lootMagnetOwner;
+        private Entity _player;
         private ReactiveVariable<float> _collectRange;
-        private ReactiveEvent<LootType> _lootPickedEvent;
-        private Transform _transform;
+        private Transform _playerTransform;
+
+        public LootMagnetSystem(EntitiesLifeContext lifeContext)
+        {
+            _lifeContext = lifeContext;
+        }
 
         public void OnInit(Entity entity)
         {
-            _lootMagnetOwner = entity;
-            /*
-            _collectRange = entity.CollectRange;
-            _transform = entity.Transform;
-            _lootPickedEvent = entity.LootPickedEvent;
-            */
+            _player = entity;
+            _collectRange = entity.LootCollectRange;
+            _playerTransform = entity.Transform;
         }
 
         public void OnUpdate(float deltaTime)
         {
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(_transform.position, _collectRange.Value, LayersAPI.LayerMaskLoot);
+            Vector3 heroPosition = _player.Transform.position;
+            float magnetRadius = _player.LootCollectRange.Value;
 
-            foreach (Collider2D collider in colliders)
+            for (int i = 0; i < _lifeContext.Entities.Count; i++)
             {
-                Entity entity = _collidersRegistryService.GetBy(collider);
+                Entity lootEntity = _lifeContext.Entities[i];
 
-                if (entity == null) 
-                    continue;
+                if (lootEntity.HasComponent<LootIsCollected>() &&
+                    lootEntity.HasComponent<CurrentTarget>() &&
+                    lootEntity.HasComponent<InSpawnProcess>())
+                {
+                    if (lootEntity.CurrentTarget.Value == null &&
+                        lootEntity.InSpawnProcess.Value == false &&
+                        lootEntity.LootIsCollected.Value == false)
+                    {
+                        float distance = Vector3.Distance(heroPosition, lootEntity.Transform.position);
 
-                /*
-                if (entity.HasComponent<LootTag>() && entity.HasComponent<CurrentTarget>() && entity.InSpawnProcess.Value == false)
-                    Collect(entity);
-                */
+                        if (distance <= magnetRadius)
+                        {
+                            lootEntity.CurrentTarget.Value = _player;
+                        }
+                    }
+                }
             }
-        }
-
-        private void Collect(Entity loot)
-        {
-            /*
-            loot.CurrentTarget.Value = _lootMagnetOwner;
-            loot.BodyCollider.isTrigger = true;
-
-            var rb = loot.Transform.GetComponent<Rigidbody2D>();
-
-            if (rb != null)
-                rb.simulated = false;
-
-            _lootPickedEvent?.Invoke(LootType.Coin); // ? rework
-            */
         }
     }
 }

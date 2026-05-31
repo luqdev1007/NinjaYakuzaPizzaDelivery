@@ -1,6 +1,6 @@
 ﻿namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 {
-    public enum LootType
+    public enum LootTypes
     {
         SoulShard,      // Осколки памяти
         Coin,        // Золото

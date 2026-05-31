@@ -15,9 +15,9 @@ MonoBehaviour:
   <PrefabPath>k__BackingField: Entities/Loot/CoinLoot
   <LootType>k__BackingField: 1
   <CollectSoundId>k__BackingField: CoinCollect
-  <LaunchForceX>k__BackingField: {x: -7, y: 7}
-  <LaunchForceY>k__BackingField: {x: 6, y: 10}
-  <GravityRange>k__BackingField: {x: 4, y: 6}
+  <LaunchForceRangeX>k__BackingField: {x: -2, y: 2}
+  <LaunchForceRangeY>k__BackingField: {x: 2, y: 3}
+  <GravityRange>k__BackingField: {x: 3, y: 4}
   <SpawnDuration>k__BackingField: 1
   <LifeTime>k__BackingField: 5
   <MoveSpeed>k__BackingField: 12

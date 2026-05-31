@@ -6,7 +6,34 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 {
     public class LootPickedEvent : IEntityComponent
     {
-        public ReactiveEvent<LootType> Value;
+        public ReactiveEvent<LootTypes> Value;
+    }
+
+    public class LootCollectSoundId : IEntityComponent
+    {
+        public ReactiveVariable<string> Value;
+    }
+
+    
+
+    public class LootType : IEntityComponent
+    {
+        public ReactiveVariable<LootTypes> Value;
+    }
+
+    public class LootCount : IEntityComponent
+    {
+        public ReactiveVariable<int> Value;
+    }
+
+    public class LootIsDropped : IEntityComponent
+    {
+        public ReactiveVariable<bool> Value;
+    }
+
+    public class LootIsCollected : IEntityComponent
+    {
+        public ReactiveVariable<bool> Value;
     }
 
     public class LootCollectRange : IEntityComponent

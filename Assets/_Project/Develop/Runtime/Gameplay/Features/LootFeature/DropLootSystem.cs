@@ -27,8 +27,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
         public void OnInit(Entity entity)
         {
             _entity = entity;
-            // _lootIsDropped = entity.LootIsDropped;
-            // _dropLootCondition = entity.CanDropLoot;
+            _lootIsDropped = entity.LootIsDropped;
+            _dropLootCondition = entity.CanDropLoot;
         }
 
         public void OnUpdate(float deltaTime)

@@ -6,10 +6,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Loot
     public abstract class LootConfig : ScriptableObject
     {
         [field: SerializeField] public string PrefabPath { get; private set; }
-        [field: SerializeField] public LootType LootType { get; private set; }
-
-        [Header("Audio Settings")]
-        [field: SerializeField] public string CollectSoundId { get; private set; } = "CoinCollect";
+        [field: SerializeField] public LootTypes LootType { get; private set; }
 
         [Header("Drop Settings")]
         [field: SerializeField] public Vector2 LaunchForceRangeX { get; private set; } = new Vector2(-7f, 7f);

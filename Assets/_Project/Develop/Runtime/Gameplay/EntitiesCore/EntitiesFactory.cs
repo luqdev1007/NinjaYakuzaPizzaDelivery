@@ -26,6 +26,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Inventory;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
@@ -616,7 +617,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             ICompositeCondition canApplyDamage = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                // .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
+                .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0)) // расскоментил недавно!
                 ;
 
             ICompositeCondition canFlip = new CompositeCondition()
@@ -655,7 +656,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
                 .AddSystem(new DealDamageOnContactSystem())
 
-
                 .AddSystem(new PhysicsStabilizationSystem())
                 .AddSystem(new SimpleRigidbodyMovementSystem())
                 .AddSystem(new FlipDirectionSystem())
@@ -664,23 +664,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new DeathSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
                 ;
-
-            // Loot settings
-            /*
-            entity
-                .AddLootIsDropped(new ReactiveVariable<bool>(false));
-
-            ICompositeCondition canDropLoot = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
-
-            entity.AddCanDropLoot(canDropLoot);
-
-            LootTableConfig lootTable = ghostConfig.LootTable;
-
-            entity.AddSystem(new DropLootSystem(
-                _container.Resolve<DropLootService>(), 
-                lootTable));
-            */
 
             return entity;
         }
@@ -811,94 +794,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         // LOOT
         public Entity CreatePullable(LootConfig config, Vector3 position)
         {
-            /*
             Entity entity = CreateEmpty();
             _monoEntitiesFactory.Create(entity, position, config.PrefabPath);
 
-            entity
-                .AddInSpawnProcess(new ReactiveVariable<bool>(true))
-                .AddSpawnCurrentTime(new ReactiveVariable<float>(config.SpawnDuration))
-                .AddSpawnInitialTime(new ReactiveVariable<float>(config.SpawnDuration))
 
-                .AddAutoDeleteCurrentTime(new ReactiveVariable<float>(config.LifeTime))
-                .AddAutoDeleteInitialTime(new ReactiveVariable<float>(config.LifeTime))
-
-                .AddMoveDirection()
-                .AddMoveSpeed(new ReactiveVariable<float>(config.MoveSpeed))
-                .AddIsCollected(new ReactiveVariable<bool>(false))
-                .AddCurrentTarget(new ReactiveVariable<Entity>(null));
-
-            ICompositeCondition moveCondition = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
-
-            ICompositeCondition mustSelfRelease = new CompositeCondition(LogicOperations.Or)
-                .Add(new FuncCondition(() => entity.IsCollected.Value == true))
-                .Add(new CompositeCondition(LogicOperations.And)
-                    .Add(new FuncCondition(() => entity.AutoDeleteCurrentTime.Value <= 0))
-                    .Add(new FuncCondition(() => entity.CurrentTarget.Value == null))
-                    .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-                );
-
-            entity
-                .AddCanMove(moveCondition)
-                .AddMustSelfRelease(mustSelfRelease);
-
-            entity
-                .AddSystem(new SpawnProcessTimerSystem())
-                .AddSystem(new AutoDeleteTimerSystem())
-                .AddSystem(new LootArcMovementSystem(config.TravelTime, config.ArcHeight)) 
-                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
-
-            _entitiesLifeContext.Add(entity);
             return entity;
-        }
-
-        public Entity CreateChest(Vector3 position, LootTableConfig lootTable)
-        {
-            Entity entity = CreateEmpty();
-            _monoEntitiesFactory.Create(entity, position, "Entities/Loot/SecretChest");
-
-            entity.AddAudio(_audioService);
-
-            entity
-                .AddCurrentHealth(new ReactiveVariable<float>(1f)) 
-                .AddDamageCooldown(new ReactiveVariable<float>(0.5f))
-                .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
-                .AddTakeDamageRequest(new ReactiveEvent<DamageData>())
-                .AddTakeDamageEvent(new ReactiveEvent<DamageData>())
-                .AddLootIsDropped(new ReactiveVariable<bool>(false));
-
-            ICompositeCondition canDropLoot = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
-
-            ICompositeCondition canApplyDamage = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.LootIsDropped.Value == false));
-
-            ICompositeCondition mustSelfRelease = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.LootIsDropped.Value == true));
-
-            entity.AddMustSelfRelease(mustSelfRelease);
-
-            entity.AddCanDropLoot(canDropLoot);
-            entity.AddCanApplyDamage(canApplyDamage);
-
-            entity.AddIsSecretChest();
-
-            entity
-                .AddSystem(new ApplyDamageSystem())
-
-                .AddSystem(new DropLootSystem(
-                    _container.Resolve<DropLootService>(), 
-                    lootTable))
-                
-                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
-                ;
-
-            _entitiesLifeContext.Add(entity);
-            return entity;
-            */
-
-            return null;
         }
         // _______________________________________________________________________
         // REWORK ________________
