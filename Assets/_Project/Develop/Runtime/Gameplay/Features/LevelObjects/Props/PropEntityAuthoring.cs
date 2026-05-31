@@ -32,6 +32,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props
             }
 
             BuildPropEntity();
+
+            // [ДОБАВЛЕНО]: Подписываемся на глобальное событие освобождения сущностей
+            _entitiesLifeContext.Released += OnEntityReleased;
         }
 
         private void BuildPropEntity()
@@ -72,10 +75,32 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props
                 view.Link(entity);
             }
 
-
             LinkedEntity = entity;
 
             _entitiesLifeContext.Add(entity);
+        }
+
+        // [ДОБАВЛЕНО]: Ловим момент, когда SelfReleaseSystem удалит сущность из контекста
+        private void OnEntityReleased(Entity entity)
+        {
+            if (entity == LinkedEntity)
+            {
+                _entitiesLifeContext.Released -= OnEntityReleased;
+
+                // Убираем Cleanup(entity); — он здесь лишний и ломает код из-за неинициализированных базовых полей
+
+                // Физически удаляем объект со сцены
+                Destroy(gameObject);
+            }
+        }
+
+        // [ДОБАВЛЕНО]: Обязательно отписываемся при уничтожении (например, при смене сцены), чтобы не плодить утечки памяти
+        private void OnDestroy()
+        {
+            if (_entitiesLifeContext != null)
+            {
+                _entitiesLifeContext.Released -= OnEntityReleased;
+            }
         }
     }
 }
