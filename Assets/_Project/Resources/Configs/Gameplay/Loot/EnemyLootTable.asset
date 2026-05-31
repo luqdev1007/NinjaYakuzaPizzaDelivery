@@ -16,7 +16,7 @@ MonoBehaviour:
   _lootEntries:
   - <Config>k__BackingField: {fileID: 11400000, guid: f55576da555a7054b817eb19b3d9d397, type: 2}
     <Weight>k__BackingField: 20
-    <CountRange>k__BackingField: {x: 5, y: 10}
+    <CountRange>k__BackingField: {x: 15, y: 25}
   - <Config>k__BackingField: {fileID: 11400000, guid: 29e08276416407548991bb062299d26e, type: 2}
     <Weight>k__BackingField: 80
-    <CountRange>k__BackingField: {x: 3, y: 5}
+    <CountRange>k__BackingField: {x: 6, y: 12}

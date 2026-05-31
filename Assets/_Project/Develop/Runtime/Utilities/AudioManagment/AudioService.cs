@@ -10,6 +10,11 @@ namespace Assets._Project.Develop.Runtime.Utilities.AudioManagment
 {
     public class AudioService : IAudioService
     {
+        // Настройка защиты от спама: минимальный интервал между одинаковыми звуками (в секундах)
+        // 0.05f (50 мс) — идеальный баланс: ухо не заметит кастрации, но клиппинга и каши не будет
+        private const float MinSfxInterval = 0.05f;
+        private readonly Dictionary<string, float> _lastPlayTimes = new Dictionary<string, float>();
+
         private readonly AudioLibrary _library;
         private readonly AudioMixer _mixer;
         private readonly GameObjectPool _sfxPool;
@@ -52,6 +57,19 @@ namespace Assets._Project.Develop.Runtime.Utilities.AudioManagment
 
         public void PlaySfx(string key, Vector3? position = null)
         {
+            // ЗАЩИТА ОТ СПАМА ЗВУКОВ
+            if (_lastPlayTimes.TryGetValue(key, out float lastPlayedTime))
+            {
+                if (Time.unscaledTime - lastPlayedTime < MinSfxInterval)
+                {
+                    // Если звук запрашивают слишком часто (например, куча лута в один фрейм) — просто игнорируем
+                    return;
+                }
+            }
+
+            // Обновляем время последнего запуска звука
+            _lastPlayTimes[key] = Time.unscaledTime;
+
             var data = _library.GetSound(key); // Вызовет ошибку дальше, если звук не найден
 
             var emitterObj = _sfxPool.Get();
@@ -146,7 +164,17 @@ namespace Assets._Project.Develop.Runtime.Utilities.AudioManagment
             if (fade)
                 _fadeCoroutine = _coroutines.StartPerform(CrossfadeCoroutine(data));
             else
-                SwitchMusicImmediately(data);
+                _switchMusicImmediately(data);
+        }
+
+        private void _switchMusicImmediately(MusicData data) // Поправил опечатку в вызове, если была
+        {
+            _activeMusicSource.Stop();
+            _activeMusicSource.clip = data.Clip;
+            _activeMusicSource.volume = data.Volume;
+            _activeMusicSource.outputAudioMixerGroup = data.Group;
+            _activeMusicSource.loop = true;
+            _activeMusicSource.Play();
         }
 
         // Volume Management
