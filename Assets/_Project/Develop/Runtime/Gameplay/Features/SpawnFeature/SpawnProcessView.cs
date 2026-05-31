@@ -3,11 +3,12 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using System;
 using UnityEngine;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using Assets._Project.Develop.Runtime.Utilities.AudioManagment; // Не забудь про пространство звуков
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
 {
     [RequireComponent(typeof(Animator))]
-    public class SpawnProcessView : EntityView
+    public class SpawnProcessView : EntityView, IRequireAudioService
     {
         private static readonly int SpawningProcessKey = Animator.StringToHash("IsSpawning");
 
@@ -19,12 +20,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
         [SerializeField] private Transform _effectSpawnPoint;
         [SerializeField] private ParticleSystemStopAction _vfxStopAction = ParticleSystemStopAction.Destroy;
 
+        [Header("SFX Settings (Optional)")]
+        [SerializeField] private string _spawnSfxKey = "LootSpawnPopup"; // Твой ключ звука спавна
+
         private IReadOnlyVariable<bool> _inSpawnProcess;
         private IDisposable _inSpawnProcessChangedDisposable;
+        private IAudioService _audioService;
 
-        private void OnValidate() 
+        private void OnValidate()
         {
             _animator ??= GetComponent<Animator>();
+        }
+
+        public void Construct(IAudioService audioService)
+        {
+            _audioService = audioService;
         }
 
         protected override void OnEntityStartedWork(Entity entity)
@@ -49,22 +59,37 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
 
         private void UpdateSpawnProcessState(bool value)
         {
-            _animator.SetBool(SpawningProcessKey, value);
+            if (_animator != null)
+            {
+                _animator.SetBool(SpawningProcessKey, value);
+            }
 
             if (value)
             {
                 PlaySpawnEffect();
+                PlaySpawnAudio();
             }
         }
 
         private void PlaySpawnEffect()
         {
-            ParticleSystem vfx = Instantiate(_spawnEffectPrefab, _effectSpawnPoint.position, _effectSpawnPoint.rotation);
+            if (_spawnEffectPrefab == null) return;
+
+            Transform spawnPoint = _effectSpawnPoint != null ? _effectSpawnPoint : transform;
+            ParticleSystem vfx = Instantiate(_spawnEffectPrefab, spawnPoint.position, spawnPoint.rotation);
 
             var main = vfx.main;
             main.stopAction = _vfxStopAction;
 
             vfx.Play();
+        }
+
+        private void PlaySpawnAudio()
+        {
+            if (!string.IsNullOrEmpty(_spawnSfxKey))
+            {
+                _audioService?.PlaySfx(_spawnSfxKey, transform.position);
+            }
         }
     }
 }

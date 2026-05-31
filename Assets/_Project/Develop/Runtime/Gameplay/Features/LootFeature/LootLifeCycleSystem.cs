@@ -6,28 +6,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 {
     public class LootLifeCycleSystem : IInitializableSystem, IUpdatableSystem
     {
-        private readonly float _spawnDuration;
-        private readonly float _lifeTime;
-        private readonly EntitiesLifeContext _entitiesLifeContext; 
+        private readonly EntitiesLifeContext _entitiesLifeContext;
 
         private Entity _entity;
-        private float _spawnTimer;
-        private bool _isDestroyed; 
+        private bool _isDestroyed;
 
-        public LootLifeCycleSystem(float spawnDuration, float lifeTime, EntitiesLifeContext entitiesLifeContext)
+        public LootLifeCycleSystem(EntitiesLifeContext entitiesLifeContext)
         {
-            _spawnDuration = spawnDuration;
-            _lifeTime = lifeTime;
             _entitiesLifeContext = entitiesLifeContext;
         }
 
         public void OnInit(Entity entity)
         {
             _entity = entity;
-            _entity.LootInitialLifeTime.Value = _lifeTime;
-            _entity.LootCurrentLifeTime.Value = _lifeTime;
-            _entity.InSpawnProcess.Value = true;
-            _spawnTimer = _spawnDuration;
+            // Таймеры жизни уже инициализированы фабрикой, здесь просто кэшируем сущность
         }
 
         public void OnUpdate(float deltaTime)
@@ -35,17 +27,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             if (_isDestroyed || _entity.LootIsCollected.Value || _entity.Transform == null)
                 return;
 
+            // Если общая система спавна всё ещё крутит анимацию появления — ничего не делаем
             if (_entity.InSpawnProcess.Value)
-            {
-                _spawnTimer -= deltaTime;
+                return;
 
-                if (_spawnTimer <= 0)
-                {
-                    _entity.InSpawnProcess.Value = false;
-                }
-            }
-
-            if (!_entity.InSpawnProcess.Value && _entity.CurrentTarget.Value == null)
+            // Монетка приземлилась. Тикаем время жизни, только если её никто не притянул магнитом
+            if (_entity.CurrentTarget.Value == null)
             {
                 _entity.LootCurrentLifeTime.Value -= deltaTime;
 

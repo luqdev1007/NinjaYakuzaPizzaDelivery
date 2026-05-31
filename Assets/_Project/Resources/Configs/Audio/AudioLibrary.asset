@@ -53,6 +53,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2388a9efdf5a59f47b2c534529df8477, type: 2}
   - {fileID: 11400000, guid: 005a3a81eb9b33746893d624d1f5ec8e, type: 2}
   - {fileID: 11400000, guid: 05d3e3b8350ab074ebbd2dc43431a3c9, type: 2}
+  - {fileID: 11400000, guid: c115755a2a5bcf64e82dcd9d64325d00, type: 2}
+  - {fileID: 11400000, guid: b4e74edce7c001143a687c05cff8a02b, type: 2}
+  - {fileID: 11400000, guid: 9eb13134b5c38e84989a6d21043ef346, type: 2}
   Musics: []
   Playlists:
   - {fileID: 11400000, guid: da7b10a3442f927479af57185bff26b7, type: 2}

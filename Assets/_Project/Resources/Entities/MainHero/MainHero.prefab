@@ -59860,6 +59860,7 @@ MonoBehaviour:
   _spawnEffectPrefab: {fileID: 4287474839184976492, guid: e95d97e26829f8b40ab4cef5ab24aa38, type: 3}
   _effectSpawnPoint: {fileID: 5732669991004532747}
   _vfxStopAction: 2
+  _spawnSfxKey: MainHeroSpawn
 --- !u!114 &4314795697379934161
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
@@ -38,7 +39,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             SetupLootComponents(loot, config, randomMultiplier);
             ApplyPhysicsAndVisuals(loot, config, randomMultiplier);
 
-            loot.AddSystem(new LootLifeCycleSystem(config.SpawnDuration, config.LifeTime, _entitiesLifeContext));
+            // 1. ПОДКЛЮЧАЕМ ОБЩУЮ СИСТЕМУ СПАВНА
+            loot.AddSystem(new SpawnProcessTimerSystem());
+
+            // 2. Очищенная система старения лута
+            loot.AddSystem(new LootLifeCycleSystem(_entitiesLifeContext));
+
+            // 3. Система полета к игроку
             loot.AddSystem(new LootArcMovementSystem(config.TravelTime, config.ArcHeight));
 
             _entitiesLifeContext.Add(loot);
