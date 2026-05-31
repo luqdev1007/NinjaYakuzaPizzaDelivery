@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 413d67370f75cbd4bba703df219df8c0, type: 3}
+  m_Name: WoodPropBreak
+  m_EditorClassIdentifier: 
+  Key: WoodPropBreak
+  Volume: 1
+  Group: {fileID: -3705572875233171632, guid: 07979af4c966f0b4e82620b1c1202d9d, type: 2}
+  Clips:
+  - {fileID: 8300000, guid: b5e00228b58124d47bdcba5b19d2116f, type: 3}
+  - {fileID: 8300000, guid: 394e11ca03494d448926e2ad1f911fb9, type: 3}
+  - {fileID: 8300000, guid: 7ae6145e60248cb4887907d3ee6c44f7, type: 3}
+  PitchMin: 1.39
+  PitchMax: 1.81

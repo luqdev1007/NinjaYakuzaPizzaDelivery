@@ -6,11 +6,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
     public class MonoEntity : MonoBehaviour
     {
         private CollidersRegistryService _collidersRegistryService;
-        private Entity _linkedEntity;
+
+        public Entity LinkedEntity { get; protected set; }
+
 
         private IAudioService _audioService;
-
-        public Entity LinkedEntity => _linkedEntity;
 
         public void Initialize(CollidersRegistryService collidersRegistryService, IAudioService audioService)
         {
@@ -20,7 +20,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
 
         public void Link(Entity entity)
         {
-            _linkedEntity = entity;
+            LinkedEntity = entity;
 
             EntityView[] views = GetComponentsInChildren<EntityView>();
 
@@ -59,7 +59,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
             foreach (Collider2D collider in GetComponentsInChildren<Collider2D>())
                 _collidersRegistryService.Unregister(collider);
 
-            _linkedEntity = null;
+            LinkedEntity = null;
         }
     }
 }

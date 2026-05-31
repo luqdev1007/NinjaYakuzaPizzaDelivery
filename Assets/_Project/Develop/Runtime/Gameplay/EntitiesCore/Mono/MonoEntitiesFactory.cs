@@ -78,21 +78,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
         private void OnEntityReleased(Entity entity)
         {
             CleanupFor(entity);
-
-            _entityToMono.Remove(entity);
         }
 
         private void CleanupFor(Entity entity)
         {
-            MonoEntity monoEntity = _entityToMono[entity];
-            monoEntity.Cleanup(entity);
-
-            if (monoEntity != null && monoEntity.gameObject != null)
+            if (_entityToMono.TryGetValue(entity, out MonoEntity monoEntity))
             {
-                Object.Destroy(monoEntity.gameObject);
-            }
+                if (monoEntity != null)
+                {
+                    monoEntity.Cleanup(entity);
 
-            _entityToMono.Remove(entity);
+                    if (monoEntity.gameObject != null)
+                    {
+                        Object.Destroy(monoEntity.gameObject);
+                    }
+                }
+                _entityToMono.Remove(entity);
+            }
         }
     }
 }

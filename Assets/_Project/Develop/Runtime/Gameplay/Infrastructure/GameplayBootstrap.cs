@@ -18,6 +18,7 @@ using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 {
@@ -70,6 +71,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
             _brainsContext = _container.Resolve<AIBrainsContext>();
             _gameplayStatesContext = _container.Resolve<GameplayStatesContext>();
+
+            // =================================================================================
+            // [ШАГ 5.5]: ИНИЦИАЛИЗАЦИЯ ПРОПСОВ НА СЦЕНЕ
+            // Находим все расставленные дизайнером пропсы ТОЛЬКО внутри созданного левела
+            PropEntityAuthoring[] sceneProps = levelInstance.GetComponentsInChildren<PropEntityAuthoring>(true);
+            IAudioService audioService = _container.Resolve<IAudioService>();
+
+            foreach (PropEntityAuthoring prop in sceneProps)
+            {
+                prop.Construct(_entitiesLifeContext, audioService);
+            }
 
             // 6. Спавним начальных сущностей
             var enemiesFactory = _container.Resolve<EnemiesFactory>();
