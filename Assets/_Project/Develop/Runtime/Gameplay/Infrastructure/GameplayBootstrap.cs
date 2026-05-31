@@ -80,7 +80,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             foreach (PropEntityAuthoring prop in sceneProps)
             {
-                prop.Construct(_entitiesLifeContext, audioService);
+                prop.Construct(
+                        _container.Resolve<EntitiesLifeContext>(),
+                        _container.Resolve<IAudioService>(),
+                        _container.Resolve<DropLootService>() 
+                    );
             }
 
             // 6. Спавним начальных сущностей

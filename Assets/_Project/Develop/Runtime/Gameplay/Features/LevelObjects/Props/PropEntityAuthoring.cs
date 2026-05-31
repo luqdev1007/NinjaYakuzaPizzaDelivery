@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature; // Для DropLootSystem и DropLootService
 using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -16,11 +17,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props
 
         private EntitiesLifeContext _entitiesLifeContext;
         private IAudioService _audioService;
+        private DropLootService _dropLootService; // [ДОБАВЛЕНО] Поле под сервис лута
 
-        public void Construct(EntitiesLifeContext entitiesLifeContext, IAudioService audioService)
+        // [ОБНОВЛЕНО] Внедряем DropLootService через параметры конструктора
+        public void Construct(EntitiesLifeContext entitiesLifeContext, IAudioService audioService, DropLootService dropLootService)
         {
             _entitiesLifeContext = entitiesLifeContext;
             _audioService = audioService;
+            _dropLootService = dropLootService;
         }
 
         private void Start()
@@ -33,7 +37,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props
 
             BuildPropEntity();
 
-            // [ДОБАВЛЕНО]: Подписываемся на глобальное событие освобождения сущностей
             _entitiesLifeContext.Released += OnEntityReleased;
         }
 
@@ -41,14 +44,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props
         {
             Entity entity = new Entity();
 
+            // Базовые компоненты здоровья и смерти
             entity
                 .AddTakeDamageRequest()
                 .AddTakeDamageEvent()
                 .AddMaxHealth(new ReactiveVariable<float>(_config.MaxHealth))
                 .AddCurrentHealth(new ReactiveVariable<float>(_config.MaxHealth))
                 .AddIsDead()
-                .AddInDeathProcess(new ReactiveVariable<bool>(false));
+                .AddInDeathProcess(new ReactiveVariable<bool>(false))
+                .AddTransform(transform)
+                ;
 
+            // [ДОБАВЛЕНО] Инициализируем компоненты лута
+            entity.AddLootIsDropped(new ReactiveVariable<bool>(false));
+
+            ICompositeCondition canDropLoot = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0)); // Дроп при ХП <= 0
+            entity.AddCanDropLoot(canDropLoot);
+
+            // Условия жизнедеятельности сущности
             ICompositeCondition canApplyDamage = new CompositeCondition().Add(new FuncCondition(() => entity.IsDead.Value == false));
             ICompositeCondition mustDie = new CompositeCondition().Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
             ICompositeCondition mustSelfRelease = new CompositeCondition().Add(new FuncCondition(() => entity.IsDead.Value == true));
@@ -58,11 +72,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props
                 .AddMustDie(mustDie)
                 .AddMustSelfRelease(mustSelfRelease);
 
+            // Базовые системы
             entity
                 .AddSystem(new ApplyDamageSystem())
                 .AddSystem(new DeathSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
 
+            // [ДОБАВЛЕНО] Вешаем систему лута, если у пропса в конфиге задана таблица дропа
+            if (_config.LootTable != null)
+            {
+                entity.AddSystem(new DropLootSystem(_dropLootService, _config.LootTable));
+            }
+
+            // Привязка вьюшек
             EntityView[] views = GetComponentsInChildren<EntityView>();
 
             foreach (EntityView view in views)
@@ -76,25 +98,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props
             }
 
             LinkedEntity = entity;
-
             _entitiesLifeContext.Add(entity);
         }
 
-        // [ДОБАВЛЕНО]: Ловим момент, когда SelfReleaseSystem удалит сущность из контекста
         private void OnEntityReleased(Entity entity)
         {
             if (entity == LinkedEntity)
             {
                 _entitiesLifeContext.Released -= OnEntityReleased;
-
-                // Убираем Cleanup(entity); — он здесь лишний и ломает код из-за неинициализированных базовых полей
-
-                // Физически удаляем объект со сцены
                 Destroy(gameObject);
             }
         }
 
-        // [ДОБАВЛЕНО]: Обязательно отписываемся при уничтожении (например, при смене сцены), чтобы не плодить утечки памяти
         private void OnDestroy()
         {
             if (_entitiesLifeContext != null)

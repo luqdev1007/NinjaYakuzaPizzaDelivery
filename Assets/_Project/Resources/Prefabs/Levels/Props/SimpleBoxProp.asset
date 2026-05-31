@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: SimpleBoxProp
   m_EditorClassIdentifier: 
   _maxHealth: 10
+  _lootTable: {fileID: 11400000, guid: 9dd2772753b762e4e98e91f3d8c3acea, type: 2}
