@@ -26,35 +26,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
         }
 
-        public StateMachineBrain CreateMainHeroBrain(Entity entity, ITargetSelector targetSelector)
+        public StateMachineBrain CreateMainHeroBrain(Entity entity)
         {
-            FindTargetState findTargetState = new FindTargetState(
-                targetSelector, _entitiesLifeContext, entity);
+            // Герою НЕ нужен FindTargetState. Его цель задает система ввода (по Tab).
+            // Герою нужен стейт, который будет поворачивать его к уже выбранной цели.
+            RotateToTargetState rotateState = new RotateToTargetState(entity);
 
             AIStateMachine combatState = CreateAutoAttackStateMachine(entity);
-
-            // ReactiveVariable<Entity> currentTarget = entity.CurrentTarget;
-
-            // боевой стейт активен только когда есть цель и игрок не двигается
-            /*
-            ICompositeCondition toCombatCondition = new CompositeCondition()
-                .Add(new FuncCondition(() => currentTarget.Value != null))
-                .Add(new FuncCondition(() => _inputService.MoveDirection == Vector2.zero));
-
-            ICompositeCondition fromCombatCondition = new CompositeCondition(LogicOperations.Or)
-                .Add(new FuncCondition(() => currentTarget.Value == null))
-                .Add(new FuncCondition(() => _inputService.MoveDirection != Vector2.zero));
-            */
-
             EmptyState idleState = new EmptyState();
 
             AIStateMachine behaviour = new AIStateMachine();
             behaviour.AddState(idleState);
             behaviour.AddState(combatState);
+
+            // Раскомментируешь транзишены, когда настроишь условия
             // behaviour.AddTransition(idleState, combatState, toCombatCondition);
             // behaviour.AddTransition(combatState, idleState, fromCombatCondition);
 
-            AIParallelState parallelState = new AIParallelState(findTargetState, behaviour);
+            // Теперь параллельно работает только поворот к цели (если она есть)
+            AIParallelState parallelState = new AIParallelState(rotateState, behaviour);
 
             AIStateMachine rootStateMachine = new AIStateMachine();
             rootStateMachine.AddState(parallelState);

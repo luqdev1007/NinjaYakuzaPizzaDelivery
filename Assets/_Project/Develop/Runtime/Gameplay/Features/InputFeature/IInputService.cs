@@ -37,5 +37,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
         bool IsJumpKeyPressed { get; }
         bool IsAttackKeyPressed { get; }
         bool IsRestartKeyPressed { get; }
+
+        bool IsTargetLockKeyHeld { get; }
     }
 }

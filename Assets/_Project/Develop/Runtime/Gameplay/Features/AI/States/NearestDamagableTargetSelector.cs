@@ -1,64 +1,44 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
+// using Assets._Project.Develop.Runtime.Gameplay.Common; // Для EntitiesHelper
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
 {
     public class NearestDamagableTargetSelector : ITargetSelector
     {
-        private Entity _source;
-        private Transform _sourceTransform;
+        private readonly Entity _source;
+        private readonly Transform _sourceTransform;
 
         public NearestDamagableTargetSelector(Entity entity)
         {
             _source = entity;
-            // _sourceTransform = entity.Transform;
+            _sourceTransform = entity.Transform; 
         }
 
         public Entity SelectTargetFrom(IEnumerable<Entity> targets)
         {
-            IEnumerable<Entity> selectedTargets = targets.Where(target =>
+            Entity closestTarget = null;
+            float minSqrDistance = float.MaxValue;
+
+            foreach (Entity target in targets)
             {
-                bool result = target.HasComponent<TakeDamageRequest>();
+                if (target == _source) continue;
 
-                /*
-                if (target.TryGetCanApplyDamage(out ICompositeCondition canApplyDamage))
+                if (!target.HasComponent<TakeDamageRequest>()) continue;
+
+                if (EntitiesHelper.IsSameTeam(_source, target)) continue;
+
+                if (target.TryGetCanApplyDamage(out ICompositeCondition canApplyDamage) 
+                    && !canApplyDamage.Evaluate()) continue; 
+
+                float sqrDistance = GetSqrDistanceTo(target);
+
+                if (sqrDistance < minSqrDistance)
                 {
-                    result = result && canApplyDamage.Evaluate();
-                }
-                */
-
-                /*
-                if (_source.TryGetTeam(out ReactiveVariable<Teams> sourceTeam)
-                && target.TryGetTeam(out ReactiveVariable<Teams> targetTeam))
-                {
-                    result = result && (sourceTeam.Value != targetTeam.Value);
-                }
-                */
-
-                result = result && EntitiesHelper.IsSameTeam(_source, target) == false;
-
-                result = result && (target != _source);
-
-                return result;
-            });
-
-            if (selectedTargets.Any() == false)
-                return null;
-
-            Entity closestTarget = selectedTargets.First();
-            float minDistance = GetDistanceTo(closestTarget);
-
-            foreach (Entity target in selectedTargets)
-            {
-                float distance = GetDistanceTo(target);
-
-                if (distance < minDistance)
-                {
-                    minDistance = distance;
+                    minSqrDistance = sqrDistance;
                     closestTarget = target;
                 }
             }
@@ -66,6 +46,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
             return closestTarget;
         }
 
-        private float GetDistanceTo(Entity target) => 0; //  (_sourceTransform.position - target.Transform.position).magnitude;
+        private float GetSqrDistanceTo(Entity target)
+        {
+            Vector2 offset = target.Transform.position - _sourceTransform.position;
+            return offset.sqrMagnitude;
+        }
     }
 }

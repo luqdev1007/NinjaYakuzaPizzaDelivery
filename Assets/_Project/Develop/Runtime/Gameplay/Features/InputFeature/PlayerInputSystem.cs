@@ -18,6 +18,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
         private ReactiveVariable<bool> _intentUseItem;
         private ReactiveVariable<float> _intentSwitchItemDelta;
         private ReactiveVariable<Vector2> _intentAimDirection;
+        private ReactiveVariable<bool> _intentSwitchTarget;
+
+        private ReactiveVariable<bool> _isTargetingActive;
+        private ReactiveVariable<Entity> _currentTarget;
 
         private Transform _playerTransform;
 
@@ -37,6 +41,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
             _intentUseItem = entity.IntentUseItem;
             _intentSwitchItemDelta = entity.IntentSwitchItemDelta;
             _intentAimDirection = entity.IntentAimDirection;
+            _intentSwitchTarget = entity.IntentSwitchTarget;
+
+            _isTargetingActive = entity.IsTargetingActive;
+            _currentTarget = entity.CurrentTarget;
 
             _playerTransform = entity.Transform;
         }
@@ -44,23 +52,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
         public void OnUpdate(float deltaTime)
         {
             _intentMovement.Value = _inputService.MoveDirection;
-
             _intentJump.Value = _inputService.IsJumpKeyHeld;
-
             _intentDash.Value = _inputService.IsDashKeyHeld;
-
             _intentAttack.Value = _inputService.IsAttackKeyHeld;
-
             _intentSlide.Value = _inputService.IsSlideKeyHeld;
-
             _intentGrapple.Value = _inputService.IsGrappleKeyHeld;
-
             _intentUseItem.Value = _inputService.IsThrowKeyPressed;
-
             _intentSwitchItemDelta.Value = _inputService.MouseScrollDelta;
 
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            _intentAimDirection.Value = ((Vector2)mousePos - (Vector2)_playerTransform.position).normalized;
+            _intentSwitchTarget.Value = _inputService.IsTargetLockKeyHeld;
+
+            if (_isTargetingActive.Value && _currentTarget.Value != null && _currentTarget.Value.Transform != null)
+            {
+                // Целимся жестко во врага
+                Vector2 targetPos = _currentTarget.Value.Transform.position;
+                _intentAimDirection.Value = (targetPos - (Vector2)_playerTransform.position).normalized;
+            }
+            else
+            {
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                _intentAimDirection.Value = ((Vector2)mousePos - (Vector2)_playerTransform.position).normalized;
+            }
         }
     }
 }

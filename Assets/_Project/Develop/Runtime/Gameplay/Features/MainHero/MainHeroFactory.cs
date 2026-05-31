@@ -38,12 +38,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 
             entity
                 .AddIsMainHero()
-                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
+                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero))
 
-            // entity.AddCurrentTarget();
-            // _brainsFactory.CreateMainHeroBrain(entity, new NearestDamagableTargetSelector(entity));
+                .AddIntentSwitchTarget()
+                .AddIsTargetingActive()
+                .AddCurrentTarget();
+
+            _brainsFactory.CreateMainHeroBrain(entity);
 
             _entitiesLifeContext.Add(entity);
+
+            TargetingCoreSystem targetingSystem = new TargetingCoreSystem(_entitiesLifeContext);
+            entity.AddSystem(targetingSystem);
 
             return entity;
         }

@@ -21,6 +21,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
         private ReactiveVariable<Transform> _grappleHookTransform;
         private ReactiveVariable<Vector3> _grappleHookAnchor;
 
+        // 1. ДОБАВЛЯЕМ ССЫЛКУ НА ИНТЕНТ ПРИЦЕЛИВАНИЯ
+        private ReactiveVariable<Vector2> _intentAimDirection;
+
         private Rigidbody2D _rigidbody;
         private Transform _transform;
 
@@ -43,13 +46,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
         public void OnInit(Entity entity)
         {
             _canGrapple = entity.CanGrapple;
-
             _intentGrapple = entity.IntentGrapple;
-
             _isGrappling = entity.IsGrappling;
-
             _grappleHookTransform = entity.GrappleHookTransform;
             _grappleHookAnchor = entity.GrappleAnchorPoint;
+
+            // 2. ИНИЦИАЛИЗИРУЕМ ИНТЕНТ ПРИЦЕЛИВАНИЯ
+            _intentAimDirection = entity.IntentAimDirection;
 
             _transform = entity.Transform;
             _rigidbody = entity.Rigidbody;
@@ -80,12 +83,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         private void TryLaunch()
         {
-            if (Camera.main == null)
-                return;
-
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector3 dir = (mousePos - _transform.position).normalized;
-            dir.z = 0;
+            // ФИКС: Вместо ручного просчета мыши берем уже готовое направление.
+            // Благодаря этому хук автоматически полетит либо в цель, либо по мышке!
+            Vector3 dir = new Vector3(_intentAimDirection.Value.x, _intentAimDirection.Value.y, 0f);
 
             _isGrappling.Value = true;
 

@@ -59717,6 +59717,7 @@ GameObject:
   - component: {fileID: 3805497461010384168}
   - component: {fileID: 1517122691524233416}
   - component: {fileID: 7223923758908717995}
+  - component: {fileID: 3336462275285570393}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -60181,6 +60182,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animator: {fileID: 1274124274879070163}
   _emptyUseSfxKey: ItemEmpty
+--- !u!114 &3336462275285570393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2274547176414386936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05cc33c7faffbc74ca7ebc88606f20a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetMarkerPrefab: {fileID: 4376332012103661058, guid: 5c54d361db87763459231acde9646727, type: 3}
+  _markerOffset: {x: 0, y: 2, z: 0}
+  _activationSfxKey: TargetingActivate
+  _deactivationSfxKey: TargetingDeactivate
+  _switchTargetSfxKey: TargetingSwitch
 --- !u!1 &2305303809177581567
 GameObject:
   m_ObjectHideFlags: 0

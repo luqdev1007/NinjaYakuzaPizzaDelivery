@@ -48,4 +48,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
     {
         public ReactiveVariable<bool> Value;
     }
+
+    public class IntentSwitchTarget : IEntityComponent
+    {
+        public ReactiveVariable<bool> Value;
+    }
 }
