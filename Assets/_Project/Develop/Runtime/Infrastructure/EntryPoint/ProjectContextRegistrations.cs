@@ -116,7 +116,10 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             => new GameStatsService(container.Resolve<PlayerDataProvider>());
 
         private static PlayerDataProvider CreatePlayerDataProvider(DIContainer container) 
-            => new PlayerDataProvider(container.Resolve<ISaveLoadService>(), container.Resolve<ConfigsProviderService>());
+            => new PlayerDataProvider(
+                container.Resolve<ISaveLoadService>(),
+                container.Resolve<ConfigsProviderService>(), 
+                container.Resolve<ICoroutinesPerformer>());
 
         private static SaveLoadService CreateSaveLoadService(DIContainer container)
         {

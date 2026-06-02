@@ -81,12 +81,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateStyleEvaluator);
             container.RegisterAsSingle(CreateSecretChestCollectService);
             container.RegisterAsSingle(CreateLevelResultService);
-            // new
+
+            // hit effect
             container.RegisterAsSingle(CreateHitStopService);
+
+            // session loot
+            container.RegisterAsSingle(CreateSessionLootService).NonLazy();
 
             // Camera
             container.RegisterAsSingle(CreateCameraService);
         }
+
+        private static SessionLootService CreateSessionLootService(DIContainer container)
+        {
+            return new SessionLootService();
+        }
+
 
         private static ProjectileFactory CreateProjectileFactory(DIContainer container)
         {

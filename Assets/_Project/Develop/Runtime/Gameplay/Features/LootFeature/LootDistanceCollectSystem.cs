@@ -9,15 +9,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
     public class LootDistanceCollectSystem : IInitializableSystem, IUpdatableSystem
     {
         private readonly EntitiesLifeContext _lifeContext;
-        private readonly WalletService _walletService;
+        private readonly SessionLootService _sessionLootService;
 
         private Entity _hero;
         private float _collectDistance = 0.4f;
 
-        public LootDistanceCollectSystem(EntitiesLifeContext lifeContext, WalletService walletService)
+        public LootDistanceCollectSystem(EntitiesLifeContext lifeContext, SessionLootService sessionLootService)
         {
             _lifeContext = lifeContext;
-            _walletService = walletService;
+            _sessionLootService = sessionLootService;
         }
 
         public void OnInit(Entity entity)
@@ -27,7 +27,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         public void OnUpdate(float deltaTime)
         {
-            if (_lifeContext == null) return;
+            if (_lifeContext == null) 
+                return;
 
             Vector3 heroPosition = _hero.Transform.position;
 
@@ -62,20 +63,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             LootTypes type = lootEntity.LootType.Value;
             int count = lootEntity.LootCount.Value;
 
-            CurrencyTypes currencyType = MapLootToCurrency(type);
-
-            _walletService.Add(currencyType, count);
+            _sessionLootService.AddLoot(type, count);
             Debug.Log($"[Loot Пылесос] Схавали лут: {type}, Количество: {count}. Отправлено в кошелек!");
-        }
-
-        private CurrencyTypes MapLootToCurrency(LootTypes lootType)
-        {
-            return lootType switch
-            {
-                LootTypes.SoulShard => CurrencyTypes.SoulShard,
-                LootTypes.Coin => CurrencyTypes.Coins,
-                _ => CurrencyTypes.Coins
-            };
-        }
+         }
     }
 }

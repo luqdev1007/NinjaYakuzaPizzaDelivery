@@ -15,6 +15,7 @@
     using Assets._Project.Develop.Runtime.Utilities.DataProviders;
     using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
     using Assets._Project.Develop.Runtime.Configs.Dialog; // Для доступа к DialogConfig
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 
     namespace Assets._Project.Develop.Runtime.Gameplay.States
     {
@@ -75,6 +76,7 @@
                     _container.Resolve<PlayerDataProvider>(),
                     _container.Resolve<ICoroutinesPerformer>(),
                     _container.Resolve<GameplayPopupService>(),
+                    _container.Resolve<SessionLootService>(),
                     _container.Resolve<WalletService>()
                 );
             }

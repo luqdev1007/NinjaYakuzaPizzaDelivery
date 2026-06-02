@@ -8,11 +8,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
     {
         private readonly FinalPointTriggerService _finalPointTrigger;
         private readonly MainHeroHolderService _heroHolder;
+
         private readonly Vector3 _finalPointPosition;
+
         private readonly ReactiveEvent _completed = new();
 
         private bool _inProcess;
-        private bool _isProgressInitialized;
 
         public IReadOnlyEvent Completed => _completed;
 
@@ -49,7 +50,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
         {
             _finalPointTrigger.Cleanup();
             _inProcess = false;
-            _isProgressInitialized = false;
         }
 
         public void Dispose() => Cleanup();

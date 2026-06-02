@@ -11,7 +11,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
 
         public AttackTriggerState(Entity entity)
         {
-            // _attackRequest = entity.StartAttackRequest;
+            _attackRequest = entity.StartAttackRequest;
         }
 
         public override void Enter()

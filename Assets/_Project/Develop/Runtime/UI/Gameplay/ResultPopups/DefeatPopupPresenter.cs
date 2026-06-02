@@ -1,7 +1,9 @@
-﻿using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+﻿using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
+using UnityEditor.U2D.Aseprite;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
 {
@@ -13,20 +15,17 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
         private readonly SceneSwitcherService _sceneSwitcherService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly GameplayInputArgs _inputArgs;
-        private readonly WalletService _walletService;
 
         public DefeatPopupPresenter(
             ICoroutinesPerformer coroutinesPerformer,
             DefeatPopupView view,
             SceneSwitcherService sceneSwitcherService,
-            GameplayInputArgs inputArgs,
-            WalletService walletService) : base(coroutinesPerformer)
+            GameplayInputArgs inputArgs) : base(coroutinesPerformer)
         {
             _coroutinesPerformer = coroutinesPerformer;
             _view = view;
             _sceneSwitcherService = sceneSwitcherService;
             _inputArgs = inputArgs;
-            _walletService = walletService;
         }
 
         protected override PopupViewBase PopupView => _view;
@@ -34,8 +33,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
         public override void Initialize()
         {
             base.Initialize();
-
-            _walletService.RollbackSessionLoot();
 
             _view.SetTitle(TitleName);
 
@@ -62,17 +59,17 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
 
         private void OnRestartClicked()
         {
-            // Помечаем, что следующий вход в сцену — это рестарт
             _inputArgs.IsRestart = true;
 
-            _coroutinesPerformer.StartPerform(_sceneSwitcherService.ProcessingSwitchTo(Scenes.Gameplay, _inputArgs));
             OnCloseRequest();
+            _coroutinesPerformer.StartPerform(_sceneSwitcherService.ProcessingSwitchTo(Scenes.Gameplay, _inputArgs));
         }
 
         private void OnContinueClicked()
         {
-            _coroutinesPerformer.StartPerform(_sceneSwitcherService.ProcessingSwitchTo(Scenes.MainMenu));
             OnCloseRequest();
+
+            _coroutinesPerformer.StartPerform(_sceneSwitcherService.ProcessingSwitchTo(Scenes.MainMenu));
         }
     }
 }

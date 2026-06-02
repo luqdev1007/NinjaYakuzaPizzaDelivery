@@ -5,6 +5,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LevelResultsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
@@ -81,8 +82,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
                 _container.Resolve<ICoroutinesPerformer>(),
                 view,
                 _container.Resolve<SceneSwitcherService>(),
-                _inputArgs,
-                _container.Resolve<WalletService>()
+                _inputArgs
                 );
         }
 
@@ -104,14 +104,13 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
                 levelConfig,
                 _container.Resolve<SceneSwitcherService>(),
                 _container.Resolve<ICoroutinesPerformer>(),
-                _inputArgs,
-                _container.Resolve<WalletService>()
+                _inputArgs
                 );
         }
 
-        public GameplayWalletPresenter CteateGameplayWalletPresenter(WalletHUDView walletView)
+        public InGameWalletPresenter CreateInGameWalletPresenter(InGameWalletView walletView)
         {
-            return new GameplayWalletPresenter(_container.Resolve<WalletService>(), walletView);
+            return new InGameWalletPresenter(_container.Resolve<SessionLootService>(), _container.Resolve<WalletService>(), walletView);
         }
     }
 }

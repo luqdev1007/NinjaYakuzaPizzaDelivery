@@ -3,7 +3,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
-using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature; // Для DropLootSystem и DropLootService
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -17,21 +17,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props
 
         private EntitiesLifeContext _entitiesLifeContext;
         private IAudioService _audioService;
-        private DropLootService _dropLootService; // [ДОБАВЛЕНО] Поле под сервис лута
+        private DropLootService _dropLootService;
+        private CollidersRegistryService _collidersRegistryService;
 
-        // [ОБНОВЛЕНО] Внедряем DropLootService через параметры конструктора
-        public void Construct(EntitiesLifeContext entitiesLifeContext, IAudioService audioService, DropLootService dropLootService)
+        private Collider2D[] _propColliders; 
+
+        public void Construct(
+            EntitiesLifeContext entitiesLifeContext,
+            IAudioService audioService,
+            DropLootService dropLootService,
+            CollidersRegistryService collidersRegistryService)
         {
             _entitiesLifeContext = entitiesLifeContext;
             _audioService = audioService;
             _dropLootService = dropLootService;
+            _collidersRegistryService = collidersRegistryService;
         }
 
         private void Start()
         {
             if (_entitiesLifeContext == null)
             {
-                Debug.LogError($"[Prop] Контекст не внедрен в {gameObject.name}! Забыли вызвать Construct в Bootstrap?");
+                Debug.LogError($"[Prop] Контекст не внедрен в {gameObject.name}!");
                 return;
             }
 
@@ -44,7 +51,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props
         {
             Entity entity = new Entity();
 
-            // Базовые компоненты здоровья и смерти
             entity
                 .AddTakeDamageRequest()
                 .AddTakeDamageEvent()
@@ -52,17 +58,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props
                 .AddCurrentHealth(new ReactiveVariable<float>(_config.MaxHealth))
                 .AddIsDead()
                 .AddInDeathProcess(new ReactiveVariable<bool>(false))
-                .AddTransform(transform)
-                ;
+                .AddTransform(transform);
 
-            // [ДОБАВЛЕНО] Инициализируем компоненты лута
             entity.AddLootIsDropped(new ReactiveVariable<bool>(false));
 
             ICompositeCondition canDropLoot = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0)); // Дроп при ХП <= 0
+                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
             entity.AddCanDropLoot(canDropLoot);
 
-            // Условия жизнедеятельности сущности
             ICompositeCondition canApplyDamage = new CompositeCondition().Add(new FuncCondition(() => entity.IsDead.Value == false));
             ICompositeCondition mustDie = new CompositeCondition().Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
             ICompositeCondition mustSelfRelease = new CompositeCondition().Add(new FuncCondition(() => entity.IsDead.Value == true));
@@ -72,16 +75,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props
                 .AddMustDie(mustDie)
                 .AddMustSelfRelease(mustSelfRelease);
 
-            // Базовые системы
             entity
                 .AddSystem(new ApplyDamageSystem())
                 .AddSystem(new DeathSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
 
-            // [ДОБАВЛЕНО] Вешаем систему лута, если у пропса в конфиге задана таблица дропа
             if (_config.LootTable != null)
             {
                 entity.AddSystem(new DropLootSystem(_dropLootService, _config.LootTable));
+            }
+
+            _propColliders = GetComponentsInChildren<Collider2D>();
+            foreach (var col in _propColliders)
+            {
+                _collidersRegistryService.Register(col, entity);
             }
 
             // Привязка вьюшек
@@ -106,6 +113,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props
             if (entity == LinkedEntity)
             {
                 _entitiesLifeContext.Released -= OnEntityReleased;
+                UnregisterColliders();
                 Destroy(gameObject);
             }
         }
@@ -115,6 +123,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props
             if (_entitiesLifeContext != null)
             {
                 _entitiesLifeContext.Released -= OnEntityReleased;
+            }
+            UnregisterColliders();
+        }
+
+        private void UnregisterColliders()
+        {
+            if (_propColliders == null || _collidersRegistryService == null) return;
+
+            foreach (var col in _propColliders)
+            {
+                if (col != null)
+                {
+                    _collidersRegistryService.Unregister(col);
+                }
             }
         }
     }

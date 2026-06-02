@@ -2,7 +2,6 @@
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataProviders;
-using Assets._Project.Develop.Runtime.Utilities.LoadingScreen;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using System.Collections;
 using UnityEngine;
@@ -34,11 +33,10 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             SceneSwitcherService sceneSwitcherService = container.Resolve<SceneSwitcherService>();
             PlayerDataProvider playerDataProvider = container.Resolve<PlayerDataProvider>();
 
-            // Загружаем конфиги
             yield return container.Resolve<ConfigsProviderService>().LoadAsync();
 
-            // Работаем с данными игрока
             bool isPlayerDataSaveExists = false;
+
             yield return playerDataProvider.ExistsAsync(result => isPlayerDataSaveExists = result);
 
             if (isPlayerDataSaveExists)
@@ -46,7 +44,6 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             else
                 playerDataProvider.Reset();
 
-            // Переходим в меню. Сервис сам покажет экран, подсказки и подождет AnyKey.
             yield return sceneSwitcherService.ProcessingSwitchTo(Scenes.MainMenu);
         }
     }

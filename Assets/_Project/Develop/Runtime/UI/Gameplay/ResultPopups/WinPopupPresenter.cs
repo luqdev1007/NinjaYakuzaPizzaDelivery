@@ -1,10 +1,11 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.Features.LevelResultsFeature;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels; // Для LevelConfig
-using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers; // Для таймера
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels; 
+using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers; 
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using UnityEngine;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
 {
@@ -16,7 +17,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
         private readonly SceneSwitcherService _sceneSwitcherService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
 
-        // Новые зависимости для расчетов
         private readonly LevelResultService _levelResultService;
         private readonly LevelConfig _levelConfig;
         private readonly InGameTimerFeatureService _timerService;
@@ -33,7 +33,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
             _view = view;
             _sceneSwitcherService = sceneSwitcherService;
 
-            // Сохраняем сервисы
             _levelResultService = levelResultService;
             _levelConfig = levelConfig;
             _timerService = timerService;
@@ -47,7 +46,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
 
             _view.SetTitle(TitleName);
 
-            float finalTime = 5; //_timerService.ElapsedTime;
+            float finalTime = _timerService.ElapsedTime.Value;
 
             LevelResultReport report = _levelResultService.CalculateResult(_levelConfig, finalTime);
 

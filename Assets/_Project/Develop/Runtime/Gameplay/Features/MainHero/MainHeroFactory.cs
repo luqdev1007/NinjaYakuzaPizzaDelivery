@@ -54,7 +54,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 
             entity
                 .AddSystem(new LootMagnetSystem(_entitiesLifeContext))
-                .AddSystem(new LootDistanceCollectSystem(_entitiesLifeContext, _container.Resolve<WalletService>()))
+                .AddSystem(new LootDistanceCollectSystem(_entitiesLifeContext, _container.Resolve<SessionLootService>()))
                 .AddSystem(new TargetingCoreSystem(_entitiesLifeContext));
 
             _entitiesLifeContext.Add(entity);

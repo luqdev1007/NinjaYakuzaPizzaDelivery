@@ -1,4 +1,5 @@
-﻿using Assets._Project.Develop.Runtime.Utilities.DataManagment;
+﻿using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.DataManagment;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,15 +10,17 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataProviders
     public abstract class DataProvider<TData> where TData : ISaveData
     {
         private readonly ISaveLoadService _saveLoadService;
+        private readonly ICoroutinesPerformer _coroutinesPerformer;
 
         private readonly List<IDataWriter<TData>> _writers = new();
         private readonly List<IDataReader<TData>> _readers = new();
          
         private TData _data;
 
-        protected DataProvider(ISaveLoadService saveLoadService)
+        protected DataProvider(ISaveLoadService saveLoadService, ICoroutinesPerformer coroutinesPerformer)
         {
             _saveLoadService = saveLoadService;
+            _coroutinesPerformer = coroutinesPerformer;
         }
 
         public void RegisterWriter(IDataWriter<TData> writer)
@@ -58,6 +61,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataProviders
         {
             _data = GetOriginData();
             SendDataToReaders();
+
+            _coroutinesPerformer.StartPerform(SaveAsync());
         }
 
         protected abstract TData GetOriginData();

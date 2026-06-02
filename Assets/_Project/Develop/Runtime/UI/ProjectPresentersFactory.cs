@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
@@ -92,8 +93,7 @@ namespace Assets._Project.Develop.Runtime.UI
                 _container.Resolve<ICoroutinesPerformer>(),
                 popupService,
                 _container.Resolve<SceneSwitcherService>(),
-                _container.Resolve<IInputService>(),
-                _container.Resolve<WalletService>()
+                _container.Resolve<IInputService>()
                 );
         }
 

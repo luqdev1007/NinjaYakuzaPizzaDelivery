@@ -19,7 +19,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            // _currentTarget = entity.CurrentTarget;
+            _currentTarget = entity.CurrentTarget;
 
             _backlight = Instantiate(_backlightPrefab);
 
@@ -59,7 +59,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             }
 
             _backlight.gameObject.SetActive(true);
-            // _currentTargetTransform = newTarget.Transform;
+            _currentTargetTransform = newTarget.Transform;
         }
     }
 }

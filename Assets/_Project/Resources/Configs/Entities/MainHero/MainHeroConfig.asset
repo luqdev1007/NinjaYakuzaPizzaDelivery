@@ -21,7 +21,7 @@ MonoBehaviour:
     m_Bits: 36096
   <ContactLayerMask>k__BackingField:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 33280
   <Movement>k__BackingField:
     <MoveSpeed>k__BackingField: 12
     <MoveSpeedMin>k__BackingField: 8
@@ -39,7 +39,7 @@ MonoBehaviour:
   <Dash>k__BackingField:
     <Duration>k__BackingField: 0.25
     <InputBufferTimeMax>k__BackingField: 0.15
-    <ForceMin>k__BackingField: 15
+    <ForceMin>k__BackingField: 20
     <ForceMax>k__BackingField: 30
     <MaxChargeTime>k__BackingField: 0.3
     <Cooldown>k__BackingField: 0.5
@@ -76,7 +76,7 @@ MonoBehaviour:
   <Plunge>k__BackingField:
     <HitLayer>k__BackingField:
       serializedVersion: 2
-      m_Bits: 512
+      m_Bits: 33280
     <Speed>k__BackingField: 25
     <DamageRange>k__BackingField: 3
     <Damage>k__BackingField: 10

@@ -28,18 +28,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
 
         public StateMachineBrain CreateMainHeroBrain(Entity entity)
         {
-            // Герою НЕ нужен FindTargetState. Его цель задает система ввода (по Tab).
-            // Герою нужен стейт, который будет поворачивать его к уже выбранной цели.
             RotateToTargetState rotateState = new RotateToTargetState(entity);
 
-            AIStateMachine combatState = CreateAutoAttackStateMachine(entity);
+            // AIStateMachine combatState = CreateAutoAttackStateMachine(entity);
             EmptyState idleState = new EmptyState();
 
             AIStateMachine behaviour = new AIStateMachine();
             behaviour.AddState(idleState);
-            behaviour.AddState(combatState);
+            // behaviour.AddState(combatState);
 
-            // Раскомментируешь транзишены, когда настроишь условия
             // behaviour.AddTransition(idleState, combatState, toCombatCondition);
             // behaviour.AddTransition(combatState, idleState, fromCombatCondition);
 

@@ -53,28 +53,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             if (levelHolder == null)
                 throw new NullReferenceException("LevelHolder not found");
 
-            // 1. Создаем уровень
             GameObject levelInstance = Instantiate(levelConfig.LevelPrefab, levelHolder.transform);
 
-            // 2. Достаем контекст сцены
             _sceneContext = levelInstance.GetComponentInChildren<GameplaySceneContext>();
             if (_sceneContext == null)
                 throw new NullReferenceException("GameplaySceneContext missing in Level Prefab");
 
-            // 3. ТОЛЬКО ТЕПЕРЬ регистрируем все зависимости, когда у нас есть и конфиги, и объекты на сцене
             GameplayContextRegistrations.Process(_container, _inputArgs, _sceneContext);
 
-            // 4. Инициализируем контейнер (теперь NonLazy создадутся без ошибок, так как _sceneContext валиден)
             _container.Initialize();
 
-            // 5. Разрешаем (Resolve) нужные нам для Update системы
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
             _brainsContext = _container.Resolve<AIBrainsContext>();
             _gameplayStatesContext = _container.Resolve<GameplayStatesContext>();
 
-            // =================================================================================
-            // [ШАГ 5.5]: ИНИЦИАЛИЗАЦИЯ ПРОПСОВ НА СЦЕНЕ
-            // Находим все расставленные дизайнером пропсы ТОЛЬКО внутри созданного левела
             PropEntityAuthoring[] sceneProps = levelInstance.GetComponentsInChildren<PropEntityAuthoring>(true);
             IAudioService audioService = _container.Resolve<IAudioService>();
 
@@ -83,11 +75,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 prop.Construct(
                         _container.Resolve<EntitiesLifeContext>(),
                         _container.Resolve<IAudioService>(),
-                        _container.Resolve<DropLootService>() 
+                        _container.Resolve<DropLootService>(),
+                        _container.Resolve<CollidersRegistryService>()
                     );
             }
 
-            // 6. Спавним начальных сущностей
             var enemiesFactory = _container.Resolve<EnemiesFactory>();
 
             foreach (var enemyData in _sceneContext.Enemies)

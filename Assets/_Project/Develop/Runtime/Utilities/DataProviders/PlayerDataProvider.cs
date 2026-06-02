@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataManagment;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,10 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataProviders
     {
         private readonly ConfigsProviderService _configsProviderService;
 
-        public PlayerDataProvider(ISaveLoadService saveLoadService, ConfigsProviderService configsProviderService) : base(saveLoadService)
+        public PlayerDataProvider(
+            ISaveLoadService saveLoadService, 
+            ConfigsProviderService configsProviderService, 
+            ICoroutinesPerformer coroutinesPerformer) : base(saveLoadService, coroutinesPerformer)
         {
             _configsProviderService = configsProviderService;
         }

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.UI.Wallet
 {
-    public class WalletHUDView : MonoBehaviour
+    public class InGameWalletView : MonoBehaviour
     {
         [Serializable]
         public struct CurrencyUIMap
@@ -23,6 +23,7 @@ namespace Assets._Project.Develop.Runtime.UI.Wallet
         private void Awake()
         {
             _map = new Dictionary<CurrencyTypes, CurrencyUIMap>();
+
             foreach (var element in _currencyElements)
                 _map[element.Type] = element;
         }

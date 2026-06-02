@@ -1,17 +1,17 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet; // Добавили юзинг мета-кошелька
 using Assets._Project.Develop.Runtime.UI.Gameplay;
-using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using Assets._Project.Develop.Runtime.Utilities.StateMachineCore;
 using UnityEngine;
+using System;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.States
 {
-
     public class WinState : EndGameState, IUpdatableState
     {
         private readonly LevelsProgressionService _levelsProgressionService;
@@ -19,8 +19,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly PlayerDataProvider _playerDataProvider;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly GameplayPopupService _gameplayPopupService;
-        private readonly WalletService _walletService;
-
+        private readonly SessionLootService _sessionLootService;
+        private readonly WalletService _walletService; // Добавили поле кошелька
 
         public WinState(
             IInputService inputService,
@@ -29,13 +29,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             PlayerDataProvider playerDataProvider,
             ICoroutinesPerformer coroutinesPerformer,
             GameplayPopupService gameplayPopupService,
-            WalletService walletService) : base(inputService)
+            SessionLootService sessionLootService,
+            WalletService walletService) : base(inputService) // Внедряем через DI
         {
             _levelsProgressionService = levelsProgressionService;
             _gameplayInputArgs = gameplayInputArgs;
             _playerDataProvider = playerDataProvider;
             _coroutinesPerformer = coroutinesPerformer;
             _gameplayPopupService = gameplayPopupService;
+            _sessionLootService = sessionLootService;
             _walletService = walletService;
         }
 
@@ -45,13 +47,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             Debug.Log("VICTORY!");
 
-            int rewardForLevel = 50;
-
-            _walletService.Add(CurrencyTypes.Coins, rewardForLevel);
-
             _levelsProgressionService.AddLevelToCompleted(_gameplayInputArgs.LevelNumber);
 
-            _walletService.CommitSessionLoot();
+            foreach (var loot in _sessionLootService.GetAllCollected())
+            {
+                if (TryMapToCurrency(loot.Key, out CurrencyTypes currencyType))
+                {
+                    _walletService.Add(currencyType, loot.Value);
+                    Debug.Log($"Авто-зачисление: {loot.Value} единиц {currencyType} добавлено в кошелек.");
+                }
+            }
+
+            _sessionLootService.ClearSession();
 
             _coroutinesPerformer.StartPerform(_playerDataProvider.SaveAsync());
 
@@ -60,6 +67,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         public void Update(float deltaTime)
         {
+        }
+
+        private bool TryMapToCurrency(LootTypes lootType, out CurrencyTypes currencyType)
+        {
+            switch (lootType)
+            {
+                case LootTypes.Coin:
+                    currencyType = CurrencyTypes.Coins;
+                    return true;
+
+                case LootTypes.SoulShard:
+                    currencyType = CurrencyTypes.SoulShard;
+                    return true;
+
+                default:
+                    currencyType = default;
+                    return false;
+            }
         }
     }
 }

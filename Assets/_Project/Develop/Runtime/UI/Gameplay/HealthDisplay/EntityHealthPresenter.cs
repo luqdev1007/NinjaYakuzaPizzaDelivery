@@ -31,7 +31,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay
 
         public void Initialize()
         {
-            /*
             _health = _entity.CurrentHealth;
             _maxHealth = _entity.MaxHealth;
             _team = _entity.Team;
@@ -42,7 +41,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay
 
             UpdateHealth();
             UpdateFillerColorBy(_team.Value);
-            */
         }
 
         public void Dispose()
