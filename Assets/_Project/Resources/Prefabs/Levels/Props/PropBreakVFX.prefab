@@ -4912,7 +4912,7 @@ GameObject:
   - component: {fileID: 6674020371362560465}
   - component: {fileID: 3153974045515464762}
   m_Layer: 0
-  m_Name: WoodBreak
+  m_Name: PropBreakVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 80e2f7dbd08dee74abcafb3b8d9c1f24, type: 3}
-  m_Name: SimpleBoxProp
+  m_Name: SimpleProp
   m_EditorClassIdentifier: 
-  _maxHealth: 10
+  _maxHealth: 3
   _lootTable: {fileID: 11400000, guid: 9dd2772753b762e4e98e91f3d8c3acea, type: 2}
