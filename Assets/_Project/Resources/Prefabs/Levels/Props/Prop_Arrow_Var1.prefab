@@ -242,7 +242,7 @@ GameObject:
   - component: {fileID: 2497641645048310877}
   - component: {fileID: 8443334230627816089}
   - component: {fileID: 7568803433582473895}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Prop_Arrow_Var1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
