@@ -60,7 +60,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
             if (t >= 1.0f)
             {
-                _isCollected.Value = true;
+                _transform.position = targetPos;
             }
         }
     }

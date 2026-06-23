@@ -44,22 +44,27 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
         public override void Initialize()
         {
             base.Initialize();
+
             _currentLineIndex = -1;
             _isEnding = false;
             _isHolding = false;
 
             _view.PlayAppearance().OnComplete(() =>
             {
-                if (_isEnding) return;
+                if (_isEnding) 
+                    return;
+
                 ShowNextLine();
             });
         }
 
         public void Update(float deltaTime)
         {
-            if (_isEnding || _view == null) return;
+            if (_isEnding || _view == null) 
+                return;
 
             _view.SkipLabel.UpdateIdle(deltaTime);
+
             HandleInput(deltaTime);
         }
 
@@ -110,7 +115,10 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 
         private void ShowNextLine()
         {
-            if (_isEnding) return;
+            if (_isEnding) 
+                return;
+
+            Debug.Log("Show Next Line");
 
             _currentLineIndex++;
 
@@ -137,7 +145,9 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 
         private void EndDialog()
         {
-            if (_isEnding) return;
+            if (_isEnding) 
+                return;
+
             _isEnding = true;
             _isHolding = false;
 

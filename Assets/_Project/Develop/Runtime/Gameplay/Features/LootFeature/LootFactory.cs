@@ -2,10 +2,9 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
-using Assets._Project.Develop.Runtime.Utilities.Reactive; 
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -14,20 +13,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
     public class LootFactory
     {
         private readonly EntitiesFactory _entityFactory;
-        private readonly ConfigsProviderService _configsProvider;
         private readonly EntitiesLifeContext _entitiesLifeContext; 
 
         public LootFactory(DIContainer container)
         {
             _entityFactory = container.Resolve<EntitiesFactory>();
-            _configsProvider = container.Resolve<ConfigsProviderService>();
             _entitiesLifeContext = container.Resolve<EntitiesLifeContext>(); 
-        }
-
-        public void CreateSecretChest(Vector3 position)
-        {
-            MetaLootConfig config = _configsProvider.GetConfig<MetaLootConfig>();
-            Create(config, position);
         }
 
         public Entity Create(LootConfig config, Vector3 position)
@@ -39,14 +30,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             SetupLootComponents(loot, config, randomMultiplier);
             ApplyPhysicsAndVisuals(loot, config, randomMultiplier);
 
-            // 1. ПОДКЛЮЧАЕМ ОБЩУЮ СИСТЕМУ СПАВНА
-            loot.AddSystem(new SpawnProcessTimerSystem());
-
-            // 2. Очищенная система старения лута
-            loot.AddSystem(new LootLifeCycleSystem(_entitiesLifeContext));
-
-            // 3. Система полета к игроку
-            loot.AddSystem(new LootArcMovementSystem(config.TravelTime, config.ArcHeight));
+            loot
+                .AddSystem(new SpawnProcessTimerSystem())
+                .AddSystem(new LootLifeCycleSystem(_entitiesLifeContext))
+                .AddSystem(new LootArcMovementSystem(config.TravelTime, config.ArcHeight));
 
             _entitiesLifeContext.Add(loot);
 

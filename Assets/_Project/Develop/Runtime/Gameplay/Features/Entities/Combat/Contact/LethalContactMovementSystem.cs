@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities;
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,6 +12,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Cont
         private Entity _entity;
         private Buffer<Entity> _contacts;
         private Rigidbody2D _rigidbody;
+
+        private ReactiveVariable<bool> _isPlunging;
+        private ReactiveVariable<bool> _isDashing;
 
         private List<Entity> _processedEntities;
 
@@ -25,9 +29,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Cont
             _contacts = entity.ContactEntitiesBuffer;
             _rigidbody = entity.Rigidbody;
 
-            _processedEntities = new List<Entity>(_contacts.Items.Length);
+            _isPlunging = entity.IsPlunging;
+            _isDashing = entity.IsDashing;
 
-            Debug.Log($"<color=white>[LethalContact]</color> Система инициализирована для {_entity}.");
+            _processedEntities = new List<Entity>(_contacts.Items.Length);
         }
 
         public void OnUpdate(float deltaTime)
@@ -43,19 +48,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Cont
                 {
                     _processedEntities.Add(contactEntity);
 
-                    if (calculatedDamage > 0f)
+                    if (calculatedDamage > 0f && (_isPlunging.Value == true || _isDashing.Value == true))
                     {
                         EntitiesHelper.TryTakeDamageFrom(_entity, contactEntity, calculatedDamage);
-
-                        // Зеленый лог — успешный смертоносный влет
-                        Debug.Log($"<color=green>[LethalContact] НАНОСИМ УРОН!</color> Сущность {_entity} врезалась в {contactEntity}. " +
-                                  $"Скорость: <b>{currentSpeed:F2}</b>, Урон: <b>{calculatedDamage}</b>");
-                    }
-                    else
-                    {
-                        // Желтый лог — коснулись, но скорость слишком мала для урона
-                        Debug.Log($"<color=yellow>[LethalContact] Мирный контакт.</color> Тормозим или просто тремся об {contactEntity}. " +
-                                  $"Скорость: <b>{currentSpeed:F2}</b> (нужно минимум {MinSpeedThreshold})");
                     }
                 }
             }
@@ -63,10 +58,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Cont
             for (int i = _processedEntities.Count - 1; i >= 0; i--)
             {
                 Entity processedEntity = _processedEntities[i];
+
                 if (ContainInContacts(processedEntity) == false)
                 {
-                    // Голубой лог — враг вышел из нашего коллайдера, теперь ему снова можно нанести урон следующим рывком
-                    Debug.Log($"<color=cyan>[LethalContact] Контакт разорван.</color> {processedEntity} вышел из зоны поражения. Удаляем из истории.");
                     _processedEntities.RemoveAt(i);
                 }
             }
