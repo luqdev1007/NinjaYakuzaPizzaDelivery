@@ -13,21 +13,17 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
         [SerializeField] private TextMeshProUGUI _pointsText;
         [SerializeField] private CanvasGroup _pointsCanvasGroup;
 
-        // НОВОЕ: glow-панель за буквой ранга, вспыхивает акцентным цветом при смене ранга.
         [SerializeField] private Image _rankGlowImage;
-
-        // НОВОЕ: заливка слайдера — перекрашивается в акцентный цвет текущего ранга.
         [SerializeField] private Image _sliderFillImage;
 
-        // НОВОЕ: радиальное кольцо вокруг буквы ранга — индикатор "до затухания".
-        // В инспекторе: Image Type = Filled, Fill Method = Radial 360.
+        [SerializeField] private TextMeshProUGUI _pointsPopupPrefab;
+
         [SerializeField] private Image _decayRingImage;
         [SerializeField] private Color _decayRingIdleColor = new Color(1f, 1f, 1f, 0.15f);
         [SerializeField] private Color _decayRingActiveColor = new Color(1f, 0.15f, 0.15f, 1f);
 
-        // НОВОЕ: префаб всплывающего "+N" при начислении очков.
-        [SerializeField] private TextMeshProUGUI _pointsPopupPrefab;
-        [SerializeField] private RectTransform _pointsPopupParent;
+        private const float PopupSpawnOffsetY = -28f;
+        private const float PopupFloatDistance = 36f;
 
         private Sequence _rankChangeSequence;
         private Tween _sliderTween;
@@ -63,8 +59,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
                 _pointsCanvasGroup.DOFade(shouldBeVisible ? 1f : 0f, shouldBeVisible ? 0.3f : 0.5f);
             }
 
-            // ИЗМЕНЕНО: punch теперь только на реальный прирост, а не на любой вызов —
-            // иначе во время decay счётчик дёргался бы пунчем каждый кадр на убывании.
             if (points > _lastRawPoints + 0.01f)
             {
                 _pointsText.transform.DOKill();
@@ -127,15 +121,13 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
             }
         }
 
-        // ИЗМЕНЕНО: было SetProgress(current, max-заглушка). Теперь нормализует прогресс
-        // внутри границ текущего саб-ранга, полученных из RankStyleService.
         public void SetProgress(float current, float floor, float ceiling)
         {
             float normalized;
 
             if (ceiling <= floor)
             {
-                normalized = 1f; // верхний саб-ранг — бар всегда полный
+                normalized = 1f;
             }
             else
             {
@@ -149,7 +141,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
             _sliderTween = _styleProgressSlider.DOValue(normalized, 0.2f).SetEase(Ease.OutQuad);
         }
 
-        // НОВОЕ: заполнение кольца — прогресс ожидания decay.
         public void SetDecayWarning(float normalized01)
         {
             if (_decayRingImage == null)
@@ -161,7 +152,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
                 .SetEase(Ease.Linear);
         }
 
-        // НОВОЕ: переключение кольца между "ожидание" и "активно теряем очки" (пульс).
         public void SetDecayActive(bool isDecaying)
         {
             _decayPulseTween?.Kill();
@@ -184,26 +174,28 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
                 .SetEase(Ease.InOutSine);
         }
 
-        // НОВОЕ: всплывающий "+N" при начислении очков — отдельный от общего счётчика фидбек.
         public void PlayPointsGained(float amount)
         {
-            if (_pointsPopupPrefab == null || _pointsPopupParent == null)
+            if (_pointsPopupPrefab == null)
             {
                 return;
             }
 
-            var popup = Instantiate(_pointsPopupPrefab, _pointsPopupParent);
+            RectTransform pointsRect = _pointsText.rectTransform;
+            var popup = Instantiate(_pointsPopupPrefab, pointsRect.parent);
             popup.text = "+" + Mathf.RoundToInt(amount);
             popup.alpha = 1f;
 
-            var rect = popup.rectTransform;
-            rect.anchoredPosition = Vector2.zero;
+            RectTransform rect = popup.rectTransform;
+            Vector2 spawnPos = pointsRect.anchoredPosition + new Vector2(0f, PopupSpawnOffsetY);
+            rect.anchoredPosition = spawnPos;
 
-            float randomXOffset = Random.Range(-20f, 20f);
+            float randomXOffset = Random.Range(-12f, 12f);
+            Vector2 targetPos = spawnPos + new Vector2(randomXOffset, PopupFloatDistance);
 
             Sequence sequence = DOTween.Sequence();
-            sequence.Append(rect.DOAnchorPos(new Vector2(randomXOffset, 60f), 0.6f).SetEase(Ease.OutCubic));
-            sequence.Join(popup.DOFade(0f, 0.45f).SetDelay(0.15f));
+            sequence.Append(rect.DOAnchorPos(targetPos, 0.5f).SetEase(Ease.OutCubic));
+            sequence.Join(popup.DOFade(0f, 0.35f).SetDelay(0.15f));
             sequence.OnComplete(() => Destroy(popup.gameObject));
         }
 

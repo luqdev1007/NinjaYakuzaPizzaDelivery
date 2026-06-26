@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
+using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
@@ -18,7 +19,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
         private readonly InGameTimerFeatureService _timerService;
         private readonly StageProviderService _stageProviderService;
         private readonly RankStyleService _styleService;
-
+        // НОВОЕ: зависимость на инпут-сервис для явного восстановления инварианта на входе.
+        private readonly IInputService _inputService;
         private readonly Vector3 _startPosition;
 
         public LevelProcessState(
@@ -29,6 +31,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
             InGameTimerFeatureService timerService,
             StageProviderService stageProviderService,
             RankStyleService styleService,
+            IInputService inputService,
             Vector3 startPosition)
         {
             _cameraService = cameraService;
@@ -38,12 +41,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
             _timerService = timerService;
             _stageProviderService = stageProviderService;
             _styleService = styleService;
+            _inputService = inputService;
             _startPosition = startPosition;
         }
 
         public override void Enter()
         {
             base.Enter();
+
+            // НОВОЕ: явный сброс инварианта "активный геймплей = инпут всегда включён".
+            // Закрывает утечку из непарных Enter/Exit (EndGameState, попапы), которая
+            // переживает hard scene reload на рестарте — см. обсуждение в чате.
+            _inputService.IsEnabled = true;
 
             var hero = _heroFactory.Create(_startPosition);
 

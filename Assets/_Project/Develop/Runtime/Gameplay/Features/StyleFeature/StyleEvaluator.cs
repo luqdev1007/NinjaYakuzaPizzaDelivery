@@ -62,6 +62,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
 
         private void RegisterAction(StyleActionType type, float rawPoints)
         {
+            bool isDirectRepeat = _usedActionsHistory.Count > 0
+                && _usedActionsHistory[_usedActionsHistory.Count - 1] == type;
+
+            if (isDirectRepeat)
+            {
+                return;
+            }
+
             float multiplier = _usedActionsHistory.Contains(type) ? 1f : _config.DiversityMultiplier;
             _styleService.AddPoints(rawPoints * multiplier);
             PushHistory(type);
