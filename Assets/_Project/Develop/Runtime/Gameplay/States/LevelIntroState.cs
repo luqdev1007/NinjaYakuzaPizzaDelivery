@@ -14,7 +14,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
         private readonly GameplayUIRoot _uiRoot;
         private readonly DialogConfig _dialogConfig;
 
-        private readonly bool _isRestart; // <-- ДОБАВЛЯЕМ ПОЛЕ
+        private readonly bool _isRestart;
 
         private DialogPresenter _activeDialog;
         private bool _isFinished;
@@ -48,9 +48,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
 
             _uiRoot.HUDLayer.gameObject.SetActive(false);
             _cameraService.SetState(CameraState.Intro);
-
             _activeDialog = _popupService.OpenDialog(_dialogConfig, OnDialogEnded);
-            _activeDialog.Initialize();
         }
 
         public void Update(float deltaTime)

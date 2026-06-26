@@ -35,6 +35,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         public ICompositeCondition Value;
     }
 
+    public class SpeedDamageDealtEvent : IEntityComponent
+    {
+        public ReactiveEvent Value = new();
+    }
 
     public class SuccessfulHitEvent : IEntityComponent
     {

@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI.States;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
@@ -53,6 +54,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             _brainsFactory.CreateMainHeroBrain(entity);
 
             entity
+                .AddSystem(new MainHeroStyleSystem(_container.Resolve<StyleEvaluator>()))
                 .AddSystem(new LootMagnetSystem(_entitiesLifeContext))
                 .AddSystem(new LootDistanceCollectSystem(_entitiesLifeContext, _container.Resolve<SessionLootService>()))
                 .AddSystem(new TargetingCoreSystem(_entitiesLifeContext));

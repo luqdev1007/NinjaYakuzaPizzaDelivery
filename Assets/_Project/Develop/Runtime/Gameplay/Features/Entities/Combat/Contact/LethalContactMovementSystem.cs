@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Cont
 
         private ReactiveVariable<bool> _isPlunging;
         private ReactiveVariable<bool> _isDashing;
+        private ReactiveEvent _speedDamageDealtEvent;
 
         private List<Entity> _processedEntities;
 
@@ -31,6 +33,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Cont
 
             _isPlunging = entity.IsPlunging;
             _isDashing = entity.IsDashing;
+            _speedDamageDealtEvent = entity.SpeedDamageDealtEvent;
 
             _processedEntities = new List<Entity>(_contacts.Items.Length);
         }
@@ -50,7 +53,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Cont
 
                     if (calculatedDamage > 0f && (_isPlunging.Value == true || _isDashing.Value == true))
                     {
-                        EntitiesHelper.TryTakeDamageFrom(_entity, contactEntity, calculatedDamage);
+                        if (EntitiesHelper.TryTakeDamageFrom(_entity, contactEntity, calculatedDamage))
+                            _speedDamageDealtEvent?.Invoke();
                     }
                 }
             }

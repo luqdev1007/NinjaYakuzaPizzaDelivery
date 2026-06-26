@@ -58,6 +58,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
         public bool IsRestartKeyPressed => IsEnabled && Input.GetKeyDown(KeyCode.R);
 
         // TARGET
-        public bool IsTargetLockKeyHeld => Input.GetKey(KeyCode.Tab);
+        public bool IsTargetLockKeyHeld => IsEnabled && Input.GetKey(KeyCode.Tab);
     }
 }

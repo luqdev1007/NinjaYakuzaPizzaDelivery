@@ -1,7 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet; // Добавили юзинг мета-кошелька
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet; 
 using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataProviders;
@@ -20,7 +20,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly GameplayPopupService _gameplayPopupService;
         private readonly SessionLootService _sessionLootService;
-        private readonly WalletService _walletService; // Добавили поле кошелька
+        private readonly WalletService _walletService; 
 
         public WinState(
             IInputService inputService,
@@ -30,7 +30,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             ICoroutinesPerformer coroutinesPerformer,
             GameplayPopupService gameplayPopupService,
             SessionLootService sessionLootService,
-            WalletService walletService) : base(inputService) // Внедряем через DI
+            WalletService walletService) : base(inputService) 
         {
             _levelsProgressionService = levelsProgressionService;
             _gameplayInputArgs = gameplayInputArgs;

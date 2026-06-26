@@ -1,11 +1,10 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Dialog;
-using Assets._Project.Develop.Runtime.UI.Core;
-using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.UI.TextFeatures;
-using System;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.UI.TextFeatures;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using DG.Tweening;
-using UnityEngine;
+using System;
 
 namespace Assets._Project.Develop.Runtime.UI.Dialog
 {
@@ -46,26 +45,34 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             base.Initialize();
 
             _currentLineIndex = -1;
+            _isTyping = false;
             _isEnding = false;
             _isHolding = false;
+            _currentHoldTime = 0f;
 
-            _view.PlayAppearance().OnComplete(() =>
-            {
-                if (_isEnding) 
-                    return;
+            if (_config.Replicas.Count > 0)
+                ApplyPortrait(_config.Replicas[0]);
 
-                ShowNextLine();
-            });
+            _view.PlayAppearance().OnComplete(OnAppearanceComplete);
         }
 
         public void Update(float deltaTime)
         {
-            if (_isEnding || _view == null) 
+            if (_isEnding || _view == null)
                 return;
 
             _view.SkipLabel.UpdateIdle(deltaTime);
 
             HandleInput(deltaTime);
+        }
+
+        private void OnAppearanceComplete()
+        {
+            if (_isEnding)
+                return;
+
+            if (_currentLineIndex == -1)
+                ShowNextLine();
         }
 
         private void HandleInput(float deltaTime)
@@ -80,6 +87,7 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             if (_isHolding && _inputService.IsInteractKeyHeld)
             {
                 _currentHoldTime += deltaTime;
+
                 if (_currentHoldTime >= SkipHoldDuration)
                 {
                     _isHolding = false;
@@ -92,9 +100,8 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             if (_inputService.IsInteractKeyReleased)
             {
                 if (_isHolding && _currentHoldTime < SkipHoldDuration)
-                {
                     ProgressDialog();
-                }
+
                 _isHolding = false;
                 _view.SkipLabel.StopHoldProgress();
             }
@@ -115,10 +122,8 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 
         private void ShowNextLine()
         {
-            if (_isEnding) 
+            if (_isEnding)
                 return;
-
-            Debug.Log("Show Next Line");
 
             _currentLineIndex++;
 
@@ -129,13 +134,8 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             }
 
             DialogReplica replica = _config.Replicas[_currentLineIndex];
-            CharacterData characterData = _charactersConfig.GetCharacter(replica.CharacterId);
 
-            if (characterData != null)
-            {
-                _view.SetPortrait(characterData.Portrait);
-                _view.SetBackground(characterData.Background);
-            }
+            ApplyPortrait(replica);
 
             string processedText = TextHighlightUtility.ProcessText(replica.RawText);
 
@@ -143,9 +143,20 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
             _view.SetText(processedText, () => _isTyping = false);
         }
 
+        private void ApplyPortrait(DialogReplica replica)
+        {
+            CharacterData characterData = _charactersConfig.GetCharacter(replica.CharacterId);
+
+            if (characterData != null)
+            {
+                _view.SetPortrait(characterData.Portrait);
+                _view.SetBackground(characterData.Background);
+            }
+        }
+
         private void EndDialog()
         {
-            if (_isEnding) 
+            if (_isEnding)
                 return;
 
             _isEnding = true;
@@ -156,7 +167,9 @@ namespace Assets._Project.Develop.Runtime.UI.Dialog
 
             _view.PlayDisappearance().OnComplete(() =>
             {
-                if (_view == null) return;
+                if (_view == null)
+                    return;
+
                 DialogEnded?.Invoke();
                 OnCloseRequest();
             });

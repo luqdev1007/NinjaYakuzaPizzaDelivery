@@ -15,6 +15,7 @@ using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataRepository;
 using Assets._Project.Develop.Runtime.Utilities.DataManagment.KeyStorage;
 using Assets._Project.Develop.Runtime.Utilities.DataManagment.Serializers;
 using Assets._Project.Develop.Runtime.Utilities.DataProviders;
+using Assets._Project.Develop.Runtime.Utilities.Hints;
 using Assets._Project.Develop.Runtime.Utilities.LoadingScreen;
 using Assets._Project.Develop.Runtime.Utilities.ObjectsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -36,6 +37,8 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
         public static void Process(DIContainer container)
         {
             container.RegisterAsSingle<ICoroutinesPerformer>(CreateCoroutinesPerformer);
+
+            container.RegisterAsSingle<ILoadingHintsService>(CreateLoadingHintsService);
 
             container.RegisterAsSingle(CreateConfigProviderService);
 
@@ -67,6 +70,11 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             container.RegisterAsSingle<IInputService>(CreateDesktopInput);
 
             container.RegisterAsSingle<IAudioService>(CreateAudioService);
+        }
+
+        private static ILoadingHintsService CreateLoadingHintsService(DIContainer container)
+        {
+            return new LoadingHintsService();
         }
 
         private static IAudioService CreateAudioService(DIContainer container)
@@ -150,7 +158,8 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
                 container.Resolve<SceneLoaderService>(), 
                 container.Resolve<ILoadingScreen>(), 
                 container, 
-                container.Resolve<ICoroutinesPerformer>());
+                container.Resolve<ICoroutinesPerformer>(),
+                container.Resolve<ILoadingHintsService>());
 
         private static SceneLoaderService CreateSceneLoaderService(DIContainer container) 
             => new SceneLoaderService();

@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.UI.Core;
 using System.Collections.Generic;
 using System;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
 {
@@ -11,6 +12,10 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
         private readonly RankStyleService _styleService;
         private readonly List<IDisposable> _disposables = new();
 
+        // НОВОЕ: для расчёта дельты прироста очков — без введения нового ReactiveEvent,
+        // т.к. сигнатура ReactiveEvent<T>.Subscribe в проекте не подтверждена.
+        private float _previousPoints;
+
         public RankStylePresenter(RankStyleView view, RankStyleService styleService)
         {
             _view = view;
@@ -19,23 +24,35 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
 
         public void Initialize()
         {
-            // Оставляем одну подписку на всё, что связано с очками
             _disposables.Add(_styleService.CurrentPoints.Subscribe((_, points) =>
             {
-                // 1000f — это заглушка, позже можно брать из текущего ранга конфига
-                _view.SetProgress(points, 1000f);
+                float delta = points - _previousPoints;
+                if (delta > 0.5f)
+                {
+                    _view.PlayPointsGained(delta);
+                }
+                _previousPoints = points;
+
+                var bounds = _styleService.GetCurrentSubRangeBounds();
+                _view.SetProgress(points, bounds.Floor, bounds.Ceiling);
                 _view.SetPoints(points);
             }));
 
             _disposables.Add(_styleService.CurrentLetter.Subscribe((_, letter) => UpdateVisuals()));
             _disposables.Add(_styleService.CurrentPrefix.Subscribe((_, prefix) => UpdateVisuals()));
 
+            // НОВОЕ: подписки на индикатор decay.
+            _disposables.Add(_styleService.DecayWarning.Subscribe((_, value) => _view.SetDecayWarning(value)));
+            _disposables.Add(_styleService.IsDecaying.Subscribe((_, isDecaying) => _view.SetDecayActive(isDecaying)));
+
             UpdateVisuals();
         }
 
         private void UpdateVisuals()
         {
-            _view.SetRank(_styleService.CurrentLetter.Value, _styleService.CurrentPrefix.Value);
+            string letter = _styleService.CurrentLetter.Value;
+            Color accent = _styleService.GetAccentColor(letter);
+            _view.SetRank(letter, _styleService.CurrentPrefix.Value, accent);
         }
 
         public void Dispose()

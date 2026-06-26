@@ -35,10 +35,8 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Timers
         {
             _view.Group.alpha = 0;
 
-            // Подписки на логику самого таймера
             _disposables.Add(_timerService.CurrentTime.Subscribe(OnTimeChanged));
             _disposables.Add(_timerService.CooldownEnded.Subscribe(OnTimerFinished));
-
         }
 
         public void ShowAndStart()
@@ -47,15 +45,15 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Timers
             _alertSequence?.Kill();
             _view.transform.localScale = Vector3.one;
 
-            _view.Group.DOFade(1, 0.5f);
-            _view.transform.DOPunchScale(Vector3.one * 0.2f, 0.5f);
+            _view.Group.DOFade(1, 0.5f).SetUpdate(true);
+            _view.transform.DOPunchScale(Vector3.one * 0.2f, 0.5f).SetUpdate(true);
 
             _timerService.Restart();
         }
 
         public void Hide()
         {
-            _view.Group.DOFade(0, 0.5f);
+            _view.Group.DOFade(0, 0.5f).SetUpdate(true);
             _timerService.Stop();
             _alertSequence?.Kill();
         }
@@ -103,29 +101,26 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Timers
             _alertSequence = DOTween.Sequence()
                 .Append(_view.transform.DOScale(1.1f, 0.3f))
                 .Append(_view.transform.DOScale(1.0f, 0.3f))
-                .SetLoops(-1);
+                .SetLoops(-1)
+                .SetUpdate(true);
         }
 
         private void OnTimerFinished()
         {
             _alertSequence?.Kill();
 
-            _view.transform.DOPunchRotation(new Vector3(0, 0, 15f), 0.5f);
-            _view.Group.DOFade(0, 1f).SetDelay(2f);
+            _view.transform.DOPunchRotation(new Vector3(0, 0, 15f), 0.5f).SetUpdate(true);
+            _view.Group.DOFade(0, 1f).SetDelay(2f).SetUpdate(true);
         }
 
         public void Dispose()
         {
-
-
-            // Очистка реактивных подписок
             foreach (var disposable in _disposables)
             {
                 disposable.Dispose();
             }
             _disposables.Clear();
 
-            // Остановка анимаций и таймера
             _alertSequence?.Kill();
             _view.transform.DOKill();
             _view.Group.DOKill();

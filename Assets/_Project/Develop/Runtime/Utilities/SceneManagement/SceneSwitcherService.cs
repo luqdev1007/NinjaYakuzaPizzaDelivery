@@ -2,12 +2,11 @@
 using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilities.LoadingScreen;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.Hints;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
-using Random = UnityEngine.Random;
 
 namespace Assets._Project.Develop.Runtime.Utilities.SceneManagement
 {
@@ -16,25 +15,23 @@ namespace Assets._Project.Develop.Runtime.Utilities.SceneManagement
         private readonly SceneLoaderService _sceneLoaderService;
         private readonly ILoadingScreen _loadingScreen;
         private readonly DIContainer _projectContainer;
-        private readonly ICoroutinesPerformer _coroutines; 
+        private readonly ICoroutinesPerformer _coroutines;
+        private readonly ILoadingHintsService _loadingHintsService;
 
         private DIContainer _currentSceneContainer;
-
-        private readonly List<string> _loadingHints = new List<string>
-        {
-            "DOWNLOAD 'OST SAMURAI X' FOR BACKGROUND MUSIC",
-        };
 
         public SceneSwitcherService(
             SceneLoaderService sceneLoaderService,
             ILoadingScreen loadingScreen,
             DIContainer projectContainer,
-            ICoroutinesPerformer coroutines)
+            ICoroutinesPerformer coroutines,
+            ILoadingHintsService loadingHintsService)
         {
             _sceneLoaderService = sceneLoaderService;
             _loadingScreen = loadingScreen;
             _projectContainer = projectContainer;
             _coroutines = coroutines;
+            _loadingHintsService = loadingHintsService;
         }
 
         public IEnumerator ProcessingSwitchTo(string sceneName, IInputSceneArgs sceneArgs = null)
@@ -42,65 +39,49 @@ namespace Assets._Project.Develop.Runtime.Utilities.SceneManagement
             CoolLoadingScreen coolScreen = _loadingScreen as CoolLoadingScreen;
             Coroutine hintRoutine = _coroutines.StartPerform(HintCycleRoutine(coolScreen));
 
-            _loadingScreen.Show();
-
-            _currentSceneContainer?.Dispose();
-
-            yield return _sceneLoaderService.LoadAsync(Scenes.Empty);
-            yield return _sceneLoaderService.LoadAsync(sceneName);
-
-            SceneBootstrap sceneBootstrap = Object.FindFirstObjectByType<SceneBootstrap>();
-
-            if (sceneBootstrap == null)
-                throw new NullReferenceException($"Bootstrap for scene: '{sceneName}' not found");
-
-            _currentSceneContainer = new DIContainer(_projectContainer);
-            sceneBootstrap.ProcessRegistrations(_currentSceneContainer, sceneArgs);
-            _currentSceneContainer.Initialize();
-
-            // long loadings tests
-            /*
-            float timer = 5;
-
-            while (timer > 0)
+            try
             {
-                timer -= Time.deltaTime;
+                _loadingScreen.Show();
 
-                if (Input.GetKeyDown(KeyCode.Escape))
-                    yield break;
+                _currentSceneContainer?.Dispose();
+
+                yield return _sceneLoaderService.LoadAsync(Scenes.Empty);
+                yield return _sceneLoaderService.LoadAsync(sceneName);
+
+                SceneBootstrap sceneBootstrap = Object.FindAnyObjectByType<SceneBootstrap>();
+
+                if (sceneBootstrap == null)
+                {
+                    throw new NullReferenceException($"Bootstrap for scene: '{sceneName}' not found");
+                }
+
+                _currentSceneContainer = new DIContainer(_projectContainer);
+                sceneBootstrap.ProcessRegistrations(_currentSceneContainer, sceneArgs);
+                _currentSceneContainer.Initialize();
+
+                yield return sceneBootstrap.Initialize();
+
+                coolScreen.ShowPressAnyKey();
+
+                yield return new WaitUntil(() => Input.anyKeyDown);
+
+                _loadingScreen.Hide();
 
                 yield return null;
+
+                sceneBootstrap.Run();
             }
-
-            timer = 0;
-            */
-            // long loadings tests
-
-            yield return sceneBootstrap.Initialize();
-
-            /*
-            if (hintRoutine != null) 
+            finally
+            {
                 _coroutines.StopPerform(hintRoutine);
-            */
-
-            // coolScreen.SetHint("");
-
-            coolScreen.ShowPressAnyKey();
-
-            yield return new WaitUntil(() => Input.anyKeyDown);
-
-            _loadingScreen.Hide();
-
-            yield return null;
-
-            sceneBootstrap.Run();
+            }
         }
 
         private IEnumerator HintCycleRoutine(CoolLoadingScreen screen)
         {
             while (true)
             {
-                string randomHint = _loadingHints[Random.Range(0, _loadingHints.Count)];
+                string randomHint = _loadingHintsService.GetRandomHint();
                 screen.SetHint(randomHint);
 
                 yield return new WaitForSeconds(3f + randomHint.Length * 0.05f);

@@ -6,18 +6,14 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
-using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using System;
 using System.Collections;
 using UnityEngine;
 using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
-using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump;
-using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
@@ -73,8 +69,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             foreach (PropEntityAuthoring prop in sceneProps)
             {
                 prop.Construct(
-                        _container.Resolve<EntitiesLifeContext>(),
-                        _container.Resolve<IAudioService>(),
+                        _entitiesLifeContext,
+                        audioService,
                         _container.Resolve<DropLootService>(),
                         _container.Resolve<CollidersRegistryService>()
                     );
@@ -84,6 +80,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             foreach (var enemyData in _sceneContext.Enemies)
                 enemiesFactory.Create(enemyData.Position, enemyData.Config);
+
+            if (_sceneContext.FinishPoint == null)
+                throw new NullReferenceException("GameplaySceneContext.FinishPoint not assigned in Level Prefab");
+
+            _container.Resolve<FinalPointTriggerService>().Create(_sceneContext.FinishPoint.position);
 
             yield break;
         }

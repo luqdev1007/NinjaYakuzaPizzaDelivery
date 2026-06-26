@@ -20,8 +20,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
         private ReactiveVariable<bool> _isGrappling;
         private ReactiveVariable<Transform> _grappleHookTransform;
         private ReactiveVariable<Vector3> _grappleHookAnchor;
+        private ReactiveEvent _grappleAnchoredEvent;
 
-        // 1. ДОБАВЛЯЕМ ССЫЛКУ НА ИНТЕНТ ПРИЦЕЛИВАНИЯ
         private ReactiveVariable<Vector2> _intentAimDirection;
 
         private Rigidbody2D _rigidbody;
@@ -50,9 +50,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
             _isGrappling = entity.IsGrappling;
             _grappleHookTransform = entity.GrappleHookTransform;
             _grappleHookAnchor = entity.GrappleAnchorPoint;
-
-            // 2. ИНИЦИАЛИЗИРУЕМ ИНТЕНТ ПРИЦЕЛИВАНИЯ
             _intentAimDirection = entity.IntentAimDirection;
+            _grappleAnchoredEvent = entity.GrappleAnchoredEvent;
 
             _transform = entity.Transform;
             _rigidbody = entity.Rigidbody;
@@ -83,8 +82,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         private void TryLaunch()
         {
-            // ФИКС: Вместо ручного просчета мыши берем уже готовое направление.
-            // Благодаря этому хук автоматически полетит либо в цель, либо по мышке!
             Vector3 dir = new Vector3(_intentAimDirection.Value.x, _intentAimDirection.Value.y, 0f);
 
             _isGrappling.Value = true;
@@ -116,6 +113,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 
         private void StartPulling(Vector2 anchorPos, Collider2D hit)
         {
+            _grappleAnchoredEvent?.Invoke();
             _isPulling = true;
             _grappleHookTransform.Value = null;
 

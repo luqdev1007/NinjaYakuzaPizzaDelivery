@@ -11,6 +11,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
         [Tooltip("Общая скорость затухания очков стиля")]
         public float GlobalDecayMultiplier = 1f;
 
+        [Tooltip("Сколько секунд бездействия нужно пережить, прежде чем начнёт работать decay")]
+        public float DecayGraceDelay = 3f;
+
         [Header("Ranks")]
         public List<MainRankEntry> Ranks;
     }
@@ -25,6 +28,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
 
         [Tooltip("Скорость сгорания очков именно на этом ранге")]
         public float DecayRate = 10f;
+
+        [Tooltip("Акцентный цвет ранга для UI")]
+        public Color AccentColor = Color.white;
     }
 
     [Serializable]

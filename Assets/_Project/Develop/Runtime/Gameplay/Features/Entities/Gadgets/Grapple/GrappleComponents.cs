@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 {
+    public class GrappleAnchoredEvent : IEntityComponent
+    {
+        public ReactiveEvent Value;
+    }
+
     public class GrappleHookTransform : IEntityComponent
     {
         public ReactiveVariable<Transform> Value;

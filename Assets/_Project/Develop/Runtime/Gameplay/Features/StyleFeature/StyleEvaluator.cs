@@ -8,9 +8,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
     {
         private readonly RankStyleService _styleService;
         private readonly StyleActionsConfig _config;
-        private readonly List<string> _usedActionsHistory = new();
 
-        private const int MaxHistorySize = 3;
+        private readonly List<StyleActionType> _usedActionsHistory = new();
 
         public StyleEvaluator(RankStyleService styleService, StyleActionsConfig config)
         {
@@ -18,62 +17,82 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
             _config = config;
         }
 
-        public void ProcessKill()
+        public void ProcessHit(StyleActionType attackType, bool isLethal)
         {
-            _styleService.AddPoints(_config.KillBasePoints);
-        }
+            float points = GetBasePoints(attackType);
 
-        public void ProcessDamage(float damage, string attackId)
-        {
-            float basePoints = damage * _config.DamagePointMultiplier;
-            float finalPoints = basePoints;
-
-            if (!_usedActionsHistory.Contains(attackId))
+            if (isLethal)
             {
-                finalPoints *= _config.FreshnessBonus;
-
-                _usedActionsHistory.Add(attackId);
-                if (_usedActionsHistory.Count > MaxHistorySize)
-                    _usedActionsHistory.RemoveAt(0);
+                points += _config.KillBonus;
             }
 
-            _styleService.AddPoints(finalPoints);
+            RegisterAction(attackType, points);
         }
 
         public void ProcessDash()
         {
-            _styleService.AddPoints(_config.DashPoints);
+            RegisterAction(StyleActionType.Dash, _config.DashPoints);
         }
 
-        public void ProcessMovementAcceleration(float deltaTime)
+        public void ProcessWallJump()
         {
-            float points = _config.UpwardAccelerationPoints * deltaTime;
-            _styleService.AddPoints(points);
+            RegisterAction(StyleActionType.WallJump, _config.WallJumpPoints);
         }
 
-        public void ProcessCoinCollect()
+        public void ProcessWallHangAttach()
         {
-            _styleService.AddPoints(_config.CoinCollectPoints);
+            RegisterAction(StyleActionType.WallHangAttach, _config.WallHangAttachPoints);
         }
 
-        public void ProcessMemoryFragmentCollect()
+        public void ProcessGrappleAttach()
         {
-            _styleService.AddPoints(_config.MemoryFragmentPoints);
+            RegisterAction(StyleActionType.GrappleAttach, _config.GrappleAttachPoints);
+        }
+
+        public void ProcessPlungeSlam()
+        {
+            RegisterAction(StyleActionType.PlungeSlam, _config.PlungeSlamPoints);
         }
 
         public void ProcessPlayerHit()
         {
             _styleService.ApplyDamagePenalty();
+            _usedActionsHistory.Clear();
+        }
+
+        private void RegisterAction(StyleActionType type, float rawPoints)
+        {
+            float multiplier = _usedActionsHistory.Contains(type) ? 1f : _config.DiversityMultiplier;
+            _styleService.AddPoints(rawPoints * multiplier);
+            PushHistory(type);
+        }
+
+        private void PushHistory(StyleActionType type)
+        {
+            _usedActionsHistory.Add(type);
+
+            if (_usedActionsHistory.Count > _config.DiversityHistorySize)
+            {
+                _usedActionsHistory.RemoveAt(0);
+            }
+        }
+
+        private float GetBasePoints(StyleActionType type)
+        {
+            switch (type)
+            {
+                case StyleActionType.LightAttack:
+                    return _config.LightAttackPoints;
+                case StyleActionType.SpeedDamage:
+                    return _config.SpeedDamagePoints;
+                default:
+                    return 0f;
+            }
         }
 
         public void Dispose()
         {
             _usedActionsHistory.Clear();
-        }
-
-        public void ProcessLootPick()
-        {
-            _styleService.AddPoints(_config.LootPickupPoints);
         }
     }
 }

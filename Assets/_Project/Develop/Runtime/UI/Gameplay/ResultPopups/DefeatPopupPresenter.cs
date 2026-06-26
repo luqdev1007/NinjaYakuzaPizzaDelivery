@@ -1,9 +1,6 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
-using Assets._Project.Develop.Runtime.UI.Core;
+﻿using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
-using UnityEditor.U2D.Aseprite;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
 {

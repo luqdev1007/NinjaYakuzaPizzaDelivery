@@ -7,8 +7,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
 {
     public class StageProviderService : IDisposable
     {
-        private ReactiveVariable<int> _currentStageNumber = new();
-        private ReactiveVariable<StageResults> _currentStageResult = new();
+        private ReactiveVariable<int> _currentStageNumber = new(0);
+        private ReactiveVariable<StageResults> _currentStageResult = new(StageResults.Uncompleted);
 
         private LevelConfig _levelConfig;
         private StagesFactory _stagesFactory;
@@ -18,7 +18,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
         private IDisposable _stageEndedDisposable;
 
         public StageProviderService(
-            LevelConfig levelConfig, 
+            LevelConfig levelConfig,
             StagesFactory stagesFactory)
         {
             _levelConfig = levelConfig;
@@ -47,29 +47,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
             _currentStageResult.Value = StageResults.Uncompleted;
 
             _currentStage = _stagesFactory.Create(_levelConfig.StageConfigs[_currentStageNumber.Value - 1]);
+
+            StartCurrent();
+            _currentStage.Start();
         }
 
         private void OnStageCompleted()
         {
             _currentStageResult.Value = StageResults.Completed;
-
-            /*
-            if (HasNextStage())
-            {
-                // SwitchToNext(); // Если у тебя логика автоматического перехода
-            }
-            */
         }
 
         public void PrepareFirstStage()
         {
-            if (_currentStage != null) 
+            if (_currentStage != null)
                 return;
+
+            if (_levelConfig.StageConfigs == null || _levelConfig.StageConfigs.Count == 0)
+                throw new InvalidOperationException("LevelConfig has no StageConfigs — level cannot be completed.");
 
             _currentStageNumber.Value = 1;
             _currentStageResult.Value = StageResults.Uncompleted;
             _currentStage = _stagesFactory.Create(_levelConfig.StageConfigs[0]);
 
+            StartCurrent();
             _currentStage.Start();
         }
 
@@ -79,15 +79,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
             _stageEndedDisposable = _currentStage.Completed.Subscribe(OnStageCompleted);
         }
 
-        public void UpdateCurrent(float deltaTime) => _currentStage.Update(deltaTime);
-        
-        public void CleanupCurrent() => _currentStage.Cleanup();
+        public void UpdateCurrent(float deltaTime) => _currentStage?.Update(deltaTime);
+
+        public void CleanupCurrent()
+        {
+            _stageEndedDisposable?.Dispose();
+            _stageEndedDisposable = null;
+
+            _currentStage?.Cleanup();
+        }
 
         public void Dispose()
         {
             _currentStage?.Dispose();
             _stageEndedDisposable?.Dispose();
         }
-
     }
 }

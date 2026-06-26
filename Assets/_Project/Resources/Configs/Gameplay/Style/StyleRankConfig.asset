@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: StyleRankConfig
   m_EditorClassIdentifier: 
   GlobalDecayMultiplier: 20
+  DecayGraceDelay: 3
   Ranks:
   - Letter: F
     SubRanks:
@@ -23,6 +24,7 @@ MonoBehaviour:
       Threshold: 50
       Multiplier: 1.1
     DecayRate: 5
+    AccentColor: {r: 0.40922037, g: 0.42771834, b: 0.7169812, a: 1}
   - Letter: C
     SubRanks:
     - Prefix: ewl
@@ -32,6 +34,7 @@ MonoBehaviour:
       Threshold: 250
       Multiplier: 2.2
     DecayRate: 10
+    AccentColor: {r: 0.04356533, g: 0.8396226, b: 0.12501897, a: 1}
   - Letter: A
     SubRanks:
     - Prefix: w-e-s-o-m-e
@@ -41,6 +44,7 @@ MonoBehaviour:
       Threshold: 600
       Multiplier: 3.2
     DecayRate: 20
+    AccentColor: {r: 0.9811321, g: 0.6646094, b: 0.0786757, a: 1}
   - Letter: S
     SubRanks:
     - Prefix: ++
@@ -53,3 +57,4 @@ MonoBehaviour:
       Threshold: 2500
       Multiplier: 10
     DecayRate: 50
+    AccentColor: {r: 0.8313726, g: 0.007843138, b: 0.10196079, a: 1}

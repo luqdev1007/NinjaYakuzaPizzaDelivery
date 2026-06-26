@@ -67,7 +67,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             // Level Systems
             container.RegisterAsSingle(CreateStageProviderService);
             container.RegisterAsSingle(CreateFinalPointTriggerService);
-            container.RegisterAsSingle(CreateStartGameTriggerService);
 
             // Gameplay State Machine
             container.RegisterAsSingle(CreateGameplayStatesFactory);
@@ -146,14 +145,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         private static LootFactory CreateLootFactory(DIContainer container) => new LootFactory(container);
 
-        private static StartGameTriggerService CreateStartGameTriggerService(DIContainer container) => new StartGameTriggerService();
-
         private static GameplayStatesContext CreateGameplayStatesContext(DIContainer container)
         {
             return new GameplayStatesContext(container.Resolve<GameplayStatesFactory>().CreateGameplayStateMachine());
         }
 
-        private static GameplayStatesFactory CreateGameplayStatesFactory(DIContainer container) => new GameplayStatesFactory(container, _inputArgs);
+        private static GameplayStatesFactory CreateGameplayStatesFactory(DIContainer container) => new GameplayStatesFactory(container, _inputArgs, _sceneContext);
 
         private static MainHeroHolderService CreateMainHeroHolderService(DIContainer container) => new MainHeroHolderService(container.Resolve<EntitiesLifeContext>());
 

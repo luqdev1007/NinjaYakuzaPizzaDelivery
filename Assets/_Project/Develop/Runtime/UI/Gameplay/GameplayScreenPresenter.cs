@@ -1,15 +1,11 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Timers;
 using Assets._Project.Develop.Runtime.UI.Wallet;
 using Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
-using System;
 using System.Collections.Generic;
-using UnityEngine;
-using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay
 {
@@ -26,6 +22,8 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         private GameplayInputArgs _inputArgs;
 
         private readonly List<IPresenter> _childPresenters = new();
+
+        private InGameTimerPresenter _timerPresenter;
 
         public GameplayScreenPresenter(
             GameplayScreenView view,
@@ -47,13 +45,11 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
         public void Initialize()
         {
-            Debug.Log("GameplayScreenPresenter Initialized!");
-
             _view.OpenGameSettingsButton.onClick.AddListener(OnOpenGameSettingsButtonClicked);
             _view.RestartButton.onClick.AddListener(OnRestartButtonClicked);
 
-            InGameTimerPresenter timerPresenter = _gameplayPresentersFactory.CreateTimerPresenter(_view.TimerView, _levelConfig.TargetTime);
-            _childPresenters.Add(timerPresenter);
+            _timerPresenter = _gameplayPresentersFactory.CreateTimerPresenter(_view.TimerView, _levelConfig.TargetTime);
+            _childPresenters.Add(_timerPresenter);
 
             InGameWalletPresenter walletPresenter = _gameplayPresentersFactory.CreateInGameWalletPresenter(_view.InGameWalletView);
             _childPresenters.Add(walletPresenter);
@@ -63,6 +59,11 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
             foreach (IPresenter presenter in _childPresenters)
                 presenter.Initialize();
+        }
+
+        public void StartGameplayHud()
+        {
+            _timerPresenter.ShowAndStart();
         }
 
         private void OnRestartButtonClicked()

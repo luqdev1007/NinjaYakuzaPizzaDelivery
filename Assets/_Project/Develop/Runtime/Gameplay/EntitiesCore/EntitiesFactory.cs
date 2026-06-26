@@ -212,6 +212,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddIsGrappling()
                 .AddGrappleHookTransform()
                 .AddGrappleAnchorPoint()
+                .AddGrappleAnchoredEvent()
 
                 // attack
                 .AddStartAttackEvent(new ReactiveEvent())
@@ -264,6 +265,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddContactsDetectingMask(config.ContactLayerMask)
                 .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
                 .AddContactEntitiesBuffer(new Buffer<Entity>(16))
+                .AddSpeedDamageDealtEvent()
 
                 // inventory
                 .AddCurrentItemIndex()

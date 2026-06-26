@@ -1,6 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
-using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
 {
@@ -8,8 +7,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
     {
         private readonly FinalPointTriggerService _finalPointTrigger;
         private readonly MainHeroHolderService _heroHolder;
-
-        private readonly Vector3 _finalPointPosition;
 
         private readonly ReactiveEvent _completed = new();
 
@@ -19,18 +16,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
 
         public FinalPointReachedStage(
             FinalPointTriggerService finalPointTrigger,
-            MainHeroHolderService heroHolder,
-            Vector3 finalPointPosition)
+            MainHeroHolderService heroHolder)
         {
             _finalPointTrigger = finalPointTrigger;
             _heroHolder = heroHolder;
-            _finalPointPosition = finalPointPosition;
         }
 
         public void Start()
         {
-            _finalPointTrigger.Create(_finalPointPosition);
-
             _inProcess = true;
         }
 
@@ -45,7 +38,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature
                 ProcessEnd();
         }
 
-    
         public void Cleanup()
         {
             _finalPointTrigger.Cleanup();

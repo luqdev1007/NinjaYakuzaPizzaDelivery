@@ -12,8 +12,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
         private readonly CameraService _cameraService;
         private readonly IInputService _inputService;
         private readonly GameplayPopupService _popupService;
+        private readonly bool _isRestart;
 
-        // Настройки (в идеале Config SO)
         private readonly float _moveSpeed = 15f;
         private readonly float _boostMultiplier = 2.5f;
         private readonly float _zoomSpeed = 5f;
@@ -28,11 +28,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
         public LevelScoutingState(
             CameraService cameraService,
             IInputService inputService,
-            GameplayPopupService popupService)
+            GameplayPopupService popupService,
+            bool isRestart)
         {
             _cameraService = cameraService;
             _inputService = inputService;
             _popupService = popupService;
+            _isRestart = isRestart;
         }
 
         public override void Enter()
@@ -40,16 +42,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
             base.Enter();
 
             _isConfirmed = false;
-            _cameraService.SetState(CameraState.Scouting);
 
+            if (_isRestart)
+            {
+                _isConfirmed = true;
+                return;
+            }
+
+            _cameraService.SetState(CameraState.Scouting);
             _inputService.IsEnabled = true;
 
             _activeHint = _popupService.OpenHint("WASD - Move, Wheel - Zoom, Shift - Boost\nPress 'T' to start");
-            _activeHint.Initialize();
         }
 
         public void Update(float deltaTime)
         {
+            if (_isRestart)
+                return;
+
             HandleMovement(deltaTime);
             HandleZoom(deltaTime);
 
@@ -63,7 +73,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
         {
             Vector2 inputDirection = _inputService.CameraMoveDirection;
 
-            if (inputDirection == Vector2.zero) 
+            if (inputDirection == Vector2.zero)
                 return;
 
             float currentSpeed = _moveSpeed;

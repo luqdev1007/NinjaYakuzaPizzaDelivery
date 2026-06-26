@@ -13,8 +13,6 @@ MonoBehaviour:
   m_Name: VillageToChurchDialog
   m_EditorClassIdentifier: 
   Replicas:
-  - RawText: start_dialog
-    CharacterId: 0
   - RawText: Hey, NINJA, deliver that PIZZA to that monk, he is paying well so be
       FAST... and also today is DANGEROUS in the sky, so look out!
     CharacterId: 2
