@@ -1,11 +1,10 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.Features.LevelResultsFeature;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels; 
-using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers; 
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
 {
@@ -52,7 +51,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
 
             Debug.Log($"<color=cyan>[WinPopup]</color> Final Time: {finalTime}s (Target: {_levelConfig.TargetTime}s) | Star: {report.TimeStarEarned}");
             Debug.Log($"<color=yellow>[WinPopup]</color> Style Points: {report.FinalStylePoints} (Threshold: {_levelConfig.StyleStarThreshold}) | Rank: {report.StyleLetter} | Star: {report.StyleStarEarned}");
-            Debug.Log($"<color=magenta>[WinPopup]</color> Chests: {report.CollectedSecrets}/{report.TotalSecrets} | Star: {report.SecretStarEarned}");
+            Debug.Log($"<color=magenta>[WinPopup]</color> Gold: {report.CollectedGold}/{report.GoldThreshold} | Shards: {report.CollectedShards}/{report.ShardThreshold} | Star: {report.CurrencyStarEarned}");
 
             _view.SetupResults(report);
 

@@ -8,27 +8,38 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelResultsFeature
     {
         public bool TimeStarEarned;
         public bool StyleStarEarned;
-        public bool SecretStarEarned;
+        public bool CurrencyStarEarned;
+
         public float FinalTime;
         public float FinalStylePoints;
         public string StyleLetter;
-        public int CollectedSecrets;
-        public int TotalSecrets;
+
+        public int CollectedGold;
+        public int CollectedShards;
+        public int GoldThreshold;
+        public int ShardThreshold;
     }
 
     public class LevelResultService
     {
         private readonly RankStyleService _styleService;
-        private readonly SecretChestCollectService _secretChestCollectService;
+        private readonly SessionLootService _sessionLootService;
 
-        public LevelResultService(RankStyleService styleService, SecretChestCollectService secretChestCollectService)
+        public LevelResultService(RankStyleService styleService, SessionLootService sessionLootService)
         {
             _styleService = styleService;
-            _secretChestCollectService = secretChestCollectService;
+            _sessionLootService = sessionLootService;
         }
 
         public LevelResultReport CalculateResult(LevelConfig config, float timeSpent)
         {
+            int collectedGold = _sessionLootService.GetCollectedAmount(LootTypes.Coin);
+            int collectedShards = _sessionLootService.GetCollectedAmount(LootTypes.SoulShard);
+
+            bool currencyStarEarned =
+                collectedGold >= config.CurrencyStarGoldThreshold &&
+                collectedShards >= config.CurrencyStarShardThreshold;
+
             return new LevelResultReport
             {
                 FinalTime = timeSpent,
@@ -38,9 +49,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelResultsFeature
                 TimeStarEarned = timeSpent <= config.TargetTime,
                 StyleStarEarned = _styleService.MaxPoints >= config.StyleStarThreshold,
 
-                SecretStarEarned = _secretChestCollectService.AllChestsCollected(),
-                CollectedSecrets = _secretChestCollectService.CollectedCount,
-                TotalSecrets = _secretChestCollectService.TotalCount
+                CurrencyStarEarned = currencyStarEarned,
+                CollectedGold = collectedGold,
+                CollectedShards = collectedShards,
+                GoldThreshold = config.CurrencyStarGoldThreshold,
+                ShardThreshold = config.CurrencyStarShardThreshold
             };
         }
     }

@@ -18,13 +18,13 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
         [Header("Stars Configuration")]
         [SerializeField] private StarUIComponents _timeStar;
         [SerializeField] private StarUIComponents _styleStar;
-        [SerializeField] private StarUIComponents _secretsStar;
+        [SerializeField] private StarUIComponents _currencyStar;
 
         [Serializable]
         public struct StarUIComponents
         {
-            public Transform StarFilled; // Объект "Star (Filled)" из твоей иерархии
-            public TMP_Text InfoText;    // Текст внутри InfoLabel -> DescriptionText
+            public Transform StarFilled; 
+            public TMP_Text InfoText;    
         }
 
         public void SetTitle(string title) => _title.text = title;
@@ -44,11 +44,12 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
                                        $"You achieved minimal goal for style points on this level!\n\n" +
                                        $"Your best rank:\n<size=48><color=\"red\">{report.StyleLetter}</color></size>";
 
-            // Настройка СЕКРЕТОВ (Purple)
-            _secretsStar.StarFilled.localScale = report.SecretStarEarned ? Vector3.one : Vector3.zero;
-            _secretsStar.InfoText.text = $"<color=\"purple\"><size=32>SECRET CHESTS</size></color>\n\n" +
-                                         $"You find <color=\"purple\">{report.CollectedSecrets}/{report.TotalSecrets}</color> secret chests on level\n\n" +
-                                         $"Don't forget to unlock founded secret loot in Dojo";
+            // Настройка ВАЛЮТЫ (Green)
+            _currencyStar.StarFilled.localScale = report.CurrencyStarEarned ? Vector3.one : Vector3.zero;
+            _currencyStar.InfoText.text = $"<color=\"green\"><size=32>LOOT</size></color>\n\n" +
+                                          $"Collect enough gold from props and soul shards from enemies!\n\n" +
+                                          $"Gold:\n<size=40><color=\"green\">{report.CollectedGold}/{report.GoldThreshold}</color></size>\n\n" +
+                                          $"Soul Shards:\n<size=40><color=\"green\">{report.CollectedShards}/{report.ShardThreshold}</color></size>";
         }
 
         protected override void ModifyShowAnimation(Sequence animation)
@@ -56,9 +57,21 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
             base.ModifyShowAnimation(animation);
 
             var starViews = new List<Transform>();
-            if (_timeStar.StarFilled.localScale.x > 0.1f) starViews.Add(_timeStar.StarFilled);
-            if (_styleStar.StarFilled.localScale.x > 0.1f) starViews.Add(_styleStar.StarFilled);
-            if (_secretsStar.StarFilled.localScale.x > 0.1f) starViews.Add(_secretsStar.StarFilled);
+
+            if (_timeStar.StarFilled.localScale.x > 0.1f)
+            {
+                starViews.Add(_timeStar.StarFilled);
+            }
+
+            if (_styleStar.StarFilled.localScale.x > 0.1f)
+            {
+                starViews.Add(_styleStar.StarFilled);
+            }
+
+            if (_currencyStar.StarFilled.localScale.x > 0.1f)
+            {
+                starViews.Add(_currencyStar.StarFilled);
+            }
 
             foreach (var star in starViews)
             {
@@ -66,7 +79,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
                     .Append(star.DOScale(1.25f, 0.3f).SetEase(Ease.OutBack).From(0))
                     .Join(star.DOLocalRotate(Vector3.forward * 360, 0.3f, RotateMode.LocalAxisAdd)
                          .SetEase(Ease.OutCubic).From(Vector3.zero))
-                    .Append(star.DOScale(1.25f, 0.1f)); 
+                    .Append(star.DOScale(1.25f, 0.1f));
 
                 animation.AppendInterval(0.1f);
             }

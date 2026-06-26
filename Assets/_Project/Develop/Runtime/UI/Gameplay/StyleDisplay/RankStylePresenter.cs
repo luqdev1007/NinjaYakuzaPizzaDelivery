@@ -12,8 +12,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
         private readonly RankStyleService _styleService;
         private readonly List<IDisposable> _disposables = new();
 
-        // НОВОЕ: для расчёта дельты прироста очков — без введения нового ReactiveEvent,
-        // т.к. сигнатура ReactiveEvent<T>.Subscribe в проекте не подтверждена.
         private float _previousPoints;
 
         public RankStylePresenter(RankStyleView view, RankStyleService styleService)
@@ -41,7 +39,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
             _disposables.Add(_styleService.CurrentLetter.Subscribe((_, letter) => UpdateVisuals()));
             _disposables.Add(_styleService.CurrentPrefix.Subscribe((_, prefix) => UpdateVisuals()));
 
-            // НОВОЕ: подписки на индикатор decay.
             _disposables.Add(_styleService.DecayWarning.Subscribe((_, value) => _view.SetDecayWarning(value)));
             _disposables.Add(_styleService.IsDecaying.Subscribe((_, isDecaying) => _view.SetDecayActive(isDecaying)));
 

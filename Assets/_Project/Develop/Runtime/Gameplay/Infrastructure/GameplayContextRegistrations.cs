@@ -16,6 +16,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay;
@@ -78,7 +79,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateInGameTimerFeatureService);
             container.RegisterAsSingle(CreateStyleService);
             container.RegisterAsSingle(CreateStyleEvaluator);
-            container.RegisterAsSingle(CreateSecretChestCollectService);
             container.RegisterAsSingle(CreateLevelResultService);
 
             // hit effect
@@ -90,7 +90,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             // Camera
             container.RegisterAsSingle(CreateCameraService);
         }
-
+        
         private static SessionLootService CreateSessionLootService(DIContainer container)
         {
             return new SessionLootService();
@@ -116,11 +116,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         {
             return new LevelResultService(
                 container.Resolve<RankStyleService>(),
-                container.Resolve<SecretChestCollectService>()
+                container.Resolve<SessionLootService>()
                 );
         }
-
-        private static SecretChestCollectService CreateSecretChestCollectService(DIContainer container) => new SecretChestCollectService();
 
         private static RankStyleService CreateStyleService(DIContainer container)
         {

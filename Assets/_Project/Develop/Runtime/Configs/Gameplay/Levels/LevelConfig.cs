@@ -24,6 +24,8 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Levels
         [Header("Balance & Rules")]
         [field: SerializeField] public float TargetTime { get; private set; }
         [field: SerializeField] public float StyleStarThreshold { get; private set; }
+        [field: SerializeField] public int CurrencyStarGoldThreshold { get; private set; }
+        [field: SerializeField] public int CurrencyStarShardThreshold { get; private set; }
 
         [field: SerializeField] public Vector3 StartPlayerPosition { get; set; }
     }
