@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay.Timers
 {
-    public class InGameTimerPresenter : IPresenter, IDisposable
+    public class InGameTimerPresenter : IPresenter, IHudPausable, IDisposable
     {
         private readonly InGameTimerView _view;
         private readonly TimerService _timerService;

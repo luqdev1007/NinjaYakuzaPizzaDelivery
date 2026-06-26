@@ -85,6 +85,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
         {
             _timerService.Stop();
             _stageProviderService.CleanupCurrent();
+
+            Debug.Log(_timerService.ElapsedTime.Value);
+
             base.Exit();
         }
     }

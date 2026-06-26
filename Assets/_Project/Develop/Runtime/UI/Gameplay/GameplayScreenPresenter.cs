@@ -66,6 +66,17 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
             _timerPresenter.ShowAndStart();
         }
 
+        public void StopGameplayHud()
+        {
+            foreach (IPresenter presenter in _childPresenters)
+            {
+                if (presenter is IHudPausable pausable)
+                {
+                    pausable.Hide();
+                }
+            }
+        }
+
         private void OnRestartButtonClicked()
         {
             _inputArgs.IsRestart = true;

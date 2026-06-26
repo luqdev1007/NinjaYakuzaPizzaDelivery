@@ -199,6 +199,15 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
             sequence.OnComplete(() => Destroy(popup.gameObject));
         }
 
+        public void Hide()
+        {
+            _decayPulseTween?.Kill();
+            _decayRingImage?.DOKill();
+
+            _sliderTween?.Kill();
+            _pointsTween?.Kill();
+        }
+
         private void OnDestroy()
         {
             _rankChangeSequence?.Kill();

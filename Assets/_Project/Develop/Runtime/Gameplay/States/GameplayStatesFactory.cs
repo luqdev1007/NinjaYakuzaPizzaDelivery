@@ -81,6 +81,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         {
             return new WinState(
                 _container.Resolve<IInputService>(),
+                _container.Resolve<GameplayScreenPresenter>(),
                 _container.Resolve<LevelsProgressionService>(),
                 _inputArgs,
                 _container.Resolve<PlayerDataProvider>(),
@@ -95,6 +96,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         {
             return new DefeatState(
                 _container.Resolve<IInputService>(),
+                _container.Resolve<GameplayScreenPresenter>(),
                 _container.Resolve<GameplayPopupService>()
             );
         }

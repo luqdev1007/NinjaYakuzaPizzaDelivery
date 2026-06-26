@@ -24,13 +24,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         public WinState(
             IInputService inputService,
+            GameplayScreenPresenter gameplayScreenPresenter,
             LevelsProgressionService levelsProgressionService,
             GameplayInputArgs gameplayInputArgs,
             PlayerDataProvider playerDataProvider,
             ICoroutinesPerformer coroutinesPerformer,
             GameplayPopupService gameplayPopupService,
             SessionLootService sessionLootService,
-            WalletService walletService) : base(inputService)
+            WalletService walletService) : base(inputService, gameplayScreenPresenter)
         {
             _levelsProgressionService = levelsProgressionService;
             _gameplayInputArgs = gameplayInputArgs;

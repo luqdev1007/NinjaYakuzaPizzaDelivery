@@ -376,7 +376,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ddfc47aa92b5b4f58a7d3a125908db67, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 59927571f500c4662839dbdeafc8df2f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1136,7 +1136,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ddfc47aa92b5b4f58a7d3a125908db67, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 59927571f500c4662839dbdeafc8df2f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3838,8 +3838,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <color="red><size=32>STYLE RANK</size></color>\n\nYou achieved minimal
-    goal for style points on this level!\n\nYour best rank:\n<size=48><color="red>S</color></size>
+  m_text: <color="green"><size=32>LOOT</size></color>\n\nCollect enough gold from
+    props and soul shards from enemies!\n\nGold:\n<size=24><color="green">200/100</color></size>\nSoul
+    Shards:\n<size=24><color="green">100/100</color></size>
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 27f54c9130c9748c9be53df11fa03382, type: 2}
   m_sharedMaterial: {fileID: -4171563015097924827, guid: 27f54c9130c9748c9be53df11fa03382, type: 2}
@@ -4500,8 +4501,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3389522801918025686}
-  - {fileID: 1098054528335516904}
   - {fileID: 4133049078021102199}
+  - {fileID: 1098054528335516904}
   m_Father: {fileID: 5224808572807690575}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

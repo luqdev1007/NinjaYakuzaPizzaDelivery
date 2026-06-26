@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
 {
-    public class RankStylePresenter : IPresenter
+    public class RankStylePresenter : IPresenter, IHudPausable
     {
         private readonly RankStyleView _view;
         private readonly RankStyleService _styleService;
@@ -50,6 +50,11 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
             string letter = _styleService.CurrentLetter.Value;
             Color accent = _styleService.GetAccentColor(letter);
             _view.SetRank(letter, _styleService.CurrentPrefix.Value, accent);
+        }
+
+        public void Hide()
+        {
+            _view.Hide();
         }
 
         public void Dispose()

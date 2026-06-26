@@ -48,8 +48,8 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups
             _currencyStar.StarFilled.localScale = report.CurrencyStarEarned ? Vector3.one : Vector3.zero;
             _currencyStar.InfoText.text = $"<color=\"green\"><size=32>LOOT</size></color>\n\n" +
                                           $"Collect enough gold from props and soul shards from enemies!\n\n" +
-                                          $"Gold:\n<size=40><color=\"green\">{report.CollectedGold}/{report.GoldThreshold}</color></size>\n\n" +
-                                          $"Soul Shards:\n<size=40><color=\"green\">{report.CollectedShards}/{report.ShardThreshold}</color></size>";
+                                          $"Gold:\n<size=24><color=\"green\">{report.CollectedGold}/{report.GoldThreshold}</color></size>\n" +
+                                          $"Soul Shards:\n<size=24><color=\"green\">{report.CollectedShards}/{report.ShardThreshold}</color></size>";
         }
 
         protected override void ModifyShowAnimation(Sequence animation)
