@@ -1084,19 +1084,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs.BuffPickupConfig BuffPickupConfigC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs.BuffPickupConfig>();
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.BuffConfig BuffPickupConfig => BuffPickupConfigC.Value;
+		public Assets._Project.Develop.Runtime.Configs.Gameplay.Buffs.BuffConfig BuffPickupConfig => BuffPickupConfigC.Value;
 
-		public bool TryGetBuffPickupConfig(out Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.BuffConfig value)
+		public bool TryGetBuffPickupConfig(out Assets._Project.Develop.Runtime.Configs.Gameplay.Buffs.BuffConfig value)
 		{
 			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs.BuffPickupConfig component);
 			if (result)
 				value = component.Value;
 			else
-				value = default(Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.BuffConfig);
+				value = default(Assets._Project.Develop.Runtime.Configs.Gameplay.Buffs.BuffConfig);
 			return result;
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBuffPickupConfig(Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.BuffConfig value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBuffPickupConfig(Assets._Project.Develop.Runtime.Configs.Gameplay.Buffs.BuffConfig value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs.BuffPickupConfig() {Value = value}); 
 		}

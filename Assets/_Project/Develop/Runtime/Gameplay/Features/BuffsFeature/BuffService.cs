@@ -1,4 +1,5 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Buffs;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature
 {
@@ -10,7 +11,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature
 
             if (activeBuffs.TryGetById(config.Id, out ActiveBuff existingBuff))
             {
-                existingBuff.RemainingTime.Value += config.Duration;
+                existingBuff.Extend(config.Duration); 
 
                 return;
             }
@@ -18,7 +19,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature
             IBuffEffect effect = config.CreateEffect();
             effect.Apply(hero);
 
-            ActiveBuff newBuff = new ActiveBuff(config.Id, effect, config.Duration);
+            ActiveBuff newBuff = new ActiveBuff(config.Id, effect, config.Duration, config.Icon); 
             activeBuffs.Add(newBuff);
         }
     }

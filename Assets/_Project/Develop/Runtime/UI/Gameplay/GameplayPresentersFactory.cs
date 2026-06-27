@@ -6,10 +6,12 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InGameTimers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LevelResultsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Dialog;
+using Assets._Project.Develop.Runtime.UI.Gameplay.Buffs;
 using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Hints;
 using Assets._Project.Develop.Runtime.UI.Gameplay.ResultPopups;
@@ -84,6 +86,11 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
                 _container.Resolve<SceneSwitcherService>(),
                 _inputArgs
                 );
+        }
+
+        public BuffsPresenter CreateBuffsPresenter(BuffsView view)
+        {
+            return new BuffsPresenter(view, _container.Resolve<MainHeroHolderService>());
         }
 
         public InGameTimerPresenter CreateTimerPresenter(InGameTimerView view, float targetTime)

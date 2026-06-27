@@ -1,6 +1,6 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Buffs;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
-using Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature;
 using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
@@ -42,7 +42,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs
                 .AddTransform(transform)
                 .AddBuffIsCollected(new ReactiveVariable<bool>(false))
                 .AddCurrentTarget(new ReactiveVariable<Entity>(null))
-                .AddBuffPickupConfig(_config);
+                .AddBuffPickupConfig(_config)
+                ;
 
             entity.AddSystem(new BuffArcMovementSystem(_config.TravelTime, _config.ArcHeight));
 

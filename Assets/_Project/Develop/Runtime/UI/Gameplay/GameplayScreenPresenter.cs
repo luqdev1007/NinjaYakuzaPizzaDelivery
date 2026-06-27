@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.UI.Gameplay.Buffs; 
 using Assets._Project.Develop.Runtime.UI.Gameplay.Timers;
 using Assets._Project.Develop.Runtime.UI.Wallet;
 using Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay;
@@ -56,6 +57,9 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
 
             RankStylePresenter stylePresenter = _gameplayPresentersFactory.CreateStylePresenter(_view.StyleView);
             _childPresenters.Add(stylePresenter);
+
+            BuffsPresenter buffsPresenter = _gameplayPresentersFactory.CreateBuffsPresenter(_view.BuffsView);
+            _childPresenters.Add(buffsPresenter);
 
             foreach (IPresenter presenter in _childPresenters)
                 presenter.Initialize();

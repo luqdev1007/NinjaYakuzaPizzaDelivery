@@ -1,4 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.UI.Gameplay.Buffs; 
 using Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Timers;
 using Assets._Project.Develop.Runtime.UI.Wallet;
@@ -14,7 +15,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay
         [field: SerializeField] public InGameTimerView TimerView { get; private set; }
         [field: SerializeField] public InGameWalletView InGameWalletView { get; private set; }
         [field: SerializeField] public RankStyleView StyleView { get; private set; }
+        [field: SerializeField] public BuffsView BuffsView { get; private set; } 
     }
-
 }
-
