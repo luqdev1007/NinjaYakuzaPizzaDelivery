@@ -72,6 +72,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<InGameTimerFeatureService>(),
                 _container.Resolve<StageProviderService>(),
                 _container.Resolve<RankStyleService>(),
+                _container.Resolve<StyleEvaluator>(),
                 _container.Resolve<IInputService>(),
                 _sceneContext.StartPoint.position
             );

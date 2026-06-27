@@ -19,7 +19,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
         private readonly InGameTimerFeatureService _timerService;
         private readonly StageProviderService _stageProviderService;
         private readonly RankStyleService _styleService;
-        // НОВОЕ: зависимость на инпут-сервис для явного восстановления инварианта на входе.
+        private readonly StyleEvaluator _styleEvaluator;
         private readonly IInputService _inputService;
         private readonly Vector3 _startPosition;
 
@@ -31,6 +31,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
             InGameTimerFeatureService timerService,
             StageProviderService stageProviderService,
             RankStyleService styleService,
+            StyleEvaluator styleEvaluator,
             IInputService inputService,
             Vector3 startPosition)
         {
@@ -41,6 +42,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
             _timerService = timerService;
             _stageProviderService = stageProviderService;
             _styleService = styleService;
+            _styleEvaluator = styleEvaluator;
             _inputService = inputService;
             _startPosition = startPosition;
         }
@@ -49,9 +51,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
         {
             base.Enter();
 
-            // НОВОЕ: явный сброс инварианта "активный геймплей = инпут всегда включён".
-            // Закрывает утечку из непарных Enter/Exit (EndGameState, попапы), которая
-            // переживает hard scene reload на рестарте — см. обсуждение в чате.
             _inputService.IsEnabled = true;
 
             var hero = _heroFactory.Create(_startPosition);
@@ -78,6 +77,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
         {
             _timerService.Tick(deltaTime);
             _styleService.UpdateDecay(deltaTime);
+            _styleEvaluator.Tick(deltaTime);
             _stageProviderService.UpdateCurrent(deltaTime);
         }
 
@@ -85,9 +85,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.States
         {
             _timerService.Stop();
             _stageProviderService.CleanupCurrent();
-
-            Debug.Log(_timerService.ElapsedTime.Value);
-
             base.Exit();
         }
     }

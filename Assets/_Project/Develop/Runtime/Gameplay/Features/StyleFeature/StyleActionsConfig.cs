@@ -33,11 +33,18 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Style
         public float KillBonus = 15f;
 
         [Header("Diversity chain")]
-        [Tooltip("Множитель очков, если тип действия не встречался в последних N действиях")]
+        [Tooltip("Множитель очков, если тип действия не встречался в последних N действиях (полностью свежий тип)")]
         public float DiversityMultiplier = 1.5f;
 
-        [Tooltip("Сколько последних действий хранится в истории для проверки разнообразия")]
+        [Tooltip("Сколько последних действий хранится в истории для проверки 'свежести' (бонус 1.5x)")]
         public int DiversityHistorySize = 3;
+
+        [Header("Repeat cooldown — защита от спама у стены")]
+        [Tooltip("Сколько реальных секунд тип действия должен 'остывать' после использования, прежде чем снова дать полную/бонусную цену. Спам внутри окна штрафуется MinDiversityMultiplier независимо от чередования с другими типами.")]
+        public float RepeatCooldownSeconds = 5f;
+
+        [Tooltip("Множитель очков для типа действия, который ещё не остыл. 0 = совсем без очков (как раньше для прямого повтора), >0 = небольшой утешительный доход.")]
+        public float MinDiversityMultiplier = 0.1f;
 
         [Header("Penalty")]
         [Tooltip("Сколько под-рангов теряет игрок при получении урона")]

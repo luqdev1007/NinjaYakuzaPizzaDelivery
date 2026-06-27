@@ -2432,6 +2432,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc80cbce0da498141a2b5efe5800890d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rootGroup: {fileID: 1000137426523647696}
   _rankLetterText: {fileID: 6362774912826571340}
   _prefixText: {fileID: 1459091787580064348}
   _styleProgressSlider: {fileID: 4143177816074014883}

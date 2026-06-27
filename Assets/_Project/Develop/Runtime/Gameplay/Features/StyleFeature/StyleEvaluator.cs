@@ -10,11 +10,50 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
         private readonly StyleActionsConfig _config;
 
         private readonly List<StyleActionType> _usedActionsHistory = new();
+        private readonly Dictionary<StyleActionType, float> _cooldowns = new();
+        private readonly List<StyleActionType> _expiredCooldownBuffer = new();
+        private readonly List<StyleActionType> _cooldownKeysBuffer = new();
 
         public StyleEvaluator(RankStyleService styleService, StyleActionsConfig config)
         {
             _styleService = styleService;
             _config = config;
+        }
+
+        public void Tick(float deltaTime)
+        {
+            if (_cooldowns.Count == 0)
+            {
+                return;
+            }
+
+            _cooldownKeysBuffer.Clear();
+
+            foreach (StyleActionType key in _cooldowns.Keys)
+            {
+                _cooldownKeysBuffer.Add(key);
+            }
+
+            _expiredCooldownBuffer.Clear();
+
+            foreach (StyleActionType key in _cooldownKeysBuffer)
+            {
+                float remaining = _cooldowns[key] - deltaTime;
+
+                if (remaining <= 0f)
+                {
+                    _expiredCooldownBuffer.Add(key);
+                }
+                else
+                {
+                    _cooldowns[key] = remaining;
+                }
+            }
+
+            foreach (StyleActionType expiredType in _expiredCooldownBuffer)
+            {
+                _cooldowns.Remove(expiredType);
+            }
         }
 
         public void ProcessHit(StyleActionType attackType, bool isLethal)
@@ -62,16 +101,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
 
         private void RegisterAction(StyleActionType type, float rawPoints)
         {
-            bool isDirectRepeat = _usedActionsHistory.Count > 0
-                && _usedActionsHistory[_usedActionsHistory.Count - 1] == type;
+            float multiplier;
 
-            if (isDirectRepeat)
+            if (_cooldowns.ContainsKey(type))
             {
-                return;
+                multiplier = _config.MinDiversityMultiplier;
+            }
+            else if (_usedActionsHistory.Contains(type))
+            {
+                multiplier = 1f;
+            }
+            else
+            {
+                multiplier = _config.DiversityMultiplier;
             }
 
-            float multiplier = _usedActionsHistory.Contains(type) ? 1f : _config.DiversityMultiplier;
             _styleService.AddPoints(rawPoints * multiplier);
+
+            _cooldowns[type] = _config.RepeatCooldownSeconds;
             PushHistory(type);
         }
 
@@ -101,6 +148,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
         public void Dispose()
         {
             _usedActionsHistory.Clear();
+            _cooldowns.Clear();
         }
     }
 }

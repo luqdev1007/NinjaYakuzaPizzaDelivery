@@ -91,7 +91,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props
                 _collidersRegistryService.Register(col, entity);
             }
 
-            // Привязка вьюшек
             EntityView[] views = GetComponentsInChildren<EntityView>();
 
             foreach (EntityView view in views)

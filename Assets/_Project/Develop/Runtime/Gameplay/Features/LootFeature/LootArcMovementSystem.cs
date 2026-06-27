@@ -35,11 +35,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         public void OnUpdate(float deltaTime)
         {
-            if (_canMove != null && _canMove.Evaluate() == false) 
+            if (_canMove != null && _canMove.Evaluate() == false)
                 return;
 
-            if (_currentTarget.Value == null || _isCollected.Value) 
+            if (_currentTarget.Value == null || _isCollected.Value)
                 return;
+
+            if (_currentTarget.Value.Transform == null)
+            {
+                _currentTarget.Value = null;
+                _elapsedTime = 0f;
+                return;
+            }
 
             if (_elapsedTime == 0)
             {
@@ -54,7 +61,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             Vector3 targetPos = _currentTarget.Value.Transform.position;
             Vector3 lerpPosition = Vector3.Lerp(_startPosition, targetPos, easeT);
 
- 
             float arc = Mathf.Sin(t * Mathf.PI) * _arcHeight;
             _transform.position = lerpPosition + new Vector3(0, arc, 0);
 

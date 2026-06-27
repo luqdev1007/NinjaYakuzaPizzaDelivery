@@ -7,6 +7,8 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
 {
     public class RankStyleView : MonoBehaviour
     {
+        [SerializeField] private CanvasGroup _rootGroup;
+
         [SerializeField] private TextMeshProUGUI _rankLetterText;
         [SerializeField] private TextMeshProUGUI _prefixText;
         [SerializeField] private Slider _styleProgressSlider;
@@ -29,6 +31,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
         private Tween _sliderTween;
         private Tween _pointsTween;
         private Tween _decayPulseTween;
+        private Tween _rootFadeTween;
 
         private float _displayedPoints;
         private float _lastRawPoints;
@@ -206,6 +209,12 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
 
             _sliderTween?.Kill();
             _pointsTween?.Kill();
+
+            if (_rootGroup != null)
+            {
+                _rootFadeTween?.Kill();
+                _rootFadeTween = _rootGroup.DOFade(0f, 0.5f).SetUpdate(true);
+            }
         }
 
         private void OnDestroy()
@@ -214,6 +223,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.StyleDisplay
             _sliderTween?.Kill();
             _pointsTween?.Kill();
             _decayPulseTween?.Kill();
+            _rootFadeTween?.Kill();
             _rankGlowImage?.DOKill();
             _decayRingImage?.DOKill();
         }

@@ -19,7 +19,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
         public void OnInit(Entity entity)
         {
             _entity = entity;
-            // Таймеры жизни уже инициализированы фабрикой, здесь просто кэшируем сущность
         }
 
         public void OnUpdate(float deltaTime)
@@ -27,11 +26,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             if (_isDestroyed || _entity.LootIsCollected.Value || _entity.Transform == null)
                 return;
 
-            // Если общая система спавна всё ещё крутит анимацию появления — ничего не делаем
             if (_entity.InSpawnProcess.Value)
                 return;
 
-            // Монетка приземлилась. Тикаем время жизни, только если её никто не притянул магнитом
             if (_entity.CurrentTarget.Value == null)
             {
                 _entity.LootCurrentLifeTime.Value -= deltaTime;
