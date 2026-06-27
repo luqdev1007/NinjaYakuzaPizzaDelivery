@@ -383,7 +383,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canStartAttack = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsWallHanging.Value == false)) 
-                // .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
                 .Add(new FuncCondition(() => entity.IsSliding.Value == false))
                 .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
