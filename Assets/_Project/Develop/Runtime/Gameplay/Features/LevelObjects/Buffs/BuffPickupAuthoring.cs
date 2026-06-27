@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature;
+using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
@@ -11,10 +12,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs
         [SerializeField] private BuffConfig _config;
 
         private EntitiesLifeContext _entitiesLifeContext;
+        private IAudioService _audioService; 
 
-        public void Construct(EntitiesLifeContext entitiesLifeContext)
+        public void Construct(EntitiesLifeContext entitiesLifeContext, IAudioService audioService) 
         {
             _entitiesLifeContext = entitiesLifeContext;
+            _audioService = audioService; 
         }
 
         private void Start()
@@ -47,6 +50,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs
 
             foreach (EntityView view in views)
             {
+                if (view is BuffVisualsView buffVisuals)
+                {
+                    buffVisuals.Construct(_audioService);
+                }
+
                 view.Link(entity);
             }
 

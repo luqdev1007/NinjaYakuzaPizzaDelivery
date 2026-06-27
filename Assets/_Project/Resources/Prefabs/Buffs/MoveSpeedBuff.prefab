@@ -100,6 +100,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5593332368526189213}
+  - component: {fileID: 5787264791357609327}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -124,6 +125,20 @@ Transform:
   - {fileID: 6817671770428821091}
   m_Father: {fileID: 8516139031722706921}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5787264791357609327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918368584800848251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30977082ccfcddf4fb69b57c1f1b3781, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs.BuffVisualsView
+  _pickupVfxPrefab: {fileID: 7780496652362377499, guid: f1e66fcd0ad19ca4eb2b69e42246a44a, type: 3}
+  _pickupSfxKey: BuffPickup
 --- !u!1 &2462628389999203475
 GameObject:
   m_ObjectHideFlags: 0

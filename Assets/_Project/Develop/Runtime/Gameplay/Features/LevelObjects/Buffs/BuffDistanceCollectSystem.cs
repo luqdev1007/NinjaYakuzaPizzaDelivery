@@ -56,8 +56,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs
                     _buffService.Pickup(_hero, buffEntity.BuffPickupConfigC.Value);
 
                     _lifeContext.Release(buffEntity);
-
-                    Object.Destroy(buffEntity.Transform.gameObject);
                 }
             }
         }

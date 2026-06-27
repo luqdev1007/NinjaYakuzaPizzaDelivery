@@ -82,7 +82,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             foreach (BuffPickupAuthoring buffPickup in sceneBuffPickups)
             {
-                buffPickup.Construct(_entitiesLifeContext);
+                buffPickup.Construct(_entitiesLifeContext, audioService);
             }
             // === КОНЕЦ БЛОКА БАФФОВ ===
 
