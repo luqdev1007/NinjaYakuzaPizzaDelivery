@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot; // Не забываем юзинг таблицы лута
+﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot; 
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Props
@@ -10,9 +10,9 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Props
         [SerializeField] private float _maxHealth = 10f;
 
         [Header("Loot")]
-        [SerializeField] private LootTableConfig _lootTable; // Ссылка на таблицу лута
+        [SerializeField] private LootTableConfig _lootTable; 
 
         public float MaxHealth => _maxHealth;
-        public LootTableConfig LootTable => _lootTable; // Геттер
+        public LootTableConfig LootTable => _lootTable;
     }
 }

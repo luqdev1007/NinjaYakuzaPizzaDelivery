@@ -5,16 +5,17 @@ using Assets._Project.Develop.Runtime.Gameplay.Context;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs; 
+using Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
+using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using System;
 using System.Collections;
 using UnityEngine;
-using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
-using Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 {
@@ -75,6 +76,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                         _container.Resolve<CollidersRegistryService>()
                     );
             }
+
+            // === БАФФЫ: расстановка pre-placed pickup-сфер по уровню ===
+            BuffPickupAuthoring[] sceneBuffPickups = levelInstance.GetComponentsInChildren<BuffPickupAuthoring>(true);
+
+            foreach (BuffPickupAuthoring buffPickup in sceneBuffPickups)
+            {
+                buffPickup.Construct(_entitiesLifeContext);
+            }
+            // === КОНЕЦ БЛОКА БАФФОВ ===
 
             var enemiesFactory = _container.Resolve<EnemiesFactory>();
 

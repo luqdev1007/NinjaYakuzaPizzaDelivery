@@ -5,6 +5,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Context;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Gameplay.Features.HitStop;
@@ -81,6 +82,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateStyleEvaluator);
             container.RegisterAsSingle(CreateLevelResultService);
 
+            // buffs
+            container.RegisterAsSingle(CreateBuffService);
+
             // hit effect
             container.RegisterAsSingle(CreateHitStopService);
 
@@ -90,7 +94,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             // Camera
             container.RegisterAsSingle(CreateCameraService);
         }
-        
+
+        private static BuffService CreateBuffService(DIContainer container)
+        {
+            return new BuffService();
+        }
+
         private static SessionLootService CreateSessionLootService(DIContainer container)
         {
             return new SessionLootService();

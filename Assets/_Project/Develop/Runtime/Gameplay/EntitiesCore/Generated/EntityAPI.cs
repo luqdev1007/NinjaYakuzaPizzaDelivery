@@ -26,6 +26,102 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.BaseMoveSpeed BaseMoveSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.BaseMoveSpeed>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> BaseMoveSpeed => BaseMoveSpeedC.Value;
+
+		public bool TryGetBaseMoveSpeed(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.BaseMoveSpeed component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBaseMoveSpeed()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.BaseMoveSpeed() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBaseMoveSpeed(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.BaseMoveSpeed() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.MoveSpeedModifiers MoveSpeedModifiersC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.MoveSpeedModifiers>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.StatModifiersList MoveSpeedModifiers => MoveSpeedModifiersC.Value;
+
+		public bool TryGetMoveSpeedModifiers(out Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.StatModifiersList value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.MoveSpeedModifiers component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.StatModifiersList);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMoveSpeedModifiers()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.MoveSpeedModifiers() { Value = new Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.StatModifiersList() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMoveSpeedModifiers(Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.StatModifiersList value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.MoveSpeedModifiers() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.BaseLootCollectRange BaseLootCollectRangeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.BaseLootCollectRange>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> BaseLootCollectRange => BaseLootCollectRangeC.Value;
+
+		public bool TryGetBaseLootCollectRange(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.BaseLootCollectRange component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBaseLootCollectRange()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.BaseLootCollectRange() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBaseLootCollectRange(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.BaseLootCollectRange() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.LootCollectRangeModifiers LootCollectRangeModifiersC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.LootCollectRangeModifiers>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.StatModifiersList LootCollectRangeModifiers => LootCollectRangeModifiersC.Value;
+
+		public bool TryGetLootCollectRangeModifiers(out Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.StatModifiersList value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.LootCollectRangeModifiers component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.StatModifiersList);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootCollectRangeModifiers()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.LootCollectRangeModifiers() { Value = new Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.StatModifiersList() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLootCollectRangeModifiers(Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.StatModifiersList value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.LootCollectRangeModifiers() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature.SpawnInitialTime SpawnInitialTimeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature.SpawnInitialTime>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> SpawnInitialTime => SpawnInitialTimeC.Value;
@@ -960,6 +1056,49 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDisableCollidersOnDeath(System.Collections.Generic.List<UnityEngine.Collider2D> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.DisableCollidersOnDeath() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs.BuffIsCollected BuffIsCollectedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs.BuffIsCollected>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> BuffIsCollected => BuffIsCollectedC.Value;
+
+		public bool TryGetBuffIsCollected(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs.BuffIsCollected component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBuffIsCollected()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs.BuffIsCollected() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBuffIsCollected(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs.BuffIsCollected() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs.BuffPickupConfig BuffPickupConfigC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs.BuffPickupConfig>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.BuffConfig BuffPickupConfig => BuffPickupConfigC.Value;
+
+		public bool TryGetBuffPickupConfig(out Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.BuffConfig value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs.BuffPickupConfig component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.BuffConfig);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBuffPickupConfig(Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.BuffConfig value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs.BuffPickupConfig() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.CurrentItemIndex CurrentItemIndexC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.InventoryFeature.CurrentItemIndex>();
@@ -4968,6 +5107,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBodyContactDamageMultiplier(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.BodyContactDamageMultiplier() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.ActiveBuffs ActiveBuffsC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.ActiveBuffs>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.ActiveBuffsList ActiveBuffs => ActiveBuffsC.Value;
+
+		public bool TryGetActiveBuffs(out Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.ActiveBuffsList value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.ActiveBuffs component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.ActiveBuffsList);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddActiveBuffs()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.ActiveBuffs() { Value = new Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.ActiveBuffsList() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddActiveBuffs(Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.ActiveBuffsList value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature.ActiveBuffs() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.AI.CurrentTarget CurrentTargetC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.AI.CurrentTarget>();
