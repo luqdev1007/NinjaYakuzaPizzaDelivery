@@ -130,7 +130,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
             while (hit != null && hit.transform != null && _intentGrapple.Value)
             {
                 Vector2 currentAnchorWorld = (Vector2)hit.transform.TransformPoint(localOffset);
-                Vector2 toTarget = currentAnchorWorld - (Vector2)_transform.position;
+                Vector2 toTarget = currentAnchorWorld - (Vector2)_transform?.position;
                 float dist = toTarget.magnitude;
 
                 if (dist > _grappleHookConfig.MaxFlyDistance * 1.5f)
