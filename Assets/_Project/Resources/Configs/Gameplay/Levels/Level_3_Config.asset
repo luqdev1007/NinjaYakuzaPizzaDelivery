@@ -15,10 +15,12 @@ MonoBehaviour:
   <LevelNumber>k__BackingField: 3
   <LevelName>k__BackingField: Light My Fire
   <LevelIcon>k__BackingField: {fileID: 21300000, guid: ccda1e9d0a91445b08abb3958530382a, type: 3}
-  <LevelPrefab>k__BackingField: {fileID: 8924945163862081062, guid: 7f08ca4b705083944815e6b9a2e21a82, type: 3}
+  <LevelPrefab>k__BackingField: {fileID: 3087975652374674218, guid: 7f08ca4b705083944815e6b9a2e21a82, type: 3}
   <StartLevelDialogConfig>k__BackingField: {fileID: 11400000, guid: 307a0436d3020614ea0631dfb549a123, type: 2}
   _stageConfigs:
   - {fileID: 11400000, guid: ad2ebdc480afcce4ab663bc95bc4f0f9, type: 2}
   <TargetTime>k__BackingField: 47
-  <StyleStarThreshold>k__BackingField: 1000
+  <StyleStarThreshold>k__BackingField: 155
+  <CurrencyStarGoldThreshold>k__BackingField: 125
+  <CurrencyStarShardThreshold>k__BackingField: 125
   <StartPlayerPosition>k__BackingField: {x: -113, y: -10, z: 0}

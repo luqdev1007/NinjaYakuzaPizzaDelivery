@@ -18,10 +18,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Context
 
         [Header("Read Only Data (Auto-filled)")]
         [SerializeField] private List<EnemySpawnData> _enemies = new();
-        [SerializeField] private List<Vector3> _chests = new();
 
         public IReadOnlyList<EnemySpawnData> Enemies => _enemies;
-        public IReadOnlyList<Vector3> Chests => _chests;
 
         public void SyncWithScene()
         {
@@ -29,11 +27,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Context
                 .Select(m => new EnemySpawnData(m.Config, m.transform.position, m.transform.rotation))
                 .ToList();
 
-            _chests = GetComponentsInChildren<ChestSpawnMarker>(true)
-                .Select(m => m.transform.position)
-                .ToList();
-
-            Debug.Log($"[SceneContext] Собрано врагов: {_enemies.Count}, сундуков: {_chests.Count}");
+            Debug.Log($"[SceneContext] Собрано врагов: {_enemies.Count}");
         }
     }
 }

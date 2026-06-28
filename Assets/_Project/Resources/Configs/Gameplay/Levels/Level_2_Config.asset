@@ -15,10 +15,12 @@ MonoBehaviour:
   <LevelNumber>k__BackingField: 2
   <LevelName>k__BackingField: Down'n'Up
   <LevelIcon>k__BackingField: {fileID: 21300000, guid: ccda1e9d0a91445b08abb3958530382a, type: 3}
-  <LevelPrefab>k__BackingField: {fileID: 3048164097277077460, guid: 8e5a1df5907ca6a4f88a905ff7060110, type: 3}
+  <LevelPrefab>k__BackingField: {fileID: 3764830286183935623, guid: 8e5a1df5907ca6a4f88a905ff7060110, type: 3}
   <StartLevelDialogConfig>k__BackingField: {fileID: 11400000, guid: fefad9d08197dc54e83128edf854337b, type: 2}
   _stageConfigs:
   - {fileID: 11400000, guid: ad2ebdc480afcce4ab663bc95bc4f0f9, type: 2}
   <TargetTime>k__BackingField: 36
-  <StyleStarThreshold>k__BackingField: 1000
+  <StyleStarThreshold>k__BackingField: 125
+  <CurrencyStarGoldThreshold>k__BackingField: 150
+  <CurrencyStarShardThreshold>k__BackingField: 100
   <StartPlayerPosition>k__BackingField: {x: -110, y: 260, z: 0}

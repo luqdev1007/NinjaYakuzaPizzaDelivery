@@ -117,5 +117,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _entitiesLifeContext?.Update(deltaTime);
             _gameplayStatesContext?.Update(deltaTime);
         }
+
+        
     }
 }

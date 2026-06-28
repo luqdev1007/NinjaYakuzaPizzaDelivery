@@ -25,9 +25,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         public override void Exit()
         {
-            base.Exit();
-
             _inputService.IsEnabled = true;
+
+            base.Exit();
         }
     }
 }
