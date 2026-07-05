@@ -177,16 +177,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         public Transform Value;
     }
 
-    public class MustCancelAttack : IEntityComponent
-    {
-        public ICompositeCondition Value;
-    }
-
-    public class AttackCanceledEvent : IEntityComponent
-    {
-        public ReactiveEvent Value;
-    }
-
     public class AttackCooldownInitialTime : IEntityComponent
     {
         public ReactiveVariable<float> Value;
