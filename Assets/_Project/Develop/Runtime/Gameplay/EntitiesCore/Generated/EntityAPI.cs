@@ -1413,54 +1413,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature.IntentSwitchTarget() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ThrowEvent ThrowEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ThrowEvent>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent ThrowEvent => ThrowEventC.Value;
-
-		public bool TryGetThrowEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ThrowEvent component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowEvent()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ThrowEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ThrowEvent() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ThrowRequest ThrowRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ThrowRequest>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent ThrowRequest => ThrowRequestC.Value;
-
-		public bool TryGetThrowRequest(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ThrowRequest component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowRequest()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ThrowRequest() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowRequest(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature.ThrowRequest() {Value = value}); 
-		}
-
 		public Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleAnchoredEvent GrappleAnchoredEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleAnchoredEvent>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent GrappleAnchoredEvent => GrappleAnchoredEventC.Value;
