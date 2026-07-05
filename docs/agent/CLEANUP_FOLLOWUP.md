@@ -49,16 +49,31 @@ add96ed4 cleanup: orphaned IsTouchAnotherTeam component
 | `EnemyLoot` loot-table asset (`a54cc72…`) | **живой** | 3 ссылки в ассетах/сценах (используется помимо `MasterLootProvider`). Удаление `MasterLootProviderConfig` его не осиротит. |
 | `PropsLoot` loot-table asset (`9dd2772…`) | **живой** | 2 ссылки в ассетах/сценах. |
 
-### Что предлагается решить
-Удалять ли этот слой, и насколько глубоко:
-- **(A)** Весь `MasterLootProviderConfig`: класс + `MasterLootProvider.asset` +
-  строка регистрации в `ResourcesConfigsLoader.cs` + осиротевший
-  `SecretChestsLootTable.asset`. (`EnemyLoot`/`PropsLoot` таблицы остаются —
-  на них ссылаются другие места.)
-- **(B)** Только полностью осиротевший `SecretChestsLootTable.asset`; сам
-  `MasterLootProviderConfig` оставить (вдруг задел под будущую лут-раздачу).
-- **(C)** Ничего не трогать — только зафиксировано в отчёте.
+### РЕШЕНО: владелец выбрал вариант A — удалено (коммит `9c151897`)
 
-> Замечание: `MasterLootProviderConfig` может подгружаться скопом при
-> `ConfigsProviderService.LoadAsync()` даже без `GetConfig<>()` — проверить,
-> прежде чем удалять строку регистрации, чтобы не сломать префолд конфигов.
+Перед удалением выполнена целенаправленная GUID-проверка (узко по текстовым
+типам, т.к. полный project-wide grep падал по таймауту на бинарниках):
+GUID `MasterLootProvider.asset`, скрипта `MasterLootProviderConfig` и
+`SecretChestsLootTable.asset` — **ни одной прямой `[SerializeField]`-ссылки** в
+`.prefab`/`.unity`/сериализованных `.asset` (кроме собственной пары
+скрипт↔.asset). Проверен и префолд: `LoadAsync` итерирует словарь
+`_configsResourcesPath` и грузит все конфиги скопом, но `MasterLootProviderConfig`
+после загрузки никто не запрашивает — удаление строки словаря безопасно.
+
+Удалено:
+- `Configs/Gameplay/Loot/MasterLootProviderConfig.cs` (класс)
+- `Resources/Configs/Gameplay/Loot/MasterLootProvider.asset`
+- `Resources/Configs/Gameplay/Loot/SecretChestsLootTable.asset` (осиротел после №3)
+- `ResourcesConfigsLoader.cs`: строка регистрации (32) + ставший неиспользуемым
+  `using ...Configs.Gameplay.Loot`
+
+Оставлено (живое): `EnemyLootTable.asset` (ссылки из `GhostConfig`/`SlimeConfig`),
+`PropsLootTable.asset` (ссылка из `SimpleProp`). Реальная раздача лута идёт
+напрямую через per-entity конфиги (`GhostConfig.LootTable` и т.п.) — поэтому
+«мастер-провайдер» и оказался мёртв целиком: заброшенная попытка централизации.
+
+Компиляция чистая, missing-reference предупреждений нет. **Дальнейшего слоя
+орфанов этот шаг не вскрыл** — обе оставшиеся таблицы имеют живых потребителей.
+
+> Не трогалось: `SecretLootConfig.asset` в той же папке — отдельный ассет, не
+> входил в вариант A; в скоуп не брал.
