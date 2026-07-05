@@ -6,7 +6,6 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Loot
     public class MasterLootProviderConfig : ScriptableObject
     {
         [field: SerializeField] public LootTableConfig EnemyLoot { get; private set; }
-        [field: SerializeField] public LootTableConfig SecretChestLoot { get; private set; }
         [field: SerializeField] public LootTableConfig PropsLoot { get; private set; }
     }
 }
