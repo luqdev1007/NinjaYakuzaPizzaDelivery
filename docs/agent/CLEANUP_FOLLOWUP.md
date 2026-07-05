@@ -168,3 +168,53 @@ GUID `MasterLootProvider.asset`, скрипта `MasterLootProviderConfig` и
 `SecretLoot.prefab`, enum-значение `LootTypes.SecretLoot`, поле
 `MetaLootConfig.SecretLootId`. Аудио-остатков нет. Оставлено по отдельному
 решению: класс `MetaLootConfig` (пустой) + ветка `is MetaLootConfig` в `LootFactory`.
+
+---
+
+## MetaLootConfig — удалён, архитектурный remnant закрыт (коммит `06a6ad91`)
+
+Владелец подтвердил: других типов мета-лута не планируется, `SecretLootConfig`
+был единственным задуманным потребителем. Свежая проверка: у `MetaLootConfig`
+ноль ссылок вне двух веток `LootFactory` и ноль GUID-ссылок в
+`.prefab`/`.unity`/`.asset`.
+
+- Удалён класс `Configs/Gameplay/Loot/MetaLootConfig.cs`.
+- `LootFactory.cs` упрощён — убраны проверки на абстрактный тип:
+  `randomMultiplier` теперь всегда `Random.Range(0.5f, 3f)`;
+  `localScale *= multiplier` применяется безусловно. Поведение для реальных
+  типов (`SoulShardLootConfig` / `CoinLootConfig` / базовый `LootConfig`) —
+  без изменений. Компиляция чистая.
+
+## Ветка «секреток» закрыта ПОЛНОСТЬЮ (все уровни)
+Сервисы: `SecretChestCollectService`, `StartGameTriggerService`(смежн.). ·
+Маркеры/authoring: `ChestSpawnMarker`. · Конфиги/поля: поле
+`MasterLootProviderConfig.SecretChestLoot` и весь осиротевший
+`MasterLootProviderConfig`, `SecretLootConfig.asset`, поле
+`MetaLootConfig.SecretLootId`. · Архитектурный remnant: класс `MetaLootConfig`
++ ветки в `LootFactory`. · Ассеты: `SecretChestsLootTable.asset`,
+`SecretLoot.prefab`. · Enum: значение `LootTypes.SecretLoot`. · Аудио:
+остатков нет (`SecretLootCollect` был висячей строкой). Больше следов фичи в
+проекте не осталось.
+
+---
+
+## Сводный итог обеих фаз чистки (CLEANUP_DONE.md + CLEANUP_FOLLOWUP.md)
+
+За две фазы из проекта вычищен весь подтверждённый мёртвый код без единой
+регрессии компиляции: **фаза 1** (CLEANUP_DONE.md) — 14 `.cs` в 6 логических
+коммитах (заброшенный throwable-кластер и behavior-классы, `InstantShootSystem`,
+`PlayerPrefsDataRepository`, `EntitiesHealthDisplay`, `UIBackgroundFloat`,
+секретный `SecretChestCollectService`/`ChestSpawnMarker`, мёртвый
+`AttackCancelSystem` с синхронной чисткой сгенерированного `EntityAPI.cs`,
+`AnotherTeamTouchDetectorSystem`, `StartGameTriggerService`, мобильный
+`SafeAreaContainer`); **фаза 2** (CLEANUP_FOLLOWUP.md) — вскрытые по цепочке
+орфаны (`IsTouchAnotherTeam`, `ThrowEvent`/`ThrowRequest`, пустой
+whitespace-файл презентера) и полное сворачивание ветки «секреток» на всех
+уровнях (весь `MasterLootProviderConfig`-слой по варианту A, `SecretLootConfig` +
+`SecretLoot.prefab` + enum-значение + поля, финально — архитектурный
+`MetaLootConfig`), с проверкой на каждом шаге (свежий ноль-ссылок по коду и
+GUID, компиляция через Unity MCP — везде 0 ошибок), логическими коммитами и
+попутной починкой битой git-ссылки `refs/remotes/origin/HEAD`. Оставлено живое:
+`EnemyLootTable`/`PropsLootTable` (реальный per-entity лут), `EntityHealthPresenter`,
+`ThrowableProjectile`/`GrappleHookProjectile` и т.п. Ветка «секреток» и заброшенная
+централизация лута удалены целиком; дерево чистое.
