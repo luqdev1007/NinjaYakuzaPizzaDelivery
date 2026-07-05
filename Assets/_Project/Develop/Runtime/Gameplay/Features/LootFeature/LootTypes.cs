@@ -6,7 +6,6 @@
         Coin,        // Золото
         Blueprint,   // Чертеж
         ProjectileCharge, // Заряды
-        Buff,        // Временный бафф
-        SecretLoot
+        Buff        // Временный бафф
     }
 }
