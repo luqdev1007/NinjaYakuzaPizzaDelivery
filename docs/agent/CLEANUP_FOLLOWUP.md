@@ -137,3 +137,34 @@ GUID `MasterLootProvider.asset`, скрипта `MasterLootProviderConfig` и
 > `CollectSoundId = "SecretLootCollect"`. Если в `AudioLibrary` есть клип под
 > этим ключом и он больше нигде не используется — это возможный аудио-остаток
 > той же фичи. Не проверял глубоко, не в скоупе; при желании — отдельным проходом.
+
+---
+
+## Аудио-хвост секретной ветки — проверен, удалять нечего
+
+Проверка ключа `SecretLootCollect` (был в `CollectSoundId` удалённого `SecretLootConfig`):
+
+- **`AudioLibrary` устройство:** `Sounds` — `List<SoundData>`, где `SoundData` —
+  отдельные ScriptableObject-ассеты; ключ (`AudioData.Key`) лежит внутри каждого,
+  поиск через `GetSound(key)`.
+- **Ни один `SoundData`-ассет не имеет ключа `SecretLootCollect`**; клипа/файла с
+  таким именем нет; строка `SecretLootCollect` во всём проекте больше не
+  встречается (ушла вместе с конфигом). → Это была **висячая строка** в конфиге,
+  реального звука под неё не существовало. Удалять клип/запись не из чего.
+
+### Другие аудио-ключи секретной ветки — НЕ найдено
+Просмотрены все ключи библиотеки — ни `Secret`, ни `Chest`, ни аналогов
+(сундук/тайник). Ближайшие collect/spawn-ключи обслуживают **живой** лут и к
+секреткам не относятся: `CoinCollectSound`, `CoinSpawn`, `SoulShardCollectSound`,
+`SoulShardSpawn`, `BuffPickup`, `ItemEmpty`.
+
+**Вывод:** аудио-остатков у секретной фичи нет. Ветка «секреток» вычищена
+полностью. В код не лез (по указанию), удалений на этом шаге нет.
+
+## Итог: ветка «секреток» закрыта
+Полностью выпилено за все проходы: `SecretChestCollectService`, `ChestSpawnMarker`,
+`SecretChestsLootTable.asset`, поле `MasterLootProviderConfig.SecretChestLoot`
+(+ весь осиротевший `MasterLootProviderConfig`), `SecretLootConfig.asset`,
+`SecretLoot.prefab`, enum-значение `LootTypes.SecretLoot`, поле
+`MetaLootConfig.SecretLootId`. Аудио-остатков нет. Оставлено по отдельному
+решению: класс `MetaLootConfig` (пустой) + ветка `is MetaLootConfig` в `LootFactory`.
