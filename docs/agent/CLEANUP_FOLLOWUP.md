@@ -10,6 +10,8 @@ add96ed4 cleanup: orphaned IsTouchAnotherTeam component
 4bff7323 cleanup: pre-existing orphans ThrowEvent/ThrowRequest
 016f3a7a cleanup: dead SecretChestLoot field from MasterLootProviderConfig
 5f15ad45 cleanup: empty whitespace file EntitiesHealthDisplayPresenter.cs
+9c151897 cleanup: fully-orphaned MasterLootProviderConfig layer (variant A)
+a913e78a cleanup: orphaned SecretLootConfig.asset (secret-loot feature)
 ```
 Также попутно (не блокировало чистку): починена битая ссылка
 `refs/remotes/origin/HEAD` — `git remote set-head origin -a` → `origin/main`.
@@ -77,3 +79,38 @@ GUID `MasterLootProvider.asset`, скрипта `MasterLootProviderConfig` и
 
 > Не трогалось: `SecretLootConfig.asset` в той же папке — отдельный ассет, не
 > входил в вариант A; в скоуп не брал.
+
+---
+
+## SecretLootConfig.asset — проверен и удалён (коммит `a913e78a`)
+
+**Тип:** `MetaLootConfig` (ScriptableObject), НЕ `LootTableConfig` (в отличие от
+удалённой `SecretChestsLootTable`). Поля: `PrefabPath=Entities/Loot/SecretLoot`,
+`LootType=SecretLoot(5)`, `CollectSoundId=SecretLootCollect`, `SecretLootId`.
+
+**Вердикт: орфан → удалён.** Проверка:
+- GUID ассета (`9dda2644…`) — 0 ссылок в `.prefab`/`.unity`/`.asset` (ни одна
+  `LootTableConfig` его не содержит).
+- По имени в коде не упоминается; в словаре `ResourcesConfigsLoader` его нет;
+  не грузится ни `GetConfig<>`, ни строковым путём, ни `LoadAll`.
+- Сравнение с живыми: `CoinLootConfig`/`SoulShardLootConfig` имеют по 2 GUID-
+  ссылки из лут-таблиц — механизм именно такой; у `SecretLootConfig` их 0.
+- Это **та же** секретная фича, что выпиливали (SecretLootId / SecretLootCollect
+  / LootType.SecretLoot), а не совпадение имени: живого потребителя нет вовсе
+  (в отличие от `EnemyLoot`/`PropsLoot`, которые остались из-за реальных ссылок
+  из `GhostConfig`/`SlimeConfig`/`SimpleProp`).
+
+## ⚠️ Вскрылся ещё слой (НЕ трогал — нужно решение)
+
+`SecretLootConfig.asset` был **единственным** `MetaLootConfig`-ассетом в проекте.
+Как следствие:
+
+| Объект | Статус | Примечание |
+|---|---|---|
+| `Entities/Loot/SecretLoot.prefab` | орфан | 0 ссылок в `.prefab`/`.unity`/`.asset`. Целевой префаб удалённого конфига (`PrefabPath`). Явно часть той же секретной фичи. Кандидат на удаление. |
+| Ветки `config is MetaLootConfig` в `LootFactory.cs:28,81` | мёртвые в рантайме | Инстансов `MetaLootConfig` больше не существует → ветки недостижимы. Но это живой-выглядящий код; тип `MetaLootConfig` (класс) остаётся. Требует решения: удалять ли ветки/класс `MetaLootConfig` или оставить как каркас. |
+| `LootTypes.SecretLoot` (enum) + `MetaLootConfig.SecretLootId` (поле) | остатки фичи | Больше не используются на уровне данных. Малозначимо; трогать только по явному решению. |
+
+> Рекомендация: не удалять эти по инерции. `SecretLoot.prefab` — безопасный
+> кандидат (0 ссылок). Ветки/класс `MetaLootConfig` — судить отдельно: заброшено
+> совсем или задел под будущую «мета-раздачу» лута.
