@@ -2,7 +2,6 @@ using Assets._Project.Develop.Runtime.Configs.Audio;
 using Assets._Project.Develop.Runtime.Configs.Dialog;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Style;
 using Assets._Project.Develop.Runtime.Configs.Inventory;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
@@ -29,7 +28,6 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
             { typeof(SlimeConfig), "Configs/Entities/Enemies/SlimeConfig" }, // enemies config
             { typeof(DialogConfig), "Configs/Dialogs/TutorialDialog" },
             { typeof(CharactersConfig), "Configs/Dialogs/CharactersConfig" },
-            { typeof(MasterLootProviderConfig), "Configs/Gameplay/Loot/MasterLootProvider" },
             { typeof(StyleRankConfig), "Configs/Gameplay/Style/StyleRankConfig" },
             { typeof(StyleActionsConfig), "Configs/Gameplay/Style/StyleActionsConfig" },
 
