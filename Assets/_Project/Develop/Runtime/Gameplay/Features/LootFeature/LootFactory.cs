@@ -25,7 +25,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
         {
             Entity loot = _entityFactory.CreatePullable(config, position);
 
-            float randomMultiplier = (config is MetaLootConfig) ? 1f : Random.Range(0.5f, 3f);
+            float randomMultiplier = Random.Range(0.5f, 3f);
 
             SetupLootComponents(loot, config, randomMultiplier);
             ApplyPhysicsAndVisuals(loot, config, randomMultiplier);
@@ -78,12 +78,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         private void ApplyPhysicsAndVisuals(Entity loot, LootConfig config, float multiplier)
         {
-            if (config is not MetaLootConfig)
-            {
-                loot.Transform.localScale *= multiplier;
-            }
+            loot.Transform.localScale *= multiplier;
 
-            Rigidbody2D rb = loot.Rigidbody; 
+            Rigidbody2D rb = loot.Rigidbody;
 
             if (rb != null)
             {
