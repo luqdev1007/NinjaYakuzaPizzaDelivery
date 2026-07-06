@@ -521,8 +521,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // inventory
                 .AddSystem(new InventorySystem(
                     _container.Resolve<ConfigsProviderService>().GetConfig<PlayerInventoryConfig>().StartingConsumables,
-                    _container.Resolve<ProjectileFactory>(), 
-                    _coroutinesPerformer))
+                    _container.Resolve<ProjectileFactory>()))
 
                 // visual
                 .AddSystem(new FlipDirectionSystem()) 

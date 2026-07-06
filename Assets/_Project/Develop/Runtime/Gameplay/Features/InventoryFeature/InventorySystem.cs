@@ -4,7 +4,6 @@ using Assets._Project.Develop.Runtime.Configs.Inventory.Potions;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles;
-using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,8 +33,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
 
         public InventorySystem(
             InventoryItemConfig[] consumables,
-            ProjectileFactory projectileFactory,
-            ICoroutinesPerformer coroutinesPerformer)
+            ProjectileFactory projectileFactory)
         {
             _consumables = consumables;
             _projectileFactory = projectileFactory;
