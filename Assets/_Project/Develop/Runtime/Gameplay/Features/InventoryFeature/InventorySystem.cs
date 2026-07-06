@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Configs.Inventory;
 using Assets._Project.Develop.Runtime.Configs.Inventory.Potions;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
@@ -6,7 +6,6 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,9 +13,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
 {
     public class InventorySystem : IInitializableSystem, IUpdatableSystem
     {
+        private const float UseResetTime = 0.15f;
+
         private readonly InventoryItemConfig[] _consumables;
         private readonly ProjectileFactory _projectileFactory;
-        private readonly ICoroutinesPerformer _coroutinesPerformer;
 
         private Entity _playerEntity;
 
@@ -30,6 +30,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
 
         private List<ReactiveVariable<int>> _chargesList;
 
+        private float _useResetTimer;
+
         public InventorySystem(
             InventoryItemConfig[] consumables,
             ProjectileFactory projectileFactory,
@@ -37,7 +39,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
         {
             _consumables = consumables;
             _projectileFactory = projectileFactory;
-            _coroutinesPerformer = coroutinesPerformer;
         }
 
         public void OnInit(Entity entity)
@@ -65,6 +66,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
         {
             HandleSwitchItem();
 
+            if (_isUsingItem.Value)
+            {
+                _useResetTimer -= deltaTime;
+
+                if (_useResetTimer <= 0f)
+                {
+                    _isUsingItem.Value = false;
+                }
+            }
+
             if (_intentUseItem.Value)
             {
                 TryUseActiveItem();
@@ -78,13 +89,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
 
             int currentIndex = _currentItemIndex.Value;
 
-            if (_chargesList[currentIndex].Value <= 0) 
+            if (_chargesList[currentIndex].Value <= 0)
                 return;
 
             InventoryItemConfig activeConfig = _consumables[currentIndex];
 
             _chargesList[currentIndex].Value--;
             _isUsingItem.Value = true;
+            _useResetTimer = UseResetTime;
 
             _itemUsedEvent?.Invoke(activeConfig);
 
@@ -98,8 +110,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
             {
                 ApplyInternalEffect(potionConfig);
             }
-
-            _coroutinesPerformer.StartPerform(ResetUsingFlag());
         }
 
         private void ApplyInternalEffect(PotionItemConfig config)
@@ -107,13 +117,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
             // _playerEntity.AddSpeedBuffModifier(config.SpeedMultiplier);
             // _playerEntity.AddBuffDuration(config.Duration);
             Debug.Log($"used {config.name} item");
-        }
-
-        private IEnumerator ResetUsingFlag()
-        {
-            yield return new WaitForSeconds(0.15f);
-
-            _isUsingItem.Value = false;
         }
 
         private void HandleSwitchItem()
