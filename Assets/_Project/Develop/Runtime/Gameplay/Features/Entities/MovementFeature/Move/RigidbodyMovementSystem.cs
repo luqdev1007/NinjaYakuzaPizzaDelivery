@@ -112,7 +112,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             if (_isOnSlope.Value)
             {
                 Vector2 slopeTangent = new Vector2(_slopeNormal.Value.y, -_slopeNormal.Value.x).normalized;
-                _rigidbody.linearVelocity = slopeTangent * _currentSpeedX;
+                Vector2 slopeVelocity = slopeTangent * _currentSpeedX;
+
+                // Инвариант single-writer по оси Y: база задаёт только ту вертикаль,
+                // что сама придаёт движению по склону, и НЕ опускает восходящую Y,
+                // выданную другой системой (прыжок/wall-jump/трамплин). Иначе
+                // тангентная запись затирает импульс прыжка, которым база не владеет.
+                if (_rigidbody.linearVelocity.y > slopeVelocity.y)
+                    slopeVelocity.y = _rigidbody.linearVelocity.y;
+
+                _rigidbody.linearVelocity = slopeVelocity;
             }
             else
             {
