@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -50,6 +50,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 Released?.Invoke(entity);
             }
             _releaseRequests.Clear();
+        }
+
+        public void FixedUpdate(float deltaTime)
+        {
+            for (int i = _entities.Count - 1; i >= 0; i--)
+            {
+                if (_entities[i] == null)
+                {
+                    _entities.RemoveAt(i);
+                    continue;
+                }
+                try
+                {
+                    _entities[i].OnFixedUpdate(deltaTime);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Entity [{i}] crashed: {e.StackTrace}");
+                    _entities.RemoveAt(i);
+                }
+            }
         }
 
         public void Release(Entity entity)

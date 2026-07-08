@@ -118,6 +118,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _gameplayStatesContext?.Update(deltaTime);
         }
 
-        
+        private void FixedUpdate()
+        {
+            _entitiesLifeContext?.FixedUpdate(Time.fixedDeltaTime);
+        }
     }
 }
