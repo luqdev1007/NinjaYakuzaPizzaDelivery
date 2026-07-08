@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -22,6 +22,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         private ReactiveVariable<bool> _isOnSlope;
         private ReactiveVariable<Vector2> _slopeNormal;
 
+        private ReactiveVariable<bool> _isDashing;
+        private ReactiveVariable<bool> _isSliding;
+        private ReactiveVariable<bool> _isPlunging;
+
         private Rigidbody2D _rigidbody;
         private float _currentSpeedX;
 
@@ -42,12 +46,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _isOnSlope = entity.IsOnSlope;
             _slopeNormal = entity.SlopeNormal;
 
+            _isDashing = entity.IsDashing;
+            _isSliding = entity.IsSliding;
+            _isPlunging = entity.IsPlunging;
+
             _currentSpeedX = _rigidbody.linearVelocity.x;
         }
 
         public void OnUpdate(float deltaTime)
         {
-            if (_movementState.Value != MovementStates.Default) 
+            if (_movementState.Value != MovementStates.Default)
+                return;
+
+            // Single-writer: пока скоростью владеет dash/slide/plunge — база не
+            // пишет velocity вовсе. Раньше держалось «случайно» через
+            // last-writer-wins на общем Update-тике; теперь правило явное.
+            if (_isDashing.Value || _isSliding.Value || _isPlunging.Value)
                 return;
 
             if (Mathf.Abs(_rigidbody.linearVelocity.x - _currentSpeedX) > 0.5f)
