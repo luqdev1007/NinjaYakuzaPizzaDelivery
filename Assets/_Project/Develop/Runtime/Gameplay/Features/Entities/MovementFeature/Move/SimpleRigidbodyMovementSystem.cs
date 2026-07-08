@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move
 {
-    public class SimpleRigidbodyMovementSystem : IInitializableSystem, IUpdatableSystem
+    public class SimpleRigidbodyMovementSystem : IInitializableSystem, IFixedUpdatableSystem
     {
         private Rigidbody2D _rigidbody;
         private ReactiveVariable<Vector2> _moveDirection;
@@ -23,7 +23,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _canMove = entity.CanMove;
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnFixedUpdate(float deltaTime)
         {
             if (_canMove.Evaluate() == false)
                 return;
