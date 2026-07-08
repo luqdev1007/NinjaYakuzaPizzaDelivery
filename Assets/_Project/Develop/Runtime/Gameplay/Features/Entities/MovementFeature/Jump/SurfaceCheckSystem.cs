@@ -1,11 +1,11 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Jump
 {
-    public class SurfaceCheckSystem : IInitializableSystem, IUpdatableSystem
+    public class SurfaceCheckSystem : IInitializableSystem, IFixedUpdatableSystem
     {
         private const float CoyoteTime = 0.1f;
         private float _coyoteTimer;
@@ -38,7 +38,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _contactFilter.useTriggers = true;
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnFixedUpdate(float deltaTime)
         {
             float castDistance = 0.15f;
             RaycastHit2D[] results = new RaycastHit2D[4];

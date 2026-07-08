@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move
 {
-    public class RigidbodyMovementSystem : IInitializableSystem, IUpdatableSystem
+    public class RigidbodyMovementSystem : IInitializableSystem, IFixedUpdatableSystem
     {
         private ICompositeCondition _canMove;
         private ReactiveVariable<MovementStates> _movementState;
@@ -53,7 +53,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _currentSpeedX = _rigidbody.linearVelocity.x;
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnFixedUpdate(float deltaTime)
         {
             if (_movementState.Value != MovementStates.Default)
                 return;
