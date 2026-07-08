@@ -298,6 +298,16 @@ Update.
 
 ### Этап 3 — Движение врага на фиксированный канал (LOW)
 
+> **✅ ВЫПОЛНЕНО и ПРОВЕРЕНО (коммит `12c1e336`).** `SimpleRigidbodyMovementSystem`
+> (движение Ghost) переведена `IUpdatableSystem` → `IFixedUpdatableSystem`
+> (`OnUpdate` → `OnFixedUpdate`), логика не менялась (`velocity = dir * speed`).
+> Первый реальный пассажир fixed-канала. Регистрация в `EnemiesFactory` не
+> трогалась — `Entity.AddSystem` роутит по интерфейсу. `RandomMovementState`
+> (решение о направлении) осталась на brains-тике (Update). Плейтест пройден:
+> Ghost движется нормально, скорость та же, без дрожи, смена направления
+> работает. Этап закрыт. `Ghost.prefab` `Interpolate = None` не менялся —
+> джиттер не проявился, правка не потребовалась.
+
 - **Входит:** `MovementFeature/Move/SimpleRigidbodyMovementSystem.cs`
   (при необходимости — регистрация в `EnemiesFactory`).
 - **Что меняется:** `IUpdatableSystem` → `IFixedUpdatableSystem`
