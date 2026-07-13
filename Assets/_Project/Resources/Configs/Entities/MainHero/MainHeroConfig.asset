@@ -91,8 +91,8 @@ MonoBehaviour:
     <BaseSlideSpeed>k__BackingField: 15
     <SlideAcceleration>k__BackingField: 30
     <MaxSlideSpeed>k__BackingField: 40
-    <BaseJumpForce>k__BackingField: 5
-    <JumpForceModifier>k__BackingField: {x: 1, y: 1.2}
+    <BaseJumpForce>k__BackingField: 15
+    <JumpForceModifier>k__BackingField: {x: 1, y: 3}
     <MinFallVelocityForAutoSlide>k__BackingField: -25
   <Attack>k__BackingField:
     <ProcessTime>k__BackingField: 0.15
