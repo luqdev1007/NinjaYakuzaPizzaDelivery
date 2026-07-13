@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump
 {
-    public class AirJumpsRecoverySystem : IInitializableSystem, IUpdatableSystem
+    public class AirJumpsRecoverySystem : IInitializableSystem, IFixedUpdatableSystem
     {
         private ICompositeCondition _mustRestoreAirJumpsCount;
 
@@ -21,7 +21,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _airJumpsMaxCount = entity.AirJumpsMaxCount;
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnFixedUpdate(float deltaTime)
         {
             if (_mustRestoreAirJumpsCount.Evaluate())
             {

@@ -5,7 +5,7 @@ using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
-public partial class AirJumpSystem : IInitializableSystem, IUpdatableSystem
+public partial class AirJumpSystem : IInitializableSystem, IFixedUpdatableSystem
 {
     private ICompositeCondition _canAirJump;
 
@@ -45,7 +45,7 @@ public partial class AirJumpSystem : IInitializableSystem, IUpdatableSystem
         _rigidbody = entity.Rigidbody;
     }
 
-    public void OnUpdate(float deltaTime)
+    public void OnFixedUpdate(float deltaTime)
     {
         bool currentIntent = _intentJump.Value;
         bool isJumpPressedDown = currentIntent && !_wasJumpIntendedLastFrame;

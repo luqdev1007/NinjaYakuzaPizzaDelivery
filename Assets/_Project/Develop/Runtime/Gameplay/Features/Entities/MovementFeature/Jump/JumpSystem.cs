@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Jump
 {
-    public class JumpSystem : IInitializableSystem, IUpdatableSystem
+    public class JumpSystem : IInitializableSystem, IFixedUpdatableSystem
     {
         private ICompositeCondition _canJump;
 
@@ -44,7 +44,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _rigidbody = entity.Rigidbody;
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnFixedUpdate(float deltaTime)
         {
             bool currentIntent = _intentJump.Value;
             bool isJumpPressedDown = currentIntent && !_wasJumpIntendedLastFrame;

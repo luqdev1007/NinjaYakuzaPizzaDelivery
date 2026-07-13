@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Jump
 {
-    public class WallJumpSystem : IInitializableSystem, IUpdatableSystem
+    public class WallJumpSystem : IInitializableSystem, IFixedUpdatableSystem
     {
         private Rigidbody2D _rigidbody;
         private Transform _transform;
@@ -50,11 +50,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _jumpForceMax = entity.JumpForceMax;
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnFixedUpdate(float deltaTime)
         {
             if (_lockoutTimer > 0f)
             {
-                _lockoutTimer -= Time.unscaledDeltaTime;
+                _lockoutTimer -= Time.fixedUnscaledDeltaTime;
 
                 if (_lockoutTimer <= 0f)
                 {
@@ -89,7 +89,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             }
             else if (_lockoutTimer <= 0f)
             {
-                _lastEntrySpeedX = Mathf.MoveTowards(_lastEntrySpeedX, 0f, Time.deltaTime * 5f);
+                _lastEntrySpeedX = Mathf.MoveTowards(_lastEntrySpeedX, 0f, deltaTime * 5f);
             }
         }
 
