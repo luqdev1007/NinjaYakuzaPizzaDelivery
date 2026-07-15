@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
 using Assets._Project.Develop.Runtime.Utilities;
@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Contact
 {
-    public class LethalContactMovementSystem : IInitializableSystem, IUpdatableSystem
+    public class LethalContactMovementSystem : IInitializableSystem, IFixedUpdatableSystem
     {
         private Entity _entity;
         private Buffer<Entity> _contacts;
@@ -38,7 +38,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Cont
             _processedEntities = new List<Entity>(_contacts.Items.Length);
         }
 
-        public void OnUpdate(float deltaTime)
+        // «Скорость = урон» читает velocity на fixed-канале: система зарегистрирована
+        // после Dash и Plunge, поэтому в этом же тике видит скорость, которую они
+        // записали, а не промежуточное значение между физ-шагами (так было на Update).
+        //
+        // Контактный буфер по-прежнему наполняют BodyContactDetecting/Filter на Update:
+        // они общие для 6 типов сущностей, и их перенос ломает снаряды (см. R7).
+        // При FPS >= 50 буфер фактически свежий (m_AutoSyncTransforms: 0 — между
+        // физ-шагами OverlapCollider отдаёт то же самое), ниже 50 частота детекта
+        // остаётся равной Update-частоте, как и до переноса.
+        public void OnFixedUpdate(float deltaTime)
         {
             float currentSpeed = _rigidbody.linearVelocity.magnitude;
             float calculatedDamage = CalculateDamageBySpeed(currentSpeed);

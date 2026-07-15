@@ -1,11 +1,11 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 {
-    public class AttackCooldownTimerSystem : IInitializableSystem, IDisposableSystem, IUpdatableSystem
+    public class AttackCooldownTimerSystem : IInitializableSystem, IDisposableSystem, IFixedUpdatableSystem
     {
         private ReactiveVariable<float> _currentTime;
         private ReactiveVariable<float> _initialTime;
@@ -24,9 +24,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             _endAttackDisposable = _endAttackEvent.Subscribe(OnCooldownBegan);
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnFixedUpdate(float deltaTime)
         {
-            if (_inAttackCooldown.Value == false) 
+            if (_inAttackCooldown.Value == false)
                 return;
 
             _currentTime.Value -= deltaTime;
