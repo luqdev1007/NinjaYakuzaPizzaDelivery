@@ -114,9 +114,9 @@ VFX) осознанно **оставляем на Update** — переноси�
 
 | Корутина | Файл | Тик |
 |---|---|---|
-| `DashCoroutine` | `DashSystem.cs:142` | `yield return null` → Update-частота, `elapsed += Time.deltaTime` |
-| `SlideCoroutine` | `SlideSystem.cs:102` | то же |
-| `ResetUsingFlag` | `InventoryFeature/InventorySystem.cs:112` | `WaitForSeconds(0.15f)` — сброс флага использования предмета |
+| ~~`DashCoroutine`~~ | `DashSystem.cs` | ✅ снята (Этап 6) — окно на fixed-тике |
+| ~~`SlideCoroutine`~~ | `SlideSystem.cs` | ✅ снята (Этап 6) — окно на fixed-тике |
+| ~~`ResetUsingFlag`~~ | `InventoryFeature/InventorySystem.cs` | ✅ снята (Этап 1) — reactive-таймер |
 | `GrappleHookProjectile` | `Gadgets/Grapple/GrappleHookProjectile.cs` | Полёт крюка через `ICoroutinesPerformer` (pull-фаза уже НЕ корутина) |
 
 `ICoroutinesPerformer` = `CoroutinesPerformer : MonoBehaviour`
@@ -186,8 +186,8 @@ FixedUpdate трамплин станет **согласован** с ними (
 | `RigidbodyMovementSystem` (бег/ускорение) | ✅ мигрировано (Этап 4) | **ВЫСОКИЙ** |
 | `SurfaceCheckSystem` (граунд/склон/coyote) | ✅ мигрировано (Этап 4) | **ВЫСОКИЙ** |
 | `JumpSystem` / `AirJumpSystem` / `WallJumpSystem` | ✅ мигрировано (Этап 5) | **ВЫСОКИЙ** |
-| `DashSystem` | частично (таймеры на float, **окно — корутина**) | **ВЫСОКИЙ** |
-| `SlideSystem` | частично (то же) | **ВЫСОКИЙ** |
+| `DashSystem` | ✅ мигрировано (Этап 6, окно — fixed state-машина) | **ВЫСОКИЙ** |
+| `SlideSystem` | ✅ мигрировано (Этап 6, окно — fixed state-машина) | **ВЫСОКИЙ** |
 | `GrappleSystem` | частично (pull в `OnUpdate`, крюк — корутина) | **ВЫСОКИЙ** |
 | `PlungeSystem` (+ `PlungeDamageOnImpact`) | не мигрировано (velocity на dt) | **ВЫСОКИЙ** |
 | Slope-триада (`Slip`/`Slide`/`Jump`) | не мигрировано | **ВЫСОКИЙ** |
@@ -393,6 +393,38 @@ Update.
 
 ### Этап 6 — Дэш и слайд: корутины → fixed-таймеры (HIGH)
 
+> **✅ ВЫПОЛНЕНО и ПРОВЕРЕНО (коммит `569cd118`).** `DashSystem` и `SlideSystem`
+> переведены `IUpdatableSystem` → `IFixedUpdatableSystem`. `DashCoroutine`/
+> `SlideCoroutine` развёрнуты в state-машину окна внутри `OnFixedUpdate`
+> (`_isInDashWindow`/`_isInSlideWindow` + `_windowElapsed`, инкремент на
+> `fixedDeltaTime`); кривая `1 - t*t` не менялась. Зависимость от
+> `ICoroutinesPerformer` убрана из обеих систем (в `EntitiesFactory` поле
+> осталось живым — его использует `GrappleSystem`).
+>
+> **F4 применён как решено:** кулдаун/буфер-таймеры `Time.unscaledDeltaTime` →
+> `Time.fixedUnscaledDeltaTime`. Хитстоп-иммунитет сохранён, поведение не менялось.
+>
+> **Неочевидная деталь переноса (не потерять для будущих корутин).** Корутина,
+> запущенная через `StartPerform`, выполняется синхронно до первого `yield` —
+> т.е. на кадре старта успевала сделать пре-луповую запись, первый проход тела
+> цикла (`t=0`) И первый инкремент `elapsed`. Наивный перенос («стартовали окно —
+> крутим со следующего тика») удлинил бы окно ровно на один физ-шаг (~2% длины
+> рывка). В коде окно прокручивается в том же тике, где стартовало — эквивалент
+> корутины сохранён.
+>
+> **Плейтест пройден:** дэш min/max по длине рывка, air-dash с вертикальным
+> бустом, слайд под низким проходом (капсула меняется и возвращается корректно),
+> хитстоп-иммунитет кулдауна. **FPS-инвариантность 30/200 подтверждена:** длина
+> дэша стабильна между FPS.
+>
+> **Не зафиксировано:** результат проверки «дэш сквозь врага» (связка с
+> `LethalContactMovementSystem`) в отчёт по плейтесту не попал. Это временный
+> кросс-тик: LethalContact до Этапа 8 живёт на Update и читает velocity между
+> физ-шагами, пока дэш пишет её на fixed. Перепроверить и закрыть наблюдение на
+> Этапе 8 — там система переезжает на fixed и кросс-тик исчезает.
+>
+> Этап закрыт (открытый пункт выше на Этап 7 не влияет — LethalContact вне его скоупа).
+
 - **Входит:** `DashSystem`, `SlideSystem`.
 - **Что меняется:** окна движения `DashCoroutine`/`SlideCoroutine` → state-
   машина внутри `OnFixedUpdate` (поля `_isInWindow`, `_windowElapsed`,
@@ -585,6 +617,10 @@ fixed меняем `Time.unscaledDeltaTime`/`unscaledTime` на
 `Time.fixedUnscaledDeltaTime`/`fixedUnscaledTime` — прямой эквивалент. Поведение
 НЕ меняем: это требование параллельности с текущим фидлом (дэш-кулдаун
 продолжает капать сквозь заморозку), а не пересмотр механики.
+
+**ПРИМЕНЕНО для Dash/Slide на Этапе 6** (`569cd118`), иммунитет подтверждён
+плейтестом. Остаток развилки — гейт `HitStopSystem` на `Time.unscaledTime`:
+ревизия на Этапе 8, там же по правилу `fixedUnscaledTime`.
 
 **F5 — `Trampoline` как vanilla-мост.**
 Оставляем прямую запись velocity из `OnCollisionEnter2D` (после Этапа 4 она
