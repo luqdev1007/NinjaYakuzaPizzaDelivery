@@ -13,6 +13,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Attack;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Contact;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Bounce;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Dash;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.HangWall;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Jump;
@@ -173,6 +174,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddBaseSlopeJumpForce(new ReactiveVariable<float>(config.Slope.BaseJumpForce))
                 .AddSlopeJumpForceModifier(new ReactiveVariable<Vector2>(config.Slope.JumpForceModifier))
                 .AddSlopeJumpEvent(new ReactiveEvent<float>())
+
+                // bounce (трамплин шлёт сюда просьбу на отскок — см. F5)
+                .AddBounceImpulseRequest(new ReactiveEvent<BounceImpulseData>())
 
                 // slide
                 .AddIsSliding()
@@ -464,6 +468,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new AirJumpsRecoverySystem())
 
                 .AddSystem(new WallJumpSystem())
+
+                // bounce
+                .AddSystem(new BounceSystem())
 
                 .AddSystem(new DashSystem())
 
