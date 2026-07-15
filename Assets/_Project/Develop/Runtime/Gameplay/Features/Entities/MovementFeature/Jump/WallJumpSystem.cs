@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
@@ -58,12 +58,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
                 if (_lockoutTimer <= 0f)
                 {
-                    _isWallJumping.Value = false; 
+                    _isWallJumping.Value = false;
                 }
             }
 
             int currentWallDir = GetWallDirection();
-            UpdateEntrySpeed(currentWallDir);
+            UpdateEntrySpeed(currentWallDir, deltaTime);
 
             bool currentJumpIntent = _intentJump.Value;
             bool isJumpPressed = currentJumpIntent && !_wasJumpIntendedLastFrame;
@@ -75,7 +75,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             }
         }
 
-        private void UpdateEntrySpeed(int currentWallDir)
+        private void UpdateEntrySpeed(int currentWallDir, float deltaTime)
         {
             if (currentWallDir != 0)
             {
