@@ -188,10 +188,11 @@ FixedUpdate трамплин станет **согласован** с ними (
 | `JumpSystem` / `AirJumpSystem` / `WallJumpSystem` | ✅ мигрировано (Этап 5) | **ВЫСОКИЙ** |
 | `DashSystem` | ✅ мигрировано (Этап 6, окно — fixed state-машина) | **ВЫСОКИЙ** |
 | `SlideSystem` | ✅ мигрировано (Этап 6, окно — fixed state-машина) | **ВЫСОКИЙ** |
-| `GrappleSystem` | частично (pull в `OnUpdate`, крюк — корутина) | **ВЫСОКИЙ** |
-| `PlungeSystem` (+ `PlungeDamageOnImpact`) | не мигрировано (velocity на dt) | **ВЫСОКИЙ** |
-| Slope-триада (`Slip`/`Slide`/`Jump`) | не мигрировано | **ВЫСОКИЙ** |
-| `WallHangSystem` / `GlideSystem` | не мигрировано | **ВЫСОКИЙ** |
+| `GrappleSystem` | ✅ мигрировано (Этап 7, pull на fixed; крюк — корутина, R5) | **ВЫСОКИЙ** |
+| `PlungeSystem` | ✅ мигрировано (Этап 7) | **ВЫСОКИЙ** |
+| `PlungeDamageOnImpactSystem` | событийный (тикового канала нет) — миграции не требовал | **ВЫСОКИЙ** |
+| Slope-триада (`Slip`/`Slide`/`Jump`) | ✅ мигрировано (Этап 7); `SlopeSlide` без Y-guard — см. R6 | **ВЫСОКИЙ** |
+| `WallHangSystem` / `GlideSystem` | ✅ мигрировано (Этап 7) | **ВЫСОКИЙ** |
 | `AttackInvulnerabilitySystem` (i-frames) | не мигрировано (таймер на dt) | **ВЫСОКИЙ** |
 | `AttackProcessTimerSystem` / cooldown-таймеры атаки | не мигрировано (dt) | **ВЫСОКИЙ** |
 | `HitStopSystem` + `HitStopService` (`Time.timeScale`) | работает через unscaled; взаимодействие с FixedUpdate | **ВЫСОКИЙ** |
@@ -443,6 +444,43 @@ Update.
 
 ### Этап 7 — Grapple, plunge, slope, wall-hang, glide (HIGH)
 
+> **✅ ВЫПОЛНЕНО и ПРОВЕРЕНО (коммит `acfcc421`).** `GrappleSystem`,
+> `PlungeSystem`, `SlopeSlipSystem`, `SlopeSlideSystem`, `SlopeJumpSystem`,
+> `WallHangSystem`, `GlideSystem` переведены `IUpdatableSystem` →
+> `IFixedUpdatableSystem`. Чистый перенос канала: логика и конфиги не менялись.
+> `GrappleSystem.UpdatePull` был структурно готов — сменился только источник dt.
+> **F6 соблюдён:** летящий крюк `GrappleHookProjectile` остаётся на корутине
+> (хвост R5). Плейтест пройден: grapple/plunge/slope/hang/glide, **FPS 30/200
+> стабильно**. Этап закрыт.
+>
+> **`PlungeDamageOnImpactSystem` кода не потребовал — расхождение с §2.** Он
+> событийный (`IInitializableSystem` + `IDisposableSystem`, подписка на
+> `PlungeImpactEvent`), тикового канала не имеет вовсе. Его `OverlapCircleAll`
+> и так исполняется на физ-тике, потому что `PlungeSystem.HandleLanding` переехал
+> на fixed. В матрице §2 он числился «не мигрировано (dt)» — это была ошибка
+> снимка, а не состояние кода.
+>
+> **Слоуп-прыжок из зажатого слайда выживает — структурно, проверено.** При
+> миграции был прогноз, что `SlopeSlideSystem` (без Y-guard, безусловная
+> абсолютная запись velocity) затрёт вертикаль прыжка на тике N+1. Плейтест
+> прогноз опроверг, разбор сошёлся с плейтестом. Причина: `SurfaceCheckSystem`
+> кастует вниз на `castDistance = 0.15м`, а слоуп-прыжок даёт
+> `targetY = BaseJumpForce(15) + |vx| * 3` — минимум ~26, обычно 45–57. За один
+> физ-шаг это подъём 0.5–1+ м, т.е. персонаж выносится из зоны каста с запасом
+> 3.5–7×. На тике N+1 `_isOnSlope = false` → `SlopeSlideSystem` уходит в
+> `Default` и делает `return` ДО записи velocity. Плюс внутри тика прыжка защищает
+> порядок: `SlopeSlide` (472) пишет раньше, `SlopeJump` (473) перезаписывает
+> последним, физика интегрирует прыжок. **Y-guard в `SlopeSlideSystem` не
+> добавлен — не нужен.** НО безопасность держится на числах конфига, а не на
+> инварианте: занесено в §5 как R6.
+>
+> **Побочный эффект переноса (ожидаемый, конфиги НЕ тюнились).** `_lastFrameVelocityY`
+> в `SlopeSlideSystem` на fixed — буквально скорость предыдущего физ-шага, а не
+> случайный семпл между шагами: на Update при высоком FPS он успевал
+> перезаписаться нулём после того, как физика гасила падение, и авто-слайд при
+> приземлении (`MinFallVelocityForAutoSlide = -25`) вместе с `fallImpactSpeed`
+> терялись. Теперь детект честный.
+
 - **Входит:** `GrappleSystem` (+ дочистка `GrappleHookProjectile` корутины
   полёта, если решим), `PlungeSystem`, `PlungeDamageOnImpactSystem`,
   `SlopeSlipSystem`, `SlopeSlideSystem`, `SlopeJumpSystem`, `WallHangSystem`,
@@ -539,6 +577,34 @@ Update.
   крюк летит на переменном тике, полный детерминизм прогона (фундамент под
   ghost-replay/лидерборды) недостижим. Закрывать отдельным заходом, когда
   детерминизм станет активной целью. До тех пор — известный технический долг.
+
+- **R6 — Отложенная мина: `SlopeSlideSystem` без Y-guard (config-dependent).**
+  `SlopeSlideSystem` делает **безусловную абсолютную запись velocity**
+  (`_rigidbody.linearVelocity = downSlopeDirection * _currentSlideSpeed`) без
+  Y-guard — в отличие от базы `RigidbodyMovementSystem`, где guard добавлен
+  коммитом `6012ab95` (не опускать восходящую Y, выданную другой системой).
+
+  **Сейчас это безвредно ТОЛЬКО из-за чисел конфига.** Слоуп-прыжок даёт
+  `targetY = BaseJumpForce + |vx| * JumpForceModifier.y` = `15 + |vx| * 3`; при
+  `fixedDeltaTime = 0.02` и `SurfaceCheckSystem.castDistance = 0.15м` персонаж за
+  один физ-шаг выносится из зоны каста склона (подъём 0.5–1+ м против каста
+  0.15 м), поэтому на тике N+1 `_isOnSlope = false` и слайд уходит в `Default`
+  до записи velocity. **Порог срабатывания мины: `targetY < 7.5`** (0.15 / 0.02).
+  Текущий запас — 3.5–7×.
+
+  **РИСК:** если при тюнинге уронить силу слоуп-прыжка примерно вдвое
+  (`BaseJumpForce` → ~7 и ниже, либо `JumpForceModifier.y` → 0 при малом `|vx|`),
+  баг проснётся — прыжок со склона начнёт **«клевать»** (стартует и тут же
+  придавливается вниз). **Симптом будет выглядеть как проблема ПРЫЖКА, без
+  видимой связи с правкой конфига слайда** — призрак, которого легко искать не
+  там. Отдельно коварно то, что мина спит при высокой силе прыжка: правка
+  конфига и проявление бага разнесены и по файлу, и по времени.
+
+  **Страховка на будущее:** добавить в `SlopeSlideSystem` тот же Y-guard, что в
+  базе (`if (_rigidbody.linearVelocity.y > slopeVelocity.y) slopeVelocity.y =
+  _rigidbody.linearVelocity.y;`), сделав безопасность структурной, а не
+  зависящей от чисел. **Не критично сейчас** (плейтест Этапа 7 подтвердил, что
+  слоуп-прыжок из слайда выживает) — зафиксировано, чтобы не искать призрак.
 
 ---
 
