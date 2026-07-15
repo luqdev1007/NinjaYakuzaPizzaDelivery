@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope
 {
-    public class SlopeSlideSystem : IInitializableSystem, IUpdatableSystem
+    public class SlopeSlideSystem : IInitializableSystem, IFixedUpdatableSystem
     {
         private ReactiveVariable<MovementStates> _movementState;
         private ReactiveVariable<bool> _intentSlide;
@@ -25,7 +25,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         private Rigidbody2D _rigidbody;
 
         private float _currentSlideSpeed;
-        private float _lastFrameVelocityY; 
+        // На fixed-канале это буквально скорость предыдущего физ-шага (до того, как
+        // столкновение погасило падение), а не случайный семпл между шагами.
+        private float _lastFrameVelocityY;
 
         public void OnInit(Entity entity)
         {
@@ -48,7 +50,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _rigidbody = entity.Rigidbody;
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnFixedUpdate(float deltaTime)
         {
             MovementStates currentState = _movementState.Value;
 
@@ -72,7 +74,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
                 if (!_isOnSlope.Value || (!_intentSlide.Value && _slopeAngle.Value < _autoSlideMinAngle.Value))
                 {
                     _movementState.Value = MovementStates.Default;
-                    _lastFrameVelocityY = _rigidbody.linearVelocity.y; 
+                    _lastFrameVelocityY = _rigidbody.linearVelocity.y;
                     return;
                 }
 

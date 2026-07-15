@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope
 {
-    public class SlopeJumpSystem : IInitializableSystem, IUpdatableSystem
+    public class SlopeJumpSystem : IInitializableSystem, IFixedUpdatableSystem
     {
         private ICompositeCondition _canSlopeJump;
         private ReactiveVariable<bool> _intentJump;
@@ -27,7 +27,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _rigidbody = entity.Rigidbody;
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnFixedUpdate(float deltaTime)
         {
             bool currentJumpIntent = _intentJump.Value;
             bool isJumpPressedThisFrame = currentJumpIntent && !_wasJumpIntendedLastFrame;

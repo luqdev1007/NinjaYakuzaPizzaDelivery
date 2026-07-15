@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Plunge
 {
-    public class PlungeSystem : IInitializableSystem, IUpdatableSystem
+    public class PlungeSystem : IInitializableSystem, IFixedUpdatableSystem
     {
         private const float AccelerationRampPerSecond = 2.0f; // config
         private const float MaxTerminalSpeedFactor = 2.5f; // config
@@ -22,8 +22,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         private Rigidbody2D _rigidbody;
 
         private float _lastVerticalSpeed;
-        private float _plungeTime; 
-        private float _originalGravityScale; 
+        private float _plungeTime;
+        private float _originalGravityScale;
 
         public void OnInit(Entity entity)
         {
@@ -38,7 +38,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _rigidbody = entity.Rigidbody;
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnFixedUpdate(float deltaTime)
         {
             if (_isPlunging.Value)
             {
@@ -55,7 +55,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         private void StartPlunge()
         {
             _isPlunging.Value = true;
-            _plungeTime = 0f; 
+            _plungeTime = 0f;
             _lastVerticalSpeed = Mathf.Abs(_rigidbody.linearVelocity.y);
 
             _originalGravityScale = _rigidbody.gravityScale;
@@ -67,7 +67,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
         private void UpdatePlunge(float deltaTime)
         {
-            _plungeTime += deltaTime; 
+            _plungeTime += deltaTime;
 
             float baseAcceleration = _plungeSpeed.Value * _accelerationMultiplier.Value;
             float rampedAcceleration = baseAcceleration * (1f + AccelerationRampPerSecond * _plungeTime);
@@ -106,9 +106,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         {
             _isPlunging.Value = false;
             _lastVerticalSpeed = 0f;
-            _plungeTime = 0f; 
+            _plungeTime = 0f;
 
-            _rigidbody.gravityScale = _originalGravityScale; 
+            _rigidbody.gravityScale = _originalGravityScale;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ThrowableFeature;
@@ -9,12 +9,17 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
 {
-    public class GrappleSystem : IInitializableSystem, IUpdatableSystem
+    public class GrappleSystem : IInitializableSystem, IFixedUpdatableSystem
     {
         // CHANGED: фаза притягивания переехала из корутины (WaitForFixedUpdate) в OnUpdate.
         // Раньше intent обрабатывался в Update (переменный таймстеп), а тяга — в корутине на фиксированном.
         // Этот раскол давал рассинхрон по кадрам, двойные StopPulling и "вязкое" ощущение.
         // Теперь вся механика тикает в одном месте, как у остальных movement-систем.
+
+        // CHANGED (Этап 7 миграции таймстепа): система целиком переехала на fixed-канал
+        // (IFixedUpdatableSystem) — тяга интегрируется тем же тиком, что и физика.
+        // Летящий крюк (GrappleHookProjectile) осознанно остаётся на корутине (развилка F6):
+        // это известный хвост под будущий детерминизм, см. R5 в плане миграции.
 
         // --- тюнинг (кандидаты на вынос в GrappleHookConfig) ---
 
@@ -92,7 +97,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature
             _state = GrappleState.Idle;
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnFixedUpdate(float deltaTime)
         {
             bool currentIntent = _intentGrapple.Value;
             bool isPressedDown = currentIntent && !_wasGrappleIntendedLastFrame;

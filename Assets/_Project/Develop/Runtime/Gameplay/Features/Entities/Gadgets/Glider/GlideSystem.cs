@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider
 {
-    public class GlideSystem : IInitializableSystem, IUpdatableSystem
+    public class GlideSystem : IInitializableSystem, IFixedUpdatableSystem
     {
         private ICompositeCondition _canGlide;
         private ReactiveVariable<bool> _intentJump;
@@ -50,7 +50,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Gli
             _rigidbody = entity.Rigidbody;
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnFixedUpdate(float deltaTime)
         {
             bool basicConditionsMet = _intentJump.Value && _canGlide.Evaluate();
 

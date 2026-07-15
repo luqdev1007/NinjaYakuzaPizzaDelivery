@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.HangWall
 {
-    public class WallHangSystem : IInitializableSystem, IUpdatableSystem
+    public class WallHangSystem : IInitializableSystem, IFixedUpdatableSystem
     {
         private ICompositeCondition _canWallHang;
         private LayerMask _wallHangLayer;
@@ -19,7 +19,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
         private ReactiveVariable<bool> _intentAttack;
         private ReactiveVariable<bool> _intentJump;
-        private ReactiveVariable<bool> _inAttackProcess; 
+        private ReactiveVariable<bool> _inAttackProcess;
 
         private Rigidbody2D _rigidbody;
         private Transform _transform;
@@ -42,7 +42,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _defaultGravityScale = entity.BaseGravityScale;
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnFixedUpdate(float deltaTime)
         {
             if (_isWallHanging.Value)
             {
@@ -58,7 +58,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
         private void TryStartWallHang()
         {
-            Vector2 forward = _transform.right; 
+            Vector2 forward = _transform.right;
             Vector2 checkOrigin = (Vector2)_transform.position + forward * 0.3f;
             Collider2D hit = Physics2D.OverlapCircle(checkOrigin, 0.15f, _wallHangLayer);
 
