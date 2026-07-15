@@ -131,10 +131,13 @@ VFX) осознанно **оставляем на Update** — переноси�
 - Системы, которые сейчас берут `Time.unscaledDeltaTime` (кулдауны Dash/Slide,
   гейт в `HitStopSystem` через `Time.unscaledTime`), **специально иммунны** к
   хитстопу — их логика продолжает идти, пока мир «заморожен».
-- **При переносе на FixedUpdate** этот приём меняется: unscaled-эквивалент —
-  `Time.fixedUnscaledDeltaTime` / `Time.fixedUnscaledTime`. Прямой перенос
-  `unscaledDeltaTime` в FixedUpdate даст неверную величину. Это разбирается в
-  Этапе 6 и в развилке F4.
+- **⚠️ ИСПРАВЛЕНО (Этап 8).** Здесь раньше утверждалось, что «прямой перенос
+  `unscaledDeltaTime` в FixedUpdate даст неверную величину». **Это неверно** —
+  Unity внутри FixedUpdate сам отдаёт fixed-варианты (`deltaTime` →
+  `fixedDeltaTime`, `unscaledDeltaTime` → unscaled fixed framerate delta time).
+  Величина корректна без ручной правки. Подробности и цитаты из доков — в F4.
+- **`timeScale` не масштабирует значение `fixedDeltaTime`** — он масштабирует
+  частоту вызовов FixedUpdate. Двойного применения нет. См. F4.
 
 ### 1.6 Чисто визуальное / не-физическое — НЕ ТРОГАЕМ
 
@@ -193,10 +196,10 @@ FixedUpdate трамплин станет **согласован** с ними (
 | `PlungeDamageOnImpactSystem` | событийный (тикового канала нет) — миграции не требовал | **ВЫСОКИЙ** |
 | Slope-триада (`Slip`/`Slide`/`Jump`) | ✅ мигрировано (Этап 7); `SlopeSlide` без Y-guard — см. R6 | **ВЫСОКИЙ** |
 | `WallHangSystem` / `GlideSystem` | ✅ мигрировано (Этап 7) | **ВЫСОКИЙ** |
-| `AttackInvulnerabilitySystem` (i-frames) | не мигрировано (таймер на dt) | **ВЫСОКИЙ** |
-| `AttackProcessTimerSystem` / cooldown-таймеры атаки | не мигрировано (dt) | **ВЫСОКИЙ** |
-| `HitStopSystem` + `HitStopService` (`Time.timeScale`) | работает через unscaled; взаимодействие с FixedUpdate | **ВЫСОКИЙ** |
-| `LethalContactMovementSystem` («скорость=урон») | не мигрировано (читает velocity на dt) | **ВЫСОКИЙ** |
+| `AttackInvulnerabilitySystem` (i-frames) | ✅ мигрировано (Этап 8) | **ВЫСОКИЙ** |
+| `AttackProcessTimerSystem` / cooldown-таймеры атаки | ✅ мигрировано (Этап 8); цепочка delay→хитбокс реактивная, уехала следом | **ВЫСОКИЙ** |
+| `HitStopSystem` + `HitStopService` (`Time.timeScale`) | событийный, тикового канала нет — миграции не требовал (см. F4) | **ВЫСОКИЙ** |
+| `LethalContactMovementSystem` («скорость=урон») | ✅ мигрировано (Этап 8); контактный буфер остался на Update — см. R7 | **ВЫСОКИЙ** |
 | `Trampoline` (bounce) | vanilla MB, физ-колбэк, прямая запись velocity | **ВЫСОКИЙ** (bounce = фил) |
 | `SimpleRigidbodyMovementSystem` (Ghost) | не мигрировано (velocity на dt) | НИЗКИЙ (враг, не хватает игрока за душу) |
 | `AIBrainsContext` / `RandomMovementState` | не мигрировано (Update-тик, решения) | НИЗКИЙ |
@@ -509,6 +512,39 @@ Update.
 
 ### Этап 8 — Боевые тайминги и «скорость=урон» (HIGH)
 
+> **⏳ КОД ВЫПОЛНЕН (коммит `8f197a34`), ПЛЕЙТЕСТ НЕ ПРОЙДЕН — этап НЕ закрыт.**
+> Переведены `IUpdatableSystem` → `IFixedUpdatableSystem`:
+> `LethalContactMovementSystem`, `AttackProcessTimerSystem`,
+> `AttackInvulnerabilitySystem`, `AttackCooldownTimerSystem`,
+> `DoubleAttackCooldownSystem`, `ApplyDamageCooldownSystem`. Чистый перенос
+> канала: пороги `MinSpeedThreshold=10` / `MaxSpeedThreshold=20` и конфиги не
+> тронуты.
+>
+> **Кросс-тик Этапа 6 закрыт.** `LethalContact` (рег. 519) идёт после Dash (468)
+> и Plunge (482) → читает velocity в том же тике, где они её пишут, а не
+> промежуточное значение между физ-шагами.
+>
+> **Атакующая цепочка уехала на fixed автоматически.** `AttackProcessTimerSystem` —
+> единственный драйвер окна атаки; `AttackDelayEndTriggerSystem`,
+> `MeleeAttackHitSystem`, `EndAttackSystem` тикового канала не имеют и висят на
+> подписке на `AttackProcessCurrentTime`. Поэтому перевод таймера на fixed втянул
+> всю цепочку (delay → `OverlapCircleAll` хитбокса → `SuccessfulHitEvent` →
+> i-frames/хитстоп) в тот же физ-тик. Расщепления нет.
+>
+> **`HitStopSystem` не тронут** — событийный, тикового канала нет,
+> `Time.unscaledTime` самоадаптируется. Двойного масштабирования `timeScale` нет.
+> Прежняя формулировка F4 содержала фактическую ошибку — исправлена, см. F4.
+>
+> **`ApplyDamageCooldownSystem` включён по трактовке** (в §4 явно не назван): это
+> окно неуязвимости при получении урона, оно гейтит `canApplyDamage` — тот самый
+> контактный урон, что уехал на fixed. Окно тикает там же, чтобы совпадать с
+> физикой контактов.
+>
+> **Осознанно НЕ тронуто:** контактный буфер (`BodyContactDetecting`/`Filter`)
+> остался на Update — перенос сломал бы снаряды, см. **R7**. `StartAttackSystem` и
+> `SlashAttackChargeSystem` остались на Update — это решения по инпуту, не окна
+> физики.
+
 - **Входит:** `AttackInvulnerabilitySystem` (i-frames), `AttackProcessTimerSystem`
   и cooldown-таймеры атаки, `LethalContactMovementSystem`, а также ревизия
   `HitStopSystem`/`HitStopService` под fixed.
@@ -606,6 +642,48 @@ Update.
   зависящей от чисел. **Не критично сейчас** (плейтест Этапа 7 подтвердил, что
   слоуп-прыжок из слайда выживает) — зафиксировано, чтобы не искать призрак.
 
+- **R7 — Хвост Этапа 8: детект контактов остался на Update (осознанно).**
+  На Этапе 8 на fixed переехал только `LethalContactMovementSystem` (потребитель),
+  а producer'ы контактного буфера — `BodyContactDetectingSystem` и
+  `BodyContactsEntitiesFilterSystem` — **остались на Update**. Причина: классы
+  общие для 6 типов сущностей (Hero, ContactTrigger, Ghost, Slime[мёртвый],
+  SlashProjectile, Shuriken), и их перенос **сломал бы снаряды**: снаряды ездят
+  `TransformMovementSystem` на Update через Transform, поэтому детект на fixed
+  (50 Гц) при движении на Update (до 200 Гц) стал бы семплить позицию вчетверо
+  реже → сюрикен/слэш проскакивали бы врага насквозь. Это регрессия, поэтому
+  Вариант «перенести всю цепочку» отклонён.
+
+  **Почему это не регрессия сейчас:** при FPS ≥ 50 буфер фактически свежий
+  (`m_AutoSyncTransforms: 0` → между физ-шагами `OverlapCollider` отдаёт то же
+  самое, т.к. позиции меняются только на физ-шаге); при FPS < 50 частота детекта
+  остаётся равной Update-частоте — ровно как до переноса. Velocity-стык при этом
+  починен: `LethalContact` (519) зарегистрирован после Dash (468) и Plunge (482)
+  и читает скорость в том же тике, где они её пишут.
+
+  **Отдельный будущий этап (НЕ часть миграции героя):** fps-инвариантный детект
+  контактов для снарядов/врагов — перенос `BodyContactDetectingSystem` +
+  `BodyContactsEntitiesFilterSystem` + `DealDamageOnContactSystem` +
+  `DeathMaskTouchDetectorSystem` + `TransformMovementSystem` снарядов на fixed.
+  Свой blast radius (урон врагов, слэш, сюрикен) и свой плейтест.
+  **Ограничение, которое всплывёт:** `FinalPointTriggerService` читает
+  `ContactEntitiesBuffer` из своего `Update(dt)` и на fixed уехать не может —
+  `GameplayBootstrap.FixedUpdate` тикает только `_entitiesLifeContext`, у сервисов
+  fixed-канала нет. Его протухание безобидно (проверка «герой на финише»), но
+  учесть надо.
+
+- **R8 — Пред-существующий баг: инвертированный порядок сенсоров на слэш-снаряде.**
+  В `ProjectileFactory.cs:83-84` системы зарегистрированы как
+  `BodyContactsEntitiesFilterSystem` (83) → `BodyContactDetectingSystem` (84),
+  т.е. **filter стоит РАНЬШЕ detect** — в отличие от всех остальных мест
+  (Hero 517→518, Ghost 655→656, Shuriken 132→133), где порядок правильный.
+  Поскольку `Entity` тикает системы в порядке регистрации, entity-буфер слэш-
+  снаряда собирается из collider-буфера **прошлого тика** → детект попадания
+  протух на тик.
+
+  **Живёт и сейчас на Update; миграцией не создан и не лечится** — обнаружен при
+  разборе зоны влияния на Этапе 8. Фикс — поменять строки 83 и 84 местами.
+  Не делалось: вне скоупа Этапа 8, требует своего плейтеста слэш-атаки.
+
 ---
 
 ## 6. Развилки — нужно твоё решение ДО старта
@@ -674,20 +752,42 @@ edge-семплинга не наступило — **не вводим**. Ра�
 
 **F4 — Хитстоп-иммунитет кулдаунов на fixed.**
 Сейчас Dash/Slide-кулдаун и гейт `HitStopSystem` берут `unscaledDeltaTime`/
-`unscaledTime` (тикают сквозь заморозку). На fixed эквивалент —
-`fixedUnscaledDeltaTime`/`fixedUnscaledTime`. Сохраняем ли этот иммунитет (дэш-
+`unscaledTime` (тикают сквозь заморозку). Сохраняем ли этот иммунитет (дэш-
 кулдаун капает во время хитстопа) или хотим, чтобы хитстоп замораживал и
 кулдауны?
 
-**РЕШЕНО:** хитстоп-иммунитет кулдаунов сохраняем как есть. При переносе на
-fixed меняем `Time.unscaledDeltaTime`/`unscaledTime` на
-`Time.fixedUnscaledDeltaTime`/`fixedUnscaledTime` — прямой эквивалент. Поведение
-НЕ меняем: это требование параллельности с текущим фидлом (дэш-кулдаун
-продолжает капать сквозь заморозку), а не пересмотр механики.
+**РЕШЕНО:** хитстоп-иммунитет кулдаунов сохраняем как есть. Поведение НЕ меняем:
+это требование параллельности с текущим фидлом (дэш-кулдаун продолжает капать
+сквозь заморозку), а не пересмотр механики.
 
-**ПРИМЕНЕНО для Dash/Slide на Этапе 6** (`569cd118`), иммунитет подтверждён
-плейтестом. Остаток развилки — гейт `HitStopSystem` на `Time.unscaledTime`:
-ревизия на Этапе 8, там же по правилу `fixedUnscaledTime`.
+**⚠️ ИСПРАВЛЕНО ПО ФАКТУ Этапа 8 — прежняя формулировка вводила в заблуждение.**
+Здесь раньше утверждалось, что «прямой перенос `unscaledDeltaTime` в FixedUpdate
+даст неверную величину» и что менять надо руками. **Это неверно.** По официальной
+документации Unity:
+- `Time.deltaTime` — *«When called from inside MonoBehaviour.FixedUpdate or
+  anywhere in the Physics update loop, including coroutines that yield
+  WaitForFixedUpdate, deltaTime returns Time.fixedDeltaTime»*;
+- `Time.unscaledDeltaTime` — *«When called from inside MonoBehaviour's
+  MonoBehaviour.FixedUpdate, it returns the unscaled fixed framerate delta
+  time»*.
+
+То есть Unity **подставляет fixed-варианты автоматически** — `Time.unscaledTime`/
+`unscaledDeltaTime` самоадаптируются к контексту вызова. Следствия:
+- **`HitStopSystem` менять НЕ надо и он НЕ тронут (Этап 8).** Он событийный
+  (`IInitializableSystem` + `IDisposableSystem`), тикового канала не имеет; его
+  гейт `Time.unscaledTime` корректен в обоих контекстах.
+- **Правка Этапа 6** (`unscaledDeltaTime` → `fixedUnscaledDeltaTime` в Dash/Slide)
+  была поведенчески **no-op**: не фикс величины, а явное выражение намерения.
+  Вреда нет (форма даже честнее и устойчива к смене канала), но считать её
+  «исправлением бага» нельзя.
+
+**Двойного масштабирования `timeScale` НЕТ (проверено на Этапе 8).** Ключевая
+механика: `timeScale` **не меняет значение** `Time.fixedDeltaTime` (оно остаётся
+0.02) — он меняет **частоту вызовов FixedUpdate** в реальном времени. Поэтому
+таймеры на `fixedDeltaTime` накапливают игровое время ровно так же, как раньше
+на `deltaTime`, и замирают в хитстопе идентично. Вручную на `timeScale` не
+умножает никто: `timeScale` пишет только `HitStopService`, читателей-множителей
+в проекте нет.
 
 **F5 — `Trampoline` как vanilla-мост.**
 Оставляем прямую запись velocity из `OnCollisionEnter2D` (после Этапа 4 она
