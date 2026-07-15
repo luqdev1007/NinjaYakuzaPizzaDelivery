@@ -1,18 +1,14 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
-using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
-using System.Collections;
 using UnityEngine;
 using Assets._Project.Develop.Runtime.Gameplay.Common;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Dash
 {
-    public class DashSystem : IInitializableSystem, IUpdatableSystem
+    public class DashSystem : IInitializableSystem, IFixedUpdatableSystem
     {
-        private readonly ICoroutinesPerformer _coroutinesPerformer;
-
         private ICompositeCondition _canDash;
 
         private ReactiveVariable<bool> _intentDash;
@@ -43,10 +39,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         private bool _isCharging;
         private bool _wasDashIntendedLastFrame;
 
-        public DashSystem(ICoroutinesPerformer coroutinesPerformer)
-        {
-            _coroutinesPerformer = coroutinesPerformer;
-        }
+        // Окно движения дэша: бывшая DashCoroutine, развёрнутая в state-машину на
+        // физ-тике. Параметры фиксируются на старте (корутина захватывала их так же).
+        private bool _isInDashWindow;
+        private float _dashWindowElapsed;
+        private float _dashWindowDuration;
+        private float _dashForce;
+        private float _dashDirection;
 
         public void OnInit(Entity entity)
         {
@@ -72,9 +71,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _transform = entity.Transform;
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnFixedUpdate(float deltaTime)
         {
-            float unscaledDt = Time.unscaledDeltaTime;
+            // Кулдаун и буфер сохраняют иммунитет к хитстопу (Time.timeScale):
+            // fixedUnscaledDeltaTime — прямой fixed-эквивалент unscaledDeltaTime.
+            float unscaledDt = Time.fixedUnscaledDeltaTime;
             bool currentIntent = _intentDash.Value;
             bool isPressedDown = currentIntent && !_wasDashIntendedLastFrame;
             bool isReleased = !currentIntent && _wasDashIntendedLastFrame;
@@ -98,13 +99,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
             if (_isCharging)
             {
-                if (!_canDash.Evaluate())
+                if (_canDash.Evaluate() == false)
                 {
                     _isCharging = false;
-                    return;
                 }
-
-                if (currentIntent)
+                else if (currentIntent)
                 {
                     _chargeTimer += deltaTime;
 
@@ -112,7 +111,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
                     {
                         _chargeTimer = _dashChargeTime.Value;
                         ExecuteDash();
-                        return;
                     }
                 }
                 else if (isReleased)
@@ -120,6 +118,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
                     ExecuteDash();
                 }
             }
+
+            // Окно прокручивается в том же тике, где стартовало: корутина
+            // выполнялась синхронно до первого yield, т.е. её первый проход тела
+            // цикла (t=0) и первый инкремент elapsed приходились на кадр старта.
+            if (_isInDashWindow)
+                AdvanceDashWindow(deltaTime);
         }
 
         private void ExecuteDash()
@@ -136,29 +140,40 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _cooldownTimer = _dashCooldown.Value;
             _isCharging = false;
 
-            _coroutinesPerformer.StartPerform(DashCoroutine(force, _lookDirectionX.Value, inAir));
+            _dashForce = force;
+            _dashDirection = _lookDirectionX.Value;
+            _dashWindowDuration = _dashDuration.Value;
+            _dashWindowElapsed = 0f;
+            _isInDashWindow = true;
+
+            // Пре-луповая запись корутины: вертикальный буст задаётся один раз на
+            // старте, дальше окно ведёт только X и сохраняет Y.
+            _rigidbody.linearVelocity = new Vector2(_dashDirection * force, inAir ? _airDashVerticalBoost.Value : 0f);
         }
 
-        private IEnumerator DashCoroutine(float force, float direction, bool inAir)
+        private void AdvanceDashWindow(float deltaTime)
         {
-            float elapsed = 0f;
-            float duration = _dashDuration.Value;
-
-            _rigidbody.linearVelocity = new Vector2(direction * force, inAir ? _airDashVerticalBoost.Value : 0f);
-
-            while (elapsed < duration)
+            if (_dashWindowElapsed < _dashWindowDuration)
             {
-                float t = elapsed / duration;
+                float t = _dashWindowElapsed / _dashWindowDuration;
                 float speedCurve = 1f - t * t;
-                float currentSpeed = force * speedCurve;
+                float currentSpeed = _dashForce * speedCurve;
 
-                _rigidbody.linearVelocity = new Vector2(direction * currentSpeed, _rigidbody.linearVelocity.y);
+                _rigidbody.linearVelocity = new Vector2(_dashDirection * currentSpeed, _rigidbody.linearVelocity.y);
 
-                elapsed += Time.deltaTime;
-                yield return null;
+                _dashWindowElapsed += deltaTime;
+
+                return;
             }
 
-            _rigidbody.linearVelocity = new Vector2(direction * 2f, _rigidbody.linearVelocity.y);
+            EndDashWindow();
+        }
+
+        private void EndDashWindow()
+        {
+            _isInDashWindow = false;
+
+            _rigidbody.linearVelocity = new Vector2(_dashDirection * 2f, _rigidbody.linearVelocity.y);
             _isDashing.Value = false;
         }
     }

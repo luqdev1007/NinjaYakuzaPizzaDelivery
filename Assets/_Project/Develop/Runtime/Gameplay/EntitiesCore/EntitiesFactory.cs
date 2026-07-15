@@ -465,7 +465,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 .AddSystem(new WallJumpSystem())
 
-                .AddSystem(new DashSystem(_coroutinesPerformer))
+                .AddSystem(new DashSystem())
 
                 // slope
                 .AddSystem(new SlopeSlipSystem())
@@ -473,7 +473,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new SlopeJumpSystem())
 
                 // slide
-                .AddSystem(new SlideSystem(_coroutinesPerformer))
+                .AddSystem(new SlideSystem())
 
                 // glide
                 .AddSystem(new GlideSystem())

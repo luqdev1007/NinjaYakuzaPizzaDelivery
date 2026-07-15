@@ -1,17 +1,13 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
-using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
-using System.Collections;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide
 {
-    public class SlideSystem : IInitializableSystem, IUpdatableSystem
+    public class SlideSystem : IInitializableSystem, IFixedUpdatableSystem
     {
-        private readonly ICoroutinesPerformer _coroutinesPerformer;
-
         private ICompositeCondition _canSlide;
         private ReactiveVariable<bool> _intentSlide;
         private ReactiveVariable<bool> _isSliding;
@@ -34,10 +30,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         private float _cooldownTimer;
         private bool _wasSlideIntendedLastFrame;
 
-        public SlideSystem(ICoroutinesPerformer coroutinesPerformer)
-        {
-            _coroutinesPerformer = coroutinesPerformer;
-        }
+        // Окно движения слайда: бывшая SlideCoroutine, развёрнутая в state-машину
+        // на физ-тике. Скорость/направление/длительность фиксируются на старте.
+        private bool _isInSlideWindow;
+        private float _slideWindowElapsed;
+        private float _slideWindowDuration;
+        private float _slideWindowSpeed;
+        private float _slideWindowDirection;
 
         public void OnInit(Entity entity)
         {
@@ -62,9 +61,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             }
         }
 
-        public void OnUpdate(float deltaTime)
+        public void OnFixedUpdate(float deltaTime)
         {
-            float unscaledDt = Time.unscaledDeltaTime;
+            // Кулдаун и буфер сохраняют иммунитет к хитстопу (Time.timeScale):
+            // fixedUnscaledDeltaTime — прямой fixed-эквивалент unscaledDeltaTime.
+            float unscaledDt = Time.fixedUnscaledDeltaTime;
             bool currentIntent = _intentSlide.Value;
             bool isPressedDown = currentIntent && !_wasSlideIntendedLastFrame;
             _wasSlideIntendedLastFrame = currentIntent;
@@ -88,6 +89,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
                 _slideBufferTimer = 0f;
                 ExecuteSlide();
             }
+
+            // Окно прокручивается в том же тике, где стартовало: корутина
+            // выполнялась синхронно до первого yield, т.е. её первый проход тела
+            // цикла (t=0) и первый инкремент elapsed приходились на кадр старта.
+            if (_isInSlideWindow)
+                AdvanceSlideWindow(deltaTime);
         }
 
         private void ExecuteSlide()
@@ -96,27 +103,35 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             _cooldownTimer = _slideCooldown.Value;
             SetSlideCollider(true);
 
-            _coroutinesPerformer.StartPerform(SlideCoroutine(_slideSpeed.Value, _lookDirectionX.Value));
+            _slideWindowSpeed = _slideSpeed.Value;
+            _slideWindowDirection = _lookDirectionX.Value;
+            _slideWindowDuration = _slideDuration.Value;
+            _slideWindowElapsed = 0f;
+            _isInSlideWindow = true;
         }
 
-        private IEnumerator SlideCoroutine(float speed, float direction)
+        private void AdvanceSlideWindow(float deltaTime)
         {
-            float elapsed = 0f;
-            float duration = _slideDuration.Value;
-
-            while (elapsed < duration)
+            // Корутина проверяла флаг в начале тела цикла и выходила БЕЗ записи и
+            // без финального нуджа — сохраняем: внешний сброс _isSliding просто
+            // гасит окно.
+            if (_isSliding.Value == false)
             {
-                if (!_isSliding.Value)
-                    yield break;
+                _isInSlideWindow = false;
+                return;
+            }
 
-                float t = elapsed / duration;
+            if (_slideWindowElapsed < _slideWindowDuration)
+            {
+                float t = _slideWindowElapsed / _slideWindowDuration;
                 float speedCurve = 1f - t * t;
-                float currentSpeed = speed * speedCurve;
+                float currentSpeed = _slideWindowSpeed * speedCurve;
 
-                _rigidbody.linearVelocity = new Vector2(direction * currentSpeed, _rigidbody.linearVelocity.y);
+                _rigidbody.linearVelocity = new Vector2(_slideWindowDirection * currentSpeed, _rigidbody.linearVelocity.y);
 
-                elapsed += Time.deltaTime;
-                yield return null;
+                _slideWindowElapsed += deltaTime;
+
+                return;
             }
 
             EndSlide();
@@ -124,12 +139,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
         private void InterruptSlide()
         {
+            _isInSlideWindow = false;
             _isSliding.Value = false;
             SetSlideCollider(false);
         }
 
         private void EndSlide()
         {
+            _isInSlideWindow = false;
             _isSliding.Value = false;
             SetSlideCollider(false);
             _rigidbody.linearVelocity = new Vector2(directionX() * 2f, _rigidbody.linearVelocity.y);
