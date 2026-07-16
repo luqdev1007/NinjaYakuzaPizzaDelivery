@@ -323,7 +323,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animator: {fileID: 1784155885393087696}
   _stateNames:
-  - Ghost_Idle
+  - GhostIdleAnimation
 --- !u!114 &4193006852274319641
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using System.Collections;
@@ -40,6 +40,21 @@ namespace Assets._Project.Develop.Runtime.Utilities.Timer
         {
             Stop();
             _cooldownProcess = _coroutinesPerformer.StartPerform(CooldownProcess());
+        }
+
+        /// <summary>
+        /// Перезапуск с новой длительностью. Добавлено для per-instance разброса фаз
+        /// у призраков: длительность там своя на каждый заход в фазу, а cooldown
+        /// задавался только конструктором и после этого был неизменяем.
+        ///
+        /// Перегрузка аддитивна: Restart() без аргумента ведёт себя ровно как раньше,
+        /// поэтому существующие потребители (уровневый таймер через
+        /// InGameTimerPresenter) не затронуты.
+        /// </summary>
+        public void Restart(float cooldown)
+        {
+            _cooldown = cooldown;
+            Restart();
         }
 
         private IEnumerator CooldownProcess()

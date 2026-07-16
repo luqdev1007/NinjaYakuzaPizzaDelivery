@@ -78,19 +78,55 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
 
             // Тайминги фаз были захардкожены (0.5f / 2f / 3f) — теперь из конфига.
             // DirectionChangeCooldown до этого лежал в конфиге мёртвым грузом.
+            //
+            // ДЕСИНХРОН СТАИ. Все призраки спавнятся в одном кадре (синхронный foreach
+            // в GameplayBootstrap и в ClearAllEnemiesStage) и входят в первую фазу
+            // одновременно, а длительности брали идентичные из конфига — отсюда
+            // «синхронные клоны». Лечится двумя независимыми вещами ниже: разбросом
+            // длительностей и стартовым оффсетом первой фазы.
+            //
+            // Источник — ЗАСЕЯННЫЙ поток, а не глобальный Random: длительности фаз
+            // определяют, когда призрак движется и где окажется, то есть это
+            // реплей-чувствительный путь наравне с направлением. Десинхрон от этого не
+            // страдает — разным призракам выпадают разные значения и из seeded-потока,
+            // а забег остаётся воспроизводимым.
             RandomMovementState randomMovementState = new RandomMovementState(
                 entity,
-                config.DirectionChangeCooldown,
+                Jitter(config.DirectionChangeCooldown, config.PhaseDurationJitter),
                 _gameplayRandom);
             EmptyState emptyState = new EmptyState();
 
             TimerService movementTimer = _timerServiceFactory.Create(config.MovementPhaseDuration);
             disposables.Add(movementTimer);
-            disposables.Add(randomMovementState.Entered.Subscribe(movementTimer.Restart));
+
+            // Первая фаза движения стартует со случайного ОСТАТКА длительности — это и
+            // есть стартовый фазовый оффсет: призрак входит в фазу так, будто она уже
+            // частично прошла. Каждый следующий заход берёт свежую разбросанную
+            // длительность, поэтому стая не сходится обратно со временем.
+            bool isFirstMovementPhase = true;
+
+            disposables.Add(randomMovementState.Entered.Subscribe(() =>
+            {
+                float duration = Jitter(config.MovementPhaseDuration, config.PhaseDurationJitter);
+
+                if (isFirstMovementPhase)
+                {
+                    duration *= _gameplayRandom.Range(0f, 1f);
+                    isFirstMovementPhase = false;
+                }
+
+                movementTimer.Restart(duration);
+            }));
 
             TimerService idleTimer = _timerServiceFactory.Create(config.IdlePhaseDuration);
             disposables.Add(idleTimer);
-            disposables.Add(emptyState.Entered.Subscribe(idleTimer.Restart));
+
+            // Простою отдельный стартовый оффсет не нужен: первый заход сюда случится
+            // уже после смещённой фазы движения.
+            disposables.Add(emptyState.Entered.Subscribe(() =>
+            {
+                idleTimer.Restart(Jitter(config.IdlePhaseDuration, config.PhaseDurationJitter));
+            }));
 
             FuncCondition movementTimerEndedCondition = new FuncCondition(() => movementTimer.IsOver);
             FuncCondition idleTimerEndedCondition = new FuncCondition(() => idleTimer.IsOver);
@@ -104,6 +140,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             stateMachine.AddTransition(emptyState, randomMovementState, idleTimerEndedCondition);
 
             return stateMachine;
+        }
+
+        /// <summary>
+        /// Разброс значения на долю jitter: 0.25 => [0.75x, 1.25x]. jitter = 0
+        /// возвращает исходное значение, то есть выключает десинхрон целиком.
+        /// Тянет из засеянного потока — см. комментарий в CreateRandomMovementStateMachine.
+        /// </summary>
+        private float Jitter(float value, float jitter)
+        {
+            if (jitter <= 0f)
+            {
+                return value;
+            }
+
+            return value * _gameplayRandom.Range(1f - jitter, 1f + jitter);
         }
 
         private AIStateMachine CreateAutoAttackStateMachine(Entity entity)

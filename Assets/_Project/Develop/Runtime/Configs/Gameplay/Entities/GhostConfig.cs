@@ -28,6 +28,20 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [Tooltip("Длительность фазы простоя между фазами движения")]
         [field: SerializeField] public float IdlePhaseDuration { get; private set; } = 1f;
 
+        // Разброс на экземпляр против «синхронных клонов»: все призраки спавнятся в
+        // одном кадре и раньше брали из конфига идентичные длительности, из-за чего
+        // фазы щёлкали в унисон. Одно поле на все три длительности — отдельные ручки
+        // на каждую пока не на что опереть.
+        //
+        // Значения берутся из ЗАСЕЯННОГО потока (IGameplayRandom), а не из глобального
+        // Random: длительности фаз определяют, когда призрак движется и где окажется,
+        // то есть это реплей-чувствительный путь наравне с направлением. Десинхрон при
+        // этом не страдает — разным призракам выпадают разные значения и из seeded-потока,
+        // а забег остаётся воспроизводимым.
+        [Tooltip("Разброс длительностей фаз на экземпляр: доля от значения (0.25 = ±25%). " +
+                 "Плейсхолдер под ручную подгонку. 0 = все призраки идентичны и синхронны.")]
+        [field: SerializeField, Range(0f, 0.9f)] public float PhaseDurationJitter { get; private set; } = 0.25f;
+
         [Header("Life Cycle")]
         [field: SerializeField] public float MaxHealth { get; private set; } = 10f;
         [field: SerializeField] public float DamageCooldown { get; private set; } = 0.1f;

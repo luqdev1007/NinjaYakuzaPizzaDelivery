@@ -19,6 +19,7 @@ MonoBehaviour:
   <DirectionChangeCooldown>k__BackingField: 0.5
   <MovementPhaseDuration>k__BackingField: 1.5
   <IdlePhaseDuration>k__BackingField: 1
+  <PhaseDurationJitter>k__BackingField: 0.25
   <MaxHealth>k__BackingField: 10
   <DamageCooldown>k__BackingField: 0.1
   <DeathProcessTime>k__BackingField: 0.2
