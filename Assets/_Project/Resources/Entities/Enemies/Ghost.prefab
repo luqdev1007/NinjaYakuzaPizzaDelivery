@@ -172,6 +172,7 @@ GameObject:
   - component: {fileID: 8267039545226137563}
   - component: {fileID: 1130839634098478934}
   - component: {fileID: 6732775899153542305}
+  - component: {fileID: 4193006852274319641}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -323,6 +324,27 @@ MonoBehaviour:
   _animator: {fileID: 1784155885393087696}
   _stateNames:
   - Ghost_Idle
+--- !u!114 &4193006852274319641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2306742963253549328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c4e1b7a2f5d40c3ab86e17d9f0c2b53, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  _spriteRenderer: {fileID: 2858558461669107319}
+  _minAlpha: 0.08
+  _maxAlpha: 0.49
+  _snapDuration: 0.02
+  _flickerDuration: 0.06
+  _minInterval: 0.15
+  _maxInterval: 1.2
+  _maxBurstFlickers: 3
+  _damageSuspendDuration: 0.45
 --- !u!1 &3607678793894935207
 GameObject:
   m_ObjectHideFlags: 0
