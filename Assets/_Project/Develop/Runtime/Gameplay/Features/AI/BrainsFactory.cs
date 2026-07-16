@@ -1,4 +1,5 @@
-﻿using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI.States;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
@@ -52,28 +53,32 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             return brain;
         }
 
-        public StateMachineBrain CreateGhostBrain(Entity entity)
+        // Конфиг пробрасывается параметром — так же, как EntitiesFactory.CreateGhost
+        // получает его от EnemiesFactory, у которой он уже на руках.
+        public StateMachineBrain CreateGhostBrain(Entity entity, GhostConfig config)
         {
-            AIStateMachine stateMachine = CreateRandomMovementStateMachine(entity);
+            AIStateMachine stateMachine = CreateRandomMovementStateMachine(entity, config);
             StateMachineBrain brain = new StateMachineBrain(stateMachine);
 
             _brainsContext.SetFor(entity, brain);
 
             return brain;
         }
-        
-        private AIStateMachine CreateRandomMovementStateMachine(Entity entity)
+
+        private AIStateMachine CreateRandomMovementStateMachine(Entity entity, GhostConfig config)
         {
             List<IDisposable> disposables = new List<IDisposable>();
 
-            RandomMovementState randomMovementState = new RandomMovementState(entity, 0.5f);
+            // Тайминги фаз были захардкожены (0.5f / 2f / 3f) — теперь из конфига.
+            // DirectionChangeCooldown до этого лежал в конфиге мёртвым грузом.
+            RandomMovementState randomMovementState = new RandomMovementState(entity, config.DirectionChangeCooldown);
             EmptyState emptyState = new EmptyState();
 
-            TimerService movementTimer = _timerServiceFactory.Create(2f);
+            TimerService movementTimer = _timerServiceFactory.Create(config.MovementPhaseDuration);
             disposables.Add(movementTimer);
             disposables.Add(randomMovementState.Entered.Subscribe(movementTimer.Restart));
 
-            TimerService idleTimer = _timerServiceFactory.Create(3f);
+            TimerService idleTimer = _timerServiceFactory.Create(config.IdlePhaseDuration);
             disposables.Add(idleTimer);
             disposables.Add(emptyState.Entered.Subscribe(idleTimer.Restart));
 
@@ -88,7 +93,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             stateMachine.AddTransition(randomMovementState, emptyState, movementTimerEndedCondition);
             stateMachine.AddTransition(emptyState, randomMovementState, idleTimerEndedCondition);
 
-            return stateMachine; 
+            return stateMachine;
         }
 
         private AIStateMachine CreateAutoAttackStateMachine(Entity entity)

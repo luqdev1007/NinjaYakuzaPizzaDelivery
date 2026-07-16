@@ -52,7 +52,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
                         _container.Resolve<DropLootService>(),
                         lootTable));
 
-                    _brainsFactory.CreateGhostBrain(entity);
+                    // Тайминги фаз блуждания теперь живут в конфиге, а не в хардкоде фабрики
+                    _brainsFactory.CreateGhostBrain(entity, ghostConfig);
                     break;
 
                 default:

@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: GhostConfig
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/Enemies/Ghost
-  <MovementSpeed>k__BackingField: 2
+  <MovementSpeed>k__BackingField: 5.5
   <LinearDrag>k__BackingField: 2
   <AngularDrag>k__BackingField: 2
-  <DirectionChangeCooldown>k__BackingField: 2
+  <DirectionChangeCooldown>k__BackingField: 0.5
+  <MovementPhaseDuration>k__BackingField: 1.5
+  <IdlePhaseDuration>k__BackingField: 1
   <MaxHealth>k__BackingField: 10
   <DamageCooldown>k__BackingField: 0.1
   <DeathProcessTime>k__BackingField: 0.2
