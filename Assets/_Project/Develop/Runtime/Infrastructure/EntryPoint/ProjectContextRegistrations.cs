@@ -18,6 +18,7 @@ using Assets._Project.Develop.Runtime.Utilities.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.Hints;
 using Assets._Project.Develop.Runtime.Utilities.LoadingScreen;
 using Assets._Project.Develop.Runtime.Utilities.ObjectsManagment;
+using Assets._Project.Develop.Runtime.Utilities.RandomManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using Assets._Project.Develop.Runtime.Utilities.Timer;
@@ -65,6 +66,11 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
 
             container.RegisterAsSingle(CreateTimerServiceFactory);
 
+            // Фабрика засеянных IGameplayRandom. Сама фабрика без состояния и живёт
+            // в project-скоупе рядом с TimerServiceFactory; засеянный инстанс на
+            // забег создаётся в gameplay-скоупе (см. GameplayContextRegistrations).
+            container.RegisterAsSingle(CreateRandomFactory);
+
             container.RegisterAsSingle(CreateLevelsProgressionService).NonLazy();
 
             container.RegisterAsSingle<IInputService>(CreateDesktopInput);
@@ -110,6 +116,9 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
 
         private static TimerServiceFactory CreateTimerServiceFactory(DIContainer container)
             => new TimerServiceFactory(container);
+
+        private static RandomFactory CreateRandomFactory(DIContainer container)
+            => new RandomFactory();
 
         private static LevelsProgressionService CreateLevelsProgressionService(DIContainer container)
             => new LevelsProgressionService(container.Resolve<PlayerDataProvider>());
