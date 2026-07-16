@@ -1,4 +1,5 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Utilities.RandomManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using Assets._Project.Develop.Runtime.Utilities.StateMachineCore;
 using UnityEngine;
@@ -8,13 +9,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
     public class RandomMovementState : State, IUpdatableState
     {
         private readonly ReactiveVariable<Vector2> _movementDirection;
+        private readonly IGameplayRandom _random;
         private readonly float _cooldown;
         private float _timer;
 
-        public RandomMovementState(Entity entity, float cooldown)
+        public RandomMovementState(Entity entity, float cooldown, IGameplayRandom random)
         {
             _movementDirection = entity.MoveDirection;
             _cooldown = cooldown;
+            _random = random;
         }
 
         public override void Enter()
@@ -42,8 +45,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
 
         private void GenerateNewDirection()
         {
-            // Генерируем случайный угол для 2D пространства (XY)
-            float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+            // Направление — реплей-чувствительное решение, поэтому берётся из
+            // засеянного IGameplayRandom, а не из глобального UnityEngine.Random.
+            // Раньше здесь был глобальный поток, и любой визуальный рандом (глитч
+            // призрака) сдвигал последовательность, меняя выпадающее направление.
+            float angle = _random.Range(0f, 360f) * Mathf.Deg2Rad;
             _movementDirection.Value = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
         }
     }

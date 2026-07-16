@@ -37,6 +37,7 @@ using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.RandomManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System.Collections.Generic;
 using UnityEngine;
@@ -506,7 +507,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // attack effects
                 .AddSystem(new HitStopSystem(_container.Resolve<HitStopService>(), _container.Resolve<CameraService>()))
-                .AddSystem(new DoubleAttackSystem())
+                // Прок двойной атаки влияет на урон => реплей-чувствителен, поэтому
+                // система получает засеянный поток, а не глобальный Random.
+                .AddSystem(new DoubleAttackSystem(_container.Resolve<IGameplayRandom>()))
                 .AddSystem(new DoubleAttackCooldownSystem())
 
                 // slash attack

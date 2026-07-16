@@ -165,7 +165,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         private static InGameTimerFeatureService CreateInGameTimerFeatureService(DIContainer container) => new InGameTimerFeatureService();
 
-        private static DropLootService CreateDropLootService(DIContainer container) => new DropLootService(container.Resolve<LootFactory>());
+        private static DropLootService CreateDropLootService(DIContainer container)
+            => new DropLootService(container.Resolve<LootFactory>(), container.Resolve<IGameplayRandom>());
 
         private static LootFactory CreateLootFactory(DIContainer container) => new LootFactory(container);
 

@@ -1,8 +1,8 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Utilities.RandomManagment;
 using System.Linq;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 {
@@ -10,9 +10,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
     {
         private readonly LootFactory _lootFactory;
 
-        public DropLootService(LootFactory lootFactory)
+        // Дроп — реплей-чувствительная ветка (влияет на заработок за забег),
+        // поэтому весь рандом здесь идёт из засеянного потока, а не из глобального
+        // UnityEngine.Random.
+        private readonly IGameplayRandom _random;
+
+        public DropLootService(LootFactory lootFactory, IGameplayRandom random)
         {
             _lootFactory = lootFactory;
+            _random = random;
         }
 
         public void DropLootFor(Entity entity, LootTableConfig lootTable)
@@ -22,16 +28,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 
         private void DropLootInternal(Vector3 position, LootTableConfig lootTable)
         {
-            int attempts = Random.Range(lootTable.TotalDropCountRange.x, lootTable.TotalDropCountRange.y + 1);
+            // "+ 1" здесь и ниже компенсируют исключающий максимум int-Range —
+            // семантика сохранена ровно как была у UnityEngine.Random.
+            int attempts = _random.Range(lootTable.TotalDropCountRange.x, lootTable.TotalDropCountRange.y + 1);
 
             for (int i = 0; i < attempts; i++)
             {
                 LootDropEntry entry = GetRandomEntry(lootTable);
-                int count = Random.Range(entry.CountRange.x, entry.CountRange.y + 1);
+                int count = _random.Range(entry.CountRange.x, entry.CountRange.y + 1);
 
                 for (int j = 0; j < count; j++)
                 {
-                    Vector3 offset = new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(-0.3f, 0.3f), 0);
+                    Vector3 offset = new Vector3(_random.Range(-0.3f, 0.3f), _random.Range(-0.3f, 0.3f), 0);
                     _lootFactory.Create(entry.Config, position + offset);
                 }
             }
@@ -40,7 +48,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
         private LootDropEntry GetRandomEntry(LootTableConfig lootTable)
         {
             int totalWeight = lootTable.LootEntries.Sum(e => e.Weight);
-            int randomValue = Random.Range(0, totalWeight);
+
+            // КРИТИЧНО: корректность взвешенного выбора держится на ИСКЛЮЧАЮЩЕМ
+            // максимуме int-Range. Если бы максимум включался, randomValue мог бы
+            // стать равен totalWeight, ни одна запись не прошла бы проверку
+            // randomValue < currentWeight, и выбор молча падал бы на fallback ниже,
+            // перекашивая распределение в пользу первой записи.
+            // IGameplayRandom.Range(int, int) максимум исключает — проверено счётом.
+            int randomValue = _random.Range(0, totalWeight);
             int currentWeight = 0;
 
             foreach (var entry in lootTable.LootEntries)

@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI.States;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
+using Assets._Project.Develop.Runtime.Utilities.RandomManagment;
 using Assets._Project.Develop.Runtime.Utilities.Timer;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
         private readonly IInputService _inputService;
         private readonly EntitiesLifeContext _entitiesLifeContext;
 
+        // Геймплейный (засеянный) поток — уходит в решения о направлении движения.
+        // Визуальный рандом призраков сюда НЕ ходит, он остаётся на глобальном
+        // UnityEngine.Random.
+        private readonly IGameplayRandom _gameplayRandom;
+
         public BrainsFactory(DIContainer container)
         {
             _container = container;
@@ -25,6 +31,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             _brainsContext = _container.Resolve<AIBrainsContext>();
             _inputService = _container.Resolve<IInputService>();
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
+            _gameplayRandom = _container.Resolve<IGameplayRandom>();
         }
 
         public StateMachineBrain CreateMainHeroBrain(Entity entity)
@@ -71,7 +78,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
 
             // Тайминги фаз были захардкожены (0.5f / 2f / 3f) — теперь из конфига.
             // DirectionChangeCooldown до этого лежал в конфиге мёртвым грузом.
-            RandomMovementState randomMovementState = new RandomMovementState(entity, config.DirectionChangeCooldown);
+            RandomMovementState randomMovementState = new RandomMovementState(
+                entity,
+                config.DirectionChangeCooldown,
+                _gameplayRandom);
             EmptyState emptyState = new EmptyState();
 
             TimerService movementTimer = _timerServiceFactory.Create(config.MovementPhaseDuration);

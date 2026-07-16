@@ -1,10 +1,9 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
-using Assets._Project.Develop.Runtime.Utilities.Extensions;
+using Assets._Project.Develop.Runtime.Utilities.RandomManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using DG.Tweening;
-using NUnit.Framework;
 using System;
 using UnityEngine;
 
@@ -16,11 +15,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private ReactiveVariable<float> _procChance;
         private ReactiveVariable<float> _currentCooldown;
         private ReactiveVariable<float> _baseCooldown;
-        private ICompositeCondition _canDoubleAttack;        
+        private ICompositeCondition _canDoubleAttack;
 
         private IDisposable _disposable;
 
+        // Прок влияет на нанесённый урон, поэтому решение реплей-чувствительное и
+        // берётся из засеянного потока. Раньше шло через статический GameRandom,
+        // который сидел на глобальном UnityEngine.Random.
+        private readonly IGameplayRandom _random;
+
         private const float ExtraAttackDelay = 0.1f;
+
+        public DoubleAttackSystem(IGameplayRandom random)
+        {
+            _random = random;
+        }
 
         public void OnInit(Entity entity)
         {
@@ -40,10 +49,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             if (_canDoubleAttack.Evaluate() == false)
                 return;
 
-            if (GameRandom.IsChanceProceed(_procChance.Value) == false)
+            // Эквивалент прежнего GameRandom.IsChanceProceed: та же формула
+            // Range(0, 100) <= percent, тот же включающий float-максимум —
+            // семантика прока не изменилась, изменился только источник.
+            if (IsChanceProceed(_procChance.Value) == false)
                 return;
 
             DOVirtual.DelayedCall(ExtraAttackDelay, ExecuteExtraHit).SetUpdate(true);
+        }
+
+        private bool IsChanceProceed(float percent)
+        {
+            return _random.Range(0f, 100f) <= percent;
         }
 
         private void ExecuteExtraHit()

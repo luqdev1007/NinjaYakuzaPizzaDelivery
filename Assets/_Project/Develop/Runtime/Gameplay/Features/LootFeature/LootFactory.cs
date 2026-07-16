@@ -4,28 +4,34 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilities.RandomManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
 {
     public class LootFactory
     {
         private readonly EntitiesFactory _entityFactory;
-        private readonly EntitiesLifeContext _entitiesLifeContext; 
+        private readonly EntitiesLifeContext _entitiesLifeContext;
+
+        // Засеянный поток: множитель ниже определяет не только визуал, но и
+        // количество валюты (finalExp/finalCoins) — то есть заработок за забег.
+        private readonly IGameplayRandom _random;
 
         public LootFactory(DIContainer container)
         {
             _entityFactory = container.Resolve<EntitiesFactory>();
-            _entitiesLifeContext = container.Resolve<EntitiesLifeContext>(); 
+            _entitiesLifeContext = container.Resolve<EntitiesLifeContext>();
+            _random = container.Resolve<IGameplayRandom>();
         }
 
         public Entity Create(LootConfig config, Vector3 position)
         {
             Entity loot = _entityFactory.CreatePullable(config, position);
 
-            float randomMultiplier = Random.Range(0.5f, 3f);
+            // Result-relevant: уходит в finalExp/finalCoins, а значит в лидерборд.
+            float randomMultiplier = _random.Range(0.5f, 3f);
 
             SetupLootComponents(loot, config, randomMultiplier);
             ApplyPhysicsAndVisuals(loot, config, randomMultiplier);
@@ -85,8 +91,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature
             if (rb != null)
             {
                 rb.simulated = true;
-                float forceX = Random.Range(config.LaunchForceRangeX.x, config.LaunchForceRangeX.y);
-                float forceY = Random.Range(config.LaunchForceRangeY.x, config.LaunchForceRangeY.y);
+                // Физика лута — тоже засеянный поток.
+                float forceX = _random.Range(config.LaunchForceRangeX.x, config.LaunchForceRangeX.y);
+                float forceY = _random.Range(config.LaunchForceRangeY.x, config.LaunchForceRangeY.y);
 
                 rb.AddForce(new Vector2(forceX, forceY) * multiplier, ForceMode2D.Impulse);
             }
