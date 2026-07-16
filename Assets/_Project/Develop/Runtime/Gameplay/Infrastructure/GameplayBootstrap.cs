@@ -56,6 +56,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             if (_sceneContext == null)
                 throw new NullReferenceException("GameplaySceneContext missing in Level Prefab");
 
+            // СИДИРОВАНИЕ ГЕЙМПЛЕЙНОГО РАНДОМА.
+            // Порядок здесь важен и держит весь детерминизм забега:
+            //   1. seed пишется в _inputArgs ДО регистраций — Process читает его при
+            //      создании IGameplayRandom;
+            //   2. _container.Initialize() ниже создаёт NonLazy-инстанс уже засеянным;
+            //   3. только после этого появляется первый потребитель рандома — спавн
+            //      врагов (ниже по методу) и, позже, ClearAllEnemiesStage.
+            // Источник seed недетерминирован намеренно: детерминизм нужен ПОСЛЕ его
+            // фиксации, а сам забег должен быть уникальным. Новый seed на каждый вход,
+            // включая рестарт (Initialize зовётся на каждую загрузку сцены).
+            _inputArgs.Seed = GenerateRunSeed();
+
             GameplayContextRegistrations.Process(_container, _inputArgs, _sceneContext);
 
             _container.Initialize();
@@ -98,6 +110,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             yield break;
         }
+
+        // Guid, а не DateTime/TickCount: у тиков грубое разрешение и соседние запуски
+        // могли бы получить близкие seed. Хеш Guid распределён равномерно.
+        private int GenerateRunSeed() => Guid.NewGuid().GetHashCode();
 
         public override void Run()
         {

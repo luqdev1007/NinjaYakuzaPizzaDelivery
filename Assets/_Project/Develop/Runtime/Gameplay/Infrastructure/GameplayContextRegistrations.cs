@@ -24,6 +24,7 @@ using Assets._Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
 using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilities.RandomManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using UnityEngine;
 
@@ -46,6 +47,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateGameplayPopupService).NonLazy();
             container.RegisterAsSingle(CreateGameplayScreenPresenter).NonLazy();
             container.RegisterAsSingle(CreateGameplayPresentersFactory);
+
+            // RNG (геймплейный поток)
+            // NonLazy обязателен: Registration.OnInitialize() и создание инстанса
+            // происходят только для NonLazy-регистраций либо при первом Resolve —
+            // без него сервис не существовал бы до первого потребителя, и момент
+            // сидирования был бы не там, где мы его задумали.
+            // Скоуп gameplay: контейнер сцены пересоздаётся на каждый переход
+            // (SceneSwitcherService), поэтому свежий засеянный инстанс на забег
+            // достаётся бесплатно.
+            container.RegisterAsSingle(CreateGameplayRandom).NonLazy();
 
             // Core Entities
             container.RegisterAsSingle(CreateEntitiesFactory).NonLazy();
@@ -94,6 +105,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             // Camera
             container.RegisterAsSingle(CreateCameraService);
         }
+
+        // Seed берётся из GameplayInputArgs — его выставил GameplayBootstrap.Initialize()
+        // непосредственно перед вызовом Process. Сам инстанс делает RandomFactory из
+        // project-скоупа (паттерн TimerServiceFactory).
+        private static IGameplayRandom CreateGameplayRandom(DIContainer container)
+            => container.Resolve<RandomFactory>().Create(_inputArgs.Seed);
 
         private static BuffService CreateBuffService(DIContainer container)
         {
