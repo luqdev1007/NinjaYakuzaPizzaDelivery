@@ -20,8 +20,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         private IDisposable _disposable;
 
         // Прок влияет на нанесённый урон, поэтому решение реплей-чувствительное и
-        // берётся из засеянного потока. Раньше шло через статический GameRandom,
-        // который сидел на глобальном UnityEngine.Random.
+        // берётся из засеянного потока. Раньше шло через глобальный статический
+        // рандом на UnityEngine.Random — недетерминированный, из-за чего забег
+        // было не воспроизвести. Теперь источник инъектируется и засеян на забег.
         private readonly IGameplayRandom _random;
 
         private const float ExtraAttackDelay = 0.1f;
@@ -49,9 +50,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             if (_canDoubleAttack.Evaluate() == false)
                 return;
 
-            // Эквивалент прежнего GameRandom.IsChanceProceed: та же формула
-            // Range(0, 100) <= percent, тот же включающий float-максимум —
-            // семантика прока не изменилась, изменился только источник.
+            // Формула эквивалентна прежней глобальной: Range(0, 100) <= percent,
+            // тот же включающий float-максимум — семантика прока не изменилась,
+            // изменился только источник рандома.
             if (IsChanceProceed(_procChance.Value) == false)
                 return;
 
