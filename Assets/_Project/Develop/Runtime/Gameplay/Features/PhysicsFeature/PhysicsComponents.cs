@@ -27,11 +27,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature
         public ReactiveVariable<float> Value;
     }
 
-    public class AngularDrag : IEntityComponent
-    {
-        public ReactiveVariable<float> Value;
-    }
-
     public class LinearDrag : IEntityComponent
     {
         public ReactiveVariable<float> Value;

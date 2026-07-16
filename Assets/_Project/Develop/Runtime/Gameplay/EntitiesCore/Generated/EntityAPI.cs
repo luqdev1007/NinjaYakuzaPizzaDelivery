@@ -428,30 +428,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.BaseGravityScale() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.AngularDrag AngularDragC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.AngularDrag>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> AngularDrag => AngularDragC.Value;
-
-		public bool TryGetAngularDrag(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.AngularDrag component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAngularDrag()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.AngularDrag() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAngularDrag(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.AngularDrag() {Value = value}); 
-		}
-
 		public Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.LinearDrag LinearDragC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.LinearDrag>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> LinearDrag => LinearDragC.Value;

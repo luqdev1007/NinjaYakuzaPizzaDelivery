@@ -587,7 +587,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // Physics
                 .AddLinearDrag(new ReactiveVariable<float>(ghostConfig.LinearDrag))
-                .AddAngularDrag(new ReactiveVariable<float>(ghostConfig.AngularDrag))
 
                 // Movement
                 .AddIsMoving()

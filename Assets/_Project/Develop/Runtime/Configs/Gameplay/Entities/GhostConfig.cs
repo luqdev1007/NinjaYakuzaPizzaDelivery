@@ -12,7 +12,6 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [Header("Movement")]
         [field: SerializeField] public float MovementSpeed { get; private set; } = 5.5f;
         [field: SerializeField] public float LinearDrag { get; private set; } = 2f;
-        [field: SerializeField] public float AngularDrag { get; private set; } = 2f;
 
         [Header("AI Behaviour")]
         // Тайминги фаз блуждания. Раньше были захардкожены в
