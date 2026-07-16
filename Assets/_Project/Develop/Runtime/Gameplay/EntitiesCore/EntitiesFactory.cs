@@ -576,8 +576,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             entity
                 // Common
                 .AddLookDirectionX(new ReactiveVariable<float>(1))
-                .AddKnockbackTimer(new ReactiveVariable<float>(ghostConfig.KnockbackTimer))
-                .AddKnockbackInitialTimer(new ReactiveVariable<float>(ghostConfig.KnockbackTimer))
+                .AddKnockbackDuration(new ReactiveVariable<float>(ghostConfig.KnockbackDuration))
+                // elapsed стартует РАВНЫМ duration => knockback-окно с рождения ЗАКРЫТО
+                // и призрак сразу двигается. Открывает окно только DamageKnockbackSystem,
+                // обнуляя elapsed при ударе мечом.
+                .AddKnockbackElapsedTime(new ReactiveVariable<float>(ghostConfig.KnockbackDuration))
 
                 // Physics
                 .AddLinearDrag(new ReactiveVariable<float>(ghostConfig.LinearDrag))
@@ -619,7 +622,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappledTarget.Value == false))
-                .Add(new FuncCondition(() => entity.KnockbackInitialTimer.Value < entity.KnockbackTimer.Value))
+                // Двигаться нельзя, ПОКА идёт knockback-окно (elapsed < duration).
+                // Окно истекло (elapsed >= duration) — движение разрешено.
+                // Раньше знак был инвертирован: призрак стоял с рождения, а после
+                // первого удара улетал навсегда.
+                .Add(new FuncCondition(() => entity.KnockbackElapsedTime.Value >= entity.KnockbackDuration.Value))
                 ;
 
             ICompositeCondition canApplyDamage = new CompositeCondition()

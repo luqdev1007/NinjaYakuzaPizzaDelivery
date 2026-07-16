@@ -1,5 +1,6 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 {
@@ -26,6 +27,13 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 
         [Header("Loot")]
         [field: SerializeField] public LootTableConfig LootTable { get; private set; }
-        [field: SerializeField] public float KnockbackTimer { get; private set; }
+
+        // Длительность knockback-окна после удара мечом. Переименовано из KnockbackTimer:
+        // имя врало — это не таймер, а константа-граница для KnockbackElapsedTime.
+        // FormerlySerializedAs по имени backing-поля автосвойства, чтобы не потерять
+        // выставленное в ассете значение (0.3).
+        [field: SerializeField]
+        [field: FormerlySerializedAs("<KnockbackTimer>k__BackingField")]
+        public float KnockbackDuration { get; private set; }
     }
 }

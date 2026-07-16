@@ -356,13 +356,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Sensors.IsTouchDeathMask() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackInitialTimer KnockbackInitialTimerC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackInitialTimer>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackElapsedTime KnockbackElapsedTimeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackElapsedTime>();
 
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> KnockbackInitialTimer => KnockbackInitialTimerC.Value;
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> KnockbackElapsedTime => KnockbackElapsedTimeC.Value;
 
-		public bool TryGetKnockbackInitialTimer(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		public bool TryGetKnockbackElapsedTime(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackInitialTimer component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackElapsedTime component);
 			if (result)
 				value = component.Value;
 			else
@@ -370,23 +370,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return result;
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddKnockbackInitialTimer()
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddKnockbackElapsedTime()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackInitialTimer() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackElapsedTime() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddKnockbackInitialTimer(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddKnockbackElapsedTime(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackInitialTimer() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackElapsedTime() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackTimer KnockbackTimerC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackTimer>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackDuration KnockbackDurationC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackDuration>();
 
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> KnockbackTimer => KnockbackTimerC.Value;
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> KnockbackDuration => KnockbackDurationC.Value;
 
-		public bool TryGetKnockbackTimer(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		public bool TryGetKnockbackDuration(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackTimer component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackDuration component);
 			if (result)
 				value = component.Value;
 			else
@@ -394,14 +394,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return result;
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddKnockbackTimer()
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddKnockbackDuration()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackTimer() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackDuration() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddKnockbackTimer(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddKnockbackDuration(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackTimer() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.KnockbackDuration() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.BaseGravityScale BaseGravityScaleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature.BaseGravityScale>();
