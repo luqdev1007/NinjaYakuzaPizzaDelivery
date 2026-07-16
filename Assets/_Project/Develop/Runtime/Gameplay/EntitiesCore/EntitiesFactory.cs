@@ -670,6 +670,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
                 .AddSystem(new DealDamageOnContactSystem())
 
+                // ПОРЯДОК ВАЖЕН: обе системы на fixed-канале, а Entity гоняет
+                // _fixedUpdatables в порядке регистрации. Стабилизация идёт ПЕРВОЙ,
+                // движение — ПОСЛЕДНИМ, поэтому в физ-кадре именно движение пишет
+                // linearVelocity последним и клампит Box2D-импульс от контакта.
+                // Это и есть механизм, из-за которого призрака не выбрасывает за карту.
                 .AddSystem(new PhysicsStabilizationSystem())
                 .AddSystem(new SimpleRigidbodyMovementSystem())
                 .AddSystem(new FlipDirectionSystem())
