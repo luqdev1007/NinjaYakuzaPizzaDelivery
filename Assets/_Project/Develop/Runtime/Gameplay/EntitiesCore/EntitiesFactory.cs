@@ -664,7 +664,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new DamageKnockbackTimerSystem())
                 .AddSystem(new DamageKnockbackSystem())
 
+                // apply damage
+                // ApplyDamageCooldownSystem призраку не добавляли — DamageCooldownTimer
+                // никогда не тикал, из-за чего DamageCooldown (0.1) в конфиге был мёртв,
+                // а canApplyDamage читал вечный ноль. Цепочка событийная:
+                // ApplyDamageSystem гейтит по canApplyDamage и инвокает TakeDamageEvent,
+                // на который кулдаун взводит окно и дальше тикает его на fixed.
                 .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new ApplyDamageCooldownSystem())
 
                 .AddSystem(new BodyContactDetectingSystem())
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
