@@ -169,6 +169,7 @@ GameObject:
   - component: {fileID: 5807132304633459110}
   - component: {fileID: 1784155885393087696}
   - component: {fileID: 2858558461669107319}
+  - component: {fileID: 8152581926173660806}
   - component: {fileID: 8267039545226137563}
   - component: {fileID: 1130839634098478934}
   - component: {fileID: 6732775899153542305}
@@ -334,17 +335,40 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9c4e1b7a2f5d40c3ab86e17d9f0c2b53, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 2858558461669107319}
   _minAlpha: 0.08
-  _maxAlpha: 0.49
   _snapDuration: 0.02
   _flickerDuration: 0.06
   _minInterval: 0.15
   _maxInterval: 1.2
   _maxBurstFlickers: 3
+  _minStartDelay: 0
+  _maxStartDelay: 1.5
   _damageSuspendDuration: 0.45
+--- !u!114 &8152581926173660806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2306742963253549328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7e04b1a9d382f65b1c47e0da6293f88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.GhostVisualVariationView
+  _viewContainer: {fileID: 5149040113408065364}
+  _spriteRenderer: {fileID: 2858558461669107319}
+  _animator: {fileID: 1784155885393087696}
+  _minScale: 0.85
+  _maxScale: 1.15
+  _minBaseAlpha: 0.4
+  _maxBaseAlpha: 0.6
+  _tintStrength: 0.12
+  _minAnimatorSpeed: 0.9
+  _maxAnimatorSpeed: 1.1
 --- !u!1 &3607678793894935207
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,6 +9,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
     // Глитч-мерцание призрака: резкие короткие пропадания альфы, нерегулярные по
     // времени — «нестабильная сущность / помехи», а не плавный синус-пульс.
     //
+    // Рандом здесь — ГЛОБАЛЬНЫЙ UnityEngine.Random, сознательно: мерцание ни на что
+    // в симуляции не влияет. Геймплейная ветка ушла на засеянный IGameplayRandom,
+    // поэтому эти вызовы больше не сдвигают ни направление движения, ни разброс фаз.
+    //
     // КООРДИНАЦИЯ С ApplyDamageView (оба висят на View и делят один SpriteRenderer):
     // 1. Приоритет у damage-вспышки. На TakeDamageEvent глитч гасит себя и уходит
     //    в паузу на _damageSuspendDuration, после чего перезапускается. Вспышка
@@ -22,9 +26,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
     // 3. Пауза переживает DOKill вспышки: DOVirtual.DelayedCall не привязан к
     //    рендереру как к цели, поэтому его тот DOKill не заденет.
     // 4. _originalColor в ApplyDamageView снимается в его OnEntityStartedWork.
-    //    Глитч в OnEntityStartedWork цвет НЕ трогает (только читает) и первую
-    //    вспышку планирует через интервал — иначе вспышка зафиксировала бы
-    //    случайную фазу мерцания как «оригинал».
+    //    Глитч в OnEntityStartedWork цвет НЕ трогает (только читает базу) и первую
+    //    серию планирует через задержку — иначе вспышка зафиксировала бы случайную
+    //    фазу мерцания как «оригинал».
     public class GhostGlitchView : EntityView
     {
         [Header("Renderer")]
@@ -33,11 +37,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
         [Header("Alpha")]
         [Tooltip("Альфа в момент глитч-пропадания")]
         [SerializeField] private float _minAlpha = 0.08f;
-
-        [Tooltip("Базовая альфа призрака. Должна совпадать с альфой, выставленной " +
-                 "на SpriteRenderer (0.49), иначе после damage-вспышки будет заметный скачок: " +
-                 "ApplyDamageView восстанавливает свой _originalColor, снятый с рендерера.")]
-        [SerializeField] private float _maxAlpha = 0.49f;
 
         [Header("Timing")]
         [Tooltip("Резкость фронта. Держать очень малым — мерцание должно быть рубленым, не плавным")]
@@ -53,6 +52,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
         [Tooltip("Максимум мерцаний подряд в одной серии (1..N, выбирается случайно)")]
         [SerializeField] private int _maxBurstFlickers = 3;
 
+        [Header("Start Offset")]
+        [Tooltip("Случайная задержка перед ПЕРВОЙ серией. Без неё все призраки, заспавненные " +
+                 "в одном кадре, начинали мерцать в один такт — интервалы разводят их только потом")]
+        [SerializeField] private float _minStartDelay = 0f;
+        [SerializeField] private float _maxStartDelay = 1.5f;
+
         [Header("Damage Coordination")]
         [Tooltip("На сколько глитч уступает damage-вспышке. Обязан быть БОЛЬШЕ полной " +
                  "длительности вспышки ApplyDamageView (_flashDuration * 2 из-за Yoyo-лупа; " +
@@ -61,13 +66,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
 
         private IDisposable _damageEventDisposable;
         private Sequence _glitchSequence;
-        private Tween _resumeCall;
+        private Tween _pendingCall;
+
+        // Базовая альфа СНИМАЕТСЯ С РЕНДЕРЕРА, а не берётся из сериализованной
+        // константы. Раньше здесь жило поле _maxAlpha = 0.49, и глитч навязывал его
+        // в двух местах — из-за чего любая per-instance базовая прозрачность
+        // проживала до первого мерцания и затиралась.
+        // GhostVisualVariationView стоит на View ВЫШЕ по списку компонентов, значит
+        // его OnEntityStartedWork уже выставил персональную альфу к этому моменту.
+        private float _baseAlpha;
 
         protected override void OnEntityStartedWork(Entity entity)
         {
             _damageEventDisposable = entity.TakeDamageEvent.Subscribe(OnDamaged);
 
-            ScheduleNextGlitch();
+            _baseAlpha = _spriteRenderer.color.a;
+
+            // Первая серия — через случайную задержку, чтобы стая не мигала в такт.
+            _pendingCall = DOVirtual.DelayedCall(
+                UnityEngine.Random.Range(_minStartDelay, _maxStartDelay),
+                ScheduleNextGlitch,
+                false);
         }
 
         public override void Cleanup(Entity entity)
@@ -89,7 +108,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
             // выставит и восстановит сама ApplyDamageView.
             KillOwnTweens();
 
-            _resumeCall = DOVirtual.DelayedCall(_damageSuspendDuration, RestartGlitch, false);
+            _pendingCall = DOVirtual.DelayedCall(_damageSuspendDuration, RestartGlitch, false);
         }
 
         private void RestartGlitch()
@@ -102,7 +121,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
             // Вспышка уже закончилась и вернула свой _originalColor — приводим альфу
             // к базовой явно, чтобы глитч всегда стартовал от известного состояния.
             Color color = _spriteRenderer.color;
-            color.a = _maxAlpha;
+            color.a = _baseAlpha;
             _spriteRenderer.color = color;
 
             ScheduleNextGlitch();
@@ -118,7 +137,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
             {
                 sequence.Append(_spriteRenderer.DOFade(_minAlpha, _snapDuration).SetEase(Ease.Linear));
                 sequence.AppendInterval(UnityEngine.Random.Range(_flickerDuration * 0.5f, _flickerDuration));
-                sequence.Append(_spriteRenderer.DOFade(_maxAlpha, _snapDuration).SetEase(Ease.Linear));
+                sequence.Append(_spriteRenderer.DOFade(_baseAlpha, _snapDuration).SetEase(Ease.Linear));
 
                 if (i < flickers - 1)
                 {
@@ -145,13 +164,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
                 _glitchSequence.Kill();
             }
 
-            if (_resumeCall != null && _resumeCall.IsActive())
+            if (_pendingCall != null && _pendingCall.IsActive())
             {
-                _resumeCall.Kill();
+                _pendingCall.Kill();
             }
 
             _glitchSequence = null;
-            _resumeCall = null;
+            _pendingCall = null;
         }
     }
 }
