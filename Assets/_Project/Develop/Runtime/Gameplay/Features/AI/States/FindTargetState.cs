@@ -30,7 +30,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
 
             if (_scanTimer <= 0f)
             {
-                _currentTarget.Value = _targetSelector.SelectTargetFrom(_entitiesLifeContext.Entities);
+                _currentTarget.Value = _targetSelector.SelectTargetFrom(_entitiesLifeContext.Entities, null, float.MaxValue);
                 _scanTimer = ScanInterval;
             }
         }

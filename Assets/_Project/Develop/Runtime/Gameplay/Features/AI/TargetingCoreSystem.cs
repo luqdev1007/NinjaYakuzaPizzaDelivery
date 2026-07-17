@@ -1,7 +1,8 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI.States;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
+using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
@@ -65,7 +66,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
                 if (_holdTimer >= _holdThreshold)
                 {
                     ToggleTargetingSystem();
-                    _holdActionTriggered = true; 
+                    _holdActionTriggered = true;
                 }
             }
 
@@ -80,13 +81,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             }
         }
 
-
         private void ProcessTapAction()
         {
-            if (!_isTargetingActive.Value) 
+            if (!_isTargetingActive.Value)
                 return;
 
             Entity nextTarget = FindNextClosestTarget(_currentTarget.Value);
+
             if (nextTarget != null)
             {
                 _currentTarget.Value = nextTarget;
@@ -106,17 +107,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
                 // Ручное ВКЛЮЧЕНИЕ системы
                 _isTargetingActive.Value = true;
 
-                // Сразу пытаемся захватить кого-то в радиусе, если он есть
-                Entity closest = _targetSelector.SelectTargetFrom(_entitiesLifeContext.Entities);
-                if (closest != null && GetSqrDistanceTo(closest) <= _sqrMaxScanRadius)
-                {
-                    _currentTarget.Value = closest;
-                }
-                else
-                {
-                    // Если никого нет, цель остается null, но сама система РАБОТАЕТ и ждет врагов
-                    _currentTarget.Value = null;
-                }
+                // Сразу пытаемся захватить ближайшего в радиусе (радиус — внутри селектора).
+                // Никого нет -> цель остаётся null, но сама система РАБОТАЕТ и ждёт врагов.
+                _currentTarget.Value = _targetSelector.SelectTargetFrom(
+                    _entitiesLifeContext.Entities, null, _sqrMaxScanRadius);
             }
         }
 
@@ -127,53 +121,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             // Если текущей цели нет, она умерла или убежала слишком далеко
             if (current == null || !current.HasComponent<TakeDamageRequest>() || GetSqrDistanceTo(current) > _sqrMaxScanRadius)
             {
-                // Локатор ищет новую цель
-                Entity next = _targetSelector.SelectTargetFrom(_entitiesLifeContext.Entities);
-
-                if (next != null && GetSqrDistanceTo(next) <= _sqrMaxScanRadius)
-                {
-                    _currentTarget.Value = next;
-                }
-                else
-                {
-                    // КРИТИЧЕСКОЕ ИЗМЕНЕНИЕ: Врагов нет. 
-                    // Мы просто скидываем таргет, но НЕ выключаем _isTargetingActive!
-                    _currentTarget.Value = null;
-                }
+                // Локатор ищет замену тем же единым проходом.
+                // Врагов нет -> селектор вернёт null: скидываем таргет, но НЕ выключаем _isTargetingActive.
+                _currentTarget.Value = _targetSelector.SelectTargetFrom(
+                    _entitiesLifeContext.Entities, null, _sqrMaxScanRadius);
             }
         }
 
         private Entity FindNextClosestTarget(Entity currentTarget)
         {
-            Entity nextClosest = null;
-            float minSqrDistance = float.MaxValue;
-
-            foreach (Entity target in _entitiesLifeContext.Entities)
-            {
-                if (target == _selfEntity || target == currentTarget) 
-                    continue;
-
-                if (!target.HasComponent<TakeDamageRequest>()) 
-                    continue;
-
-                // if (EntitiesHelper.IsSameTeam(_selfEntity, target))
-                // continue;
-
-                float sqrDist = GetSqrDistanceTo(target);
-                if (sqrDist < minSqrDistance && sqrDist <= _sqrMaxScanRadius)
-                {
-                    minSqrDistance = sqrDist;
-                    nextClosest = target;
-                }
-            }
-
-            return nextClosest ?? currentTarget;
-        }
-
-        private void ClearTargeting()
-        {
-            _currentTarget.Value = null;
-            _isTargetingActive.Value = false;
+            // Исключаем текущую цель, чтобы тап переключал на следующую валидную.
+            // Fallback: селектор вернул null -> остаёмся на текущей цели.
+            return _targetSelector.SelectTargetFrom(
+                _entitiesLifeContext.Entities, currentTarget, _sqrMaxScanRadius) ?? currentTarget;
         }
 
         private float GetSqrDistanceTo(Entity target)

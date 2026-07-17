@@ -17,12 +17,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
             _sourceTransform = entity.Transform;
         }
 
-        // Legacy-перегрузка: удаляется на этапе маршрутизации через единый селектор.
-        public Entity SelectTargetFrom(IEnumerable<Entity> targets)
-        {
-            return SelectTargetFrom(targets, null, float.MaxValue);
-        }
-
         public Entity SelectTargetFrom(IEnumerable<Entity> targets, Entity excluded, float sqrRadius)
         {
             Entity closestTarget = null;
