@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
@@ -20,7 +20,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             DamageData data = new DamageData
             {
                 Amount = damage,
-                SourcePosition = source.Transform.position 
+                SourcePosition = source.Transform.position
             };
 
             takeDamageRequest.Invoke(data);
@@ -37,6 +37,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             }
 
             return false;
+        }
+
+        public static bool AreOpponents(Entity a, Entity b)
+        {
+            if (a.TryGetTeam(out ReactiveVariable<Teams> aTeam) == false)
+                return false;
+
+            if (b.TryGetTeam(out ReactiveVariable<Teams> bTeam) == false)
+                return false;
+
+            return aTeam.Value != bTeam.Value;
         }
     }
 }
