@@ -15,6 +15,8 @@ using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
@@ -98,10 +100,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             }
             // === КОНЕЦ БЛОКА БАФФОВ ===
 
-            var enemiesFactory = _container.Resolve<EnemiesFactory>();
-
-            foreach (var enemyData in _sceneContext.Enemies)
-                enemiesFactory.Create(enemyData.Position, enemyData.Config);
+            SpawnEnemies(levelInstance);
 
             if (_sceneContext.FinishPoint == null)
                 throw new NullReferenceException("GameplaySceneContext.FinishPoint not assigned in Level Prefab");
@@ -109,6 +108,95 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _container.Resolve<FinalPointTriggerService>().Create(_sceneContext.FinishPoint.position);
 
             yield break;
+        }
+
+        // Маркеры читаются напрямую с инстанса уровня, а не из сериализованной копии
+        // в GameplaySceneContext. Копия жила отдельной жизнью и обновлялась только
+        // ручным SYNC — забыли нажать (или нажатие не доехало до диска, как бывает
+        // при правке префаба в Prefab Mode) и рантайм молча спавнил прошлую расстановку.
+        // Компонент на объекте — единственный источник истины, рассинхронизировать
+        // его больше не с чем.
+        private void SpawnEnemies(GameObject levelInstance)
+        {
+            var enemiesFactory = _container.Resolve<EnemiesFactory>();
+
+            // true — маркеры на выключенных объектах тоже учитываются: дизайнер
+            // гасит ветку иерархии, чтобы она не мешала в сцене, но спавн от этого
+            // отваливаться не должен.
+            EnemySpawnMarker[] markers = levelInstance.GetComponentsInChildren<EnemySpawnMarker>(true);
+
+            var spawnedByConfigType = new Dictionary<string, int>();
+            int skippedCount = 0;
+
+            foreach (EnemySpawnMarker marker in markers)
+            {
+                if (marker.Config == null)
+                {
+                    // Раньше пустой маркер доезжал до EnemiesFactory.Create и ронял
+                    // ArgumentException без единого намёка, ГДЕ именно в иерархии
+                    // лежит виноватый объект. Теперь — предупреждение с путём и спавн
+                    // остальных врагов продолжается.
+                    skippedCount++;
+
+                    Debug.LogWarning(
+                        $"[Spawn] Маркер без конфига пропущен: {BuildHierarchyPath(marker.transform)}",
+                        marker.gameObject);
+
+                    continue;
+                }
+
+                enemiesFactory.Create(marker.transform.position, marker.Config);
+
+                string configTypeName = marker.Config.GetType().Name;
+
+                spawnedByConfigType.TryGetValue(configTypeName, out int alreadySpawned);
+                spawnedByConfigType[configTypeName] = alreadySpawned + 1;
+            }
+
+            Debug.Log(BuildSpawnSummary(markers.Length, skippedCount, spawnedByConfigType));
+        }
+
+        // Сводка одной строкой: расхождение задуманной расстановки с фактической
+        // видно сразу в консоли, без захода в инспектор и без пересчёта объектов
+        // в иерархии руками.
+        private string BuildSpawnSummary(int markersCount, int skippedCount, Dictionary<string, int> spawnedByConfigType)
+        {
+            var summary = new StringBuilder();
+
+            summary.Append($"[Spawn] Маркеров найдено: {markersCount}");
+
+            if (spawnedByConfigType.Count == 0)
+            {
+                summary.Append(", врагов заспавнено: 0");
+            }
+            else
+            {
+                foreach (KeyValuePair<string, int> pair in spawnedByConfigType)
+                {
+                    summary.Append($", {pair.Key}: {pair.Value}");
+                }
+            }
+
+            if (skippedCount > 0)
+            {
+                summary.Append($", пропущено без конфига: {skippedCount}");
+            }
+
+            return summary.ToString();
+        }
+
+        private string BuildHierarchyPath(Transform target)
+        {
+            var path = new StringBuilder(target.name);
+            Transform current = target.parent;
+
+            while (current != null)
+            {
+                path.Insert(0, $"{current.name}/");
+                current = current.parent;
+            }
+
+            return path.ToString();
         }
 
         // Guid, а не DateTime/TickCount: у тиков грубое разрешение и соседние запуски

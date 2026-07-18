@@ -1,5 +1,3 @@
-﻿using System.Collections.Generic;
-using System.Linq;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -16,18 +14,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Context
         [field: SerializeField] public Transform StartPoint { get; private set; }
         [field: SerializeField] public Transform FinishPoint { get; private set; }
 
-        [Header("Read Only Data (Auto-filled)")]
-        [SerializeField] private List<EnemySpawnData> _enemies = new();
-
-        public IReadOnlyList<EnemySpawnData> Enemies => _enemies;
-
-        public void SyncWithScene()
-        {
-            _enemies = GetComponentsInChildren<EnemySpawnMarker>(true)
-                .Select(m => new EnemySpawnData(m.Config, m.transform.position, m.transform.rotation))
-                .ToList();
-
-            Debug.Log($"[SceneContext] Собрано врагов: {_enemies.Count}");
-        }
+        // Сериализованный список врагов (_enemies + Enemies + SyncWithScene) убран
+        // намеренно. Это была вторая копия данных, которые уже лежат на компонентах
+        // EnemySpawnMarker, и копия обновлялась только ручным нажатием кнопки SYNC.
+        // Любой пропуск синхронизации давал тихий рассинхрон: расстановка в префабе
+        // говорила одно, рантайм спавнил другое, ошибок при этом не было.
+        // Теперь GameplayBootstrap читает маркеры напрямую с инстанса уровня —
+        // единственный источник истины, синхронизировать нечего.
     }
 }
