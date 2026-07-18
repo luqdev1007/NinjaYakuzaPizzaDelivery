@@ -28,6 +28,43 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             return true;
         }
 
+        /// <summary>
+        /// Отправляет запрос на урон цели, НАМЕРЕННО ОБХОДЯ тим-фильтр: команды
+        /// источника и цели не сравниваются вообще, поэтому урон долетит и до
+        /// союзников источника, и до нейтральных сущностей без компонента Team.
+        /// </summary>
+        /// <remarks>
+        /// Сценарий, ради которого метод существует — ПЛОЩАДНОЙ УРОН, задевающий
+        /// всех в радиусе. Взрыв призрака-камикадзе не разбирает, кто попал в
+        /// эпицентр: игрок, другой враг той же команды или разрушаемый проп.
+        /// Проверка команд здесь была бы не фильтром, а багом — она молча
+        /// выключила бы половину поражаемых целей.
+        ///
+        /// Отличие от <see cref="TryTakeDamageFrom"/>, помимо тим-фильтра:
+        /// DamageData передаётся ЦЕЛИКОМ, как её собрал вызывающий, включая
+        /// KnockbackForce и Type. TryTakeDamageFrom собирает DamageData сам и
+        /// заполняет только Amount и SourcePosition, из-за чего отбрасывание по
+        /// его пути никогда не срабатывает (DamageKnockbackSystem выходит на
+        /// нулевой магнитуде).
+        ///
+        /// НЕ использовать для направленных атак по конкретной цели — там нужен
+        /// тим-фильтр, то есть TryTakeDamageFrom.
+        ///
+        /// Гейт canApplyDamage цели этот метод не обходит: его по-прежнему
+        /// проверяет ApplyDamageSystem на стороне получателя.
+        /// </remarks>
+        /// <returns>true, если запрос был отправлен; false, если у цели нет
+        /// компонента TakeDamageRequest.</returns>
+        public static bool TryTakeDamageIgnoringTeams(Entity source, Entity damageable, DamageData damageData)
+        {
+            if (damageable.TryGetTakeDamageRequest(out ReactiveEvent<DamageData> takeDamageRequest) == false)
+                return false;
+
+            takeDamageRequest.Invoke(damageData);
+
+            return true;
+        }
+
         public static bool IsSameTeam(Entity firstEntity, Entity secondEntity)
         {
             if (firstEntity.TryGetTeam(out ReactiveVariable<Teams> sourceTeam)
