@@ -36,6 +36,31 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
 
             switch (config)
             {
+                // ПОРЯДОК ВЕТОК КРИТИЧЕН И НЕ СЛУЧАЕН.
+                // AngryGhostConfig наследует GhostConfig, поэтому pattern matching
+                // по GhostConfig поймает и его тоже. Опусти эту ветку ниже — злой
+                // призрак молча уедет в ветку обычного: получит CreateGhost вместо
+                // CreateAngryGhost и CreateGhostBrain вместо CreateAngryGhostBrain,
+                // то есть станет неотличим от рядового Ghost.
+                // Ошибки компиляции при этом НЕ БУДЕТ — только тихо неправильное
+                // поведение. Ветка AngryGhostConfig обязана оставаться выше.
+                case AngryGhostConfig angryGhostConfig:
+                    entity = _entitiesFactory.CreateAngryGhost(at, angryGhostConfig);
+
+                    entity.AddLootIsDropped(new ReactiveVariable<bool>(false));
+
+                    ICompositeCondition canAngryGhostDropLoot = new CompositeCondition()
+                        .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
+
+                    entity.AddCanDropLoot(canAngryGhostDropLoot);
+
+                    entity.AddSystem(new DropLootSystem(
+                        _container.Resolve<DropLootService>(),
+                        angryGhostConfig.LootTable));
+
+                    _brainsFactory.CreateAngryGhostBrain(entity, angryGhostConfig);
+                    break;
+
                 case GhostConfig ghostConfig:
                     entity = _entitiesFactory.CreateGhost(at, ghostConfig);
 

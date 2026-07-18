@@ -9,8 +9,11 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Combat.HitImpact;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
+using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Attack;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Contact;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Explosion;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Bounce;
@@ -684,7 +687,72 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         }
 
 
-        // HELPERS 
+        // Призрак-камикадзе. Базовая сборка целиком переиспользуется из CreateGhost:
+        // AngryGhostConfig наследует GhostConfig, а PrefabPath в ассете указывает на
+        // AngryGhost, поэтому MonoEntitiesFactory поднимет нужный префаб.
+        public Entity CreateAngryGhost(Vector3 at, AngryGhostConfig config)
+        {
+            Entity entity = CreateGhost(at, config);
+
+            entity
+                // Агро
+                .AddDetectionRadius(new ReactiveVariable<float>(config.DetectionRadius))
+                .AddChaseSpeed(new ReactiveVariable<float>(config.ChaseSpeed))
+                .AddIsAgro(new ReactiveVariable<bool>(false))
+
+                // Взведение
+                .AddArmingRadius(new ReactiveVariable<float>(config.ArmingRadius))
+                .AddDisarmRadius(new ReactiveVariable<float>(config.DisarmRadius))
+                .AddArmingDuration(new ReactiveVariable<float>(config.ArmingDuration))
+                .AddArmingTimer(new ReactiveVariable<float>(0f))
+                .AddIsArming(new ReactiveVariable<bool>(false))
+
+                // Взрыв
+                .AddExplosionRadius(new ReactiveVariable<float>(config.ExplosionRadius))
+                .AddExplosionDamage(new ReactiveVariable<float>(config.ExplosionDamage))
+                .AddExplosionKnockbackForce(new ReactiveVariable<float>(config.ExplosionKnockbackForce))
+                .AddForcedExplosionKnockbackMultiplier(
+                    new ReactiveVariable<float>(config.ForcedExplosionKnockbackMultiplier))
+                .AddExplosionLayerMask(config.ExplosionLayerMask)
+                .AddDetonationRequest(new ReactiveEvent<DetonationKind>())
+                .AddDetonationEvent(new ReactiveEvent<DetonationKind>())
+                .AddHasDetonated(new ReactiveVariable<bool>(false))
+                ;
+
+            // Ужесточаем условие движения ПОСТ-ФАКТУМ: CanMove собран внутри
+            // CreateGhost, здесь к нему доклеивается ещё одна проверка. Add на
+            // ICompositeCondition кладёт условие в конец и склеивает стандартной
+            // операцией (And), поэтому семантика — «всё, что было, И не взводимся».
+            //
+            // Во время взведения SimpleRigidbodyMovementSystem вообще не пишет
+            // скорость, а PhysicsStabilizationSystem гасит остаточную — призрак
+            // замирает физически, а не только обнулением MoveDirection.
+            entity.CanMove.Add(new FuncCondition(() => entity.IsArming.Value == false));
+
+            entity
+                .AddSystem(new AgroDetectionSystem(_container.Resolve<MainHeroHolderService>()))
+                .AddSystem(new ArmingTimerSystem())
+                .AddSystem(new ExplosionSystem(_collidersRegistryService))
+
+                // ОТСТУПЛЕНИЕ ОТ ЗАДАННОГО ПОРЯДКА, осознанное.
+                // Требовалось подписать ForcedDetonationSystem на IsDead РАНЬШЕ
+                // DisableCollidersOnDeathSystem. Недостижимо без правки CreateGhost:
+                // та регистрирует DisableCollidersOnDeathSystem внутри себя, а
+                // Entity.AddSystem умеет только дописывать в конец — вставки нет.
+                // Рефакторить сигнатуру CreateGhost ради этого не стали.
+                //
+                // Функционально порядок не влияет: DisableCollidersOnDeathSystem
+                // гасит СОБСТВЕННЫЕ коллайдеры призрака, а ExplosionSystem читает
+                // чужие через CollidersRegistryService и свою сущность пропускает
+                // явной проверкой target == _selfEntity.
+                .AddSystem(new ForcedDetonationSystem())
+                ;
+
+            return entity;
+        }
+
+
+        // HELPERS
         private Entity CreateEmpty() => new Entity();
 
         // LOOT
