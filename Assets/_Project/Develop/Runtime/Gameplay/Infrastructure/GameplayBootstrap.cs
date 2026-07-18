@@ -1,11 +1,11 @@
-﻿using Assets._Project.Develop.Infrastructure;
+using Assets._Project.Develop.Infrastructure;
 using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.Context;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
-using Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs; 
+using Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
@@ -129,14 +129,32 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         {
             float deltaTime = Time.deltaTime;
 
-            _brainsContext?.Update(deltaTime);
             _entitiesLifeContext?.Update(deltaTime);
             _gameplayStatesContext?.Update(deltaTime);
         }
 
+        // Мозги переехали сюда с Update-канала. Причина: решения AI (запись
+        // MoveDirection, проверки расстояний) читаются и исполняются системами,
+        // которые живут на fixed — SimpleRigidbodyMovementSystem, PhysicsStabilization.
+        // На Update-канале частота решений была привязана к FPS, а применение к
+        // физ-шагу, из-за чего при просадке кадров призрак получал несколько
+        // физ-шагов на одном устаревшем направлении, а при высоком FPS — наоборот,
+        // менял решение чаще, чем оно могло быть применено.
+        //
+        // Порядок «мозги раньше сущностей» сохранён: brainsContext идёт первой
+        // строкой, до entitiesLifeContext.FixedUpdate, ровно как было в Update.
+        //
+        // ВАЖНО: фазовые таймеры блуждания (TimerService в BrainsFactory) остались
+        // на корутинах и продолжают тикать Time.deltaTime на Update-частоте. Это
+        // известный технический долг, он этой правкой НЕ устраняется — переходы
+        // между фазами блуждания по-прежнему оцениваются относительно кадрового
+        // времени, тогда как сама стейт-машина теперь опрашивается на fixed.
         private void FixedUpdate()
         {
-            _entitiesLifeContext?.FixedUpdate(Time.fixedDeltaTime);
+            float fixedDeltaTime = Time.fixedDeltaTime;
+
+            _brainsContext?.Update(fixedDeltaTime);
+            _entitiesLifeContext?.FixedUpdate(fixedDeltaTime);
         }
     }
 }
