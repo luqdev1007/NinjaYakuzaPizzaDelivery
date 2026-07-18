@@ -371,6 +371,27 @@ MonoBehaviour:
   _minStartDelay: 0
   _maxStartDelay: 1.5
   _damageSuspendDuration: 0.45
+--- !u!114 &7301458812234110021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2306742963253549328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6958ecc66914ca1b7a3a9302af763e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _agroGlow: {fileID: 7301458812234110003}
+  _blastRadiusIndicator: {fileID: 7301458812234110013}
+  _explosionVfxPrefab: {fileID: 5871771541233932325, guid: 1b86ffd8d6ea31a47b9babefc8a29ea7, type: 3}
+  _agroGlowAlpha: 0.85
+  _agroFadeInDuration: 0.25
+  _armingPulseMinAlpha: 0.15
+  _agroSfxKey: AngryGhostAgro
+  _armingSfxKey: AngryGhostArming
+  _explosionSfxKey: 
 --- !u!1 &3607678793894935207
 GameObject:
   m_ObjectHideFlags: 0
@@ -5298,37 +5319,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
---- !u!1 &8810964295612542083
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2720600874618316831}
-  m_Layer: 0
-  m_Name: HitPointVFX
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2720600874618316831
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8810964295612542083}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8962585156850830168}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7301458812234110001
 GameObject:
   m_ObjectHideFlags: 0
@@ -5355,9 +5345,9 @@ Transform:
   m_GameObject: {fileID: 7301458812234110001}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 0.25, y: -0.01, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 5807132304633459110}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5410,12 +5400,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 11
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Sprite: {fileID: 21300000, guid: 01a509805ee1e4dbd956bc2c1960403c, type: 3}
+  m_Color: {r: 1, g: 0, b: 0, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.74, y: 0.66}
+  m_Size: {x: 19.2, y: 10.8}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -5501,37 +5491,47 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.35}
+  m_Sprite: {fileID: 21300000, guid: 3d33bbf47918d4deca06bc016b4c945d, type: 3}
+  m_Color: {r: 1, g: 0, b: 0, a: 0.35}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.74, y: 0.66}
+  m_Size: {x: 1.42, y: 1.42}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &7301458812234110021
-MonoBehaviour:
+--- !u!1 &8810964295612542083
+GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2306742963253549328}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6958ecc66914ca1b7a3a9302af763e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _agroGlow: {fileID: 7301458812234110003}
-  _blastRadiusIndicator: {fileID: 7301458812234110013}
-  _explosionVfxPrefab: {fileID: 0}
-  _agroGlowAlpha: 0.85
-  _agroFadeInDuration: 0.25
-  _armingPulseMinAlpha: 0.15
-  _agroSfxKey: 
-  _armingSfxKey: 
-  _explosionSfxKey: 
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2720600874618316831}
+  m_Layer: 0
+  m_Name: HitPointVFX
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2720600874618316831
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8810964295612542083}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8962585156850830168}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1001143561248245298
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5601,12 +5601,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5857535375371146468, guid: 45fdc72a38b91ae479fc901becb660f0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8962585156850830168}
-    - targetCorrespondingSourceObject: {fileID: 5373311607167498598, guid: 45fdc72a38b91ae479fc901becb660f0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 5807132304633459110}
     - targetCorrespondingSourceObject: {fileID: 5857535375371146468, guid: 45fdc72a38b91ae479fc901becb660f0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7301458812234110012}
+    - targetCorrespondingSourceObject: {fileID: 5373311607167498598, guid: 45fdc72a38b91ae479fc901becb660f0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5807132304633459110}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5476442007397641218, guid: 45fdc72a38b91ae479fc901becb660f0, type: 3}
       insertIndex: -1
