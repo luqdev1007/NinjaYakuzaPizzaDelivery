@@ -3,11 +3,14 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI.States;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.RandomManagment;
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using Assets._Project.Develop.Runtime.Utilities.Timer;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
 {
@@ -24,6 +27,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
         // UnityEngine.Random.
         private readonly IGameplayRandom _gameplayRandom;
 
+        private readonly MainHeroHolderService _mainHeroHolderService;
+
         public BrainsFactory(DIContainer container)
         {
             _container = container;
@@ -32,6 +37,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             _inputService = _container.Resolve<IInputService>();
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
             _gameplayRandom = _container.Resolve<IGameplayRandom>();
+            _mainHeroHolderService = _container.Resolve<MainHeroHolderService>();
         }
 
         public StateMachineBrain CreateMainHeroBrain(Entity entity)
@@ -70,6 +76,95 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             _brainsContext.SetFor(entity, brain);
 
             return brain;
+        }
+
+        /// <summary>
+        /// Мозг призрака-камикадзе: блуждание -> погоня -> взведение.
+        /// </summary>
+        /// <remarks>
+        /// Конфиг типизирован AngryGhostConfig, но во вложенную машину блуждания
+        /// уезжает как GhostConfig — наследование покрывает это без правки
+        /// сигнатуры CreateRandomMovementStateMachine.
+        ///
+        /// ПОРЯДОК AddState ЗНАЧИМ: явного SetInitialState в StateMachine нет,
+        /// стартовым становится _states[0] (см. StateMachine.Enter). Блуждание
+        /// обязано быть первым.
+        ///
+        /// ПОРЯДОК AddTransition ЗНАЧИМ: приоритет = порядок вызова, срабатывает
+        /// первый истинный переход (foreach + break в StateMachine.Update).
+        /// Механизма AnyState в реализации нет, поэтому все пары заданы явно.
+        ///
+        /// Обратного перехода Chase -> Wander нет намеренно: агро необратимо.
+        /// Помимо дизайна, такой переход был бы ещё и некорректен технически —
+        /// StateMachine.Enter() не зовёт Enter() текущего состояния при повторном
+        /// входе (проверка if (_currentState == null)), и машина блуждания
+        /// возобновилась бы, не взведя фазовые таймеры.
+        /// </remarks>
+        public StateMachineBrain CreateAngryGhostBrain(Entity entity, AngryGhostConfig config)
+        {
+            AIStateMachine wanderStateMachine = CreateRandomMovementStateMachine(entity, config);
+            ChaseTargetState chaseState = new ChaseTargetState(entity, _mainHeroHolderService);
+            ArmingState armingState = new ArmingState(entity);
+
+            AIStateMachine rootStateMachine = new AIStateMachine();
+
+            rootStateMachine.AddState(wanderStateMachine);
+            rootStateMachine.AddState(chaseState);
+            rootStateMachine.AddState(armingState);
+
+            Transform selfTransform = entity.Transform;
+            ReactiveVariable<bool> isAgro = entity.IsAgro;
+            ReactiveVariable<float> armingRadius = entity.ArmingRadius;
+            ReactiveVariable<float> disarmRadius = entity.DisarmRadius;
+
+            ICondition agroTriggeredCondition = new FuncCondition(() => isAgro.Value);
+
+            // Сравниваем квадраты расстояний, без sqrt — образец
+            // NearestDamagableTargetSelector.
+            ICondition heroInArmingRangeCondition = new FuncCondition(() =>
+                GetSqrDistanceToHeroFrom(selfTransform) <= armingRadius.Value * armingRadius.Value);
+
+            ICondition heroOutOfDisarmRangeCondition = new FuncCondition(() =>
+                GetSqrDistanceToHeroFrom(selfTransform) > disarmRadius.Value * disarmRadius.Value);
+
+            rootStateMachine.AddTransition(wanderStateMachine, chaseState, agroTriggeredCondition);
+            rootStateMachine.AddTransition(chaseState, armingState, heroInArmingRangeCondition);
+            rootStateMachine.AddTransition(armingState, chaseState, heroOutOfDisarmRangeCondition);
+
+            StateMachineBrain brain = new StateMachineBrain(rootStateMachine);
+
+            _brainsContext.SetFor(entity, brain);
+
+            return brain;
+        }
+
+        /// <summary>
+        /// Квадрат расстояния до героя. Героя нет или его Transform уже уничтожен —
+        /// возвращает float.MaxValue, то есть «бесконечно далеко».
+        /// </summary>
+        /// <remarks>
+        /// Такой fallback выбран не произвольно, он даёт корректное поведение на
+        /// обоих переходах: взведение не начнётся (условие <= не выполнится), а
+        /// уже начатое сорвётся обратно в погоню (условие > выполнится). Призрак,
+        /// потерявший цель, не зависает взведённым.
+        /// </remarks>
+        private float GetSqrDistanceToHeroFrom(Transform selfTransform)
+        {
+            Entity mainHero = _mainHeroHolderService.MainHero;
+
+            if (mainHero == null)
+            {
+                return float.MaxValue;
+            }
+
+            if (mainHero.Transform == null)
+            {
+                return float.MaxValue;
+            }
+
+            Vector2 offset = mainHero.Transform.position - selfTransform.position;
+
+            return offset.sqrMagnitude;
         }
 
         private AIStateMachine CreateRandomMovementStateMachine(Entity entity, GhostConfig config)
