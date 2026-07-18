@@ -15,6 +15,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Gadgets.Glider;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.AirJump;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Bounce;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Dash;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Explosion;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.HangWall;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Jump;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move;
@@ -178,6 +179,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // bounce (трамплин шлёт сюда просьбу на отскок — см. F5)
                 .AddBounceImpulseRequest(new ReactiveEvent<BounceImpulseData>())
+
+                // explosion (взрыв призрака-камикадзе шлёт сюда просьбу на импульс)
+                .AddExplosionImpulseRequest(new ReactiveEvent<Vector2>())
 
                 // slide
                 .AddIsSliding()
@@ -472,6 +476,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // bounce
                 .AddSystem(new BounceSystem())
+
+                // explosion
+                .AddSystem(new ExplosionImpulseSystem())
 
                 .AddSystem(new DashSystem())
 
