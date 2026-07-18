@@ -18,7 +18,7 @@ MonoBehaviour:
   <FallActionThreshold>k__BackingField: -2
   <GroundMask>k__BackingField:
     serializedVersion: 2
-    m_Bits: 36096
+    m_Bits: 36097
   <ContactLayerMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 33280
@@ -77,23 +77,23 @@ MonoBehaviour:
     <HitLayer>k__BackingField:
       serializedVersion: 2
       m_Bits: 33280
-    <Speed>k__BackingField: 25
+    <Speed>k__BackingField: 15
     <DamageRange>k__BackingField: 3
     <Damage>k__BackingField: 10
     <KnockbackForce>k__BackingField: 5
-    <MinImpactSpeedThreshold>k__BackingField: 12
-    <AccelerationMultiplier>k__BackingField: 6
+    <MinImpactSpeedThreshold>k__BackingField: 8
+    <AccelerationMultiplier>k__BackingField: 8
   <Slope>k__BackingField:
     <MinAngle>k__BackingField: 15
     <MaxAngle>k__BackingField: 75
     <SlipForce>k__BackingField: 15
     <MaxStableAngle>k__BackingField: 45
-    <BaseSlideSpeed>k__BackingField: 15
-    <SlideAcceleration>k__BackingField: 30
-    <MaxSlideSpeed>k__BackingField: 40
-    <BaseJumpForce>k__BackingField: 15
-    <JumpForceModifier>k__BackingField: {x: 1, y: 3}
-    <MinFallVelocityForAutoSlide>k__BackingField: -25
+    <BaseSlideSpeed>k__BackingField: 12
+    <SlideAcceleration>k__BackingField: 15
+    <MaxSlideSpeed>k__BackingField: 35
+    <BaseJumpForce>k__BackingField: 4
+    <JumpForceModifier>k__BackingField: {x: 1, y: 1.5}
+    <MinFallVelocityForAutoSlide>k__BackingField: -20
   <Attack>k__BackingField:
     <ProcessTime>k__BackingField: 0.15
     <DelayTime>k__BackingField: 0.075
@@ -105,16 +105,16 @@ MonoBehaviour:
     <Range>k__BackingField: 2
     <InvulnerabilityDuration>k__BackingField: 0.5
     <HitBounceForce>k__BackingField: 8
-    <GroundHitBounceModifiers>k__BackingField: {x: 1, y: 1}
-    <AirHitBounceModifiers>k__BackingField: {x: 1, y: 2}
+    <GroundHitBounceModifiers>k__BackingField: {x: 2, y: 3}
+    <AirHitBounceModifiers>k__BackingField: {x: 3, y: 4}
     <HitStopScale>k__BackingField: 0.05
     <HitStopDuration>k__BackingField: 0.15
-    <AttackKnockback>k__BackingField: {x: 6, y: 8}
-    <AerialHangForce>k__BackingField: {x: 4, y: 8}
+    <AttackKnockback>k__BackingField: {x: 12, y: 16}
+    <AerialHangForce>k__BackingField: {x: 8, y: 16}
     <RecoilForce>k__BackingField: {x: 10, y: 20}
-    <DoubleAttackChance>k__BackingField: 50.9
-    <DoubleAttackCooldown>k__BackingField: 1
-    <SlashAttackChargeRequiredTime>k__BackingField: 0.4
+    <DoubleAttackChance>k__BackingField: 45
+    <DoubleAttackCooldown>k__BackingField: 0.5
+    <SlashAttackChargeRequiredTime>k__BackingField: 0.3
   <LifeCycle>k__BackingField:
     <MaxHealth>k__BackingField: 5
     <DeathProcessTime>k__BackingField: 1.5

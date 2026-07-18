@@ -52,13 +52,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddLootCollectRange(new ReactiveVariable<float>(config.LootCollectRange))
                 .AddLootPickedEvent()
 
-                // === БАФФЫ: модификатор-слой для MoveSpeed/LootCollectRange ===
                 .AddBaseMoveSpeed(new ReactiveVariable<float>(config.Movement.MoveSpeed))
                 .AddMoveSpeedModifiers(new StatModifiersList())
                 .AddBaseLootCollectRange(new ReactiveVariable<float>(config.LootCollectRange))
                 .AddLootCollectRangeModifiers(new StatModifiersList())
                 .AddActiveBuffs(new ActiveBuffsList())
-                // === КОНЕЦ БЛОКА БАФФОВ ===
                 ;
 
             _brainsFactory.CreateMainHeroBrain(entity);
@@ -69,13 +67,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddSystem(new LootDistanceCollectSystem(_entitiesLifeContext, _container.Resolve<SessionLootService>()))
                 .AddSystem(new TargetingCoreSystem(_entitiesLifeContext))
 
-                // === БАФФЫ: синхронизаторы статов + таймер + pickup-системы баффов ===
                 .AddSystem(new MoveSpeedStatSynchronizerSystem())
                 .AddSystem(new LootCollectRangeStatSynchronizerSystem())
                 .AddSystem(new BuffsTimerSystem())
                 .AddSystem(new BuffMagnetSystem(_entitiesLifeContext))
                 .AddSystem(new BuffDistanceCollectSystem(_entitiesLifeContext, _buffService))
-                // === КОНЕЦ БЛОКА БАФФОВ ===
                 ;
 
             _entitiesLifeContext.Add(entity);

@@ -507,8 +507,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // attack effects
                 .AddSystem(new HitStopSystem(_container.Resolve<HitStopService>(), _container.Resolve<CameraService>()))
-                // Прок двойной атаки влияет на урон => реплей-чувствителен, поэтому
-                // система получает засеянный поток, а не глобальный Random.
                 .AddSystem(new DoubleAttackSystem(_container.Resolve<IGameplayRandom>()))
                 .AddSystem(new DoubleAttackCooldownSystem())
 
@@ -580,9 +578,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // Common
                 .AddLookDirectionX(new ReactiveVariable<float>(1))
                 .AddKnockbackDuration(new ReactiveVariable<float>(ghostConfig.KnockbackDuration))
-                // elapsed стартует РАВНЫМ duration => knockback-окно с рождения ЗАКРЫТО
-                // и призрак сразу двигается. Открывает окно только DamageKnockbackSystem,
-                // обнуляя elapsed при ударе мечом.
                 .AddKnockbackElapsedTime(new ReactiveVariable<float>(ghostConfig.KnockbackDuration))
 
                 // Physics
@@ -624,10 +619,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.IsGrappledTarget.Value == false))
-                // Двигаться нельзя, ПОКА идёт knockback-окно (elapsed < duration).
-                // Окно истекло (elapsed >= duration) — движение разрешено.
-                // Раньше знак был инвертирован: призрак стоял с рождения, а после
-                // первого удара улетал навсегда.
                 .Add(new FuncCondition(() => entity.KnockbackElapsedTime.Value >= entity.KnockbackDuration.Value))
                 ;
 
@@ -666,12 +657,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new DamageKnockbackTimerSystem())
                 .AddSystem(new DamageKnockbackSystem())
 
-                // apply damage
-                // ApplyDamageCooldownSystem призраку не добавляли — DamageCooldownTimer
-                // никогда не тикал, из-за чего DamageCooldown (0.1) в конфиге был мёртв,
-                // а canApplyDamage читал вечный ноль. Цепочка событийная:
-                // ApplyDamageSystem гейтит по canApplyDamage и инвокает TakeDamageEvent,
-                // на который кулдаун взводит окно и дальше тикает его на fixed.
                 .AddSystem(new ApplyDamageSystem())
                 .AddSystem(new ApplyDamageCooldownSystem())
 
@@ -679,11 +664,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
                 .AddSystem(new DealDamageOnContactSystem())
 
-                // ПОРЯДОК ВАЖЕН: обе системы на fixed-канале, а Entity гоняет
-                // _fixedUpdatables в порядке регистрации. Стабилизация идёт ПЕРВОЙ,
-                // движение — ПОСЛЕДНИМ, поэтому в физ-кадре именно движение пишет
-                // linearVelocity последним и клампит Box2D-импульс от контакта.
-                // Это и есть механизм, из-за которого призрака не выбрасывает за карту.
                 .AddSystem(new PhysicsStabilizationSystem())
                 .AddSystem(new SimpleRigidbodyMovementSystem())
                 .AddSystem(new FlipDirectionSystem())
@@ -700,125 +680,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         // HELPERS 
         private Entity CreateEmpty() => new Entity();
 
-
-        // _______________________________________________________________________
-        // REWORK ________________
-        public Entity CreateSlime(Vector3 at, SlimeConfig slimeConfig)
-        {
-            /*
-            Entity entity = CreateEmpty();
-            _monoEntitiesFactory.Create(entity, at, slimeConfig.PrefabPath);
-            LootTableConfig lootTable = slimeConfig.LootTable;
-
-            entity
-                .AddAudio(_audioService)
-
-                // — Движение —
-                .AddMoveSpeed(new ReactiveVariable<float>(slimeConfig.MovementSpeed))
-                .AddMoveDirection()
-                .AddIsMoving()
-                .AddLinearDrag(new ReactiveVariable<float>(slimeConfig.LinearDrag))
-
-                // — Коллайдеры —
-                .AddBodyContactDamage(new ReactiveVariable<float>(slimeConfig.ContactDamage))
-
-                .AddContactsDetectingMask(LayersAPI.LayerMaskCharacters)
-
-                .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
-                .AddContactEntitiesBuffer(new Buffer<Entity>(16))
-
-                // — Жизнь —
-                .AddMaxHealth(new ReactiveVariable<float>(slimeConfig.MaxHealth))
-                .AddCurrentHealth(new ReactiveVariable<float>(slimeConfig.MaxHealth))
-
-                .AddTakeDamageRequest()
-                .AddTakeDamageEvent()
-
-                .AddIsDead()
-                .AddInDeathProcess()
-
-                .AddDeathProcessInitialTime(new ReactiveVariable<float>(slimeConfig.DeathProcessTime))
-                .AddDeathProcessCurrentTime()
-
-                .AddDamageCooldown(new ReactiveVariable<float>(slimeConfig.DamageCooldown))
-                .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
-
-                // Баффы/Дебаффы
-                .AddIsGrappledTarget()
-
-                // Loot
-                .AddLootIsDropped(new ReactiveVariable<bool>(false));
-            ;
-
-            // — Условия —
-            ICompositeCondition canMove = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.IsGrappledTarget.Value == false))
-                ;
-
-
-            ICompositeCondition canDropLoot = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0))
-                .Add(new FuncCondition(() => entity.IsDead.Value == true))
-                ;
-
-            // Условие получения урона: не мертв и кулдаун прошел
-            ICompositeCondition canApplyDamage = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
-                ;
-
-            ICompositeCondition canFlip = new CompositeCondition()
-                .Add(new FuncCondition(() => true))
-                ;
-
-            ICompositeCondition mustDie = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0))
-                ;
-
-            ICompositeCondition mustSelfRelease = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == true))
-                .Add(new FuncCondition(() => entity.InDeathProcess.Value == false))
-                ;
-
-            entity
-                .AddCanMove(canMove)
-                .AddCanPhysicalyInteract(canApplyDamage)
-                .AddCanFlip(canFlip)
-                .AddCanApplyDamage(canApplyDamage)
-                .AddMustDie(mustDie)
-                .AddCanDropLoot(canDropLoot)
-                .AddMustSelfRelease(mustSelfRelease)
-                ;
-
-            entity
-                // Системы логики
-                .AddSystem(new PhysicsStabilizationSystem())
-                .AddSystem(new BodyContactDetectingSystem())
-                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
-                .AddSystem(new DealDamageOnContactSystem())
-                .AddSystem(new TransformMovementSystem())
-                .AddSystem(new FlipDirectionSystem())
-
-                // Системы урона
-                .AddSystem(new ApplyDamageSystem())
-                .AddSystem(new DamageKnockbackSystem())
-                .AddSystem(new DeathSystem())
-                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
-                        
-                // loot
-                .AddSystem(new DropLootSystem(
-                    _container.Resolve<DropLootService>(),
-                    lootTable))
-                ;
-
-
-            return entity;
-            */
-
-            return null;
-        }
-
         // LOOT
         public Entity CreatePullable(LootConfig config, Vector3 position)
         {
@@ -828,7 +689,5 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             return entity;
         }
-        // _______________________________________________________________________
-        // REWORK ________________
     }
 }

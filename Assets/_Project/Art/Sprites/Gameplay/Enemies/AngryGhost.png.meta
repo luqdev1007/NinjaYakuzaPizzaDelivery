@@ -1,0 +1,1157 @@
+fileFormatVersion: 2
+guid: 186e9fb1a1ce8704fa8da8d2668a8f00
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4364230323269141242
+    second: AngryGhost_0
+  - first:
+      213: -600236602225117882
+    second: AngryGhost_1
+  - first:
+      213: 579215174360899293
+    second: AngryGhost_2
+  - first:
+      213: 5231396188000719116
+    second: AngryGhost_3
+  - first:
+      213: 3491219904277539079
+    second: AngryGhost_4
+  - first:
+      213: -573458889089994839
+    second: AngryGhost_5
+  - first:
+      213: 2701224429021367132
+    second: AngryGhost_6
+  - first:
+      213: -2018424043503722645
+    second: AngryGhost_7
+  - first:
+      213: 322656667963638059
+    second: AngryGhost_8
+  - first:
+      213: 2208437737994842662
+    second: AngryGhost_9
+  - first:
+      213: -535951658087057138
+    second: AngryGhost_10
+  - first:
+      213: 1961390315307460595
+    second: AngryGhost_11
+  - first:
+      213: 1985775692224097393
+    second: AngryGhost_12
+  - first:
+      213: -2305958668599904123
+    second: AngryGhost_13
+  - first:
+      213: 7757126556968114913
+    second: AngryGhost_14
+  - first:
+      213: 4708828037123616660
+    second: AngryGhost_15
+  - first:
+      213: -3907013723241376040
+    second: AngryGhost_16
+  - first:
+      213: -7807930128712634079
+    second: AngryGhost_17
+  - first:
+      213: 5559751193144369341
+    second: AngryGhost_18
+  - first:
+      213: -8095448994740751891
+    second: AngryGhost_19
+  - first:
+      213: -9199888332929978740
+    second: AngryGhost_20
+  - first:
+      213: -809562040400842165
+    second: AngryGhost_21
+  - first:
+      213: 3180285459642730819
+    second: AngryGhost_22
+  - first:
+      213: -6610502593397555981
+    second: AngryGhost_23
+  - first:
+      213: -8136092646305000698
+    second: AngryGhost_24
+  - first:
+      213: -8021887585122467463
+    second: AngryGhost_25
+  - first:
+      213: -421778172117336852
+    second: AngryGhost_26
+  - first:
+      213: -6613110561444740479
+    second: AngryGhost_27
+  - first:
+      213: -5380116661342235638
+    second: AngryGhost_28
+  - first:
+      213: -6177846473015882010
+    second: AngryGhost_29
+  - first:
+      213: 450216767824163742
+    second: AngryGhost_30
+  - first:
+      213: 140207632900341965
+    second: AngryGhost_31
+  - first:
+      213: 6973884672621475707
+    second: AngryGhost_32
+  - first:
+      213: -9018392660974480081
+    second: AngryGhost_33
+  - first:
+      213: -4668064240782706722
+    second: AngryGhost_34
+  - first:
+      213: 4547942768492585894
+    second: AngryGhost_35
+  - first:
+      213: 3817030022908684151
+    second: AngryGhost_36
+  - first:
+      213: 1153234305930814494
+    second: AngryGhost_37
+  - first:
+      213: 2186379896998097974
+    second: AngryGhost_38
+  - first:
+      213: 7480617063903422276
+    second: AngryGhost_39
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: AngryGhost_0
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 708
+        width: 103
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60dfd87c4a32f63c0800000000000000
+      internalID: -4364230323269141242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_1
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 709
+        width: 101
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6453f2f8df78ba7f0800000000000000
+      internalID: -600236602225117882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_2
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 709
+        width: 103
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dde1c4cd129c90800800000000000000
+      internalID: 579215174360899293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_3
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 709
+        width: 102
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c019d19ad17a99840800000000000000
+      internalID: 5231396188000719116
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_4
+      rect:
+        serializedVersion: 2
+        x: 573
+        y: 709
+        width: 101
+        height: 91
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7096c33710e437030800000000000000
+      internalID: 3491219904277539079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_5
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 567
+        width: 101
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9af208ebd2aaa08f0800000000000000
+      internalID: -573458889089994839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_6
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 567
+        width: 101
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5b0d667e4dac7520800000000000000
+      internalID: 2701224429021367132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_7
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 567
+        width: 103
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6f5ad8c60e1df3e0800000000000000
+      internalID: -2018424043503722645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_8
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 568
+        width: 102
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b21426ea78e4a7400800000000000000
+      internalID: 322656667963638059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_9
+      rect:
+        serializedVersion: 2
+        x: 573
+        y: 567
+        width: 102
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 622ffb10c62f5ae10800000000000000
+      internalID: 2208437737994842662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_10
+      rect:
+        serializedVersion: 2
+        x: 709
+        y: 568
+        width: 102
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0970fa7ecaef88f0800000000000000
+      internalID: -535951658087057138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_11
+      rect:
+        serializedVersion: 2
+        x: 850
+        y: 567
+        width: 103
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f7eac19912483b10800000000000000
+      internalID: 1961390315307460595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_12
+      rect:
+        serializedVersion: 2
+        x: 989
+        y: 568
+        width: 102
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17c6f929874ee8b10800000000000000
+      internalID: 1985775692224097393
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_13
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 428
+        width: 102
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 588be53fec69fffd0800000000000000
+      internalID: -2305958668599904123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_14
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 427
+        width: 110
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ea55d92189d6ab60800000000000000
+      internalID: 7757126556968114913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_15
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 430
+        width: 115
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49f272db62e195140800000000000000
+      internalID: 4708828037123616660
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_16
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 429
+        width: 112
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d61f9d08bf77c9c0800000000000000
+      internalID: -3907013723241376040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_17
+      rect:
+        serializedVersion: 2
+        x: 578
+        y: 431
+        width: 97
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12173078ae8a4a390800000000000000
+      internalID: -7807930128712634079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_18
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 287
+        width: 102
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db0acead044382d40800000000000000
+      internalID: 5559751193144369341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_19
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 289
+        width: 102
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de13f23e70037af80800000000000000
+      internalID: -8095448994740751891
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_20
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 293
+        width: 103
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8ea276ed4e635080800000000000000
+      internalID: -9199888332929978740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_21
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 293
+        width: 103
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b42744e0d9bd3c4f0800000000000000
+      internalID: -809562040400842165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_22
+      rect:
+        serializedVersion: 2
+        x: 573
+        y: 298
+        width: 101
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 349485296c4a22c20800000000000000
+      internalID: 3180285459642730819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_23
+      rect:
+        serializedVersion: 2
+        x: 711
+        y: 298
+        width: 102
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3fc7dbd4ae6c244a0800000000000000
+      internalID: -6610502593397555981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_24
+      rect:
+        serializedVersion: 2
+        x: 850
+        y: 294
+        width: 103
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 603925558dac61f80800000000000000
+      internalID: -8136092646305000698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_25
+      rect:
+        serializedVersion: 2
+        x: 989
+        y: 295
+        width: 103
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 971c8ac3eb78ca090800000000000000
+      internalID: -8021887585122467463
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_26
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 157
+        width: 96
+        height: 97
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cecbee4bcfa852af0800000000000000
+      internalID: -421778172117336852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_27
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 154
+        width: 110
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 182c3bc6bf28934a0800000000000000
+      internalID: -6613110561444740479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_28
+      rect:
+        serializedVersion: 2
+        x: 293
+        y: 155
+        width: 115
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a04198ec66cf555b0800000000000000
+      internalID: -5380116661342235638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_29
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 155
+        width: 111
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ee0dfa4d51e34aa0800000000000000
+      internalID: -6177846473015882010
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_30
+      rect:
+        serializedVersion: 2
+        x: 573
+        y: 154
+        width: 101
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e937516d3cd7f3600800000000000000
+      internalID: 450216767824163742
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_31
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 14
+        width: 101
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc0c2d9691e12f100800000000000000
+      internalID: 140207632900341965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_32
+      rect:
+        serializedVersion: 2
+        x: 157
+        y: 14
+        width: 104
+        height: 83
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b77f428192738c060800000000000000
+      internalID: 6973884672621475707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_33
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 14
+        width: 110
+        height: 75
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2550a508ab38d280800000000000000
+      internalID: -9018392660974480081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_34
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 14
+        width: 102
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed771733e44b73fb0800000000000000
+      internalID: -4668064240782706722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_35
+      rect:
+        serializedVersion: 2
+        x: 564
+        y: 22
+        width: 117
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a3aec61ad98d1f30800000000000000
+      internalID: 4547942768492585894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_36
+      rect:
+        serializedVersion: 2
+        x: 709
+        y: 15
+        width: 108
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77729741590d8f430800000000000000
+      internalID: 3817030022908684151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_37
+      rect:
+        serializedVersion: 2
+        x: 849
+        y: 15
+        width: 102
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e14eccbbd7c110010800000000000000
+      internalID: 1153234305930814494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_38
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 15
+        width: 103
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63470a0bee4975e10800000000000000
+      internalID: 2186379896998097974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: AngryGhost_39
+      rect:
+        serializedVersion: 2
+        x: 1131
+        y: 14
+        width: 102
+        height: 93
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44760bae59d70d760800000000000000
+      internalID: 7480617063903422276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      AngryGhost_0: -4364230323269141242
+      AngryGhost_1: -600236602225117882
+      AngryGhost_10: -535951658087057138
+      AngryGhost_11: 1961390315307460595
+      AngryGhost_12: 1985775692224097393
+      AngryGhost_13: -2305958668599904123
+      AngryGhost_14: 7757126556968114913
+      AngryGhost_15: 4708828037123616660
+      AngryGhost_16: -3907013723241376040
+      AngryGhost_17: -7807930128712634079
+      AngryGhost_18: 5559751193144369341
+      AngryGhost_19: -8095448994740751891
+      AngryGhost_2: 579215174360899293
+      AngryGhost_20: -9199888332929978740
+      AngryGhost_21: -809562040400842165
+      AngryGhost_22: 3180285459642730819
+      AngryGhost_23: -6610502593397555981
+      AngryGhost_24: -8136092646305000698
+      AngryGhost_25: -8021887585122467463
+      AngryGhost_26: -421778172117336852
+      AngryGhost_27: -6613110561444740479
+      AngryGhost_28: -5380116661342235638
+      AngryGhost_29: -6177846473015882010
+      AngryGhost_3: 5231396188000719116
+      AngryGhost_30: 450216767824163742
+      AngryGhost_31: 140207632900341965
+      AngryGhost_32: 6973884672621475707
+      AngryGhost_33: -9018392660974480081
+      AngryGhost_34: -4668064240782706722
+      AngryGhost_35: 4547942768492585894
+      AngryGhost_36: 3817030022908684151
+      AngryGhost_37: 1153234305930814494
+      AngryGhost_38: 2186379896998097974
+      AngryGhost_39: 7480617063903422276
+      AngryGhost_4: 3491219904277539079
+      AngryGhost_5: -573458889089994839
+      AngryGhost_6: 2701224429021367132
+      AngryGhost_7: -2018424043503722645
+      AngryGhost_8: 322656667963638059
+      AngryGhost_9: 2208437737994842662
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
