@@ -98,6 +98,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
             RegisterAction(StyleActionType.Bounce, _config.BouncePoints);
         }
 
+        /// <summary>
+        /// Разруб языка слайма. Очки берутся явно из конфига, ветка в
+        /// GetBasePoints НЕ добавляется: тот switch обслуживает только
+        /// ProcessHit (действия с флагом isLethal и KillBonus), а это
+        /// движенческое по своей природе действие — как Dash или Bounce.
+        /// </summary>
+        public void ProcessTongueCut()
+        {
+            RegisterAction(StyleActionType.TongueCut, _config.TongueCutPoints);
+        }
+
         public void ProcessPlayerHit()
         {
             _styleService.ApplyDamagePenalty();

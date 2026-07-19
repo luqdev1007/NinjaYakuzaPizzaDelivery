@@ -33,6 +33,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 
             _disposables.Add(entity.SpeedDamageDealtEvent.Subscribe(OnSpeedDamageDealt));
 
+            _disposables.Add(entity.TongueCutEvent.Subscribe(OnTongueCut));
+
             _disposables.Add(entity.TakeDamageEvent.Subscribe(OnTakeDamage));
         }
 
@@ -77,6 +79,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         private void OnSpeedDamageDealt()
         {
             _styleEvaluator.ProcessHit(StyleActionType.SpeedDamage, isLethal: false);
+        }
+
+        /// <summary>
+        /// Язык слайма разрублен — катаной, тараном на скорости или пике.
+        /// Событие пишет TongueSystem со стороны слайма, фазу не различаем:
+        /// сбить язык в полёте и сорвать уже вцепившийся одинаково скилловы.
+        /// </summary>
+        private void OnTongueCut()
+        {
+            _styleEvaluator.ProcessTongueCut();
         }
 
         private void OnPlungeImpact(float landVelocity)

@@ -9,6 +9,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
         WallJump,
         WallHangAttach,
         GrappleAttach,
-        Bounce
+        Bounce,
+        TongueCut
     }
 }
