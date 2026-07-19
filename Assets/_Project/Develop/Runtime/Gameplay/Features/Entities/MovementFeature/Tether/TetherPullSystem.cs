@@ -81,8 +81,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         private const float MinReleaseSpeed = 12f;
 
         // Скорость отскока от слайма при Arrived. Отдельная константа, а не
-        // MinReleaseSpeed: отскок — это наказание за то, что игрок не разрубил
-        // язык, и он намеренно слабее награды за разруб.
+        // переиспользованная MinReleaseSpeed, потому что величины РАЗНОЙ
+        // ПРИРОДЫ и сравнивать их в лоб нельзя: MinReleaseSpeed — нижняя
+        // граница модуля ПОЛНОГО вектора при отпускании, а эта — компонента
+        // ВДОЛЬ ОСИ отскока, поперечная составляющая при этом сохраняется
+        // (см. семантику BounceSystem). Тюнить их нужно независимо.
         private const float ArriveBounceVelocity = 14f;
 
         // Ниже этого модуля вектор считается вырожденным (тот же порог, что
