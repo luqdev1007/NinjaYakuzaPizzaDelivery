@@ -22,6 +22,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.HangWall;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Jump;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Patrol;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Plunge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope;
@@ -749,6 +750,159 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 ;
 
             return entity;
+        }
+
+
+        // Наземный патрульный. Собран ПО ОБРАЗЦУ CreateGhost, но три системы
+        // призрака здесь отсутствуют намеренно:
+        //
+        //   SimpleRigidbodyMovementSystem — рулит по НАПРАВЛЕНИЮ и никогда не
+        //     останавливается сама, поэтому маршрут с концами ею не выражается.
+        //     Заменена на TargetPointMovementSystem, которая едет К ТОЧКЕ.
+        //
+        //   PhysicsStabilizationSystem — была бы вторым тиковым писателем
+        //     linearVelocity и вдобавок гасила бы движение к нулю. Её роль
+        //     (осаждение арки knockback) здесь исполняет сама рулёжка: по
+        //     окончании окна тело возвращается к точке маршрута.
+        //
+        //   SurfaceCheckSystem — не добавляется и не нужна. Слой Enemies(9) не
+        //     сталкивается с Ground(8)/Wall(10)/Slope(11), тело живёт с
+        //     gravityScale = 0, никакой «земли» под ним физически нет. Высоту
+        //     задают точки маршрута, которые дизайнер ставит руками.
+        //
+        // ОТЛИЧИЕ ОТ ПРИЗРАКА, НА КОТОРОЕ СТОИТ ОБРАТИТЬ ВНИМАНИЕ:
+        // здесь есть DeathProcessTimerSystem, а у призрака её нет. Без неё
+        // InDeathProcess остаётся false навсегда, mustSelfRelease срабатывает в
+        // тот же тик, что и смерть, и DeathProcessTime из конфига оказывается
+        // мёртвым полем — труп исчезает мгновенно. Слайму окно смерти нужно:
+        // на префабе есть анимация смерти и VFX.
+        public Entity CreateSlime(Vector3 at, SlimeConfig slimeConfig, PatrolRoute? patrolRoute)
+        {
+            Entity entity = CreateEmpty();
+
+            _monoEntitiesFactory.Create(entity, at, slimeConfig.PrefabPath);
+
+            PatrolRoute route = ResolvePatrolRoute(at, slimeConfig, patrolRoute);
+
+            entity
+                // Common
+                .AddLookDirectionX(new ReactiveVariable<float>(1))
+                .AddKnockbackDuration(new ReactiveVariable<float>(slimeConfig.KnockbackDuration))
+                .AddKnockbackElapsedTime(new ReactiveVariable<float>(slimeConfig.KnockbackDuration))
+
+                // Movement
+                .AddIsMoving()
+                .AddMoveSpeed(new ReactiveVariable<float>(slimeConfig.MovementSpeed))
+
+                // Patrol
+                .AddPatrolPointA(route.PointA)
+                .AddPatrolPointB(route.PointB)
+                .AddMoveTargetPoint(new ReactiveVariable<Vector2>(route.PointA))
+                .AddPatrolPauseMin(slimeConfig.PatrolPauseMin)
+                .AddPatrolPauseMax(slimeConfig.PatrolPauseMax)
+                .AddPatrolArriveDistance(slimeConfig.PatrolArriveDistance)
+
+                // Combat
+                .AddTakeDamageRequest()
+                .AddTakeDamageEvent()
+
+                .AddBodyContactDamage(new ReactiveVariable<float>(slimeConfig.ContactDamage))
+                .AddContactsDetectingMask(slimeConfig.ContactLayerMask)
+                .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
+                .AddContactEntitiesBuffer(new Buffer<Entity>(16))
+
+                .AddDamageCooldown(new ReactiveVariable<float>(slimeConfig.DamageCooldown))
+                .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
+
+                // LifeCycle
+                .AddMaxHealth(new ReactiveVariable<float>(slimeConfig.MaxHealth))
+                .AddCurrentHealth(new ReactiveVariable<float>(slimeConfig.MaxHealth))
+
+                .AddIsDead()
+                .AddInDeathProcess()
+                .AddDeathProcessInitialTime(new ReactiveVariable<float>(slimeConfig.DeathProcessTime))
+                .AddDeathProcessCurrentTime()
+                ;
+
+
+            // — Условия —
+            // Состав CanMove сверен с призраком, за вычетом IsGrappledTarget:
+            // тот компонент слайму не выдаётся и переиспользовать его нельзя —
+            // у него другая семантика и он читается в CanMove призрака
+            // (правило single-writer).
+            ICompositeCondition canMove = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.KnockbackElapsedTime.Value >= entity.KnockbackDuration.Value))
+                ;
+
+            ICompositeCondition canApplyDamage = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
+                ;
+
+            ICompositeCondition canFlip = new CompositeCondition()
+                .Add(new FuncCondition(() => true))
+                ;
+
+            ICompositeCondition mustDie = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0))
+                ;
+
+            ICompositeCondition mustSelfRelease = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == true))
+                .Add(new FuncCondition(() => entity.InDeathProcess.Value == false))
+                ;
+
+            entity
+                .AddCanMove(canMove)
+                .AddCanFlip(canFlip)
+                .AddCanApplyDamage(canApplyDamage)
+                .AddMustDie(mustDie)
+                .AddMustSelfRelease(mustSelfRelease)
+                ;
+
+            entity
+                .AddSystem(new DamageKnockbackTimerSystem())
+                .AddSystem(new DamageKnockbackSystem())
+
+                .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new ApplyDamageCooldownSystem())
+
+                .AddSystem(new BodyContactDetectingSystem())
+                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
+                .AddSystem(new DealDamageOnContactSystem())
+
+                .AddSystem(new TargetPointMovementSystem())
+                .AddSystem(new FlipDirectionSystem())
+
+                .AddSystem(new DisableCollidersOnDeathSystem())
+                .AddSystem(new DeathSystem())
+                .AddSystem(new DeathProcessTimerSystem())
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
+                ;
+
+            return entity;
+        }
+
+        // Маршрут со сцены либо запасной отрезок вокруг точки спавна.
+        //
+        // Проверка вырожденности (совпавшие концы) живёт НЕ здесь, а в
+        // GameplayBootstrap: только там на руках есть Transform маркера, а значит
+        // и путь объекта в иерархии для внятного warning'а. Сюда вырожденный
+        // маршрут уже не доезжает — приезжает null.
+        private PatrolRoute ResolvePatrolRoute(Vector3 at, SlimeConfig slimeConfig, PatrolRoute? patrolRoute)
+        {
+            if (patrolRoute.HasValue)
+            {
+                return patrolRoute.Value;
+            }
+
+            float halfRange = slimeConfig.PatrolFallbackHalfRange;
+
+            Vector2 pointA = new Vector2(at.x - halfRange, at.y);
+            Vector2 pointB = new Vector2(at.x + halfRange, at.y);
+
+            return new PatrolRoute(pointA, pointB);
         }
 
 

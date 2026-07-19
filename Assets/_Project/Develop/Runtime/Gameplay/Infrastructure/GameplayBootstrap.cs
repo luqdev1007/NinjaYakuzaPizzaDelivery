@@ -1,7 +1,9 @@
 using Assets._Project.Develop.Infrastructure;
 using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.Context;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Patrol;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
@@ -145,7 +147,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                     continue;
                 }
 
-                enemiesFactory.Create(marker.transform.position, marker.Config);
+                enemiesFactory.Create(marker.transform.position, marker.Config, TryGetPatrolRoute(marker));
 
                 string configTypeName = marker.Config.GetType().Name;
 
@@ -154,6 +156,65 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             }
 
             Debug.Log(BuildSpawnSummary(markers.Length, skippedCount, spawnedByConfigType));
+        }
+
+        // Маршрут патруля снимается ЗДЕСЬ, а не в фабрике, по той же причине, по
+        // которой здесь же живёт проверка маркера без конфига: только тут на руках
+        // есть Transform объекта, а значит и его путь в иерархии для внятного
+        // warning'а. Наружу уезжает либо готовый маршрут, либо null — фабрика
+        // разбирается с null сама и строит запасной отрезок вокруг спавна.
+        //
+        // Возврат null во всех проблемных случаях означает, что слайм всё равно
+        // заспавнится и будет ходить, просто не там, где задумано. Это осознанно:
+        // уронить весь уровень из-за одной незаполненной пустышки хуже, чем
+        // отработать с запасным маршрутом и громко об этом сказать.
+        private PatrolRoute? TryGetPatrolRoute(EnemySpawnMarker marker)
+        {
+            if (marker.TryGetComponent(out SlimePatrolRouteAuthoring routeAuthoring) == false)
+            {
+                return null;
+            }
+
+            if (routeAuthoring.PointA == null || routeAuthoring.PointB == null)
+            {
+                Debug.LogWarning(
+                    $"[Spawn] Маршрут патруля задан не полностью, будет использован запасной отрезок " +
+                    $"вокруг точки спавна: {BuildHierarchyPath(marker.transform)}",
+                    marker.gameObject);
+
+                return null;
+            }
+
+            Vector2 pointA = routeAuthoring.PointA.position;
+            Vector2 pointB = routeAuthoring.PointB.position;
+
+            if (Vector2.Distance(pointA, pointB) < GetDegenerateRouteThreshold(marker.Config))
+            {
+                Debug.LogWarning(
+                    $"[Spawn] Концы маршрута патруля совпали, будет использован запасной отрезок " +
+                    $"вокруг точки спавна: {BuildHierarchyPath(marker.transform)}",
+                    marker.gameObject);
+
+                return null;
+            }
+
+            return new PatrolRoute(pointA, pointB);
+        }
+
+        // Порог вырожденности — это и есть радиус достижения точки: маршрут, обе
+        // точки которого попадают в один такой радиус, слайм считал бы пройденным,
+        // не сдвинувшись с места.
+        //
+        // Для не-слайма порога нет: маршрут ему всё равно не пригодится, и
+        // отбраковывать его незачем.
+        private float GetDegenerateRouteThreshold(EntityConfig config)
+        {
+            if (config is SlimeConfig slimeConfig)
+            {
+                return slimeConfig.PatrolArriveDistance;
+            }
+
+            return 0f;
         }
 
         // Сводка одной строкой: расхождение задуманной расстановки с фактической

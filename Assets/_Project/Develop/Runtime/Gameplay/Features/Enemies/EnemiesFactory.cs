@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Patrol;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
@@ -30,7 +31,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
         }
 
-        public Entity Create(Vector3 at, EntityConfig config)
+        // patrolRoute — НЕОБЯЗАТЕЛЬНЫЙ параметр, и это принципиально: у
+        // ClearAllEnemiesStage на руках только позиция и конфиг, маркера в сцене
+        // нет вовсе. Он вызывает Create в две руки, как и раньше, и молча попадает
+        // в ветку «маршрут не задан» — слайм получит запасной отрезок вокруг
+        // точки спавна. Маршрут со сцены снимает GameplayBootstrap.
+        //
+        // Врагам, которым маршрут не нужен (обе разновидности призрака), параметр
+        // просто игнорируется.
+        public Entity Create(Vector3 at, EntityConfig config, PatrolRoute? patrolRoute = null)
         {
             Entity entity;
 
@@ -79,6 +88,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
 
                     // Тайминги фаз блуждания теперь живут в конфиге, а не в хардкоде фабрики
                     _brainsFactory.CreateGhostBrain(entity, ghostConfig);
+                    break;
+
+                // SlimeConfig наследует EntityConfig НАПРЯМУЮ, поэтому в ловушку
+                // порядка веток, описанную выше, он не попадает: pattern matching
+                // по GhostConfig его не ловит, и эта ветка может стоять где угодно
+                // ниже. Держим её последней перед default, чтобы порядок призраков
+                // между собой не поехал при будущих правках.
+                case SlimeConfig slimeConfig:
+                    entity = _entitiesFactory.CreateSlime(at, slimeConfig, patrolRoute);
+
+                    entity.AddLootIsDropped(new ReactiveVariable<bool>(false));
+
+                    ICompositeCondition canSlimeDropLoot = new CompositeCondition()
+                        .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
+
+                    entity.AddCanDropLoot(canSlimeDropLoot);
+
+                    entity.AddSystem(new DropLootSystem(
+                        _container.Resolve<DropLootService>(),
+                        slimeConfig.LootTable));
+
+                    _brainsFactory.CreateSlimeBrain(entity);
                     break;
 
                 default:
