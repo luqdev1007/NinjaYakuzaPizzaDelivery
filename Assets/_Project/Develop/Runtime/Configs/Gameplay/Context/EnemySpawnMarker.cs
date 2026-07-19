@@ -22,6 +22,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Context
         private static readonly Color ArmingRadiusColor = new Color(1f, 0.5f, 0f, RadiusGizmoAlpha);
         private static readonly Color DisarmRadiusColor = new Color(0.35f, 0.7f, 1f, RadiusGizmoAlpha);
         private static readonly Color ExplosionRadiusColor = new Color(1f, 0.15f, 0.1f, RadiusGizmoAlpha);
+        private static readonly Color PatrolFallbackRangeColor = new Color(0.4f, 1f, 0.5f, RadiusGizmoAlpha);
 
         [field: SerializeField] public EntityConfig Config { get; private set; }
 
@@ -56,6 +57,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Context
                 DrawRadius(angryConfig.ArmingRadius, ArmingRadiusColor);
                 DrawRadius(angryConfig.DisarmRadius, DisarmRadiusColor);
                 DrawRadius(angryConfig.ExplosionRadius, ExplosionRadiusColor);
+            }
+
+            // Слайм. Ветка независима от предыдущей: SlimeConfig наследует
+            // EntityConfig напрямую, поэтому pattern matching по GhostConfig его
+            // не ловит и порядок веток здесь ни на что не влияет.
+            //
+            // Рисуется ТОЛЬКО запасной радиус патруля — тот отрезок, по которому
+            // слайм пойдёт, если маршрут в сцене не задан. Реальный маршрут
+            // рисует SlimePatrolRouteAuthoring, и если он есть, этот радиус
+            // не используется вовсе.
+            if (Config is SlimeConfig slimeConfig)
+            {
+                DrawRadius(slimeConfig.PatrolFallbackHalfRange, PatrolFallbackRangeColor);
             }
         }
 
