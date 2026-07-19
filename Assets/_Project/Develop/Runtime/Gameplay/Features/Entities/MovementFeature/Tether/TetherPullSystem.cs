@@ -97,6 +97,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
         private ReactiveVariable<bool> _isTethered;
         private ReactiveVariable<Vector2> _anchorPoint;
+        private ReactiveVariable<bool> _isDashing;
         private ReactiveEvent<BounceImpulseData> _bounceImpulseRequest;
 
         private IDisposable _requestDisposable;
@@ -116,6 +117,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
             _isTethered = entity.IsTethered;
             _anchorPoint = entity.TetherAnchorPoint;
+            _isDashing = entity.IsDashing;
             _bounceImpulseRequest = entity.BounceImpulseRequest;
 
             _requestDisposable = entity.TetherRequest.Subscribe(OnTetherRequested);
@@ -186,6 +188,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
             if (_remainingTime <= 0f)
             {
                 ReleaseWithInertia();
+                return;
+            }
+
+            // ДЭШ ОБЯЗАН ОСТАВАТЬСЯ ВЫХОДОМ ИЗ ЗАХВАТА.
+            //
+            // Захват НЕ отменяется — состояние живёт, таймер выше продолжает
+            // тикать. Пропускается ровно применение тяги: velocity в этот тик
+            // не трогается и, что важнее, НЕ КАПИТСЯ на _pullSpeed.
+            //
+            // Зачем именно так, а не через IsTethered в canDash: CanBeTethered
+            // уже содержит IsDashing == false, то есть дэш даёт ИММУНИТЕТ к
+            // захвату. Запрещать дэш во время захвата значило бы противоречие
+            // (дэш спасает от захвата, но не спасает из захвата) и, хуже,
+            // проглоченный ввод — игрок жмёт кнопку, а игра молчит.
+            //
+            // Кап здесь снимается не косметически: полная скорость дэша
+            // (ForceMin 20 / ForceMax 30, в воздухе ×2) уверенно превышает
+            // MinSpeedThreshold = 10 у LethalContactMovementSystem, поэтому
+            // язык срубается штатным путём «скорость = урон». Оставь кап на
+            // 9 — и порог не берётся, а дэш превращается в ловушку.
+            if (_isDashing.Value)
+            {
                 return;
             }
 

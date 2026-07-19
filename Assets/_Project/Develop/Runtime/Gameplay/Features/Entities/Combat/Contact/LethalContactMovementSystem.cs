@@ -58,10 +58,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.Combat.Cont
 
                 if (_processedEntities.Contains(contactEntity) == false)
                 {
-                    _processedEntities.Add(contactEntity);
-
+                    // СЕМАНТИКА СПИСКА: «уже получил урон за эту серию контакта»,
+                    // а НЕ «уже просмотрен». Отсюда и положение Add — ВНУТРИ
+                    // гейта урона, вместе с самим уроном.
+                    //
+                    // Раньше Add стоял снаружи, и список означал «просмотрен».
+                    // Это молча блокировало урон в сценарии, где контакт возник
+                    // ВНЕ дэша, а дэш начался позже БЕЗ РАЗРЫВА контакта: цель
+                    // уже лежала в списке, ветка урона не исполнялась никогда.
+                    // Пока герой пролетал сквозь цель за один-два тика, баг был
+                    // не виден — контакт рвался, запись вычищалась нижним циклом.
+                    // Проявился он на языке слайма, который держит героя в
+                    // непрерывном контакте секундами.
+                    //
+                    // Дедупликация при этом НЕ ослаблена: пока контакт не
+                    // разорван, повторный урон по той же цели невозможен —
+                    // после первого попадания запись в списке уже есть.
                     if (calculatedDamage > 0f && (_isPlunging.Value == true || _isDashing.Value == true))
                     {
+                        _processedEntities.Add(contactEntity);
+
                         if (EntitiesHelper.TryTakeDamageFrom(_entity, contactEntity, calculatedDamage))
                             _speedDamageDealtEvent?.Invoke();
                     }
