@@ -1,7 +1,9 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles;
+using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using UnityEngine;
@@ -10,7 +12,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
 {
     /// <summary>
     /// Язык слайма: поиск цели в арке вверх → телеграф → выстрел с упреждением →
-    /// полёт → втягивание → кулдаун отращивания.
+    /// полёт → (захват героя) → втягивание → кулдаун отращивания.
     ///
     /// ЖИВЁТ НА СЛАЙМЕ. Собственный приватный enum состояния (по образцу
     /// GrappleSystem), стейт-машина мозга здесь НЕ используется: мозг продолжает
@@ -18,19 +20,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
     /// флагу IsTongueActive. Это штатный приём проекта — мозг решает, системы
     /// исполняют, условия гасят.
     ///
-    /// SINGLE-WRITER. Система пишет три вещи: IsTongueActive и
-    /// IsTongueTelegraphing на СВОЕЙ сущности и TongueOriginPoint на сущности
-    /// СОЗДАННОГО ЕЮ ЯЗЫКА. Последнее выглядит как запись «в чужую» сущность, но
-    /// писатель у этого компонента по-прежнему ровно один: язык создаётся,
-    /// ведётся и освобождается исключительно этой системой, других писателей у
-    /// TongueOriginPoint нет. Копии компонента на слайме нет намеренно —
-    /// единственный читатель живёт на префабе языка (TongueView).
+    /// SINGLE-WRITER. Система пишет: IsTongueActive и IsTongueTelegraphing на
+    /// СВОЕЙ сущности, TongueOriginPoint на сущности СОЗДАННОГО ЕЮ ЯЗЫКА, и
+    /// TetherRequest / TetherReleaseRequest / TetherAnchorPoint / TongueCutEvent
+    /// на сущности ГЕРОЯ. Последнее выглядит как запись «в чужую» сущность, но
+    /// писатель у каждого из этих компонентов по-прежнему ровно один — эта
+    /// система. Контракт целиком зафиксирован в TetherComponents.cs.
     ///
-    /// ЭТАП 3a: попадание в героя = язык коснулся и втянулся. Притягивания,
-    /// урона и очков стиля здесь нет — это 3b.
+    /// ФЛАГ IsTethered ЭТА СИСТЕМА НЕ ПИШЕТ. Им владеет TetherPullSystem на
+    /// герое, и это принципиально: флаг обязан гаснуть даже когда слайм уже
+    /// мёртв и физически не может ничего прислать.
+    ///
+    /// ЭТАП 3b: попадание в героя, прошедшего CanBeTethered, переводит язык в
+    /// фазу Tethering — слайм тянет героя к себе. Не прошедшего (дэш, подкат,
+    /// уже захвачен) — сразу во втягивание, как было на 3a.
     ///
     /// ПРО ОСВОБОЖДЕНИЕ ЯЗЫКА. EntitiesLifeContext.Release только кладёт заявку
-    /// в очередь, а очередь сливается в конце Update — тогда как эта система
+    /// в очередь, а очередь сливается в конце Update, тогда как эта система
     /// тикается на fixed. Между Release и фактическим удалением сущность языка
     /// проживёт ещё несколько fixed-тиков с ЖИВЫМ и всё ещё
     /// ЗАРЕГИСТРИРОВАННЫМ коллайдером. Поэтому поведение гасится немедленно
@@ -44,6 +50,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
             Idle,
             Telegraph,
             Flying,
+            Tethering,
             Retracting,
             Cooldown
         }
@@ -56,6 +63,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
         // каждый тик: ровно та претензия, что висит к SurfaceCheckSystem, —
         // повторять её не будем.
         private const int CastHitsBufferSize = 16;
+
+        // Дистанция от героя до точки вылета, на которой захват считается
+        // доведённым до конца. Заметно больше грэпловой ArriveDistance (0.5):
+        // герой должен оказаться ВПЛОТНУЮ К ТЕЛУ слайма, а не в точке
+        // ShootPoint, и на этой дистанции его уже накрывает контактный урон
+        // слайма штатной цепочкой DealDamageOnContactSystem.
+        private const float TetherArriveDistance = 1.2f;
 
         // ==================== ВРЕМЕННАЯ ДИАГНОСТИКА (этап 3a) ====================
         // Удаляется целиком по префиксу TONGUE-DIAG. Логика условий не затронута:
@@ -85,6 +99,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
         private float _cooldown;
         private float _aimArcDot;
 
+        private float _grabTime;
+        private float _tetherPullSpeed;
+        private float _tetherPullAcceleration;
+
         private LayerMask _sightBlockMask;
         private LayerMask _targetMask;
         private string _prefabPath;
@@ -104,6 +122,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
         // правила реактивности проекта (см. шапку TongueComponents).
         private float _telegraphTimer;
         private float _cooldownTimer;
+        private float _grabTimer;
 
         private Entity _tongueEntity;
         private IDisposable _tongueDamageDisposable;
@@ -113,6 +132,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
         // проверка ссылки: в окне до фактического удаления язык ещё можно
         // разрубить, и этот удар обязан уйти в никуда.
         private bool _isTongueReleased;
+
+        // Захваченный герой и подписка на его атаку. Ссылка держится ОТДЕЛЬНО
+        // от ResolveHero(): отпускать нужно ровно ту сущность, которую
+        // захватили, даже если сервис к этому моменту отдаёт другую.
+        private Entity _tetheredHero;
+        private IDisposable _heroAttackDisposable;
+
+        // Идемпотентность отпускания — по образцу _isTongueReleased. Двойной
+        // TetherReleaseRequest не сломал бы TetherPullSystem (там есть свой
+        // гейт), но полагаться на чужую защиту вместо своей нельзя.
+        private bool _isTetherActive;
 
         private Vector2 _tipPosition;
         private Vector2 _flyDirection;
@@ -144,6 +174,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
             _cooldown = entity.TongueCooldown;
             _aimArcDot = entity.TongueAimArcDot;
 
+            _grabTime = entity.TongueGrabTime;
+            _tetherPullSpeed = entity.TetherPullSpeed;
+            _tetherPullAcceleration = entity.TetherPullAcceleration;
+
             _sightBlockMask = entity.SightBlockMask;
             _targetMask = entity.TargetMask;
             _prefabPath = entity.TonguePrefabPath;
@@ -163,7 +197,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
 
             // Смерть слайма с активным языком — обязательный сценарий: бесхозный
             // язык оставил бы свой коллайдер в CollidersRegistryService, и тот
-            // вечно ловился бы атаками.
+            // вечно ловился бы атаками. С этапа 3b тот же путь обязан ещё и
+            // отпустить захваченного героя.
             _isDeadDisposable = _isDead.Subscribe(OnIsDeadChanged);
         }
 
@@ -201,6 +236,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
 
                 case TongueState.Flying:
                     TickFlying(deltaTime);
+                    break;
+
+                case TongueState.Tethering:
+                    TickTethering(deltaTime);
                     break;
 
                 case TongueState.Retracting:
@@ -505,12 +544,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
             // без неё язык втыкался бы в LevelBounds на первом же тике.
             if (TryFindBlockingHit(_tipPosition, newTip, _flightFilter, out RaycastHit2D hit))
             {
-                // ЭТАП 3a: попадание в героя и попадание в препятствие
-                // обрабатываются одинаково — язык коснулся и втягивается.
-                // ТОЧКА ВЕТВЛЕНИЯ ДЛЯ 3b: здесь развилка по слою hit.collider —
-                // Characters уходит в захват, остальное во втягивание.
                 _tipPosition = hit.point;
                 ApplyTipPosition();
+
+                // РАЗВИЛКА ЭТАПА 3b. Слой из TargetMask — это герой; всё
+                // остальное (геометрия из SightBlockMask) по-прежнему просто
+                // останавливает язык.
+                if (IsTargetLayer(hit.collider.gameObject.layer))
+                {
+                    TryStartTether();
+                    return;
+                }
+
                 EnterRetracting();
                 return;
             }
@@ -523,6 +568,166 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
             {
                 EnterRetracting();
             }
+        }
+
+        private bool IsTargetLayer(int layer)
+        {
+            return (_targetMask.value & (1 << layer)) != 0;
+        }
+
+        // — Захват —
+
+        /// <summary>
+        /// Попали в слой цели. Захват состоится, только если герой сейчас
+        /// зацепляем: в дэше, подкате или уже захваченный другим языком он
+        /// проходит сквозь, и язык просто втягивается — ровно как на 3a.
+        ///
+        /// Условие читается ЧЕРЕЗ TryGet, а не через прямое свойство: на слое
+        /// TargetMask может оказаться сущность без CanBeTethered, и падать
+        /// на этом нельзя.
+        /// </summary>
+        private void TryStartTether()
+        {
+            Entity hero = ResolveHero();
+
+            if (hero == null)
+            {
+                EnterRetracting();
+                return;
+            }
+
+            if (hero.TryGetCanBeTethered(out ICompositeCondition canBeTethered) == false)
+            {
+                EnterRetracting();
+                return;
+            }
+
+            if (canBeTethered.Evaluate() == false)
+            {
+                EnterRetracting();
+                return;
+            }
+
+            TetherData data = new TetherData
+            {
+                PullSpeed = _tetherPullSpeed,
+                PullAcceleration = _tetherPullAcceleration,
+                MaxDuration = _grabTime
+            };
+
+            _tetheredHero = hero;
+            _isTetherActive = true;
+            _grabTimer = _grabTime;
+
+            // Якорь выставляется ДО запроса: TetherPullSystem применяет тягу
+            // на своём ближайшем fixed-тике и обязана увидеть валидную точку,
+            // а не оставшийся с прошлого захвата ноль.
+            hero.TetherAnchorPoint.Value = GetOrigin();
+            hero.TetherRequest.Invoke(data);
+
+            // Любая атака рвёт язык БЕЗУСЛОВНО, попадание не требуется.
+            // Язык физически висит на игроке — требовать от него ещё и
+            // точности значило бы наказывать за очевидное действие.
+            // Подписка живёт ровно на время захвата.
+            _heroAttackDisposable = hero.StartAttackEvent.Subscribe(OnHeroAttacked);
+
+            _state = TongueState.Tethering;
+        }
+
+        private void TickTethering(float deltaTime)
+        {
+            if (_tongueEntity == null)
+            {
+                CancelAll();
+                EnterCooldown();
+                return;
+            }
+
+            // Герой умер под захватом: его сущность освобождена, отпускать
+            // некого и незачем — просто сматываем язык.
+            if (_tetheredHero == null || _tetheredHero.Transform == null)
+            {
+                ReleaseTether(TetherReleaseReason.SourceDied);
+                EnterRetracting();
+                return;
+            }
+
+            Vector2 origin = GetOrigin();
+            UpdateTongueOrigin(origin);
+
+            // Якорь переписывается каждый тик: слайм мог быть сдвинут тараном
+            // уже после того, как язык вцепился.
+            _tetheredHero.TetherAnchorPoint.Value = origin;
+
+            // Кончик языка держится на герое — иначе язык визуально остался бы
+            // висеть в точке первого касания.
+            _tipPosition = _tetheredHero.Transform.position;
+            ApplyTipPosition();
+
+            float distance = Vector2.Distance(_tipPosition, origin);
+
+            if (distance <= TetherArriveDistance)
+            {
+                ReleaseTether(TetherReleaseReason.Arrived);
+                EnterRetracting();
+                return;
+            }
+
+            _grabTimer -= deltaTime;
+
+            if (_grabTimer <= 0f)
+            {
+                ReleaseTether(TetherReleaseReason.Timeout);
+                EnterRetracting();
+            }
+        }
+
+        /// <summary>
+        /// Герой атаковал во время захвата. Сигнал приходит из
+        /// StartAttackSystem, то есть в МОМЕНТ НАЖАТИЯ, ещё до вычисления
+        /// попадания — так и задумано.
+        /// </summary>
+        private void OnHeroAttacked()
+        {
+            if (_state != TongueState.Tethering)
+            {
+                return;
+            }
+
+            NotifyTongueCut();
+            ReleaseTether(TetherReleaseReason.Cut);
+            EnterRetracting();
+        }
+
+        /// <summary>
+        /// Единственная точка отправки TetherReleaseRequest. Идемпотентна:
+        /// повторный вызов не отправит второй запрос.
+        ///
+        /// Обрати внимание: таймаут здесь ДУБЛИРУЕТ таймер внутри
+        /// TetherPullSystem, и это намеренно. Кто из двоих сработает первым —
+        /// неважно: оба пути приводят к отпусканию с инерцией, а гейты
+        /// идемпотентности с обеих сторон гасят второе срабатывание.
+        /// </summary>
+        private void ReleaseTether(TetherReleaseReason reason)
+        {
+            _heroAttackDisposable?.Dispose();
+            _heroAttackDisposable = null;
+
+            if (_isTetherActive == false)
+            {
+                _tetheredHero = null;
+                return;
+            }
+
+            _isTetherActive = false;
+
+            if (_tetheredHero != null)
+            {
+                _tetheredHero.TetherReleaseRequest.Invoke(reason);
+            }
+
+            _tetheredHero = null;
+            _grabTimer = 0f;
         }
 
         // — Втягивание —
@@ -563,8 +768,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
         }
 
         /// <summary>
-        /// Разруб катаной. В 3a визуально то же втягивание; отдельное поведение
-        /// «обрубок» — за скоупом этапа.
+        /// Разруб языка — катаной, тараном на скорости или пике. Работает
+        /// В ЛЮБОЙ ФАЗЕ: и по летящему языку, и по уже вцепившемуся.
         /// </summary>
         private void OnTongueDamaged(DamageData damageData)
         {
@@ -575,12 +780,48 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
                 return;
             }
 
-            if (_state != TongueState.Flying)
+            if (_state != TongueState.Flying && _state != TongueState.Tethering)
             {
                 return;
             }
 
+            NotifyTongueCut();
+
+            if (_state == TongueState.Tethering)
+            {
+                ReleaseTether(TetherReleaseReason.Cut);
+            }
+
             EnterRetracting();
+        }
+
+        /// <summary>
+        /// Сообщает герою факт разруба — сигнал для очков стиля.
+        ///
+        /// Событие живёт на герое, а не на языке, потому что у сущности языка
+        /// нет ни ApplyDamageSystem, ни TakeDamageEvent, и её читатель
+        /// (MainHeroStyleSystem) переживает смерть любого отдельного слайма.
+        /// </summary>
+        private void NotifyTongueCut()
+        {
+            Entity hero = _tetheredHero;
+
+            if (hero == null)
+            {
+                hero = ResolveHero();
+            }
+
+            if (hero == null)
+            {
+                return;
+            }
+
+            if (hero.TryGetTongueCutEvent(out ReactiveEvent tongueCutEvent) == false)
+            {
+                return;
+            }
+
+            tongueCutEvent.Invoke();
         }
 
         // — Кулдаун —
@@ -629,9 +870,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
         /// OnDispose системы. Идемпотентен: повторный вызов не подаст вторую
         /// заявку на Release — двойной Release дал бы двойной Dispose сущности и
         /// повторный прогон всех её OnDispose.
+        ///
+        /// ОТПУСКАНИЕ ГЕРОЯ ЗДЕСЬ ОБЯЗАТЕЛЬНО. Смерть слайма посреди захвата —
+        /// штатный и самый вероятный сценарий (игрока тянет прямо на катану).
+        /// Не отпусти мы его тут, герой остался бы с IsTethered = true до
+        /// срабатывания предохранителя в TetherPullSystem.
         /// </summary>
         private void CancelAll()
         {
+            ReleaseTether(TetherReleaseReason.SourceDied);
+
             _tongueDamageDisposable?.Dispose();
             _tongueDamageDisposable = null;
 

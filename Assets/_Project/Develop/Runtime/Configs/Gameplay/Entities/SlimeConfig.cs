@@ -60,19 +60,45 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField] public LootTableConfig LootTable { get; private set; }
 
         // Поля языка. Часть из них заведена ещё на этапе 1 и переиспользуется
-        // этапом 3a как есть: MaxRange — дальность языка, GrabAttackSpeed —
-        // скорость полёта вперёд, GrabBackSpeed — скорость втягивания.
+        // как есть: MaxRange — дальность языка, GrabAttackSpeed — скорость
+        // полёта вперёд, GrabBackSpeed — скорость втягивания.
         //
-        // GrabTime на этапе 3a НЕ ЧИТАЕТСЯ: удержание героя — это 3b.
+        // ЭТАП 3b: GrabTime начал читаться — он ровно для этого и заводился.
         //
         // ReduceGrabTimePerHitPercent удалено: это была заготовка под маш-эскейп
         // (долбить атаку, чтобы вырваться), решение принято против неё — один
         // удар рвёт язык целиком.
         [Header("Grab Target Settings")]
         [field: SerializeField] public float MaxRange { get; private set; } = 10f;
+
+        [Tooltip("Таймаут ЗАХВАТА героя, сек — сколько язык тянет, прежде чем сдаться " +
+                 "сам. Это НЕ длительность полёта языка и не время втягивания.\n" +
+                 "Уезжает герою в TetherData.MaxDuration: TetherPullSystem ведёт по нему " +
+                 "СВОЙ таймер и отпускает даже если слайм умер и запрос не дошёл")]
         [field: SerializeField] public float GrabTime { get; private set; } = 2f;
+
         [field: SerializeField] public float GrabAttackSpeed { get; private set; } = 5f;
+
+        [Tooltip("Скорость ВТЯГИВАНИЯ языка обратно в слайм, ед/с. К силе притяга героя " +
+                 "отношения НЕ имеет — с этапа 3b за тягу отвечают TetherPullSpeed и " +
+                 "TetherPullAcceleration ниже")]
         [field: SerializeField] public float GrabBackSpeed { get; private set; } = 3f;
+
+        [Header("Tether — притяг героя языком")]
+        [Tooltip("Кап общего модуля скорости героя во время притяга, ед/с. Аналог " +
+                 "GrappleHookConfig.GrappleSpeed (15). Ниже — притяг слабее базовой " +
+                 "скорости героя (12) и он может уйти пешком, что и задумано: " +
+                 "сопротивляться должно быть можно, но дорого")]
+        [field: SerializeField] public float TetherPullSpeed { get; private set; } = 9f;
+
+        [Tooltip("Ускорение героя к слайму, ед/с². Аналог связки GrappleSpeed * " +
+                 "PullAccelerationFactor у грэпла (15 * 6 = 90) — здесь намеренно " +
+                 "заметно мягче.\n" +
+                 "НИЖНЯЯ ГРАНИЦА НЕ КОСМЕТИЧЕСКАЯ: RigidbodyMovementSystem " +
+                 "перезаписывает X героя каждый fixed-тик и принимает чужое значение " +
+                 "только при расхождении > 0.5. Слишком малое ускорение будет " +
+                 "съедаться базой, и горизонтальная тяга просто пропадёт")]
+        [field: SerializeField] public float TetherPullAcceleration { get; private set; } = 40f;
 
         [Header("Tongue")]
         [Tooltip("Препятствия для линии взгляда И для полёта языка. Выставлено " +

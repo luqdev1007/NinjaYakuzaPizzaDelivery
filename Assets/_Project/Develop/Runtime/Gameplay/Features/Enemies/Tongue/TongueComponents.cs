@@ -127,6 +127,33 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
         public string Value;
     }
 
+    /// <summary>
+    /// Таймаут захвата героя, сек. Из SlimeConfig.GrabTime. Уезжает герою
+    /// в TetherData.MaxDuration.
+    /// </summary>
+    public class TongueGrabTime : IEntityComponent
+    {
+        public float Value;
+    }
+
+    /// <summary>
+    /// Кап скорости героя во время притяга. Из SlimeConfig.TetherPullSpeed.
+    /// Уезжает герою в TetherData.PullSpeed.
+    /// </summary>
+    public class TetherPullSpeed : IEntityComponent
+    {
+        public float Value;
+    }
+
+    /// <summary>
+    /// Ускорение героя к слайму. Из SlimeConfig.TetherPullAcceleration.
+    /// Уезжает герою в TetherData.PullAcceleration.
+    /// </summary>
+    public class TetherPullAcceleration : IEntityComponent
+    {
+        public float Value;
+    }
+
     // ─────────────────────────────────────────────────────────────────────
     //  НА ЯЗЫКЕ
     // ─────────────────────────────────────────────────────────────────────

@@ -890,6 +890,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSightBlockMask(slimeConfig.SightBlockMask)
                 .AddTargetMask(slimeConfig.TargetMask)
                 .AddTonguePrefabPath(slimeConfig.TonguePrefabPath)
+
+                // Уставки притяга. Живут на слайме, а НЕ на герое: это
+                // параметры конкретного врага, они уезжают герою в TetherData
+                // в момент захвата.
+                .AddTongueGrabTime(slimeConfig.GrabTime)
+                .AddTetherPullSpeed(slimeConfig.TetherPullSpeed)
+                .AddTetherPullAcceleration(slimeConfig.TetherPullAcceleration)
                 ;
 
 

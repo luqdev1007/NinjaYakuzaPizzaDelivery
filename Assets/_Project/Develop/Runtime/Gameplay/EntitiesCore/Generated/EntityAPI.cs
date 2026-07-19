@@ -6104,5 +6104,77 @@
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueCutEvent() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueGrabTime TongueGrabTimeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueGrabTime>();
+
+		public System.Single TongueGrabTime => TongueGrabTimeC.Value;
+
+		public bool TryGetTongueGrabTime(out System.Single value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueGrabTime component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(System.Single);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueGrabTime()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueGrabTime() { Value = new System.Single() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueGrabTime(System.Single value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueGrabTime() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullSpeed TetherPullSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullSpeed>();
+
+		public System.Single TetherPullSpeed => TetherPullSpeedC.Value;
+
+		public bool TryGetTetherPullSpeed(out System.Single value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullSpeed component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(System.Single);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherPullSpeed()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullSpeed() { Value = new System.Single() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherPullSpeed(System.Single value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullSpeed() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullAcceleration TetherPullAccelerationC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullAcceleration>();
+
+		public System.Single TetherPullAcceleration => TetherPullAccelerationC.Value;
+
+		public bool TryGetTetherPullAcceleration(out System.Single value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullAcceleration component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(System.Single);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherPullAcceleration()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullAcceleration() { Value = new System.Single() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherPullAcceleration(System.Single value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullAcceleration() {Value = value}); 
+		}
+
 	}
 }
