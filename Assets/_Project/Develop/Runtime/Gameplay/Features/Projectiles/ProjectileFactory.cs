@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Move;
@@ -121,9 +121,50 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
             // SetParent(null) соседних методов здесь не нужен.
             _monoEntitiesFactory.Create(entity, (Vector3)startPosition, prefabPath);
 
+            // ЗАЧЕМ ЯЗЫКУ ЗАВЕДОМО ЛОЖНОЕ CanApplyDamage.
+            //
+            // Компонент нужен НЕ для урона, а чтобы выключить язык из
+            // автонаведения. NearestDamagableTargetSelector.IsValidTarget
+            // проверяет цель так: TryGetCanApplyDamage(...) && Evaluate() == false.
+            // Отсутствие компонента роняет левую часть && — и проверка
+            // ПРОПУСКАЕТСЯ ЦЕЛИКОМ. Язык при этом проходит все остальные
+            // критерии селектора (TakeDamageRequest есть, дистанция мала по
+            // определению), поэтому без этой строки лок-он героя прыгает
+            // на язык вместо слайма.
+            //
+            // ОБЩИЙ ПАТТЕРН ЭТОЙ МАШИНЕРИИ, который здесь и кусается:
+            // ОТСУТСТВУЮЩИЙ КОМПОНЕНТ РАЗРЕШАЕТ, А НЕ ЗАПРЕЩАЕТ. То же самое
+            // у EntitiesHelper.TryTakeDamageFrom с Team. Сущности минимального
+            // состава (а язык именно такая) от этого страдают систематически.
+            //
+            // РАЗРУБ КАТАНОЙ ЭТИМ НЕ ЗАДЕВАЕТСЯ, и вот почему это держится:
+            // CanApplyDamage читает ApplyDamageSystem, а её на языке НЕТ —
+            // у языка вообще нет систем, TongueSystem подписана на его
+            // TakeDamageRequest напрямую. MeleeAttackHitSystem проверяет только
+            // HasComponent<TakeDamageRequest>() и бьёт в него в обход
+            // EntitiesHelper.
+            // МИНА НА БУДУЩЕЕ: добавишь языку ApplyDamageSystem — эта константа
+            // молча выключит ВЕСЬ урон по языку, и разруб перестанет работать
+            // без единой ошибки компиляции.
+            ICompositeCondition canApplyDamage = new CompositeCondition()
+                .Add(new FuncCondition(() => false))
+                ;
+
+            // TEAM ЯЗЫКУ НЕ ВЫДАЁТСЯ — ОСОЗНАННО, НЕ ЗАБЫТО.
+            //
+            // Единственный путь контактного урона от героя — это
+            // LethalContactMovementSystem ("скорость = урон"), и она ходит через
+            // EntitiesHelper.TryTakeDamageFrom, то есть ТИМ-ФИЛЬТРУЕТСЯ. Выдай
+            // языку Team = Enemies — герой и язык окажутся в одной команде
+            // относительно этого фильтра, и дэш/пике сквозь язык перестанут его
+            // рубить.
+            // Это прямо противоречит design pillar "скорость = урон": пролёт
+            // сквозь язык на скорости ОБЯЗАН его срезать. Поэтому язык остаётся
+            // нейтралом без Team и уязвим для тарана.
             entity
                 .AddTakeDamageRequest()
                 .AddTongueOriginPoint(new ReactiveVariable<Vector2>(startPosition))
+                .AddCanApplyDamage(canApplyDamage)
                 ;
 
             _entitiesLifeContext.Add(entity);
@@ -165,9 +206,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
                 .AddMustSelfRelease(mustSelfRelease);
 
             entity
-                .AddSystem(new TransformMovementSystem())                                  
-                .AddSystem(new BodyContactDetectingSystem())                        
-                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService)); 
+                .AddSystem(new TransformMovementSystem())
+                .AddSystem(new BodyContactDetectingSystem())
+                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService));
 
             if (throwableConfig is ShurikenConfig shurikenConfig)
             {
@@ -179,11 +220,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
                 mustSelfRelease.Add(new FuncCondition(() => entity.IsTouchDeathMask.Value == true));
 
                 entity
-                    .AddSystem(new DealDamageOnContactSystem())        
-                    .AddSystem(new DeathMaskTouchDetectorSystem());     
+                    .AddSystem(new DealDamageOnContactSystem())
+                    .AddSystem(new DeathMaskTouchDetectorSystem());
             }
 
-            entity.AddSystem(new SelfReleaseSystem(_entitiesLifeContext)); 
+            entity.AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
 
             _entitiesLifeContext.Add(entity);
         }
