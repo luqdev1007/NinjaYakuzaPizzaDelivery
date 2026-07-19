@@ -33,3 +33,13 @@ MonoBehaviour:
   <GrabTime>k__BackingField: 2
   <GrabAttackSpeed>k__BackingField: 5
   <GrabBackSpeed>k__BackingField: 3
+  <SightBlockMask>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 36097
+  <TargetMask>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 128
+  <TongueTelegraphDuration>k__BackingField: 0.25
+  <TongueCooldown>k__BackingField: 3
+  <TongueAimArcDot>k__BackingField: 0
+  <TonguePrefabPath>k__BackingField: Entities/Projectiles/SlimeTongue
