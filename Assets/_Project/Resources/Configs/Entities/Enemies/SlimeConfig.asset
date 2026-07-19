@@ -11,18 +11,25 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 376759e2808c6c343b178278c1ce2967, type: 3}
   m_Name: SlimeConfig
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   <PrefabPath>k__BackingField: Entities/Enemies/Slime
   <MovementSpeed>k__BackingField: 2
   <LinearDrag>k__BackingField: 2
   <DirectionChangeCooldown>k__BackingField: 2
+  <PatrolPauseMin>k__BackingField: 0.5
+  <PatrolPauseMax>k__BackingField: 1.5
+  <PatrolArriveDistance>k__BackingField: 0.15
+  <PatrolFallbackHalfRange>k__BackingField: 3
   <MaxHealth>k__BackingField: 10
   <DamageCooldown>k__BackingField: 0.1
   <DeathProcessTime>k__BackingField: 0.5
   <ContactDamage>k__BackingField: 1
+  <ContactLayerMask>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 128
+  <KnockbackDuration>k__BackingField: 1
   <LootTable>k__BackingField: {fileID: 11400000, guid: a54cc7243b8c3744991f591301f01020, type: 2}
   <MaxRange>k__BackingField: 10
   <GrabTime>k__BackingField: 2
-  <ReduceGrabTimePerHitPercent>k__BackingField: 1
   <GrabAttackSpeed>k__BackingField: 5
   <GrabBackSpeed>k__BackingField: 3
