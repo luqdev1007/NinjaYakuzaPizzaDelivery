@@ -35,6 +35,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Visual;
@@ -822,6 +823,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddInDeathProcess()
                 .AddDeathProcessInitialTime(new ReactiveVariable<float>(slimeConfig.DeathProcessTime))
                 .AddDeathProcessCurrentTime()
+
+                // Tongue.
+                // Реактивны только те два флага, у которых есть читатель: CanMove
+                // читает IsTongueActive, TongueTelegraphView — IsTongueTelegraphing.
+                // Остальное — уставки из конфига, они не меняются после сборки
+                // сущности, поэтому нереактивны (то же решение, что по
+                // PatrolPointA/PatrolPointB).
+                .AddIsTongueActive(new ReactiveVariable<bool>(false))
+                .AddIsTongueTelegraphing(new ReactiveVariable<bool>(false))
+
+                .AddTongueRange(slimeConfig.MaxRange)
+                .AddTongueSpeed(slimeConfig.GrabAttackSpeed)
+                .AddTongueRetractSpeed(slimeConfig.GrabBackSpeed)
+                .AddTongueTelegraphDuration(slimeConfig.TongueTelegraphDuration)
+                .AddTongueCooldown(slimeConfig.TongueCooldown)
+                .AddTongueAimArcDot(slimeConfig.TongueAimArcDot)
+                .AddSightBlockMask(slimeConfig.SightBlockMask)
+                .AddTargetMask(slimeConfig.TargetMask)
+                .AddTonguePrefabPath(slimeConfig.TonguePrefabPath)
                 ;
 
 
@@ -861,6 +881,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMustSelfRelease(mustSelfRelease)
                 ;
 
+            // Ужесточаем условие движения ПОСТ-ФАКТУМ, ровно как в
+            // CreateAngryGhost с IsArming: Add на ICompositeCondition кладёт
+            // условие в конец и склеивает стандартной операцией (And).
+            //
+            // Мозг и PatrolState при этом НЕ трогаются: слайм продолжает «хотеть»
+            // идти к точке маршрута, а исполняющая система движения загашена
+            // условием. Мозг решает, системы исполняют, условия гасят.
+            entity.CanMove.Add(new FuncCondition(() => entity.IsTongueActive.Value == false));
+
             entity
                 .AddSystem(new DamageKnockbackTimerSystem())
                 .AddSystem(new DamageKnockbackSystem())
@@ -874,6 +903,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 .AddSystem(new TargetPointMovementSystem())
                 .AddSystem(new FlipDirectionSystem())
+
+                // ProjectileFactory резолвится отложенно, в теле метода (образец —
+                // SlashAttackSpawnSystem в AddHeroSystems): в конструкторе
+                // EntitiesFactory её ещё нет. EntitiesLifeContext брать из
+                // контейнера не нужно — он уже лежит в поле фабрики.
+                .AddSystem(new TongueSystem(
+                    _container.Resolve<ProjectileFactory>(),
+                    _entitiesLifeContext,
+                    _container.Resolve<MainHeroHolderService>()))
 
                 .AddSystem(new DisableCollidersOnDeathSystem())
                 .AddSystem(new DeathSystem())

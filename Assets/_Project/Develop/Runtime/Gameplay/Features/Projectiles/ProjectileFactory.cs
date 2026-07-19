@@ -94,6 +94,43 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
             return entity;
         }
 
+        /// <summary>
+        /// Язык слайма. Отдельная сущность, а НЕ дочерний узел слайма: катана
+        /// мапит цель через GetComponentInParent&lt;MonoEntity&gt;, поэтому удар по
+        /// дочернему языку был бы неотличим от удара по слайму. Плюс
+        /// CollidersRegistryService.Register использует Dictionary.Add — повторная
+        /// регистрация того же коллайдера бросила бы ArgumentException.
+        ///
+        /// Уставки СПЕЦИАЛЬНО не хардкодятся в теле метода (в соседних методах
+        /// этой фабрики они захардкожены под комментарием "// settings (config)" —
+        /// эту практику не наследуем): всё, что нужно знать языку, приезжает
+        /// параметрами, остальным рулит TongueSystem на стороне слайма.
+        ///
+        /// Состав сущности намеренно минимальный. Здоровья, смерти, лута,
+        /// самоосвобождения и контактной цепочки у языка нет: разрубаемость
+        /// катаной обеспечивает один TakeDamageRequest, а MeleeAttackHitSystem
+        /// на такой сущности отрабатывает штатно — Invoke по пустому списку
+        /// подписчиков проходит, CurrentHealth никто не читает.
+        /// Жизненным циклом языка управляет TongueSystem через EntitiesLifeContext.
+        /// </summary>
+        public Entity CreateSlimeTongue(Vector2 startPosition, string prefabPath)
+        {
+            Entity entity = new Entity();
+
+            // Перегрузка с позицией уже инстанцирует без родителя, поэтому
+            // SetParent(null) соседних методов здесь не нужен.
+            _monoEntitiesFactory.Create(entity, (Vector3)startPosition, prefabPath);
+
+            entity
+                .AddTakeDamageRequest()
+                .AddTongueOriginPoint(new ReactiveVariable<Vector2>(startPosition))
+                ;
+
+            _entitiesLifeContext.Add(entity);
+
+            return entity;
+        }
+
         public void CreateThrowableProjectile(ThrowableItemConfig throwableConfig, Transform parent, Vector2 aimDirection, Entity playerEntity)
         {
             Entity entity = new Entity();
