@@ -61,6 +61,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private bool ApplyDamage(Entity target, Vector2 position)
         {
+            if (target == null)
+            {
+                return false;
+            }
+
             if (target.HasComponent<TakeDamageRequest>())
             {
                 float direction = Mathf.Abs(_entity.Transform.localRotation.eulerAngles.y - 180f) < 1f ? -1f : 1f;
