@@ -94,9 +94,16 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [Tooltip("Время отращивания языка после полного цикла, сек")]
         [field: SerializeField] public float TongueCooldown { get; private set; } = 3f;
 
-        [Tooltip("Порог dot между направлением на героя и Vector2.up. " +
-                 "0 = ровно полусфера вверх, вниз слайм не стреляет никогда")]
-        [field: SerializeField] public float TongueAimArcDot { get; private set; } = 0f;
+        [Tooltip("Порог dot между направлением на героя и Vector2.up — нижняя граница арки.\n" +
+                 "0 = ровно полусфера вверх. Отрицательные значения ОПУСКАЮТ нижнюю " +
+                 "границу: -0.35 — примерно 20° ниже горизонта, -1 — полная сфера.\n" +
+                 "Для наземного врага небольшое отрицательное значение ОБЯЗАТЕЛЬНО. " +
+                 "ShootPoint стоит на высоте центра слайма, а пивот героя — у него в " +
+                 "ногах, поэтому герой, стоящий на той же земле, оказывается НИЖЕ точки " +
+                 "вылета (замерено: origin.y 15.96 против heroPos.y 15.35, dot = -0.085). " +
+                 "При пороге 0 такой герой не проходит проверку, и слайм стреляет только " +
+                 "по подпрыгнувшему")]
+        [field: SerializeField] public float TongueAimArcDot { get; private set; } = -0.35f;
 
         [field: SerializeField] public string TonguePrefabPath { get; private set; } = "Entities/Projectiles/SlimeTongue";
     }

@@ -41,5 +41,5 @@ MonoBehaviour:
     m_Bits: 128
   <TongueTelegraphDuration>k__BackingField: 0.25
   <TongueCooldown>k__BackingField: 3
-  <TongueAimArcDot>k__BackingField: 0
+  <TongueAimArcDot>k__BackingField: -0.35
   <TonguePrefabPath>k__BackingField: Entities/Projectiles/SlimeTongue

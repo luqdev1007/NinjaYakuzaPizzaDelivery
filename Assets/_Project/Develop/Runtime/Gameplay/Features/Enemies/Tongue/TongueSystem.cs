@@ -52,6 +52,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
         // запасное — иначе normalized вернёт ноль и язык улетит «в никуда».
         private const float DegenerateVectorThreshold = 0.0001f;
 
+        // Потолок хитов за один каст. Буфер переиспользуется, а не создаётся
+        // каждый тик: ровно та претензия, что висит к SurfaceCheckSystem, —
+        // повторять её не будем.
+        private const int CastHitsBufferSize = 16;
+
+        // ==================== ВРЕМЕННАЯ ДИАГНОСТИКА (этап 3a) ====================
+        // Удаляется целиком по префиксу TONGUE-DIAG. Логика условий не затронута:
+        // диагностика только ЧИТАЕТ те же величины и печатает их раз в секунду.
+        private const string DiagnosticsPrefix = "[TONGUE-DIAG]";
+        private const float DiagnosticsInterval = 1f;
+
+        private float _nextDiagnosticsTime;
+        private bool _isDiagnosticsTick;
+        // =========================================================================
+
         private readonly ProjectileFactory _projectileFactory;
         private readonly EntitiesLifeContext _entitiesLifeContext;
         private readonly MainHeroHolderService _mainHeroHolderService;
@@ -73,6 +88,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
         private LayerMask _sightBlockMask;
         private LayerMask _targetMask;
         private string _prefabPath;
+
+        // Переиспользуемые буфер и фильтры кастов. Оба каста системы (линия
+        // взгляда и полёт языка) идут по одному буферу — они никогда не
+        // выполняются в одном тике, поэтому за перетирание результатов можно
+        // не переживать.
+        private readonly RaycastHit2D[] _castHits = new RaycastHit2D[CastHitsBufferSize];
+        private ContactFilter2D _sightFilter;
+        private ContactFilter2D _flightFilter;
 
         private TongueState _state;
 
@@ -125,6 +148,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
             _targetMask = entity.TargetMask;
             _prefabPath = entity.TonguePrefabPath;
 
+            // useTriggers = true сохраняет прежнее поведение: глобальный
+            // Physics2D.queriesHitTriggers в проекте включён, и одиночный
+            // Linecast, который здесь стоял раньше, триггеры видел.
+            _sightFilter = new ContactFilter2D();
+            _sightFilter.useTriggers = true;
+            _sightFilter.SetLayerMask(_sightBlockMask);
+
+            _flightFilter = new ContactFilter2D();
+            _flightFilter.useTriggers = true;
+            _flightFilter.SetLayerMask(_sightBlockMask | _targetMask);
+
             _state = TongueState.Idle;
 
             // Смерть слайма с активным языком — обязательный сценарий: бесхозный
@@ -135,9 +169,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
 
         public void OnFixedUpdate(float deltaTime)
         {
+            // TONGUE-DIAG: троттлинг общий на весь тик — одна строка в секунду.
+            _isDiagnosticsTick = Time.unscaledTime >= _nextDiagnosticsTime;
+
+            if (_isDiagnosticsTick)
+            {
+                _nextDiagnosticsTime = Time.unscaledTime + DiagnosticsInterval;
+            }
+
             if (_isDead.Value)
             {
+                LogDiagnostics("ранний выход: IsDead = true");
                 return;
+            }
+
+            if (_state != TongueState.Idle)
+            {
+                LogDiagnostics($"состояние = {_state} (не Idle, поиск цели не выполняется), " +
+                               $"cooldownTimer = {_cooldownTimer:F2}, telegraphTimer = {_telegraphTimer:F2}");
             }
 
             switch (_state)
@@ -176,6 +225,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
 
         private void TickIdle()
         {
+            LogIdleDiagnostics();
+
             Entity hero = ResolveHero();
 
             if (hero == null)
@@ -205,7 +256,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
                 return;
             }
 
-            if (Physics2D.Linecast(origin, heroPosition, _sightBlockMask))
+            if (TryFindBlockingHit(origin, heroPosition, _sightFilter, out RaycastHit2D _))
             {
                 return;
             }
@@ -240,6 +291,58 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
             }
 
             return hero;
+        }
+
+        /// <summary>
+        /// Неаллоцирующий каст с отсевом ОХВАТЫВАЮЩИХ коллайдеров.
+        ///
+        /// Хит считается препятствием, только если точка старта НЕ лежит внутри
+        /// задевшего коллайдера. Коллайдеры вроде LevelBounds охватывают всю
+        /// игровую зону и потому всегда содержат стреляющего, физически не
+        /// являясь преградой между ним и целью. При
+        /// Physics2D.queriesStartInColliders = 1 такой коллайдер возвращается
+        /// как хит с дистанцией 0 и намертво глушит любую проверку видимости.
+        ///
+        /// Глобальный queriesStartInColliders СПЕЦИАЛЬНО не трогаем: его
+        /// мутация посреди кадра задела бы любые другие касты в том же тике.
+        ///
+        /// Возвращается БЛИЖАЙШИЙ валидный хит: порядок результатов в буфере
+        /// не гарантирован, поэтому минимум по дистанции ищем явно.
+        /// </summary>
+        private bool TryFindBlockingHit(Vector2 start, Vector2 end, ContactFilter2D filter, out RaycastHit2D blockingHit)
+        {
+            blockingHit = default;
+
+            int count = Physics2D.Linecast(start, end, filter, _castHits);
+            float closestDistance = float.MaxValue;
+            bool found = false;
+
+            for (int i = 0; i < count; i++)
+            {
+                RaycastHit2D hit = _castHits[i];
+
+                if (hit.collider == null)
+                {
+                    continue;
+                }
+
+                // Охватывающий коллайдер — не преграда.
+                if (hit.collider.OverlapPoint(start))
+                {
+                    continue;
+                }
+
+                if (hit.distance >= closestDistance)
+                {
+                    continue;
+                }
+
+                closestDistance = hit.distance;
+                blockingHit = hit;
+                found = true;
+            }
+
+            return found;
         }
 
         private Vector2 GetOrigin()
@@ -398,9 +501,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
 
             Vector2 newTip = _tipPosition + _flyDirection * _speed * deltaTime;
 
-            RaycastHit2D hit = Physics2D.Linecast(_tipPosition, newTip, _sightBlockMask | _targetMask);
-
-            if (hit.collider != null)
+            // Та же фильтрация охватывающих коллайдеров, что и у линии взгляда:
+            // без неё язык втыкался бы в LevelBounds на первом же тике.
+            if (TryFindBlockingHit(_tipPosition, newTip, _flightFilter, out RaycastHit2D hit))
             {
                 // ЭТАП 3a: попадание в героя и попадание в препятствие
                 // обрабатываются одинаково — язык коснулся и втягивается.
@@ -558,5 +661,94 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
 
             CancelAll();
         }
+
+        // ==================== ВРЕМЕННАЯ ДИАГНОСТИКА (этап 3a) ====================
+        // Всё ниже удаляется целиком. Ни один метод здесь не пишет состояние —
+        // только читает и печатает.
+
+        private void LogDiagnostics(string message)
+        {
+            if (_isDiagnosticsTick == false)
+            {
+                return;
+            }
+
+            Debug.Log($"{DiagnosticsPrefix} {message}");
+        }
+
+        /// <summary>
+        /// Пересчитывает ровно те же величины, что проверяет TickIdle, и печатает
+        /// их одной строкой. Логика TickIdle не тронута — это независимый
+        /// read-only проход, включая собственный Linecast (раз в секунду).
+        /// </summary>
+        private void LogIdleDiagnostics()
+        {
+            if (_isDiagnosticsTick == false)
+            {
+                return;
+            }
+
+            Vector2 origin = GetOrigin();
+            string originInfo = $"shootPointSet = {_shootPoint != null}, origin = {origin}";
+
+            if (_mainHeroHolderService == null)
+            {
+                LogDiagnostics($"герой НЕ найден: MainHeroHolderService = null. {originInfo}");
+                return;
+            }
+
+            Entity hero = _mainHeroHolderService.MainHero;
+
+            if (hero == null)
+            {
+                LogDiagnostics($"герой НЕ найден: MainHero = null (герой ещё не создан). {originInfo}");
+                return;
+            }
+
+            if (hero.Transform == null)
+            {
+                LogDiagnostics($"герой НЕ найден: hero.Transform уничтожен. {originInfo}");
+                return;
+            }
+
+            Vector2 heroPosition = hero.Transform.position;
+            Vector2 toHero = heroPosition - origin;
+            float distance = toHero.magnitude;
+
+            float dot = 0f;
+
+            if (distance >= DegenerateVectorThreshold)
+            {
+                dot = Vector2.Dot(toHero / distance, Vector2.up);
+            }
+
+            // Тот же путь, что и в TickIdle, — с отсевом охватывающих
+            // коллайдеров. Иначе лог показывал бы LevelBounds и после фикса.
+            string sightInfo;
+
+            if (TryFindBlockingHit(origin, heroPosition, _sightFilter, out RaycastHit2D hit))
+            {
+                int layer = hit.collider.gameObject.layer;
+
+                sightInfo = $"ПЕРЕКРЫТА коллайдером '{hit.collider.name}', " +
+                            $"слой = {LayerMask.LayerToName(layer)}({layer}), " +
+                            $"дистанция хита = {hit.distance:F3}";
+            }
+            else
+            {
+                sightInfo = "свободна";
+            }
+
+            LogDiagnostics(
+                $"{originInfo}, heroPos = {heroPosition} | " +
+                $"дистанция = {distance:F2} / range = {_range:F2} " +
+                $"({(distance <= _range ? "ok" : "ДАЛЕКО")}) | " +
+                $"dot = {dot:F3} / arcDot = {_aimArcDot:F3} " +
+                $"({(dot >= _aimArcDot ? "ok" : "ВНЕ АРКИ")}) | " +
+                $"линия взгляда: {sightInfo} | " +
+                $"cooldownTimer = {_cooldownTimer:F2}, sightBlockMask = {_sightBlockMask.value}");
+        }
+
+        // ================== КОНЕЦ ВРЕМЕННОЙ ДИАГНОСТИКИ ==========================
     }
 }
