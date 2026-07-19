@@ -19,6 +19,7 @@ MonoBehaviour:
   WallHangAttachPoints: 10
   GrappleAttachPoints: 12
   PlungeSlamPoints: 25
+  BouncePoints: 10
   KillBonus: 15
   DiversityMultiplier: 1.5
   DiversityHistorySize: 3

@@ -28,6 +28,9 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Style
         [Tooltip("Срабатывание оглушающего AoE при приземлении после смертельного пике")]
         public float PlungeSlamPoints = 25f;
 
+        [Tooltip("Отскок от упругой поверхности: трамплин уровня или площадка на теле врага. Источник не различается — одно действие на все батуты")]
+        public float BouncePoints = 10f;
+
         [Header("Kill / Destroy")]
         [Tooltip("Бонус сверху, если этим ударом цель была уничтожена. ПОКА НЕ ПРИМЕНЯЕТСЯ для LightAttack — см. чат.")]
         public float KillBonus = 15f;

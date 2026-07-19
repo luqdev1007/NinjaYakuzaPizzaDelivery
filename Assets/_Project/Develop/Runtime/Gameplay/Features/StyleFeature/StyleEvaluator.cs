@@ -93,6 +93,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
             RegisterAction(StyleActionType.PlungeSlam, _config.PlungeSlamPoints);
         }
 
+        public void ProcessBounce()
+        {
+            RegisterAction(StyleActionType.Bounce, _config.BouncePoints);
+        }
+
         public void ProcessPlayerHit()
         {
             _styleService.ApplyDamagePenalty();

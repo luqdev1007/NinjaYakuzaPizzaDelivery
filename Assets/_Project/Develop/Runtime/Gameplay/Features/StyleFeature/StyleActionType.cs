@@ -1,4 +1,4 @@
-﻿namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature
 {
     public enum StyleActionType
     {
@@ -8,6 +8,7 @@
         Dash,
         WallJump,
         WallHangAttach,
-        GrappleAttach
+        GrappleAttach,
+        Bounce
     }
 }
