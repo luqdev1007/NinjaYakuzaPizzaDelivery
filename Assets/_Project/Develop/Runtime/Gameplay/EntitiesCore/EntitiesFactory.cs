@@ -549,6 +549,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // grapple
                 .AddSystem(new GrappleSystem(grappleConfig, _coroutinesPerformer))
 
+                // tether (язык слайма). Стоит РЯДОМ С ГРЭПЛОМ и ПОСЛЕ
+                // RigidbodyMovementSystem осознанно: обе механики тяги
+                // накладываются поверх уже посчитанной базовой скорости,
+                // на том же fixed-канале. Уставок из конфига здесь нет —
+                // они приезжают в TetherRequest от конкретного слайма.
+                .AddSystem(new TetherPullSystem())
+
                 // attack
                 .AddSystem(new StartAttackSystem())
                 .AddSystem(new AttackProcessTimerSystem())
