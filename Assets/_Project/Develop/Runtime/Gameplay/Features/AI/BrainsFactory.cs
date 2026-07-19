@@ -139,6 +139,35 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
         }
 
         /// <summary>
+        /// Мозг наземного патрульного: одно состояние, ping-pong между двумя
+        /// точками маршрута.
+        /// </summary>
+        /// <remarks>
+        /// Конфиг сюда НЕ передаётся, в отличие от CreateGhostBrain. Всё, что
+        /// нужно состоянию (точки, границы паузы, радиус достижения), уже лежит
+        /// на сущности компонентами — их положила EntitiesFactory.CreateSlime.
+        /// Тянуть конфиг вторым путём значило бы завести второй источник истины.
+        ///
+        /// Переходов нет вовсе: состояние одно. Место под состояния этапа 3
+        /// (прицеливание / выстрел языком / притяг) остаётся чистым, и когда они
+        /// появятся, порядок AddState/AddTransition придётся задавать здесь по
+        /// тем же правилам, что описаны в CreateAngryGhostBrain.
+        /// </remarks>
+        public StateMachineBrain CreateSlimeBrain(Entity entity)
+        {
+            PatrolState patrolState = new PatrolState(entity, _gameplayRandom);
+
+            AIStateMachine rootStateMachine = new AIStateMachine();
+            rootStateMachine.AddState(patrolState);
+
+            StateMachineBrain brain = new StateMachineBrain(rootStateMachine);
+
+            _brainsContext.SetFor(entity, brain);
+
+            return brain;
+        }
+
+        /// <summary>
         /// Квадрат расстояния до героя. Героя нет или его Transform уже уничтожен —
         /// возвращает float.MaxValue, то есть «бесконечно далеко».
         /// </summary>
