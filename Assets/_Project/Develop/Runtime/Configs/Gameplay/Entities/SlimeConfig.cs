@@ -59,7 +59,12 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [Header("Loot")]
         [field: SerializeField] public LootTableConfig LootTable { get; private set; }
 
-        // Поля языка. На этапе 1 НЕ используются — сборка сущности их не читает.
+        // Поля языка. Часть из них заведена ещё на этапе 1 и переиспользуется
+        // этапом 3a как есть: MaxRange — дальность языка, GrabAttackSpeed —
+        // скорость полёта вперёд, GrabBackSpeed — скорость втягивания.
+        //
+        // GrabTime на этапе 3a НЕ ЧИТАЕТСЯ: удержание героя — это 3b.
+        //
         // ReduceGrabTimePerHitPercent удалено: это была заготовка под маш-эскейп
         // (долбить атаку, чтобы вырваться), решение принято против неё — один
         // удар рвёт язык целиком.
@@ -68,5 +73,31 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField] public float GrabTime { get; private set; } = 2f;
         [field: SerializeField] public float GrabAttackSpeed { get; private set; } = 5f;
         [field: SerializeField] public float GrabBackSpeed { get; private set; } = 3f;
+
+        [Header("Tongue")]
+        [Tooltip("Препятствия для линии взгляда И для полёта языка. Выставлено " +
+                 "Default(0) + Ground(8) + Wall(10) + Slope(11) + Props(15): геометрия " +
+                 "Village.prefab размазана ровно по этим пяти слоям, Ground+Wall+Slope " +
+                 "покрывает только 28 из 36 коллайдеров. Тот же набор — GroundMask героя.\n" +
+                 "Имя поля намеренно НЕ WallMask: в Entity.cs живёт заглушка AddWallMask " +
+                 "с throw new NotImplementedException рядом с генерённой перегрузкой")]
+        [field: SerializeField] public LayerMask SightBlockMask { get; private set; }
+
+        [Tooltip("На чём искать героя для выстрела языком. Characters(7)")]
+        [field: SerializeField] public LayerMask TargetMask { get; private set; }
+
+        [Tooltip("Длительность телеграфа перед плевком, сек. Окно, за которое игрок " +
+                 "успевает среагировать. Условия входа в нём повторно НЕ проверяются: " +
+                 "выстрел состоится даже если герой ушёл — промах это честная награда")]
+        [field: SerializeField] public float TongueTelegraphDuration { get; private set; } = 0.25f;
+
+        [Tooltip("Время отращивания языка после полного цикла, сек")]
+        [field: SerializeField] public float TongueCooldown { get; private set; } = 3f;
+
+        [Tooltip("Порог dot между направлением на героя и Vector2.up. " +
+                 "0 = ровно полусфера вверх, вниз слайм не стреляет никогда")]
+        [field: SerializeField] public float TongueAimArcDot { get; private set; } = 0f;
+
+        [field: SerializeField] public string TonguePrefabPath { get; private set; } = "Entities/Projectiles/SlimeTongue";
     }
 }

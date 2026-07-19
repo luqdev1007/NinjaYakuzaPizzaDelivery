@@ -5468,6 +5468,249 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.CanApplyDamage() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueActive IsTongueActiveC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueActive>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsTongueActive => IsTongueActiveC.Value;
+
+		public bool TryGetIsTongueActive(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueActive component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTongueActive()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueActive() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTongueActive(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueActive() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueTelegraphing IsTongueTelegraphingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueTelegraphing>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsTongueTelegraphing => IsTongueTelegraphingC.Value;
+
+		public bool TryGetIsTongueTelegraphing(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueTelegraphing component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTongueTelegraphing()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueTelegraphing() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTongueTelegraphing(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueTelegraphing() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueRange TongueRangeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueRange>();
+
+		public System.Single TongueRange => TongueRangeC.Value;
+
+		public bool TryGetTongueRange(out System.Single value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueRange component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(System.Single);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueRange(System.Single value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueRange() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueSpeed TongueSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueSpeed>();
+
+		public System.Single TongueSpeed => TongueSpeedC.Value;
+
+		public bool TryGetTongueSpeed(out System.Single value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueSpeed component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(System.Single);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueSpeed(System.Single value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueSpeed() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueRetractSpeed TongueRetractSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueRetractSpeed>();
+
+		public System.Single TongueRetractSpeed => TongueRetractSpeedC.Value;
+
+		public bool TryGetTongueRetractSpeed(out System.Single value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueRetractSpeed component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(System.Single);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueRetractSpeed(System.Single value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueRetractSpeed() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueTelegraphDuration TongueTelegraphDurationC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueTelegraphDuration>();
+
+		public System.Single TongueTelegraphDuration => TongueTelegraphDurationC.Value;
+
+		public bool TryGetTongueTelegraphDuration(out System.Single value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueTelegraphDuration component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(System.Single);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueTelegraphDuration(System.Single value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueTelegraphDuration() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueCooldown TongueCooldownC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueCooldown>();
+
+		public System.Single TongueCooldown => TongueCooldownC.Value;
+
+		public bool TryGetTongueCooldown(out System.Single value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueCooldown component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(System.Single);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueCooldown(System.Single value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueCooldown() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueAimArcDot TongueAimArcDotC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueAimArcDot>();
+
+		public System.Single TongueAimArcDot => TongueAimArcDotC.Value;
+
+		public bool TryGetTongueAimArcDot(out System.Single value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueAimArcDot component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(System.Single);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueAimArcDot(System.Single value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueAimArcDot() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.SightBlockMask SightBlockMaskC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.SightBlockMask>();
+
+		public UnityEngine.LayerMask SightBlockMask => SightBlockMaskC.Value;
+
+		public bool TryGetSightBlockMask(out UnityEngine.LayerMask value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.SightBlockMask component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(UnityEngine.LayerMask);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddSightBlockMask(UnityEngine.LayerMask value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.SightBlockMask() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TargetMask TargetMaskC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TargetMask>();
+
+		public UnityEngine.LayerMask TargetMask => TargetMaskC.Value;
+
+		public bool TryGetTargetMask(out UnityEngine.LayerMask value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TargetMask component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(UnityEngine.LayerMask);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTargetMask(UnityEngine.LayerMask value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TargetMask() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TonguePrefabPath TonguePrefabPathC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TonguePrefabPath>();
+
+		public System.String TonguePrefabPath => TonguePrefabPathC.Value;
+
+		public bool TryGetTonguePrefabPath(out System.String value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TonguePrefabPath component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(System.String);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTonguePrefabPath(System.String value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TonguePrefabPath() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueOriginPoint TongueOriginPointC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueOriginPoint>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> TongueOriginPoint => TongueOriginPointC.Value;
+
+		public bool TryGetTongueOriginPoint(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueOriginPoint component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueOriginPoint()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueOriginPoint() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueOriginPoint(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueOriginPoint() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.BodyContactDamage BodyContactDamageC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.BodyContactDamage>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> BodyContactDamage => BodyContactDamageC.Value;
