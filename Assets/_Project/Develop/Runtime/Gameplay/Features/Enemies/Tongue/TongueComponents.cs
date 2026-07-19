@@ -148,4 +148,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
     {
         public ReactiveVariable<Vector2> Value;
     }
+
+    // ─────────────────────────────────────────────────────────────────────
+    //  НА ГЕРОЕ
+    // ─────────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Факт разруба языка. Инвоукается В ЛЮБОЙ ФАЗЕ — и когда язык сбит в
+    /// полёте, и когда разрублен уже вцепившимся в героя.
+    ///
+    /// ЖИВЁТ НА ГЕРОЕ, хотя пишет его система слайма — ровно та же схема, что
+    /// у TongueOriginPoint на языке: писатель по-прежнему ровно один.
+    /// Компонент здесь потому, что единственный читатель — MainHeroStyleSystem,
+    /// а она живёт на герое и переживает смерть любого отдельного слайма.
+    ///
+    /// Отдельным событием, а не веткой внутри TakeDamageEvent, осознанно:
+    /// у сущности языка нет ни ApplyDamageSystem, ни TakeDamageEvent —
+    /// TongueSystem подписана на её TakeDamageRequest напрямую.
+    ///
+    /// Single-writer: TongueSystem.
+    /// </summary>
+    public class TongueCutEvent : IEntityComponent
+    {
+        public ReactiveEvent Value;
+    }
 }

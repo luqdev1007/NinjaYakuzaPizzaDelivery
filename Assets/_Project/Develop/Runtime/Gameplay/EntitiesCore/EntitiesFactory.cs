@@ -26,6 +26,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Plunge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slide;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.HitStop;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
@@ -187,6 +188,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // explosion (взрыв призрака-камикадзе шлёт сюда просьбу на импульс)
                 .AddExplosionImpulseRequest(new ReactiveEvent<Vector2>())
+
+                // tether (язык слайма шлёт сюда просьбу на захват — та же схема,
+                // что у bounce выше: запрос-компонент на герое, применяет
+                // система героя. Контракт писателей — в TetherComponents.cs)
+                .AddIsTethered()
+                .AddTetherAnchorPoint()
+                .AddTetherRequest(new ReactiveEvent<TetherData>())
+                .AddTetherReleaseRequest(new ReactiveEvent<TetherReleaseReason>())
+
+                // разруб языка — сигнал для очков стиля, писатель TongueSystem
+                .AddTongueCutEvent(new ReactiveEvent())
 
                 // slide
                 .AddIsSliding()
@@ -392,6 +404,34 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsGliding.Value == false))
                 .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                // Две механики тяги одновременно недопустимы: обе пишут в
+                // linearVelocity героя, и арбитра между ними нет. Плюс
+                // GrappleSystem подменяет gravityScale и восстанавливает его
+                // своим Release — на пересечении это восстановление прилетело
+                // бы посреди активного захвата.
+                .Add(new FuncCondition(() => entity.IsTethered.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
+
+            // Можно ли зацепить героя языком. Проверяется НА СТОРОНЕ СЛАЙМА
+            // в момент попадания: условие ложно — язык просто втягивается,
+            // как на этапе 3a.
+            //
+            // IsPlunging В СПИСКЕ НЕТ — ЭТО ДИЗАЙН-РЕШЕНИЕ, НЕ ЗАБЫТАЯ СТРОКА.
+            // Выдернуть героя из пике языком — желаемое поведение: пике это
+            // мощный самонаводящийся коммит вниз, и возможность сорвать его
+            // языком единственное, что делает слайма угрозой для игрока,
+            // спамящего пике. НЕ "чинить".
+            //
+            // IsDashing/IsSliding, наоборот, дают иммунитет: это короткие
+            // окна, которыми игрок платит за проход сквозь язык, и в них он
+            // язык РУБИТ (LethalContactMovementSystem) — захват поверх этого
+            // был бы наказанием за успешное исполнение.
+            ICompositeCondition canBeTethered = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+                .Add(new FuncCondition(() => entity.IsSliding.Value == false))
+                .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+                .Add(new FuncCondition(() => entity.IsTethered.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
 
             ICompositeCondition canStartAttack = new CompositeCondition()
@@ -451,6 +491,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddCanGlide(canGlide)
                 .AddCanWallHang(canWallHang)
                 .AddCanGrapple(canGrapple)
+                .AddCanBeTethered(canBeTethered)
                 .AddCanStartAttack(canStartAttack)
                 .AddCanApplyDamage(canApplyDamage)
                 .AddCanDoubleAttack(canDoubleAttack)
