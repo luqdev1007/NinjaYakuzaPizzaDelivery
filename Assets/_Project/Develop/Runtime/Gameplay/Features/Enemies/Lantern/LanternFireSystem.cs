@@ -1,5 +1,6 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
@@ -7,14 +8,19 @@ using UnityEngine;
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
 {
     /// <summary>
-    /// Ритмичная стрельба фонаря: метроном без прицеливания. По приватному
-    /// таймеру взводит телеграф, по концу телеграфа спавнит снаряд в
-    /// ФИКСИРОВАННОМ направлении и уходит на кулдаун.
+    /// Ритмичная стрельба фонаря. По приватному таймеру взводит телеграф, по концу
+    /// телеграфа спавнит снаряд В СТОРОНУ ГЕРОЯ и уходит на кулдаун.
     ///
-    /// СТРЕЛЬБА БЕЗУСЛОВНА: ни sight-check, ни дистанции, ни поиска героя — в
-    /// отличие от TongueSystem слайма. Фонарь плюётся огнём по ритму независимо
-    /// от того, где игрок. Это осознанно: скилл-чек не в «увернись от прицела», а
-    /// в «прочитай ритм и линию огня».
+    /// ПРИЦЕЛ — СНАПШОТ В МОМЕНТ ВЫСТРЕЛА. Направление считается ровно один раз,
+    /// когда снаряд рождается: вектор от точки дула к ТЕКУЩЕЙ позиции героя,
+    /// нормализованный. БЕЗ упреждения по скорости героя и БЕЗ самонаведения —
+    /// дальше снаряд летит прямо, MoveDirection после спавна не трогается. Скилл-чек
+    /// в том, чтобы уйти с линии в окне телеграфа, а не в том, что снаряд
+    /// «мажет мимо стоящего».
+    ///
+    /// ГЕРОЙ НЕДОСТУПЕН — ВЫСТРЕЛ ПРОПУСКАЕТСЯ. Если в момент выстрела героя нет
+    /// (сервис пуст, сущность или её Transform уничтожены), снаряд не спавнится,
+    /// но ритм не ломается: телеграф отыгрался, таймер сбрасывается на кулдаун.
     ///
     /// ТАЙМЕРЫ — приватные float на fixed-канале (правило проекта: игровой ритм
     /// НЕ на TimerService и НЕ на корутинах). Собственный enum фазы по образцу
@@ -28,11 +34,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
     /// гасит телеграф: труп не должен ни плеваться, ни застыть в сжатом
     /// телеграф-состоянии. Проверка в начале тика.
     ///
-    /// НАПРАВЛЕНИЕ И ТОЧКА ВЫЛЕТА приезжают в конструктор из LanternAimAuthoring
-    /// (per-instance со сцены), уставки ритма и снаряда — из LanternConfig.
-    /// Компонентов под них не заводим: иных читателей нет, а реактивка без
-    /// подписчика против правил проекта (то же решение, что по приватным таймерам
-    /// TongueSystem).
+    /// ТОЧКА ВЫЛЕТА приезжает в конструктор из authoring (per-instance со сцены),
+    /// уставки ритма и снаряда — из LanternConfig. Компонентов под них не заводим:
+    /// иных читателей нет, а реактивка без подписчика против правил проекта (то же
+    /// решение, что по приватным таймерам TongueSystem).
     /// </summary>
     public class LanternFireSystem : IInitializableSystem, IFixedUpdatableSystem
     {
@@ -42,13 +47,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
             Telegraph
         }
 
+        // Ниже этого модуля вектор дуло→герой считается вырожденным (герой ровно в
+        // точке вылета) и выстрел пропускается — normalized иначе вернул бы ноль.
+        private const float DegenerateVectorThreshold = 0.0001f;
+
         private readonly ProjectileFactory _projectileFactory;
+        private readonly MainHeroHolderService _mainHeroHolderService;
 
         private readonly float _fireCooldown;
         private readonly float _telegraphDuration;
         private readonly LanternProjectileData _projectileData;
         private readonly Vector2 _shootOrigin;
-        private readonly Vector2 _shootDirection;
 
         private ReactiveVariable<bool> _isTelegraphing;
         private ReactiveVariable<bool> _isDead;
@@ -60,18 +69,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
 
         public LanternFireSystem(
             ProjectileFactory projectileFactory,
+            MainHeroHolderService mainHeroHolderService,
             float fireCooldown,
             float telegraphDuration,
             LanternProjectileData projectileData,
-            Vector2 shootOrigin,
-            Vector2 shootDirection)
+            Vector2 shootOrigin)
         {
             _projectileFactory = projectileFactory;
+            _mainHeroHolderService = mainHeroHolderService;
             _fireCooldown = fireCooldown;
             _telegraphDuration = telegraphDuration;
             _projectileData = projectileData;
             _shootOrigin = shootOrigin;
-            _shootDirection = shootDirection;
         }
 
         public void OnInit(Entity entity)
@@ -136,15 +145,66 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
 
             _isTelegraphing.Value = false;
 
+            // Fire сам решает, спавнить снаряд или пропустить (герой недоступен).
+            // Таймер сбрасывается в любом случае — ритм фонаря не зависит от того,
+            // попался ли герой на прицел.
             Fire();
 
             _state = FireState.Cooldown;
             _cooldownTimer = _fireCooldown;
         }
 
+        /// <summary>
+        /// Снапшот направления на героя и спавн снаряда. Пропускается, если герой
+        /// недоступен или стоит ровно в точке дула (вырожденный вектор).
+        /// </summary>
         private void Fire()
         {
-            _projectileFactory.CreateLanternProjectile(_shootOrigin, _shootDirection, _projectileData);
+            Entity hero = ResolveHero();
+
+            if (hero == null)
+            {
+                return;
+            }
+
+            Vector2 toHero = (Vector2)hero.Transform.position - _shootOrigin;
+
+            if (toHero.sqrMagnitude < DegenerateVectorThreshold * DegenerateVectorThreshold)
+            {
+                return;
+            }
+
+            Vector2 direction = toHero.normalized;
+
+            _projectileFactory.CreateLanternProjectile(_shootOrigin, direction, _projectileData);
+        }
+
+        /// <summary>
+        /// Ссылка на героя берётся В МОМЕНТ ВЫСТРЕЛА, не кэшируется: враги создаются
+        /// раньше героя, и сервис не обнуляет ссылку после его смерти — сама Entity
+        /// остаётся живым C#-объектом, а Transform к этому моменту уже уничтожен.
+        /// Обе проверки обязательны (тот же приём, что в TongueSystem.ResolveHero).
+        /// </summary>
+        private Entity ResolveHero()
+        {
+            if (_mainHeroHolderService == null)
+            {
+                return null;
+            }
+
+            Entity hero = _mainHeroHolderService.MainHero;
+
+            if (hero == null)
+            {
+                return null;
+            }
+
+            if (hero.Transform == null)
+            {
+                return null;
+            }
+
+            return hero;
         }
     }
 }

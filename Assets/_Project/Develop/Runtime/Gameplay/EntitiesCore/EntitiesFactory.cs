@@ -1086,11 +1086,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 // конструктором — компонентов под них не заводим.
                 .AddSystem(new LanternFireSystem(
                     _container.Resolve<ProjectileFactory>(),
+                    _container.Resolve<MainHeroHolderService>(),
                     config.FireCooldown,
                     config.TelegraphDuration,
                     projectileData,
-                    resolvedAim.Origin,
-                    resolvedAim.Direction))
+                    resolvedAim.Origin))
 
                 .AddSystem(new DisableCollidersOnDeathSystem())
                 .AddSystem(new DeathSystem())
