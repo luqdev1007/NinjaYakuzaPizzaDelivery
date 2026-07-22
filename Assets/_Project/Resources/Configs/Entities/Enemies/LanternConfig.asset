@@ -20,7 +20,7 @@ MonoBehaviour:
   <ContactLayerMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 128
-  <LootTable>k__BackingField: {fileID: 11400000, guid: a54cc7243b8c3744991f591301f01020, type: 2}
+  <LootTable>k__BackingField: {fileID: 11400000, guid: e3c9a5f10d6b482798c3e1b7d05f4a29, type: 2}
   <FireCooldown>k__BackingField: 2
   <FireRadius>k__BackingField: 8
   <TelegraphDuration>k__BackingField: 0.3
