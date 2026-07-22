@@ -44,9 +44,16 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField] public LootTableConfig LootTable { get; private set; }
 
         [Header("Fire — ритм стрельбы")]
-        [Tooltip("Период между выстрелами, сек. Метроном: фонарь стреляет БЕЗУСЛОВНО, " +
-                 "без прицеливания, sight-check и поиска героя")]
+        [Tooltip("Период между выстрелами, сек. Метроном. Прицел берётся снапшотом " +
+                 "в сторону героя в момент выстрела, без упреждения и самонаведения")]
         [field: SerializeField] public float FireCooldown { get; private set; } = 2f;
+
+        [Tooltip("Радиус активации, ед. Фонарь стреляет, только когда герой ближе " +
+                 "этого (центр — тело фонаря). Вне радиуса ритм заморожен: на входе " +
+                 "героя играет полный телеграф, а не мгновенный выстрел из накопленного " +
+                 "таймера. Проверка — простая дистанция в LanternFireSystem, отдельной " +
+                 "системы детекта не заводим. Гизмо радиуса — на authoring в сцене")]
+        [field: SerializeField] public float FireRadius { get; private set; } = 8f;
 
         [Tooltip("Длительность телеграфа перед выстрелом, сек. Окно на реакцию. Ведёт " +
                  "общий флаг IsTelegraphing — та же вьюха (TelegraphView), что у языка слайма")]

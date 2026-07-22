@@ -1088,6 +1088,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                     _container.Resolve<MainHeroHolderService>(),
                     config.FireCooldown,
                     config.TelegraphDuration,
+                    config.FireRadius,
                     projectileData,
                     resolvedAim.Origin))
 

@@ -1,3 +1,4 @@
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Context
@@ -30,6 +31,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Context
         private const float MissingMuzzleSphereRadius = 0.5f;
 
         private static readonly Color AimColor = new Color(1f, 0.75f, 0.2f, 0.9f);
+        private static readonly Color FireRadiusColor = new Color(1f, 0.5f, 0.15f, 0.5f);
 
         // Дуло не задано — снаряд полетит вниз из точки спавна, БЕЗ единой ошибки
         // в консоли (warning печатает GameplayBootstrap). Поэтому в сцене такой
@@ -41,6 +43,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Context
 
         private void OnDrawGizmos()
         {
+            DrawFireRadius();
+
             if (Muzzle == null)
             {
                 Gizmos.color = MissingMuzzleColor;
@@ -63,6 +67,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Context
 
             Gizmos.DrawLine(tip, tip + leftHead);
             Gizmos.DrawLine(tip, tip + rightHead);
+        }
+
+        // Радиус активации берётся из соседнего EnemySpawnMarker (его Config —
+        // LanternConfig): значение живёт в конфиге, а гизмо — на authoring, как
+        // просит контракт. Нет маркера/не тот конфиг — радиус просто не рисуем.
+        private void DrawFireRadius()
+        {
+            if (TryGetComponent(out EnemySpawnMarker marker) == false)
+            {
+                return;
+            }
+
+            if (marker.Config is LanternConfig lanternConfig)
+            {
+                Gizmos.color = FireRadiusColor;
+                Gizmos.DrawWireSphere(transform.position, lanternConfig.FireRadius);
+            }
         }
     }
 }

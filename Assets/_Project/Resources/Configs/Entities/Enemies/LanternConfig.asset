@@ -22,6 +22,7 @@ MonoBehaviour:
     m_Bits: 128
   <LootTable>k__BackingField: {fileID: 11400000, guid: a54cc7243b8c3744991f591301f01020, type: 2}
   <FireCooldown>k__BackingField: 2
+  <FireRadius>k__BackingField: 8
   <TelegraphDuration>k__BackingField: 0.3
   <ProjectilePrefabPath>k__BackingField: Entities/Projectiles/LanternProjectile
   <ProjectileSpeed>k__BackingField: 6

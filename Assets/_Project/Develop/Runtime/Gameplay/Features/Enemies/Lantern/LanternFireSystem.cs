@@ -11,12 +11,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
     /// Ритмичная стрельба фонаря. По приватному таймеру взводит телеграф, по концу
     /// телеграфа спавнит снаряд В СТОРОНУ ГЕРОЯ и уходит на кулдаун.
     ///
+    /// РАДИУСНЫЙ ГЕЙТ. Фонарь стреляет, только когда герой в радиусе (простая
+    /// дистанция от тела фонаря, без отдельной системы — сервис героя тут и так
+    /// есть). Вне радиуса РИТМ ЗАМОРОЖЕН: таймер не тикает, начатый телеграф
+    /// гасится. На входе героя в радиус кулдаун продолжается с замороженного
+    /// значения → перед выстрелом всегда играет ПОЛНЫЙ телеграф, мгновенного
+    /// выстрела из накопленного таймера не бывает (Fire вызывается только по концу
+    /// телеграфа). Заморозка (а не сброс) сохраняет per-instance фазу из блока E:
+    /// соседние фонари, входящие в радиус одновременно, продолжают со своих разных
+    /// значений и не залпят синхронно.
+    ///
     /// ПРИЦЕЛ — СНАПШОТ В МОМЕНТ ВЫСТРЕЛА. Направление считается ровно один раз,
     /// когда снаряд рождается: вектор от точки дула к ТЕКУЩЕЙ позиции героя,
     /// нормализованный. БЕЗ упреждения по скорости героя и БЕЗ самонаведения —
-    /// дальше снаряд летит прямо, MoveDirection после спавна не трогается. Скилл-чек
-    /// в том, чтобы уйти с линии в окне телеграфа, а не в том, что снаряд
-    /// «мажет мимо стоящего».
+    /// дальше снаряд летит прямо, MoveDirection после спавна не трогается.
     ///
     /// ГЕРОЙ НЕДОСТУПЕН — ВЫСТРЕЛ ПРОПУСКАЕТСЯ. Если в момент выстрела героя нет
     /// (сервис пуст, сущность или её Transform уничтожены), снаряд не спавнится,
@@ -32,12 +40,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
     ///
     /// ГЕЙТ СМЕРТИ. Пока фонарь в death-process (или уже мёртв), не стреляет и
     /// гасит телеграф: труп не должен ни плеваться, ни застыть в сжатом
-    /// телеграф-состоянии. Проверка в начале тика.
+    /// телеграф-состоянии. Проверка в начале тика, ПЕРЕД радиусным гейтом.
     ///
     /// ТОЧКА ВЫЛЕТА приезжает в конструктор из authoring (per-instance со сцены),
-    /// уставки ритма и снаряда — из LanternConfig. Компонентов под них не заводим:
-    /// иных читателей нет, а реактивка без подписчика против правил проекта (то же
-    /// решение, что по приватным таймерам TongueSystem).
+    /// уставки ритма/радиуса и снаряда — из LanternConfig. Компонентов под них не
+    /// заводим: иных читателей нет, а реактивка без подписчика против правил проекта
+    /// (то же решение, что по приватным таймерам TongueSystem).
     /// </summary>
     public class LanternFireSystem : IInitializableSystem, IFixedUpdatableSystem
     {
@@ -56,8 +64,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
 
         private readonly float _fireCooldown;
         private readonly float _telegraphDuration;
+        private readonly float _fireRadius;
         private readonly LanternProjectileData _projectileData;
         private readonly Vector2 _shootOrigin;
+
+        private Transform _transform;
 
         private ReactiveVariable<bool> _isTelegraphing;
         private ReactiveVariable<bool> _isDead;
@@ -72,6 +83,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
             MainHeroHolderService mainHeroHolderService,
             float fireCooldown,
             float telegraphDuration,
+            float fireRadius,
             LanternProjectileData projectileData,
             Vector2 shootOrigin)
         {
@@ -79,12 +91,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
             _mainHeroHolderService = mainHeroHolderService;
             _fireCooldown = fireCooldown;
             _telegraphDuration = telegraphDuration;
+            _fireRadius = fireRadius;
             _projectileData = projectileData;
             _shootOrigin = shootOrigin;
         }
 
         public void OnInit(Entity entity)
         {
+            _transform = entity.Transform;
+
             _isTelegraphing = entity.IsTelegraphing;
             _isDead = entity.IsDead;
             _inDeathProcess = entity.InDeathProcess;
@@ -100,11 +115,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
             // не осталась в сжатом состоянии на трупе.
             if (_isDead.Value || _inDeathProcess.Value)
             {
-                if (_isTelegraphing.Value)
-                {
-                    _isTelegraphing.Value = false;
-                }
+                CancelTelegraph();
+                return;
+            }
 
+            // Радиусный гейт: вне радиуса ритм заморожен, таймер не тикает.
+            // Начатый телеграф гасим (иначе squash застынет, пока герой далеко).
+            if (IsHeroInRadius() == false)
+            {
+                CancelTelegraph();
                 return;
             }
 
@@ -118,6 +137,42 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
                     TickTelegraph(deltaTime);
                     break;
             }
+        }
+
+        /// <summary>
+        /// Гасит начатый телеграф и откатывает фазу в Cooldown, НЕ трогая
+        /// _cooldownTimer (заморозка, а не сброс). Идемпотентна.
+        /// </summary>
+        private void CancelTelegraph()
+        {
+            if (_state == FireState.Telegraph)
+            {
+                _state = FireState.Cooldown;
+            }
+
+            if (_isTelegraphing.Value)
+            {
+                _isTelegraphing.Value = false;
+            }
+        }
+
+        private bool IsHeroInRadius()
+        {
+            Entity hero = ResolveHero();
+
+            if (hero == null)
+            {
+                return false;
+            }
+
+            if (_transform == null)
+            {
+                return false;
+            }
+
+            Vector2 toHero = (Vector2)hero.Transform.position - (Vector2)_transform.position;
+
+            return toHero.sqrMagnitude <= _fireRadius * _fireRadius;
         }
 
         private void TickCooldown(float deltaTime)
@@ -180,7 +235,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
         }
 
         /// <summary>
-        /// Ссылка на героя берётся В МОМЕНТ ВЫСТРЕЛА, не кэшируется: враги создаются
+        /// Ссылка на героя берётся В МОМЕНТ ЧТЕНИЯ, не кэшируется: враги создаются
         /// раньше героя, и сервис не обнуляет ссылку после его смерти — сама Entity
         /// остаётся живым C#-объектом, а Transform к этому моменту уже уничтожен.
         /// Обе проверки обязательны (тот же приём, что в TongueSystem.ResolveHero).
