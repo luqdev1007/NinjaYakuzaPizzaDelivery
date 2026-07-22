@@ -1004,13 +1004,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         // Death-process КАК У СЛАЙМА: DeathProcessTimerSystem + DeathProcessTime,
         // чтобы бумажный фонарь успел красиво сгореть (анимация/VFX — на префабе),
         // а не исчез в тот же тик.
-        public Entity CreateLantern(Vector3 at, LanternConfig config, LanternAimData? aim)
+        public Entity CreateLantern(Vector3 at, LanternConfig config, LanternMuzzleData? muzzle)
         {
             Entity entity = CreateEmpty();
 
             _monoEntitiesFactory.Create(entity, at, config.PrefabPath);
 
-            LanternAimData resolvedAim = ResolveLanternAim(at, aim);
+            LanternMuzzleData resolvedMuzzle = ResolveMuzzle(at, muzzle);
 
             entity
                 // Combat
@@ -1090,7 +1090,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                     config.TelegraphDuration,
                     config.FireRadius,
                     projectileData,
-                    resolvedAim.Origin))
+                    resolvedMuzzle.Origin))
 
                 .AddSystem(new DisableCollidersOnDeathSystem())
                 .AddSystem(new DeathSystem())
@@ -1101,21 +1101,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             return entity;
         }
 
-        // Прицел со сцены либо запасной. Запасной (дуло не задано) стреляет вниз
-        // из точки спавна — фонарь заспавнится и будет стрелять, просто не туда,
-        // где задумано. Warning об этом печатает GameplayBootstrap — там на руках
-        // путь объекта в иерархии, ровно как с патрулём слайма.
-        private LanternAimData ResolveLanternAim(Vector3 at, LanternAimData? aim)
+        // Точка вылета со сцены либо запасная. Запасная (дуло не задано) — центр
+        // фонаря: снаряд заспавнится из тела и полетит в героя (направление даёт
+        // LanternFireSystem снапшотом), просто вылет не из задуманной точки.
+        // Warning об этом печатает GameplayBootstrap — там на руках путь объекта
+        // в иерархии, ровно как с патрулём слайма.
+        private LanternMuzzleData ResolveMuzzle(Vector3 at, LanternMuzzleData? muzzle)
         {
-            if (aim.HasValue)
+            if (muzzle.HasValue)
             {
-                return aim.Value;
+                return muzzle.Value;
             }
 
-            return new LanternAimData
+            return new LanternMuzzleData
             {
-                Origin = at,
-                Direction = Vector2.down
+                Origin = at
             };
         }
 

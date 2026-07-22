@@ -40,7 +40,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
         //
         // Врагам, которым маршрут не нужен (обе разновидности призрака), параметр
         // просто игнорируется.
-        public Entity Create(Vector3 at, EntityConfig config, PatrolRoute? patrolRoute = null, LanternAimData? lanternAim = null)
+        public Entity Create(Vector3 at, EntityConfig config, PatrolRoute? patrolRoute = null, LanternMuzzleData? lanternMuzzle = null)
         {
             Entity entity;
 
@@ -116,9 +116,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
                 // LanternConfig наследует EntityConfig НАПРЯМУЮ (как SlimeConfig),
                 // поэтому в ловушку порядка веток pattern matching не попадает.
                 // Мозга нет — фонарь стационарен, поведением рулит LanternFireSystem
-                // на самой сущности. Прицел (lanternAim) приезжает из GameplayBootstrap.
+                // на самой сущности. Точка вылета (lanternMuzzle) приезжает из GameplayBootstrap.
                 case LanternConfig lanternConfig:
-                    entity = _entitiesFactory.CreateLantern(at, lanternConfig, lanternAim);
+                    entity = _entitiesFactory.CreateLantern(at, lanternConfig, lanternMuzzle);
 
                     entity.AddLootIsDropped(new ReactiveVariable<bool>(false));
 
