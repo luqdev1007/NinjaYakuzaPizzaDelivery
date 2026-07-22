@@ -61,8 +61,8 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [Tooltip("На кого снаряд наносит контактный урон телом — Characters(7)")]
         [field: SerializeField] public LayerMask ProjectileTargetMask { get; private set; }
 
-        [Tooltip("Геометрия, об которую снаряд гаснет. Тот же набор, что SightBlockMask " +
-                 "языка слайма: Default(0)+Ground(8)+Wall(10)+Slope(11)+Props(15)")]
-        [field: SerializeField] public LayerMask ProjectileSightBlockMask { get; private set; }
+        // ProjectileSightBlockMask убрано: снаряд фонаря летит СКВОЗЬ СТЕНЫ,
+        // деспавн об геометрию снят (см. LanternProjectileSystem). Ограничитель
+        // дальности — только ProjectileLifeTime.
     }
 }

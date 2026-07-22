@@ -20,17 +20,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
         public float ContactDamage;
 
         /// <summary>
-        /// Слой цели контактного урона — герой (Characters). Складывается с
-        /// SightBlockMask в ContactsDetectingMask, чтобы буфер контактов ловил и
-        /// героя (для урона), и стены (для деспавна).
+        /// Слой цели контактного урона — герой (Characters). Идёт в
+        /// ContactsDetectingMask: буфер контактов нужен только для урона, снаряд
+        /// летит сквозь стены, поэтому геометрия в маску не входит.
         /// </summary>
         public LayerMask TargetMask;
-
-        /// <summary>
-        /// Геометрия, об которую снаряд гаснет. Уезжает в DeathMask — тот же
-        /// паттерн деспавна, что у сюрикена (DeathMaskTouchDetectorSystem).
-        /// </summary>
-        public LayerMask SightBlockMask;
 
         /// <summary>Путь к префабу снаряда в Resources.</summary>
         public string PrefabPath;

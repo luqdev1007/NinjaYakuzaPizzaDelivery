@@ -175,7 +175,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
 
         /// <summary>
         /// Снаряд фонаря (Lantern). Автономный fire-and-forget: летит прямо в
-        /// заданном направлении, гаснет по времени жизни, об стену или от разруба.
+        /// заданном направлении, гаснет ТОЛЬКО по времени жизни или от разруба.
         ///
         /// TEAM НЕ ВЫДАЁТСЯ — ОСОЗНАННО, ровно как языку слайма: рубка дэшем/пике
         /// идёт через тим-фильтр EntitiesHelper.TryTakeDamageFrom, а нейтрал без
@@ -191,11 +191,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
         /// эта константа молча выключит ВЕСЬ урон по нему, и разруб отвалится без
         /// ошибки компиляции.
         ///
-        /// Деспавн об стену — паттерн сюрикена: DeathMask (= SightBlockMask) +
-        /// IsTouchDeathMask + DeathMaskTouchDetectorSystem. Детектор читает тот же
-        /// ContactCollidersBuffer, что уже наполняется для контактного урона, —
-        /// отдельный каст не нужен. Стены в ContactEntitiesBuffer не попадают (не
-        /// зарегистрированы как Entity), поэтому урон по стенам не идёт.
+        /// СКВОЗЬ СТЕНЫ. Деспавна об геометрию НЕТ — снаряд игнорирует стены,
+        /// ограничен только LifeTime (см. шапку LanternProjectileSystem). Поэтому
+        /// ContactsDetectingMask — только TargetMask (герой): буфер контактов
+        /// нужен исключительно для контактного урона, стены в него не собираем.
+        /// DeathMask/IsTouchDeathMask/DeathMaskTouchDetectorSystem здесь не заводим
+        /// (сюрикеновый паттерн деспавна об стену снят намеренно).
         ///
         /// Движение и время жизни — на fixed (LanternProjectileSystem), контактная
         /// цепочка — на Update (общие системы проекта). См. шапку
@@ -212,10 +213,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
             float angle = Mathf.Atan2(flyDirection.y, flyDirection.x) * Mathf.Rad2Deg;
             mono.transform.rotation = Quaternion.Euler(0f, 0f, angle);
 
-            // Буфер контактов ловит и героя (для урона), и стены (для деспавна),
-            // поэтому маска детекта — объединение. DeathMask — только стены.
-            LayerMask contactsDetectingMask = data.TargetMask | data.SightBlockMask;
-
             ICompositeCondition canApplyDamage = new CompositeCondition()
                 .Add(new FuncCondition(() => false))
                 ;
@@ -228,20 +225,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
                 .AddTakeDamageRequest()
                 .AddCanApplyDamage(canApplyDamage)
 
+                // Маска детекта — только герой: снаряд сквозь стены, буфер контактов
+                // нужен лишь для контактного урона.
                 .AddBodyContactDamage(new ReactiveVariable<float>(data.ContactDamage))
-                .AddContactsDetectingMask(contactsDetectingMask)
+                .AddContactsDetectingMask(data.TargetMask)
                 .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
                 .AddContactEntitiesBuffer(new Buffer<Entity>(16))
-
-                .AddIsTouchDeathMask()
-                .AddDeathMask(data.SightBlockMask)
                 ;
 
             entity
                 .AddSystem(new BodyContactDetectingSystem())
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
                 .AddSystem(new DealDamageOnContactSystem())
-                .AddSystem(new DeathMaskTouchDetectorSystem())
 
                 .AddSystem(new LanternProjectileSystem(_entitiesLifeContext))
                 ;

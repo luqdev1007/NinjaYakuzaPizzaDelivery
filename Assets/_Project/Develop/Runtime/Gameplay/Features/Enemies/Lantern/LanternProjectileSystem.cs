@@ -7,24 +7,27 @@ using UnityEngine;
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
 {
     /// <summary>
-    /// Автономный снаряд фонаря: летит прямо, гаснет по времени жизни, об стену
-    /// или от разруба катаной/дэшем.
+    /// Автономный снаряд фонаря: летит прямо, гаснет ТОЛЬКО по времени жизни или
+    /// от разруба катаной/дэшем.
+    ///
+    /// СКВОЗЬ СТЕНЫ. Геометрию снаряд игнорирует полностью — блок-каста и деспавна
+    /// об стену здесь нет (в отличие от языка слайма и сюрикена). Единственный
+    /// ограничитель дальности — LifeTime. Это осознанно: фонарный огонёк проходит
+    /// стены, дистанцию задаёт время жизни, а не препятствия.
     ///
     /// ПОЧЕМУ FIXED, А НЕ TransformMovementSystem. Снаряд языка слайма — «тупая»
     /// сущность, её каждый тик двигает система на слайме. Здесь снаряд автономен,
     /// и по решению для фонаря его движение и время жизни ведутся на fixed-канале
     /// (в отличие от Update-образца ChargedSlash/Throwable). Контактная детекция
-    /// (BodyContactDetecting/Filter/DealDamage/DeathMaskTouch) при этом остаётся на
-    /// Update — это общие системы проекта, их канал не трогаем. Рассинхрон каналов
-    /// штатен: IsTouchDeathMask ставится на Update, читается здесь на ближайшем
-    /// fixed-тике, задержка максимум один тик.
+    /// (BodyContactDetecting/Filter/DealDamage) для урона герою при этом остаётся на
+    /// Update — это общие системы проекта, их канал не трогаем.
     ///
-    /// ЕДИНСТВЕННЫЙ ВЛАДЕЛЕЦ РЕЛИЗА. Все три пути завершения (время жизни, стена,
-    /// разруб) сходятся в один идемпотентный Release — по образцу
-    /// TongueSystem.CancelAll с флагом _isReleased. EntitiesLifeContext.Release
-    /// кладёт заявку в очередь, сливаемую в конце Update, поэтому сущность проживёт
-    /// ещё несколько fixed-тиков живой; флаг гасит поведение немедленно, чтобы за
-    /// это окно не уйти в релиз повторно.
+    /// ЕДИНСТВЕННЫЙ ВЛАДЕЛЕЦ РЕЛИЗА. Оба пути завершения (время жизни, разруб)
+    /// сходятся в один идемпотентный Release — по образцу TongueSystem.CancelAll
+    /// с флагом _isReleased. EntitiesLifeContext.Release кладёт заявку в очередь,
+    /// сливаемую в конце Update, поэтому сущность проживёт ещё несколько fixed-тиков
+    /// живой; флаг гасит поведение немедленно, чтобы за это окно не уйти в релиз
+    /// повторно.
     ///
     /// РАЗРУБ. Подписка на собственный TakeDamageRequest: у снаряда нет
     /// ApplyDamageSystem (и добавлять её нельзя — это выключит урон, см. мину в
@@ -41,7 +44,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
         private ReactiveVariable<Vector2> _moveDirection;
         private ReactiveVariable<float> _moveSpeed;
         private ReactiveVariable<float> _lifeTime;
-        private ReactiveVariable<bool> _isTouchDeathMask;
 
         private ReactiveEvent<DamageData> _takeDamageRequest;
         private IDisposable _takeDamageDisposable;
@@ -61,7 +63,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
             _moveDirection = entity.MoveDirection;
             _moveSpeed = entity.MoveSpeed;
             _lifeTime = entity.LifeTime;
-            _isTouchDeathMask = entity.IsTouchDeathMask;
 
             _takeDamageRequest = entity.TakeDamageRequest;
             _takeDamageDisposable = _takeDamageRequest.Subscribe(OnTakeDamage);
@@ -92,14 +93,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
             }
 
             if (_lifeTime.Value <= 0f)
-            {
-                Release();
-                return;
-            }
-
-            // Стену детектит DeathMaskTouchDetectorSystem на Update — здесь только
-            // читаем результат.
-            if (_isTouchDeathMask.Value)
             {
                 Release();
             }
