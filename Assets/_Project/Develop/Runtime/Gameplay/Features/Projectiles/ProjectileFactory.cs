@@ -13,6 +13,7 @@ using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern;
 using System;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
@@ -165,6 +166,84 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
                 .AddTakeDamageRequest()
                 .AddTongueOriginPoint(new ReactiveVariable<Vector2>(startPosition))
                 .AddCanApplyDamage(canApplyDamage)
+                ;
+
+            _entitiesLifeContext.Add(entity);
+
+            return entity;
+        }
+
+        /// <summary>
+        /// Снаряд фонаря (Lantern). Автономный fire-and-forget: летит прямо в
+        /// заданном направлении, гаснет по времени жизни, об стену или от разруба.
+        ///
+        /// TEAM НЕ ВЫДАЁТСЯ — ОСОЗНАННО, ровно как языку слайма: рубка дэшем/пике
+        /// идёт через тим-фильтр EntitiesHelper.TryTakeDamageFrom, а нейтрал без
+        /// Team проходит фильтр и потому уязвим для тарана (design pillar
+        /// «скорость = урон»). Контактный урон герою при этом работает: source
+        /// (снаряд) без Team роняет левый операнд && в тим-фильтре, проверка
+        /// пропускается, урон уходит.
+        ///
+        /// CanApplyDamage = false — так же, как языку: выключает снаряд из
+        /// автонаведения героя (NearestDamagableTargetSelector). Разруб этим не
+        /// задет: у снаряда нет ApplyDamageSystem, LanternProjectileSystem подписан
+        /// на TakeDamageRequest напрямую. МИНА: добавишь снаряду ApplyDamageSystem —
+        /// эта константа молча выключит ВЕСЬ урон по нему, и разруб отвалится без
+        /// ошибки компиляции.
+        ///
+        /// Деспавн об стену — паттерн сюрикена: DeathMask (= SightBlockMask) +
+        /// IsTouchDeathMask + DeathMaskTouchDetectorSystem. Детектор читает тот же
+        /// ContactCollidersBuffer, что уже наполняется для контактного урона, —
+        /// отдельный каст не нужен. Стены в ContactEntitiesBuffer не попадают (не
+        /// зарегистрированы как Entity), поэтому урон по стенам не идёт.
+        ///
+        /// Движение и время жизни — на fixed (LanternProjectileSystem), контактная
+        /// цепочка — на Update (общие системы проекта). См. шапку
+        /// LanternProjectileSystem.
+        /// </summary>
+        public Entity CreateLanternProjectile(Vector2 position, Vector2 direction, LanternProjectileData data)
+        {
+            Entity entity = new Entity();
+
+            MonoEntity mono = _monoEntitiesFactory.Create(entity, (Vector3)position, data.PrefabPath);
+
+            // Ориентация спрайта по направлению полёта — как в CreateThrowableProjectile.
+            Vector2 flyDirection = direction.normalized;
+            float angle = Mathf.Atan2(flyDirection.y, flyDirection.x) * Mathf.Rad2Deg;
+            mono.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+
+            // Буфер контактов ловит и героя (для урона), и стены (для деспавна),
+            // поэтому маска детекта — объединение. DeathMask — только стены.
+            LayerMask contactsDetectingMask = data.TargetMask | data.SightBlockMask;
+
+            ICompositeCondition canApplyDamage = new CompositeCondition()
+                .Add(new FuncCondition(() => false))
+                ;
+
+            entity
+                .AddMoveDirection(new ReactiveVariable<Vector2>(flyDirection))
+                .AddMoveSpeed(new ReactiveVariable<float>(data.Speed))
+                .AddLifeTime(new ReactiveVariable<float>(data.LifeTime))
+
+                .AddTakeDamageRequest()
+                .AddCanApplyDamage(canApplyDamage)
+
+                .AddBodyContactDamage(new ReactiveVariable<float>(data.ContactDamage))
+                .AddContactsDetectingMask(contactsDetectingMask)
+                .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
+                .AddContactEntitiesBuffer(new Buffer<Entity>(16))
+
+                .AddIsTouchDeathMask()
+                .AddDeathMask(data.SightBlockMask)
+                ;
+
+            entity
+                .AddSystem(new BodyContactDetectingSystem())
+                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
+                .AddSystem(new DealDamageOnContactSystem())
+                .AddSystem(new DeathMaskTouchDetectorSystem())
+
+                .AddSystem(new LanternProjectileSystem(_entitiesLifeContext))
                 ;
 
             _entitiesLifeContext.Add(entity);
