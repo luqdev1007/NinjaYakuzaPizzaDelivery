@@ -874,12 +874,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
                 // Tongue.
                 // Реактивны только те два флага, у которых есть читатель: CanMove
-                // читает IsTongueActive, TongueTelegraphView — IsTongueTelegraphing.
+                // читает IsTongueActive, TelegraphView — IsTelegraphing (общий
+                // компонент, делится с фонарём).
                 // Остальное — уставки из конфига, они не меняются после сборки
                 // сущности, поэтому нереактивны (то же решение, что по
                 // PatrolPointA/PatrolPointB).
                 .AddIsTongueActive(new ReactiveVariable<bool>(false))
-                .AddIsTongueTelegraphing(new ReactiveVariable<bool>(false))
+                .AddIsTelegraphing(new ReactiveVariable<bool>(false))
 
                 .AddTongueRange(slimeConfig.MaxRange)
                 .AddTongueSpeed(slimeConfig.GrabAttackSpeed)

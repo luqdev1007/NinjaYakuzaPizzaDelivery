@@ -20,7 +20,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
     /// флагу IsTongueActive. Это штатный приём проекта — мозг решает, системы
     /// исполняют, условия гасят.
     ///
-    /// SINGLE-WRITER. Система пишет: IsTongueActive и IsTongueTelegraphing на
+    /// SINGLE-WRITER. Система пишет: IsTongueActive и IsTelegraphing на
     /// СВОЕЙ сущности, TongueOriginPoint на сущности СОЗДАННОГО ЕЮ ЯЗЫКА, и
     /// TetherRequest / TetherReleaseRequest / TetherAnchorPoint / TongueCutEvent
     /// на сущности ГЕРОЯ. Последнее выглядит как запись «в чужую» сущность, но
@@ -89,7 +89,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
         private Transform _shootPoint;
 
         private ReactiveVariable<bool> _isTongueActive;
-        private ReactiveVariable<bool> _isTongueTelegraphing;
+        private ReactiveVariable<bool> _isTelegraphing;
         private ReactiveVariable<bool> _isDead;
 
         private float _range;
@@ -164,7 +164,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
             _shootPoint = entity.ShootPoint;
 
             _isTongueActive = entity.IsTongueActive;
-            _isTongueTelegraphing = entity.IsTongueTelegraphing;
+            _isTelegraphing = entity.IsTelegraphing;
             _isDead = entity.IsDead;
 
             _range = entity.TongueRange;
@@ -406,7 +406,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
             _telegraphTimer = _telegraphDuration;
 
             _isTongueActive.Value = true;
-            _isTongueTelegraphing.Value = true;
+            _isTelegraphing.Value = true;
         }
 
         private void TickTelegraph(float deltaTime)
@@ -420,7 +420,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
 
             // Условия входа ПОВТОРНО НЕ ПРОВЕРЯЮТСЯ: если герой ушёл, выстрел всё
             // равно состоится. Промах — честная награда игроку за реакцию.
-            _isTongueTelegraphing.Value = false;
+            _isTelegraphing.Value = false;
 
             Shoot();
         }
@@ -892,7 +892,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
             _tongueEntity = null;
 
             _isTongueActive.Value = false;
-            _isTongueTelegraphing.Value = false;
+            _isTelegraphing.Value = false;
 
             _telegraphTimer = 0f;
             _traveledDistance = 0f;

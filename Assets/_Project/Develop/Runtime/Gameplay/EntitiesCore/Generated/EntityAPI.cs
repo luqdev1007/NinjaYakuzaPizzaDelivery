@@ -5607,13 +5607,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueActive() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueTelegraphing IsTongueTelegraphingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueTelegraphing>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Telegraph.IsTelegraphing IsTelegraphingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Telegraph.IsTelegraphing>();
 
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsTongueTelegraphing => IsTongueTelegraphingC.Value;
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsTelegraphing => IsTelegraphingC.Value;
 
-		public bool TryGetIsTongueTelegraphing(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		public bool TryGetIsTelegraphing(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueTelegraphing component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Telegraph.IsTelegraphing component);
 			if (result)
 				value = component.Value;
 			else
@@ -5621,14 +5621,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return result;
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTongueTelegraphing()
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTelegraphing()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueTelegraphing() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Telegraph.IsTelegraphing() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() });
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTongueTelegraphing(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTelegraphing(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueTelegraphing() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Telegraph.IsTelegraphing() {Value = value});
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueRange TongueRangeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueRange>();

@@ -33,20 +33,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
         public ReactiveVariable<bool> Value;
     }
 
-    /// <summary>
-    /// Идёт windup перед плевком. Читатель — TongueTelegraphView на префабе
-    /// слайма (DOTween-сжатие узла SlimeView).
-    ///
-    /// Заведён отдельным флагом, а не выведен из IsTongueActive, осознанно:
-    /// это разные семантические состояния, склейка их в один флаг дала бы
-    /// тихий orphaning (правило single-writer из CLAUDE.md).
-    ///
-    /// Single-writer: TongueSystem.
-    /// </summary>
-    public class IsTongueTelegraphing : IEntityComponent
-    {
-        public ReactiveVariable<bool> Value;
-    }
+    // Флаг телеграфа переехал в общий компонент IsTelegraphing
+    // (Features/Enemies/Telegraph/TelegraphComponents.cs): его теперь делит
+    // с языком слайма фонарь (Lantern). Писатель на слайме прежний —
+    // TongueSystem.
 
     // ─────────────────────────────────────────────────────────────────────
     //  НА СЛАЙМЕ — уставки из конфига, нереактивные

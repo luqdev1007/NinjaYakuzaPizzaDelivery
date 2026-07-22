@@ -5,23 +5,28 @@ using DG.Tweening;
 using System;
 using UnityEngine;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Telegraph
 {
     /// <summary>
-    /// Телеграф перед плевком: узел SlimeView сжимается и разжимается, читаемо
-    /// сообщая игроку об окне для реакции.
+    /// Телеграф перед атакой: узел визуала сжимается и разжимается, читаемо
+    /// сообщая игроку об окне для реакции. Ведётся флагом <see cref="IsTelegraphing"/>.
     ///
-    /// АНИМИРУЕТСЯ ТОЛЬКО SCALE, И ЭТО ЖЁСТКОЕ ОГРАНИЧЕНИЕ. Цвет основного
-    /// SpriteRenderer узла SlimeView уже занят ApplyDamageView (DOColor + DOKill),
-    /// четвёртого писателя цвета туда добавлять нельзя — это ровно тот урок,
-    /// что зафиксирован в шапке AngryGhostStateView.
+    /// ОБЩАЯ ВЬЮХА. Изначально писалась под плевок слайма (SlimeView), вынесена
+    /// в нейтральную локацию, когда телеграф понадобился фонарю. Слайм-специфики
+    /// в анимации нет — только scale по _visualTarget.
     ///
-    /// Твины хранятся в полях и убиваются АДРЕСНО (KillTelegraphSequence).
+    /// АНИМИРУЕТСЯ ТОЛЬКО SCALE, И ЭТО ЖЁСТКОЕ ОГРАНИЧЕНИЕ. На слайме цвет
+    /// основного SpriteRenderer узла уже занят ApplyDamageView (DOColor + DOKill),
+    /// четвёртого писателя цвета туда добавлять нельзя — тот же урок, что
+    /// зафиксирован в шапке AngryGhostStateView. Держим вьюху на одном канале
+    /// (scale), чтобы она оставалась переносимой между врагами.
+    ///
+    /// Твины хранятся в поле и убиваются АДРЕСНО (KillTelegraphSequence).
     /// Глобального DOKill по цели здесь нет и быть не должно: на том же
-    /// трансформе живёт punch-scale от EnemyBounceSurface, а на его рендерере —
-    /// твины ApplyDamageView. DOKill по цели снёс бы и их.
+    /// трансформе может жить punch-scale от EnemyBounceSurface, а на его
+    /// рендерере — твины ApplyDamageView. DOKill по цели снёс бы и их.
     /// </summary>
-    public class TongueTelegraphView : EntityView
+    public class TelegraphView : EntityView
     {
         [Header("Refs")]
         [SerializeField] private Transform _visualTarget;
@@ -46,7 +51,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue
 
             _baseScale = _visualTarget.localScale;
 
-            _isTelegraphing = entity.IsTongueTelegraphing;
+            _isTelegraphing = entity.IsTelegraphing;
             _isTelegraphingDisposable = _isTelegraphing.Subscribe(OnIsTelegraphingChanged);
         }
 
