@@ -1,4 +1,4 @@
-﻿namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
+namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 {
 	public partial class Entity
 	{
@@ -1670,6 +1670,121 @@
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGrappleArriveDistance(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GrappleFeature.GrappleArriveDistance() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.IsTethered IsTetheredC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.IsTethered>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsTethered => IsTetheredC.Value;
+
+		public bool TryGetIsTethered(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.IsTethered component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTethered()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.IsTethered() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTethered(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.IsTethered() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherAnchorPoint TetherAnchorPointC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherAnchorPoint>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> TetherAnchorPoint => TetherAnchorPointC.Value;
+
+		public bool TryGetTetherAnchorPoint(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherAnchorPoint component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherAnchorPoint()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherAnchorPoint() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherAnchorPoint(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherAnchorPoint() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherRequest TetherRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherRequest>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherData> TetherRequest => TetherRequestC.Value;
+
+		public bool TryGetTetherRequest(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherData> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherRequest component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherData>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherRequest()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherRequest() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherData>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherRequest(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherData> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherRequest() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseRequest TetherReleaseRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseRequest>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseReason> TetherReleaseRequest => TetherReleaseRequestC.Value;
+
+		public bool TryGetTetherReleaseRequest(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseReason> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseRequest component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseReason>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherReleaseRequest()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseRequest() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseReason>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherReleaseRequest(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseReason> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseRequest() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.CanBeTethered CanBeTetheredC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.CanBeTethered>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition CanBeTethered => CanBeTetheredC.Value;
+
+		public bool TryGetCanBeTethered(out Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.CanBeTethered component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanBeTethered(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.CanBeTethered() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope.CanSlopeJump CanSlopeJumpC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Slope.CanSlopeJump>();
@@ -5687,6 +5802,63 @@
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TonguePrefabPath() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueGrabTime TongueGrabTimeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueGrabTime>();
+
+		public System.Single TongueGrabTime => TongueGrabTimeC.Value;
+
+		public bool TryGetTongueGrabTime(out System.Single value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueGrabTime component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(System.Single);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueGrabTime(System.Single value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueGrabTime() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullSpeed TetherPullSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullSpeed>();
+
+		public System.Single TetherPullSpeed => TetherPullSpeedC.Value;
+
+		public bool TryGetTetherPullSpeed(out System.Single value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullSpeed component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(System.Single);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherPullSpeed(System.Single value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullSpeed() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullAcceleration TetherPullAccelerationC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullAcceleration>();
+
+		public System.Single TetherPullAcceleration => TetherPullAccelerationC.Value;
+
+		public bool TryGetTetherPullAcceleration(out System.Single value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullAcceleration component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(System.Single);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherPullAcceleration(System.Single value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullAcceleration() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueOriginPoint TongueOriginPointC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueOriginPoint>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> TongueOriginPoint => TongueOriginPointC.Value;
@@ -5709,6 +5881,30 @@
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueOriginPoint(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueOriginPoint() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueCutEvent TongueCutEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueCutEvent>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent TongueCutEvent => TongueCutEventC.Value;
+
+		public bool TryGetTongueCutEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueCutEvent component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueCutEvent()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueCutEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueCutEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueCutEvent() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.BodyContactDamage BodyContactDamageC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.BodyContactDamage>();
@@ -5963,217 +6159,6 @@
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLockoutDuration(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Common.LockoutDuration() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.IsTethered IsTetheredC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.IsTethered>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsTethered => IsTetheredC.Value;
-
-		public bool TryGetIsTethered(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.IsTethered component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTethered()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.IsTethered() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTethered(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.IsTethered() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherAnchorPoint TetherAnchorPointC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherAnchorPoint>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> TetherAnchorPoint => TetherAnchorPointC.Value;
-
-		public bool TryGetTetherAnchorPoint(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherAnchorPoint component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherAnchorPoint()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherAnchorPoint() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherAnchorPoint(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector2> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherAnchorPoint() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherRequest TetherRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherRequest>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherData> TetherRequest => TetherRequestC.Value;
-
-		public bool TryGetTetherRequest(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherData> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherRequest component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherData>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherRequest()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherRequest() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherData>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherRequest(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherData> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherRequest() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseRequest TetherReleaseRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseRequest>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseReason> TetherReleaseRequest => TetherReleaseRequestC.Value;
-
-		public bool TryGetTetherReleaseRequest(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseReason> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseRequest component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseReason>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherReleaseRequest()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseRequest() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseReason>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherReleaseRequest(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseReason> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.TetherReleaseRequest() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.CanBeTethered CanBeTetheredC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.CanBeTethered>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition CanBeTethered => CanBeTetheredC.Value;
-
-		public bool TryGetCanBeTethered(out Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.CanBeTethered component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanBeTethered(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Tether.CanBeTethered() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueCutEvent TongueCutEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueCutEvent>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent TongueCutEvent => TongueCutEventC.Value;
-
-		public bool TryGetTongueCutEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueCutEvent component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueCutEvent()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueCutEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueCutEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueCutEvent() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueGrabTime TongueGrabTimeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueGrabTime>();
-
-		public System.Single TongueGrabTime => TongueGrabTimeC.Value;
-
-		public bool TryGetTongueGrabTime(out System.Single value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueGrabTime component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(System.Single);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueGrabTime()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueGrabTime() { Value = new System.Single() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueGrabTime(System.Single value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueGrabTime() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullSpeed TetherPullSpeedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullSpeed>();
-
-		public System.Single TetherPullSpeed => TetherPullSpeedC.Value;
-
-		public bool TryGetTetherPullSpeed(out System.Single value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullSpeed component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(System.Single);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherPullSpeed()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullSpeed() { Value = new System.Single() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherPullSpeed(System.Single value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullSpeed() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullAcceleration TetherPullAccelerationC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullAcceleration>();
-
-		public System.Single TetherPullAcceleration => TetherPullAccelerationC.Value;
-
-		public bool TryGetTetherPullAcceleration(out System.Single value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullAcceleration component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(System.Single);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherPullAcceleration()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullAcceleration() { Value = new System.Single() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTetherPullAcceleration(System.Single value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TetherPullAcceleration() {Value = value}); 
 		}
 
 	}

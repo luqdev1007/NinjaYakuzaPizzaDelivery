@@ -4599,7 +4599,7 @@ GameObject:
   - component: {fileID: 5727101902998028985}
   - component: {fileID: 2087689067929188515}
   m_Layer: 0
-  m_Name: GhostSpawnPoint
+  m_Name: AngryGhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9490,8 +9490,9 @@ GameObject:
   - component: {fileID: 5692196543808651478}
   - component: {fileID: 7033042034336860105}
   - component: {fileID: 4964575769387217926}
+  - component: {fileID: 547699777333952853}
   m_Layer: 0
-  m_Name: GhostSpawnPoint
+  m_Name: SlimeSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9506,10 +9507,12 @@ Transform:
   m_GameObject: {fileID: 1786812653341973414}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -26, y: 16, z: 0}
+  m_LocalPosition: {x: -21.91, y: 15.56, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 6009207327400890394}
+  - {fileID: 1761201858326151062}
   m_Father: {fileID: 3090440052307223557}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7033042034336860105
@@ -9583,7 +9586,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd4befeef63b74848aefc91a47d59dd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Config>k__BackingField: {fileID: 11400000, guid: 0183bf2e6bb4f3e47902810a27988725, type: 2}
+  <Config>k__BackingField: {fileID: 11400000, guid: af6456b6ada352a479c6ac1306776a8a, type: 2}
+--- !u!114 &547699777333952853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1786812653341973414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 030cb7ccafd051a4fa2b1d33071b295b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets._Project.Develop.Runtime.Gameplay.Context.SlimePatrolRouteAuthoring
+  <PointA>k__BackingField: {fileID: 6009207327400890394}
+  <PointB>k__BackingField: {fileID: 1761201858326151062}
 --- !u!1 &1819647795967071900
 GameObject:
   m_ObjectHideFlags: 0
@@ -27455,6 +27472,37 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &5066343903568279269
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6009207327400890394}
+  m_Layer: 0
+  m_Name: PointA
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6009207327400890394
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5066343903568279269}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6.52, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5692196543808651478}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5072191419468563304
 GameObject:
   m_ObjectHideFlags: 0
@@ -61538,6 +61586,37 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &6859862129224234335
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1761201858326151062}
+  m_Layer: 0
+  m_Name: PointB
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1761201858326151062
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6859862129224234335}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.4, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5692196543808651478}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6870114304919579154
 GameObject:
   m_ObjectHideFlags: 0
@@ -65782,7 +65861,7 @@ GameObject:
   - component: {fileID: 2021969314079784344}
   - component: {fileID: 3895383596333471789}
   m_Layer: 0
-  m_Name: GhostSpawnPoint
+  m_Name: AngryGhostSpawnPoint
   m_TagString: Spawner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
