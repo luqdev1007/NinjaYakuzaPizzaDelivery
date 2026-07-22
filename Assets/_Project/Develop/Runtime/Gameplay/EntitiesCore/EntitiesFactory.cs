@@ -1071,6 +1071,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 PrefabPath = config.ProjectilePrefabPath
             };
 
+            // Фазовый офсет из ЗАСЕЯННОГО рандома — детерминированный десинк
+            // соседних фонарей. Клампим к кулдауну: офсет крупнее него смысла не
+            // имеет (укорачивать первый кулдаун ниже нуля незачем).
+            float phaseMaxOffset = Mathf.Clamp(config.FirePhaseMaxOffset, 0f, config.FireCooldown);
+            float initialPhaseOffset = _container.Resolve<IGameplayRandom>().Range(0f, phaseMaxOffset);
+
             entity
                 .AddSystem(new ApplyDamageSystem())
                 .AddSystem(new ApplyDamageCooldownSystem())
@@ -1089,6 +1095,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                     config.FireCooldown,
                     config.TelegraphDuration,
                     config.FireRadius,
+                    initialPhaseOffset,
                     projectileData,
                     resolvedMuzzle.Origin))
 

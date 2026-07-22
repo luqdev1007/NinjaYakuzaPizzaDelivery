@@ -21,6 +21,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
     /// соседние фонари, входящие в радиус одновременно, продолжают со своих разных
     /// значений и не залпят синхронно.
     ///
+    /// ФАЗА СТАРТА. Первый кулдаун укорачивается на per-instance офсет
+    /// (initialPhaseOffset), взятый из ЗАСЕЯННОГО IGameplayRandom в фабрике —
+    /// детерминизм забега сохраняется (не UnityEngine.Random). Это разводит
+    /// первые выстрелы соседних фонарей во времени. Дальнейшие кулдауны — полные.
+    ///
     /// ПРИЦЕЛ — СНАПШОТ В МОМЕНТ ВЫСТРЕЛА. Направление считается ровно один раз,
     /// когда снаряд рождается: вектор от точки дула к ТЕКУЩЕЙ позиции героя,
     /// нормализованный. БЕЗ упреждения по скорости героя и БЕЗ самонаведения —
@@ -65,6 +70,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
         private readonly float _fireCooldown;
         private readonly float _telegraphDuration;
         private readonly float _fireRadius;
+        private readonly float _initialPhaseOffset;
         private readonly LanternProjectileData _projectileData;
         private readonly Vector2 _shootOrigin;
 
@@ -84,6 +90,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
             float fireCooldown,
             float telegraphDuration,
             float fireRadius,
+            float initialPhaseOffset,
             LanternProjectileData projectileData,
             Vector2 shootOrigin)
         {
@@ -92,6 +99,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
             _fireCooldown = fireCooldown;
             _telegraphDuration = telegraphDuration;
             _fireRadius = fireRadius;
+            _initialPhaseOffset = initialPhaseOffset;
             _projectileData = projectileData;
             _shootOrigin = shootOrigin;
         }
@@ -105,7 +113,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
             _inDeathProcess = entity.InDeathProcess;
 
             _state = FireState.Cooldown;
-            _cooldownTimer = _fireCooldown;
+            // Первый кулдаун укорочен на фазовый офсет (десинк соседей). Max(0)
+            // на случай офсета крупнее кулдауна — тогда фонарь телеграфит сразу,
+            // как только герой в радиусе.
+            _cooldownTimer = Mathf.Max(0f, _fireCooldown - _initialPhaseOffset);
             _telegraphTimer = 0f;
         }
 

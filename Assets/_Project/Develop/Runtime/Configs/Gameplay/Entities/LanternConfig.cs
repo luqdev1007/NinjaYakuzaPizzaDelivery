@@ -59,6 +59,13 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
                  "общий флаг IsTelegraphing — та же вьюха (TelegraphView), что у языка слайма")]
         [field: SerializeField] public float TelegraphDuration { get; private set; } = 0.3f;
 
+        [Tooltip("Максимальный сдвиг фазы стрельбы, сек. Стартовый кулдаун каждого " +
+                 "фонаря укорачивается на случайное [0..это] из ЗАСЕЯННОГО " +
+                 "IGameplayRandom (детерминизм забега), чтобы соседние фонари не " +
+                 "залпили синхронно. Крупнее FireCooldown брать смысла нет — эффект " +
+                 "клампится (фонарь просто телеграфит сразу на входе в радиус)")]
+        [field: SerializeField] public float FirePhaseMaxOffset { get; private set; } = 1.5f;
+
         [Header("Projectile — снаряд")]
         [field: SerializeField] public string ProjectilePrefabPath { get; private set; } = "Entities/Projectiles/LanternProjectile";
         [field: SerializeField] public float ProjectileSpeed { get; private set; } = 6f;

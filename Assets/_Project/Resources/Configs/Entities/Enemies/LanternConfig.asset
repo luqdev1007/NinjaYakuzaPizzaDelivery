@@ -24,6 +24,7 @@ MonoBehaviour:
   <FireCooldown>k__BackingField: 2
   <FireRadius>k__BackingField: 8
   <TelegraphDuration>k__BackingField: 0.3
+  <FirePhaseMaxOffset>k__BackingField: 1.5
   <ProjectilePrefabPath>k__BackingField: Entities/Projectiles/LanternProjectile
   <ProjectileSpeed>k__BackingField: 6
   <ProjectileLifeTime>k__BackingField: 3
