@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Patrol;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
@@ -39,7 +40,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
         //
         // Врагам, которым маршрут не нужен (обе разновидности призрака), параметр
         // просто игнорируется.
-        public Entity Create(Vector3 at, EntityConfig config, PatrolRoute? patrolRoute = null)
+        public Entity Create(Vector3 at, EntityConfig config, PatrolRoute? patrolRoute = null, LanternAimData? lanternAim = null)
         {
             Entity entity;
 
@@ -110,6 +111,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
                         slimeConfig.LootTable));
 
                     _brainsFactory.CreateSlimeBrain(entity);
+                    break;
+
+                // LanternConfig наследует EntityConfig НАПРЯМУЮ (как SlimeConfig),
+                // поэтому в ловушку порядка веток pattern matching не попадает.
+                // Мозга нет — фонарь стационарен, поведением рулит LanternFireSystem
+                // на самой сущности. Прицел (lanternAim) приезжает из GameplayBootstrap.
+                case LanternConfig lanternConfig:
+                    entity = _entitiesFactory.CreateLantern(at, lanternConfig, lanternAim);
+
+                    entity.AddLootIsDropped(new ReactiveVariable<bool>(false));
+
+                    ICompositeCondition canLanternDropLoot = new CompositeCondition()
+                        .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
+
+                    entity.AddCanDropLoot(canLanternDropLoot);
+
+                    entity.AddSystem(new DropLootSystem(
+                        _container.Resolve<DropLootService>(),
+                        lanternConfig.LootTable));
                     break;
 
                 default:

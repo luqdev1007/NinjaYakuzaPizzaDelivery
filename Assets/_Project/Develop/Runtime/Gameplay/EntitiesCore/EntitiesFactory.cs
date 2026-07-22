@@ -37,6 +37,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PhysicsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Visual;
@@ -976,6 +977,146 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 ;
 
             return entity;
+        }
+
+        // Стационарный ритмичный стрелок (тётин-обакэ). Собран ПО ОБРАЗЦУ
+        // CreateSlime, но урезан сильнее: НЕТ движ-систем, патруля, мозга, флипа
+        // и Rigidbody — фонарь стоит/висит на месте.
+        //
+        //   Движения нет вовсе → ни TargetPointMovementSystem, ни
+        //     SimpleRigidbodyMovementSystem, ни FlipDirectionSystem, ни CanMove/CanFlip.
+        //
+        //   Rigidbody НЕТ намеренно. Контактная детекция (OverlapCollider) — это
+        //     запрос, на статике работает (сверено с Shuriken/ChargedSlash).
+        //     Рубка дэшем/катаной идёт через реестр коллайдеров, RB не нужен.
+        //
+        //   KNOCKBACK-СИСТЕМ НЕТ — И ЭТО НЕ ЗАБЫТО. DamageKnockbackSystem читает
+        //     entity.Rigidbody, а Entity.GetComponent на ОТСУТСТВУЮЩЕМ компоненте
+        //     БРОСАЕТ ArgumentException (не возвращает null) — на фонаре без RB
+        //     это упало бы на первом ударе меча. Плюс knockback-окно у слайма
+        //     гейтит CanMove, которого у фонаря нет. Для стационарного врага без
+        //     движения knockback и не нужен, и невозможен без RB — систему и её
+        //     компоненты (KnockbackDuration/ElapsedTime) не заводим.
+        //
+        //   Точку зацепа крюком даёт слой Enemies(9) БЕСПЛАТНО (маска крюка его
+        //     включает) — отдельного кода нет.
+        //
+        // Death-process КАК У СЛАЙМА: DeathProcessTimerSystem + DeathProcessTime,
+        // чтобы бумажный фонарь успел красиво сгореть (анимация/VFX — на префабе),
+        // а не исчез в тот же тик.
+        public Entity CreateLantern(Vector3 at, LanternConfig config, LanternAimData? aim)
+        {
+            Entity entity = CreateEmpty();
+
+            _monoEntitiesFactory.Create(entity, at, config.PrefabPath);
+
+            LanternAimData resolvedAim = ResolveLanternAim(at, aim);
+
+            entity
+                // Combat
+                .AddTakeDamageRequest()
+                .AddTakeDamageEvent()
+
+                .AddBodyContactDamage(new ReactiveVariable<float>(config.ContactDamage))
+                .AddContactsDetectingMask(config.ContactLayerMask)
+                .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
+                .AddContactEntitiesBuffer(new Buffer<Entity>(16))
+
+                .AddDamageCooldown(new ReactiveVariable<float>(config.DamageCooldown))
+                .AddDamageCooldownTimer(new ReactiveVariable<float>(0f))
+
+                // LifeCycle
+                .AddMaxHealth(new ReactiveVariable<float>(config.MaxHealth))
+                .AddCurrentHealth(new ReactiveVariable<float>(config.MaxHealth))
+
+                .AddIsDead()
+                .AddInDeathProcess()
+                .AddDeathProcessInitialTime(new ReactiveVariable<float>(config.DeathProcessTime))
+                .AddDeathProcessCurrentTime()
+
+                // Telegraph. Общий флаг: читает TelegraphView на префабе, пишет
+                // LanternFireSystem. Реактивен — у него есть подписчик (вьюха).
+                .AddIsTelegraphing(new ReactiveVariable<bool>(false))
+                ;
+
+            // — Условия —
+            // CanMove/CanFlip НЕ заводим: движ- и флип-систем у фонаря нет,
+            // читателей у этих условий не было бы (в отличие от слайма).
+            ICompositeCondition canApplyDamage = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.DamageCooldownTimer.Value <= 0))
+                ;
+
+            ICompositeCondition mustDie = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0))
+                ;
+
+            ICompositeCondition mustSelfRelease = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == true))
+                .Add(new FuncCondition(() => entity.InDeathProcess.Value == false))
+                ;
+
+            entity
+                .AddCanApplyDamage(canApplyDamage)
+                .AddMustDie(mustDie)
+                .AddMustSelfRelease(mustSelfRelease)
+                ;
+
+            LanternProjectileData projectileData = new LanternProjectileData
+            {
+                Speed = config.ProjectileSpeed,
+                LifeTime = config.ProjectileLifeTime,
+                ContactDamage = config.ProjectileContactDamage,
+                TargetMask = config.ProjectileTargetMask,
+                SightBlockMask = config.ProjectileSightBlockMask,
+                PrefabPath = config.ProjectilePrefabPath
+            };
+
+            entity
+                .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new ApplyDamageCooldownSystem())
+
+                .AddSystem(new BodyContactDetectingSystem())
+                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
+                .AddSystem(new DealDamageOnContactSystem())
+
+                // ProjectileFactory резолвится отложенно, в теле метода (как в
+                // CreateSlime для TongueSystem): в конструкторе EntitiesFactory её
+                // ещё нет. Уставки ритма/снаряда и прицел уезжают в систему
+                // конструктором — компонентов под них не заводим.
+                .AddSystem(new LanternFireSystem(
+                    _container.Resolve<ProjectileFactory>(),
+                    config.FireCooldown,
+                    config.TelegraphDuration,
+                    projectileData,
+                    resolvedAim.Origin,
+                    resolvedAim.Direction))
+
+                .AddSystem(new DisableCollidersOnDeathSystem())
+                .AddSystem(new DeathSystem())
+                .AddSystem(new DeathProcessTimerSystem())
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
+                ;
+
+            return entity;
+        }
+
+        // Прицел со сцены либо запасной. Запасной (дуло не задано) стреляет вниз
+        // из точки спавна — фонарь заспавнится и будет стрелять, просто не туда,
+        // где задумано. Warning об этом печатает GameplayBootstrap — там на руках
+        // путь объекта в иерархии, ровно как с патрулём слайма.
+        private LanternAimData ResolveLanternAim(Vector3 at, LanternAimData? aim)
+        {
+            if (aim.HasValue)
+            {
+                return aim.Value;
+            }
+
+            return new LanternAimData
+            {
+                Origin = at,
+                Direction = Vector2.down
+            };
         }
 
         // Маршрут со сцены либо запасной отрезок вокруг точки спавна.

@@ -7,6 +7,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
@@ -147,7 +148,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                     continue;
                 }
 
-                enemiesFactory.Create(marker.transform.position, marker.Config, TryGetPatrolRoute(marker));
+                enemiesFactory.Create(marker.transform.position, marker.Config, TryGetPatrolRoute(marker), TryGetLanternAim(marker));
 
                 string configTypeName = marker.Config.GetType().Name;
 
@@ -199,6 +200,37 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             }
 
             return new PatrolRoute(pointA, pointB);
+        }
+
+        // Прицел фонаря снимается ЗДЕСЬ, по той же причине, что и маршрут патруля:
+        // только тут на руках есть Transform объекта, а значит и путь в иерархии
+        // для внятного warning'а. Наружу уезжает либо готовый прицел, либо null —
+        // фабрика разбирается с null сама (стреляет вниз из точки спавна).
+        //
+        // Origin — мировая позиция «дула», Direction — его мировая ось +X
+        // (Muzzle.right). Дизайнер вращает дуло, чтобы прицелиться.
+        private LanternAimData? TryGetLanternAim(EnemySpawnMarker marker)
+        {
+            if (marker.TryGetComponent(out LanternAimAuthoring aimAuthoring) == false)
+            {
+                return null;
+            }
+
+            if (aimAuthoring.Muzzle == null)
+            {
+                Debug.LogWarning(
+                    $"[Spawn] Дуло фонаря не задано, снаряд полетит вниз из точки спавна: " +
+                    $"{BuildHierarchyPath(marker.transform)}",
+                    marker.gameObject);
+
+                return null;
+            }
+
+            return new LanternAimData
+            {
+                Origin = aimAuthoring.Muzzle.position,
+                Direction = aimAuthoring.Muzzle.right
+            };
         }
 
         // Порог вырожденности — это и есть радиус достижения точки: маршрут, обе
