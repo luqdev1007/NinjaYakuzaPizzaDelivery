@@ -1,9 +1,10 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Utilities.ObjectsManagment;
 using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Dash
@@ -36,8 +37,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
         private IDisposable _intentDashDisposable;
 
         private GameObjectPool _pool;
+        private GameObject _poolRoot;
         private MaterialPropertyBlock _propertyBlock;
         private Coroutine _flashCoroutine;
+
+        // Выданные наружу и ещё не догоревшие афтеримиджи. Нужны только затем,
+        // чтобы Cleanup мог вернуть их до уничтожения рута.
+        private readonly List<GameObject> _liveAfterimages = new();
 
         private float _vfxSpawnTimer;
         private IAudioService _audioService;
@@ -51,7 +57,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _pool = new GameObjectPool(_afterimagePrefab, null, _poolSize);
+            // Рут пула. Раньше пул создавался с parent = null, из-за чего его
+            // объекты оседали в КОРНЕ СЦЕНЫ и переживали релиз героя: каждая
+            // смерть-респавн добавляла в сцену новую партию из _poolSize штук,
+            // и никто их не убирал до выгрузки сцены.
+            //
+            // Рут НЕ парентится к герою: афтеримидж — отпечаток в мире, он обязан
+            // остаться там, где снят. Ребёнок героя ехал бы за ним и превращался
+            // в приклеенный к спрайту шлейф. Поэтому рут отдельный объект в корне,
+            // но теперь у него есть владелец, который его уничтожает.
+            _poolRoot = new GameObject($"AfterimagePool (Dash) [{name}]");
+
+            _pool = new GameObjectPool(_afterimagePrefab, _poolRoot.transform, _poolSize);
 
             _dashDisposable = entity.IsDashing.Subscribe((oldValue, newValue) =>
             {
@@ -107,16 +124,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
 
             if (obj.TryGetComponent<AfterimageInstance>(out var instance))
             {
+                _liveAfterimages.Add(obj);
+
                 instance.Initialize(
                     _spriteRenderer.sprite,
                     _spriteRenderer.transform.position,
                     _spriteRenderer.transform.lossyScale,
                     _afterimageLifetime,
                     _afterimageColor,
-                    _pool.Return);
+                    ReturnToPool);
 
                 obj.transform.rotation = _spriteRenderer.transform.rotation;
             }
+        }
+
+        // Прослойка вместо прямого _pool.Return: список живых копий обязан
+        // вычищаться ровно тогда, когда копия догорела, иначе Cleanup стал бы
+        // возвращать в пул то, что там уже лежит.
+        private void ReturnToPool(GameObject obj)
+        {
+            _liveAfterimages.Remove(obj);
+
+            _pool.Return(obj);
         }
 
         private IEnumerator FlashCoroutine()
@@ -152,6 +181,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFea
                 StopCoroutine(_flashCoroutine);
 
             SetSpriteColor(Color.white);
+
+            // Обратный проход: ReturnToPool вычёркивает элемент из этого же списка.
+            for (int i = _liveAfterimages.Count - 1; i >= 0; i--)
+            {
+                GameObject afterimage = _liveAfterimages[i];
+
+                if (afterimage != null)
+                {
+                    _pool.Return(afterimage);
+                }
+            }
+
+            _liveAfterimages.Clear();
+
+            // Уничтожение рута забирает с собой весь пул — и свободные объекты,
+            // и только что возвращённые.
+            if (_poolRoot != null)
+            {
+                Destroy(_poolRoot);
+                _poolRoot = null;
+            }
+
+            _pool = null;
         }
     }
 }
