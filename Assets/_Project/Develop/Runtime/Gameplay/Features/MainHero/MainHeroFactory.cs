@@ -62,9 +62,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 // и он перезапишет значение своим Recalculate в OnInit. Дублировать
                 // сюда config-значение (как это сделано выше у LootCollectRange)
                 // не стали — двойное авторство одного числа только путает.
+                //
+                // EvadedEvent ОБЯЗАН стоять рядом со статом и добавляться вместе с
+                // ним. Без него бросок продолжает отменять урон (за это отвечает
+                // EvasionChance), но визуал молча не срабатывает: и
+                // ApplyDamageSystem, и AfterimageView читают событие через TryGet.
+                // Именно так этот баг и появился — стат был, события не было, ни
+                // одной ошибки при этом не печаталось. Обе стороны теперь ругаются
+                // в лог на такую сборку, но чинится она здесь, одной строкой.
                 .AddBaseEvasionChance(new ReactiveVariable<float>(config.LifeCycle.EvasionChance))
                 .AddEvasionChanceModifiers(new StatModifiersList())
                 .AddEvasionChance(new ReactiveVariable<float>(0f))
+                .AddEvadedEvent()
 
                 .AddActiveBuffs(new ActiveBuffsList())
                 ;
