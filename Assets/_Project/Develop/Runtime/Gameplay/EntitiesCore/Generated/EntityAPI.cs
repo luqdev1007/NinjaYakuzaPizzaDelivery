@@ -122,6 +122,54 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.LootCollectRangeModifiers() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.BaseEvasionChance BaseEvasionChanceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.BaseEvasionChance>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> BaseEvasionChance => BaseEvasionChanceC.Value;
+
+		public bool TryGetBaseEvasionChance(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.BaseEvasionChance component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBaseEvasionChance()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.BaseEvasionChance() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBaseEvasionChance(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.BaseEvasionChance() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.EvasionChanceModifiers EvasionChanceModifiersC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.EvasionChanceModifiers>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.StatModifiersList EvasionChanceModifiers => EvasionChanceModifiersC.Value;
+
+		public bool TryGetEvasionChanceModifiers(out Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.StatModifiersList value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.EvasionChanceModifiers component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.StatModifiersList);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEvasionChanceModifiers()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.EvasionChanceModifiers() { Value = new Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.StatModifiersList() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEvasionChanceModifiers(Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.StatModifiersList value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature.EvasionChanceModifiers() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature.SpawnInitialTime SpawnInitialTimeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature.SpawnInitialTime>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> SpawnInitialTime => SpawnInitialTimeC.Value;
@@ -5583,6 +5631,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.CanApplyDamage() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.EvasionChance EvasionChanceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.EvasionChance>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> EvasionChance => EvasionChanceC.Value;
+
+		public bool TryGetEvasionChance(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.EvasionChance component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEvasionChance()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.EvasionChance() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEvasionChance(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.EvasionChance() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueActive IsTongueActiveC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueActive>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsTongueActive => IsTongueActiveC.Value;
@@ -5605,30 +5677,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTongueActive(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.IsTongueActive() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Telegraph.IsTelegraphing IsTelegraphingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Telegraph.IsTelegraphing>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsTelegraphing => IsTelegraphingC.Value;
-
-		public bool TryGetIsTelegraphing(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Telegraph.IsTelegraphing component);
-			if (result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTelegraphing()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Telegraph.IsTelegraphing() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() });
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTelegraphing(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Telegraph.IsTelegraphing() {Value = value});
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueRange TongueRangeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueRange>();
@@ -5905,6 +5953,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTongueCutEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue.TongueCutEvent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Telegraph.IsTelegraphing IsTelegraphingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Telegraph.IsTelegraphing>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsTelegraphing => IsTelegraphingC.Value;
+
+		public bool TryGetIsTelegraphing(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Telegraph.IsTelegraphing component);
+			if (result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTelegraphing()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Telegraph.IsTelegraphing() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsTelegraphing(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Telegraph.IsTelegraphing() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.BodyContactDamage BodyContactDamageC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.BodyContactDamage>();

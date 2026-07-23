@@ -120,6 +120,7 @@ MonoBehaviour:
     <DeathProcessTime>k__BackingField: 1.5
     <SpawnProcessTime>k__BackingField: 1
     <DamageCooldown>k__BackingField: 1
+    <EvasionChance>k__BackingField: 50
   <Throwables>k__BackingField:
     <GrappleConfig>k__BackingField: {fileID: 11400000, guid: 6443bd3d003d36342a2d702adbc37789, type: 2}
     <ShurikenConfig>k__BackingField: {fileID: 11400000, guid: b348a5f78cee93b4cbdd19f8eead08a4, type: 2}

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using UnityEngine;
 
@@ -187,6 +187,12 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField] public float DeathProcessTime { get; private set; } = 1.5f;
         [field: SerializeField] public float SpawnProcessTime { get; private set; } = 1f;
         [field: SerializeField] public float DamageCooldown { get; private set; } = 0.5f;
+
+        [Header("Defense")]
+        // Проценты 0..100, как DoubleAttackChance — единая единица измерения для всех
+        // шансовых статов. Это БАЗА: итоговое значение считает
+        // EvasionChanceStatSynchronizerSystem поверх модификаторов баффов.
+        [field: SerializeField, Range(0f, 100f)] public float EvasionChance { get; private set; } = 50f;
     }
 
     [Serializable]

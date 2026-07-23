@@ -1,11 +1,11 @@
-﻿using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs; 
+using Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Buffs;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature; 
+using Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
@@ -22,7 +22,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         private readonly BrainsFactory _brainsFactory;
         private readonly ConfigsProviderService _configsProviderService;
         private readonly EntitiesLifeContext _entitiesLifeContext;
-        private readonly BuffService _buffService; 
+        private readonly BuffService _buffService;
 
         public MainHeroFactory(DIContainer container)
         {
@@ -32,7 +32,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             _brainsFactory = _container.Resolve<BrainsFactory>();
             _configsProviderService = _container.Resolve<ConfigsProviderService>();
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
-            _buffService = _container.Resolve<BuffService>(); 
+            _buffService = _container.Resolve<BuffService>();
         }
 
         public Entity Create(Vector3 at)
@@ -56,6 +56,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddMoveSpeedModifiers(new StatModifiersList())
                 .AddBaseLootCollectRange(new ReactiveVariable<float>(config.LootCollectRange))
                 .AddLootCollectRangeModifiers(new StatModifiersList())
+
+                // Уклонение. Итоговый EvasionChance заводится НУЛЁМ намеренно:
+                // единственный его писатель — EvasionChanceStatSynchronizerSystem,
+                // и он перезапишет значение своим Recalculate в OnInit. Дублировать
+                // сюда config-значение (как это сделано выше у LootCollectRange)
+                // не стали — двойное авторство одного числа только путает.
+                .AddBaseEvasionChance(new ReactiveVariable<float>(config.LifeCycle.EvasionChance))
+                .AddEvasionChanceModifiers(new StatModifiersList())
+                .AddEvasionChance(new ReactiveVariable<float>(0f))
+
                 .AddActiveBuffs(new ActiveBuffsList())
                 ;
 
@@ -69,6 +79,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 
                 .AddSystem(new MoveSpeedStatSynchronizerSystem())
                 .AddSystem(new LootCollectRangeStatSynchronizerSystem())
+                .AddSystem(new EvasionChanceStatSynchronizerSystem())
                 .AddSystem(new BuffsTimerSystem())
                 .AddSystem(new BuffMagnetSystem(_entitiesLifeContext))
                 .AddSystem(new BuffDistanceCollectSystem(_entitiesLifeContext, _buffService))
