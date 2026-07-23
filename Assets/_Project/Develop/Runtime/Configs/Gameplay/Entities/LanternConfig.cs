@@ -75,8 +75,12 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [Tooltip("На кого снаряд наносит контактный урон телом — Characters(7)")]
         [field: SerializeField] public LayerMask ProjectileTargetMask { get; private set; }
 
-        // ProjectileSightBlockMask убрано: снаряд фонаря летит СКВОЗЬ СТЕНЫ,
-        // деспавн об геометрию снят (см. LanternProjectileSystem). Ограничитель
-        // дальности — только ProjectileLifeTime.
+        [Tooltip("Геометрия, об которую снаряд гаснет — Ground(8)+Wall(10). " +
+                 "НЕ КОПИРУЙ СЮДА SightBlockMask слайма: в ней есть Default(0), а на " +
+                 "Default лежит LevelBounds — охватывающий уровень триггер, из-за " +
+                 "которого снаряд умирал в точке вылета. Enemies(9) тоже не класть: " +
+                 "на нём сам фонарь и тело снаряда. Второй ограничитель дальности — " +
+                 "ProjectileLifeTime, он остаётся в силе")]
+        [field: SerializeField] public LayerMask ProjectileBlockMask { get; private set; }
     }
 }

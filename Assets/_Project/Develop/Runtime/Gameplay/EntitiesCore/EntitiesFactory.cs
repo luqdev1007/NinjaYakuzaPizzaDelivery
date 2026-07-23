@@ -1068,6 +1068,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 LifeTime = config.ProjectileLifeTime,
                 ContactDamage = config.ProjectileContactDamage,
                 TargetMask = config.ProjectileTargetMask,
+                BlockMask = config.ProjectileBlockMask,
                 PrefabPath = config.ProjectilePrefabPath
             };
 

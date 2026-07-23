@@ -32,3 +32,6 @@ MonoBehaviour:
   <ProjectileTargetMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 128
+  <ProjectileBlockMask>k__BackingField:
+    serializedVersion: 2
+    m_Bits: 1280

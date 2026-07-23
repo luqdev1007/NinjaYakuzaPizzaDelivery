@@ -175,7 +175,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
 
         /// <summary>
         /// Снаряд фонаря (Lantern). Автономный fire-and-forget: летит прямо в
-        /// заданном направлении, гаснет ТОЛЬКО по времени жизни или от разруба.
+        /// заданном направлении, гаснет об геометрию, по времени жизни или от разруба.
         ///
         /// TEAM НЕ ВЫДАЁТСЯ — ОСОЗНАННО, ровно как языку слайма: рубка дэшем/пике
         /// идёт через тим-фильтр EntitiesHelper.TryTakeDamageFrom, а нейтрал без
@@ -191,15 +191,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
         /// эта константа молча выключит ВЕСЬ урон по нему, и разруб отвалится без
         /// ошибки компиляции.
         ///
-        /// СКВОЗЬ СТЕНЫ. Деспавна об геометрию НЕТ — снаряд игнорирует стены,
-        /// ограничен только LifeTime (см. шапку LanternProjectileSystem). Поэтому
-        /// ContactsDetectingMask — только TargetMask (герой): буфер контактов
-        /// нужен исключительно для контактного урона, стены в него не собираем.
-        /// DeathMask/IsTouchDeathMask/DeathMaskTouchDetectorSystem здесь не заводим
-        /// (сюрикеновый паттерн деспавна об стену снят намеренно).
+        /// ДЕСПАВН ОБ ГЕОМЕТРИЮ ЖИВЁТ НЕ ЗДЕСЬ. Он целиком внутри
+        /// LanternProjectileSystem — Linecast по BlockMask из предыдущей позиции в
+        /// новую, с ignore-set'ом коллайдеров, снятым в точке вылета. Поэтому
+        /// ContactsDetectingMask здесь — ТОЛЬКО TargetMask (герой).
         ///
-        /// Движение и время жизни — на fixed (LanternProjectileSystem), контактная
-        /// цепочка — на Update (общие системы проекта). См. шапку
+        /// ГЕОМЕТРИЮ В ContactsDetectingMask НЕ ДОБАВЛЯТЬ. Ровно на этом снаряд
+        /// ломался в прошлой итерации: маска включала Default(0), на нём висит
+        /// LevelBounds (охватывающий уровень триггер), overlap тела ловил его на
+        /// первом же Update, DeathMaskTouchDetectorSystem поднимала IsTouchDeathMask
+        /// — и снаряд гас в точке вылета, каждый выстрел. Сюрикеновый паттерн
+        /// (DeathMask + IsTouchDeathMask + DeathMaskTouchDetectorSystem) здесь не
+        /// заводим ещё и потому, что он туннелирует на скорости: overlap проверяет
+        /// точку, а не пройденный за тик отрезок.
+        ///
+        /// Движение, каст и время жизни — на fixed (LanternProjectileSystem),
+        /// контактная цепочка — на Update (общие системы проекта). См. шапку
         /// LanternProjectileSystem.
         /// </summary>
         public Entity CreateLanternProjectile(Vector2 position, Vector2 direction, LanternProjectileData data)
@@ -225,8 +232,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
                 .AddTakeDamageRequest()
                 .AddCanApplyDamage(canApplyDamage)
 
-                // Маска детекта — только герой: снаряд сквозь стены, буфер контактов
-                // нужен лишь для контактного урона.
+                // Маска детекта — только герой. Геометрия сюда не идёт: деспавн об
+                // стену ведётся кастом в LanternProjectileSystem (см. шапку метода).
                 .AddBodyContactDamage(new ReactiveVariable<float>(data.ContactDamage))
                 .AddContactsDetectingMask(data.TargetMask)
                 .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
@@ -238,7 +245,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
                 .AddSystem(new DealDamageOnContactSystem())
 
-                .AddSystem(new LanternProjectileSystem(_entitiesLifeContext))
+                .AddSystem(new LanternProjectileSystem(_entitiesLifeContext, data.BlockMask))
                 ;
 
             _entitiesLifeContext.Add(entity);

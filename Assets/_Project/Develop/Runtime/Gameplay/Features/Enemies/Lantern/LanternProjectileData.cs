@@ -21,10 +21,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern
 
         /// <summary>
         /// Слой цели контактного урона — герой (Characters). Идёт в
-        /// ContactsDetectingMask: буфер контактов нужен только для урона, снаряд
-        /// летит сквозь стены, поэтому геометрия в маску не входит.
+        /// ContactsDetectingMask ОДИН, без геометрии: буфер контактов нужен только
+        /// для урона. Деспавн об стену ведётся отдельным кастом по BlockMask
+        /// (см. LanternProjectileSystem), а НЕ через контактный буфер.
         /// </summary>
         public LayerMask TargetMask;
+
+        /// <summary>
+        /// Геометрия, об которую снаряд гаснет: Ground + Wall.
+        ///
+        /// НЕ КОПИЯ SightBlockMask СЛАЙМА. У слайма в маске есть Default(0), а на
+        /// Default лежит LevelBounds — охватывающий триггер на весь уровень. Именно
+        /// он в прошлой итерации убивал снаряд на первом же кадре. Смысл этого поля
+        /// отдельный от слаймового, поэтому и имя другое: подставишь сюда слаймовую
+        /// маску — вернёшь ту же поломку.
+        ///
+        /// Enemies(9) сюда НЕ входит: на нём лежат и сам фонарь, и тело снаряда.
+        /// </summary>
+        public LayerMask BlockMask;
 
         /// <summary>Путь к префабу снаряда в Resources.</summary>
         public string PrefabPath;
