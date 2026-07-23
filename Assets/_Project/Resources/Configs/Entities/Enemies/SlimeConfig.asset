@@ -29,11 +29,11 @@ MonoBehaviour:
     m_Bits: 128
   <KnockbackDuration>k__BackingField: 1
   <LootTable>k__BackingField: {fileID: 11400000, guid: a54cc7243b8c3744991f591301f01020, type: 2}
-  <MaxRange>k__BackingField: 15
-  <GrabTime>k__BackingField: 2
-  <GrabAttackSpeed>k__BackingField: 15
-  <GrabBackSpeed>k__BackingField: 12
-  <TetherPullSpeed>k__BackingField: 9
+  <MaxRange>k__BackingField: 25
+  <GrabTime>k__BackingField: 4
+  <GrabAttackSpeed>k__BackingField: 25
+  <GrabBackSpeed>k__BackingField: 20
+  <TetherPullSpeed>k__BackingField: 15
   <TetherPullAcceleration>k__BackingField: 40
   <SightBlockMask>k__BackingField:
     serializedVersion: 2
@@ -41,7 +41,7 @@ MonoBehaviour:
   <TargetMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 128
-  <TongueTelegraphDuration>k__BackingField: 0.25
+  <TongueTelegraphDuration>k__BackingField: 0.1
   <TongueCooldown>k__BackingField: 3
   <TongueAimArcDot>k__BackingField: -0.35
   <TonguePrefabPath>k__BackingField: Entities/Projectiles/SlimeTongue

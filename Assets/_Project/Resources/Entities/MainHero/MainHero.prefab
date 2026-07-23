@@ -60278,7 +60278,7 @@ MonoBehaviour:
   _jitterAngle: 12
   _scaleGrowth: 0.35
   _sortingOrder: 11
-  _evadeSfxKey: 
+  _evadeSfxKey: EvadeSFX
 --- !u!1 &2305303809177581567
 GameObject:
   m_ObjectHideFlags: 0
