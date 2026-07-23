@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Entities.MovementFeature.Dash;
 using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using Assets._Project.Develop.Runtime.Utilities.ObjectsManagment;
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -87,16 +88,37 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
             _audioService = audioService;
         }
 
+        /// <summary>
+        /// ПУЛ СОЗДАЁТСЯ ТОЛЬКО ПОСЛЕ УСПЕШНОГО TryGet, и это не косметика.
+        /// Раньше рут пула и сами объекты рождались безусловно, ДО проверки, —
+        /// то есть сущность без EvadedEvent молча плодила в сцене мёртвый пул,
+        /// который никто никогда не активирует. Ровно так и выглядел баг: пул в
+        /// иерархии есть, объекты в нём есть, подписки нет, картинки нет.
+        ///
+        /// Вьюха доджа на префабе сущности, у которой нет EvadedEvent, — это
+        /// ошибка сборки, а не штатная конфигурация: компонент выдаёт фабрика
+        /// рядом со статом уклонения. Поэтому здесь громкий лог, а не тихий
+        /// выход, — но не исключение: отсутствие визуала не повод ронять забег.
+        /// </summary>
         protected override void OnEntityStartedWork(Entity entity)
         {
+            if (entity.TryGetEvadedEvent(out ReactiveEvent evadedEvent) == false)
+            {
+                Debug.LogError(
+                    $"[Evasion] На '{name}' висит {nameof(AfterimageView)}, но у сущности нет " +
+                    $"{nameof(EvadedEvent)} — визуал уклонения не заработает никогда. " +
+                    $"Либо фабрика сущности не зовёт .AddEvadedEvent(), либо вьюха попала на " +
+                    $"чужой префаб. Пул не создаётся.",
+                    this);
+
+                return;
+            }
+
             _poolRoot = new GameObject($"AfterimagePool (Evade) [{name}]");
 
             _pool = new GameObjectPool(_afterimagePrefab, _poolRoot.transform, _poolSize);
 
-            if (entity.TryGetEvadedEvent(out Utilities.Reactive.ReactiveEvent evadedEvent))
-            {
-                _evadedDisposable = evadedEvent.Subscribe(OnEvaded);
-            }
+            _evadedDisposable = evadedEvent.Subscribe(OnEvaded);
         }
 
         private void OnEvaded()
@@ -209,11 +231,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
             _audioService?.PlaySfx(_evadeSfxKey, transform.position);
         }
 
+        /// <summary>
+        /// Обязан отрабатывать и на сущности без EvadedEvent — там OnEntityStartedWork
+        /// вышел раньше создания пула, поэтому _pool, _poolRoot и _evadedDisposable
+        /// остались null. Отсюда проверки на каждом шаге: без них Cleanup ронял бы
+        /// NullReferenceException поверх уже залогированной ошибки сборки.
+        /// </summary>
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
 
             _evadedDisposable?.Dispose();
+            _evadedDisposable = null;
 
             if (_burstCoroutine != null)
             {
@@ -226,7 +255,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
             {
                 GameObject afterimage = _liveAfterimages[i];
 
-                if (afterimage != null)
+                if (afterimage != null && _pool != null)
                 {
                     _pool.Return(afterimage);
                 }

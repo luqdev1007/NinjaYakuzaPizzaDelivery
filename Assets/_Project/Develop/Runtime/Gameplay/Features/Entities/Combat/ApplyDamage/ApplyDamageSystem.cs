@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.RandomManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
 {
@@ -49,17 +50,62 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
 
             // TryGet один раз в OnInit, а не на каждый хит: остальные системы
             // проекта кешируют ссылки ровно так же.
-            if (entity.TryGetEvasionChance(out ReactiveVariable<float> evasionChance))
+            bool hasEvasionChance = entity.TryGetEvasionChance(out ReactiveVariable<float> evasionChance);
+
+            if (hasEvasionChance)
             {
                 _evasionChance = evasionChance;
             }
 
-            if (entity.TryGetEvadedEvent(out ReactiveEvent evadedEvent))
+            bool hasEvadedEvent = entity.TryGetEvadedEvent(out ReactiveEvent evadedEvent);
+
+            if (hasEvadedEvent)
             {
                 _evadedEvent = evadedEvent;
             }
 
+            ValidateEvasionSetup(entity, hasEvasionChance, hasEvadedEvent);
+
             _requestDisposable = _damageRequest.Subscribe(OnDamageRequest);
+        }
+
+        /// <summary>
+        /// «Стат есть, события нет» — это ВСЕГДА ошибка сборки сущности, и молчать
+        /// о ней нельзя. Ровно в такой конфигурации фича уже ломалась: герой
+        /// получил EvasionChance без EvadedEvent, урон отменялся правильно, а
+        /// визуала не было — и ни одна из двух сторон (эта система и
+        /// AfterimageView) не сказала ни слова, потому что обе читают событие
+        /// через TryGet и при отказе тихо уходят в no-op.
+        ///
+        /// Это ЛОГ, А НЕ ИСКЛЮЧЕНИЕ, осознанно: отсутствие визуала не повод ронять
+        /// забег. Бросок и отмена урона ниже продолжают работать в полном объёме.
+        ///
+        /// Обратная конфигурация (событие без стата) НЕ проверяется: она безвредна
+        /// и осмысленна — сущности можно выдать EvadedEvent заранее, до появления
+        /// стата, или ради чужого визуала.
+        /// </summary>
+        private void ValidateEvasionSetup(Entity entity, bool hasEvasionChance, bool hasEvadedEvent)
+        {
+            if (hasEvasionChance == false)
+            {
+                return;
+            }
+
+            if (hasEvadedEvent)
+            {
+                return;
+            }
+
+            string entityName = entity.TryGetTransform(out Transform transform) && transform != null
+                ? transform.name
+                : "без Transform";
+
+            Debug.LogError(
+                $"[Evasion] Рассинхрон компонентов доджа на сущности '{entityName}': " +
+                $"есть {nameof(EvasionChance)}, но нет {nameof(EvadedEvent)}. " +
+                $"Бросок и отмена урона работать будут, а визуал уклонения — нет: " +
+                $"{nameof(AfterimageView)} подписывается именно на {nameof(EvadedEvent)}. " +
+                $"Чинится добавлением .AddEvadedEvent() рядом с .AddEvasionChance() в фабрике сущности.");
         }
 
         private void OnDamageRequest(DamageData damage)
