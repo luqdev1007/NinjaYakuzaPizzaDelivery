@@ -579,7 +579,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new AerialHitSuspensionSystem())
 
                  // apply damage
-                .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new ApplyDamageSystem(_container.Resolve<IGameplayRandom>()))
                 .AddSystem(new ApplyDamageCooldownSystem())
 
                 // тело ниндзя - смертельное оружие
@@ -718,7 +718,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new DamageKnockbackTimerSystem())
                 .AddSystem(new DamageKnockbackSystem())
 
-                .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new ApplyDamageSystem(_container.Resolve<IGameplayRandom>()))
                 .AddSystem(new ApplyDamageCooldownSystem())
 
                 .AddSystem(new BodyContactDetectingSystem())
@@ -951,7 +951,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new DamageKnockbackTimerSystem())
                 .AddSystem(new DamageKnockbackSystem())
 
-                .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new ApplyDamageSystem(_container.Resolve<IGameplayRandom>()))
                 .AddSystem(new ApplyDamageCooldownSystem())
 
                 .AddSystem(new BodyContactDetectingSystem())
@@ -1079,7 +1079,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             float initialPhaseOffset = _container.Resolve<IGameplayRandom>().Range(0f, phaseMaxOffset);
 
             entity
-                .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new ApplyDamageSystem(_container.Resolve<IGameplayRandom>()))
                 .AddSystem(new ApplyDamageCooldownSystem())
 
                 .AddSystem(new BodyContactDetectingSystem())

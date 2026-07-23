@@ -48,4 +48,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage
     {
         public ReactiveVariable<float> Value;
     }
+
+    /// <summary>
+    /// Уклонение состоялось: бросок прошёл, хит отменён целиком. Писатель один —
+    /// ApplyDamageSystem, читатель — AfterimageView (burst мельтешения).
+    ///
+    /// ОТДЕЛЬНОЕ СОБЫТИЕ, А НЕ ВЕТКА ВНУТРИ TakeDamageEvent — это суть фичи, а не
+    /// стилистика. TakeDamageEvent означает «урон случился» и на него завязаны
+    /// DamageCooldown (i-frames), штраф стиля, hit flash и тряска пиццы. При
+    /// уклонении не должно сработать НИЧЕГО из этого, поэтому уклонение обязано
+    /// иметь собственный канал. Схема та же, что у TongueCutEvent.
+    ///
+    /// ВАЖНОЕ СЛЕДСТВИЕ: успешный уворот НЕ открывает окно неуязвимости. Это
+    /// намеренно — иначе додж выдавал бы бесплатные i-frames и стоил бы дешевле
+    /// попадания. Следующий источник урона может прилететь в тот же тик.
+    /// </summary>
+    public class EvadedEvent : IEntityComponent
+    {
+        public ReactiveEvent Value;
+    }
 }

@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Props;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Props;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
+using Assets._Project.Develop.Runtime.Utilities.RandomManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
@@ -20,18 +21,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props
         private DropLootService _dropLootService;
         private CollidersRegistryService _collidersRegistryService;
 
-        private Collider2D[] _propColliders; 
+        // Нужен только затем, чтобы отдать его в ApplyDamageSystem: у пропса нет
+        // компонента EvasionChance, поэтому рандом он не тронет ни разу. Это плата
+        // за то, что ApplyDamageSystem одна на все сущности, а пропсы строятся
+        // MonoBehaviour'ом в обход DI-фабрик и своего доступа к контейнеру не имеют.
+        private IGameplayRandom _gameplayRandom;
+
+        private Collider2D[] _propColliders;
 
         public void Construct(
             EntitiesLifeContext entitiesLifeContext,
             IAudioService audioService,
             DropLootService dropLootService,
-            CollidersRegistryService collidersRegistryService)
+            CollidersRegistryService collidersRegistryService,
+            IGameplayRandom gameplayRandom)
         {
             _entitiesLifeContext = entitiesLifeContext;
             _audioService = audioService;
             _dropLootService = dropLootService;
             _collidersRegistryService = collidersRegistryService;
+            _gameplayRandom = gameplayRandom;
         }
 
         private void Start()
@@ -76,7 +85,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LevelObjects.Props
                 .AddMustSelfRelease(mustSelfRelease);
 
             entity
-                .AddSystem(new ApplyDamageSystem())
+                .AddSystem(new ApplyDamageSystem(_gameplayRandom))
                 .AddSystem(new DeathSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
 

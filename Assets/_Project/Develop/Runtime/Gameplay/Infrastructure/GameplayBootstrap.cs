@@ -15,6 +15,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.StageFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
 using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilities.RandomManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagement;
 using System;
 using System.Collections;
@@ -90,7 +91,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                         _entitiesLifeContext,
                         audioService,
                         _container.Resolve<DropLootService>(),
-                        _container.Resolve<CollidersRegistryService>()
+                        _container.Resolve<CollidersRegistryService>(),
+                        _container.Resolve<IGameplayRandom>()
                     );
             }
 
