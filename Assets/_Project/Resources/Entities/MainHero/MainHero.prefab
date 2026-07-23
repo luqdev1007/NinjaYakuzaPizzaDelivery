@@ -60266,11 +60266,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage.AfterimageView
   _spriteRenderer: {fileID: 1593908433206030503}
   _afterimagePrefab: {fileID: 2092742535912402765, guid: bfa1d847138cafb4dbc0719e21491257, type: 3}
-  _burstCount: 4
-  _burstInterval: 0.03
-  _afterimageLifetime: 0.2
-  _afterimageColor: {r: 1, g: 1, b: 1, a: 0.8}
-  _poolSize: 6
+  _burstCount: 5
+  _burstInterval: 0.02
+  _afterimageLifetime: 0.35
+  _afterimageColor: {r: 1, g: 1, b: 1, a: 1}
+  _startAlpha: 0.75
+  _poolSize: 8
+  _spawnOffset: 0.18
+  _driftSpeed: 3.5
+  _verticalSpread: 0.6
+  _jitterAngle: 12
+  _scaleGrowth: 0.35
+  _sortingOrder: 11
   _evadeSfxKey: 
 --- !u!1 &2305303809177581567
 GameObject:
