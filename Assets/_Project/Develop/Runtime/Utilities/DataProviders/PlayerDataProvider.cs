@@ -37,7 +37,13 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataProviders
                 Wins = 0,
                 Losses = 0,
                 CompletedLevels = new(),
-                IntroSeen = false
+                IntroSeen = false,
+
+                // Пустой словарь = все тиры 0. Отдельного резета покупок не нужно:
+                // сброс прогресса идёт через Reset() -> GetOriginData() ->
+                // SendDataToReaders(), и PlayerUpgradesService обнулится тем же
+                // каналом, что кошелёк.
+                PurchasedTiers = new()
             };
         }
 
@@ -54,5 +60,3 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataProviders
         }
     }
 }
-
-

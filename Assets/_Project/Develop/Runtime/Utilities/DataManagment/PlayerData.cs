@@ -15,5 +15,12 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataManagment
         // GameEntryPoint. Старые сейвы без этого поля Newtonsoft читает как false —
         // интро им покажется один раз.
         public bool IntroSeen;
+
+        // Купленные тир-апгрейды: itemId -> номер купленного тира, 0 (или
+        // отсутствие ключа) = не куплен. Единственный писатель — PlayerUpgradesService.
+        // Словарь, а не поля под каждый апгрейд: добавление товара в магазин не
+        // должно требовать миграции сейва. Старые сейвы без этого поля Newtonsoft
+        // читает как null — PlayerUpgradesService.ReadFrom это переваривает.
+        public Dictionary<string, int> PurchasedTiers;
     }
 }
