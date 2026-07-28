@@ -1,8 +1,9 @@
-﻿using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Audio;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
 using Assets._Project.Develop.Runtime.Meta.Features.Stats;
+using Assets._Project.Develop.Runtime.Meta.Features.Upgrades;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
@@ -33,7 +34,7 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
     public class ProjectContextRegistrations
     {
         private const string AudioMixerPath = "Utilities/AudioMixerMain";
-        private const string AudioEmitterPrefabPath = "Utilities/AudioEmitter"; 
+        private const string AudioEmitterPrefabPath = "Utilities/AudioEmitter";
 
         public static void Process(DIContainer container)
         {
@@ -53,6 +54,11 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
 
             container.RegisterAsSingle(CreateWalletService).NonLazy();
 
+            // NonLazy по той же причине, что у WalletService: сервис обязан
+            // зарегистрироваться читателем/писателем PlayerData ДО того, как
+            // GameEntryPoint дёрнет LoadAsync/Reset. Ленивый сервис на момент
+            // первого SendDataToReaders ещё не создан и молча пропустит загрузку.
+            container.RegisterAsSingle(CreatePlayerUpgradesService).NonLazy();
 
             container.RegisterAsSingle(CreatePlayerDataProvider);
 
@@ -91,7 +97,7 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             AudioLibrary library = container.Resolve<ConfigsProviderService>().GetConfig<AudioLibrary>();
             AudioMixer mixer = loader.Load<AudioMixer>(AudioMixerPath);
 
-            if (mixer == null) 
+            if (mixer == null)
                 throw new Exception($"AudioMixer not found at {AudioMixerPath}");
 
 
@@ -123,19 +129,22 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
         private static LevelsProgressionService CreateLevelsProgressionService(DIContainer container)
             => new LevelsProgressionService(container.Resolve<PlayerDataProvider>());
 
-        private static ViewsFactory CreateViewsFactory(DIContainer container) 
+        private static ViewsFactory CreateViewsFactory(DIContainer container)
             => new ViewsFactory(container.Resolve<ResourcesAssetsLoader>());
 
-        private static ProjectPresentersFactory CreateProjectPresentersFactory(DIContainer container) 
+        private static ProjectPresentersFactory CreateProjectPresentersFactory(DIContainer container)
             => new ProjectPresentersFactory(container);
 
-        private static GameStatsService CreateGameStatsService(DIContainer container) 
+        private static GameStatsService CreateGameStatsService(DIContainer container)
             => new GameStatsService(container.Resolve<PlayerDataProvider>());
 
-        private static PlayerDataProvider CreatePlayerDataProvider(DIContainer container) 
+        private static PlayerUpgradesService CreatePlayerUpgradesService(DIContainer container)
+            => new PlayerUpgradesService(container.Resolve<PlayerDataProvider>());
+
+        private static PlayerDataProvider CreatePlayerDataProvider(DIContainer container)
             => new PlayerDataProvider(
                 container.Resolve<ISaveLoadService>(),
-                container.Resolve<ConfigsProviderService>(), 
+                container.Resolve<ConfigsProviderService>(),
                 container.Resolve<ICoroutinesPerformer>());
 
         private static SaveLoadService CreateSaveLoadService(DIContainer container)
@@ -153,7 +162,7 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
         private static WalletService CreateWalletService(DIContainer container)
         {
             Dictionary<CurrencyTypes, ReactiveVariable<int>> currencies = new();
-            
+
             foreach (CurrencyTypes currencyType in Enum.GetValues(typeof(CurrencyTypes)))
             {
                 currencies[currencyType] = new ReactiveVariable<int>(0);
@@ -162,15 +171,15 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             return new WalletService(currencies, container.Resolve<PlayerDataProvider>());
         }
 
-        private static SceneSwitcherService CreateSceneSwitcherService(DIContainer container) 
+        private static SceneSwitcherService CreateSceneSwitcherService(DIContainer container)
             => new SceneSwitcherService(
-                container.Resolve<SceneLoaderService>(), 
-                container.Resolve<ILoadingScreen>(), 
-                container, 
+                container.Resolve<SceneLoaderService>(),
+                container.Resolve<ILoadingScreen>(),
+                container,
                 container.Resolve<ICoroutinesPerformer>(),
                 container.Resolve<ILoadingHintsService>());
 
-        private static SceneLoaderService CreateSceneLoaderService(DIContainer container) 
+        private static SceneLoaderService CreateSceneLoaderService(DIContainer container)
             => new SceneLoaderService();
 
         private static ConfigsProviderService CreateConfigProviderService(DIContainer container)
@@ -181,7 +190,7 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             return new ConfigsProviderService(resourcesConfigsLoader);
         }
 
-        private static ResourcesAssetsLoader CreateResourcesAssetsLoader(DIContainer container) 
+        private static ResourcesAssetsLoader CreateResourcesAssetsLoader(DIContainer container)
             => new ResourcesAssetsLoader();
 
         private static CoroutinesPerformer CreateCoroutinesPerformer(DIContainer container)
