@@ -21,14 +21,16 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
     public class MainMenuBootstrap : SceneBootstrap
     {
         private DIContainer _container;
-        private ICoroutinesPerformer _coroutinesPerformer;
-        private PlayerDataProvider _playerDataProvider;
 
 #if UNITY_EDITOR
-        // Дебаг-стенд магазина вместо UI. Целиком под UNITY_EDITOR — в билд не
-        // попадает ни одна строка, в отличие от F2-сейва выше, который висит в
-        // рантайме без гарда (не трогаю: чужой код, вне скоупа задачи).
+        // Дебаг-инструменты сцены целиком под UNITY_EDITOR — в билд не попадает
+        // ни одна строка. Сюда же уехали _coroutinesPerformer и
+        // _playerDataProvider: их единственный потребитель — ручной сейв по F2,
+        // и без гарда они остались бы в билде присвоенными, но никем не читаемыми.
         private const int DebugGoldGrant = 1000;
+
+        private ICoroutinesPerformer _coroutinesPerformer;
+        private PlayerDataProvider _playerDataProvider;
 
         private ShopService _shopService;
         private PlayerUpgradesService _playerUpgradesService;
@@ -47,10 +49,10 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
 
         public override IEnumerator Initialize()
         {
+#if UNITY_EDITOR
             _playerDataProvider = _container.Resolve<PlayerDataProvider>();
             _coroutinesPerformer = _container.Resolve<ICoroutinesPerformer>();
 
-#if UNITY_EDITOR
             InitializeShopDebug();
 #endif
 
@@ -63,19 +65,22 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
             audioService.PlayPlaylist("MainMenu_Playlist");
         }
 
+#if UNITY_EDITOR
+        // Гардим саму сигнатуру Update, а не только тело: пустой Update Unity всё
+        // равно вызывает каждый кадр через native->managed мост, и в билде этот
+        // вызов был бы чистой платой ни за что.
         private void Update()
         {
+            // Ручной сейв по F2 — дебажный инструмент. В билде игроку он не нужен,
+            // а лишний способ дёрнуть запись сейва с клавиатуры только вредит.
             if (Input.GetKeyDown(KeyCode.F2))
             {
                 _coroutinesPerformer.StartPerform(_playerDataProvider.SaveAsync());
             }
 
-#if UNITY_EDITOR
             HandleShopDebugInput();
-#endif
         }
 
-#if UNITY_EDITOR
         private void InitializeShopDebug()
         {
             _shopService = _container.Resolve<ShopService>();
