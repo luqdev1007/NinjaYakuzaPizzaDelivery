@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataManagment;
 using System;
 using System.Collections;
@@ -14,7 +14,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataProviders
 
         private readonly List<IDataWriter<TData>> _writers = new();
         private readonly List<IDataReader<TData>> _readers = new();
-         
+
         private TData _data;
 
         protected DataProvider(ISaveLoadService saveLoadService, ICoroutinesPerformer coroutinesPerformer)
@@ -22,6 +22,10 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataProviders
             _saveLoadService = saveLoadService;
             _coroutinesPerformer = coroutinesPerformer;
         }
+
+        // Доступ к загруженной модели для наследников. Наружу модель не отдаём:
+        // публичные аксессоры конкретных полей объявляет конкретный провайдер.
+        protected TData Data => _data;
 
         public void RegisterWriter(IDataWriter<TData> writer)
         {

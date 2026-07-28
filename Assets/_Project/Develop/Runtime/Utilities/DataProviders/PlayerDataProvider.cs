@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
+using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
@@ -13,11 +13,20 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataProviders
         private readonly ConfigsProviderService _configsProviderService;
 
         public PlayerDataProvider(
-            ISaveLoadService saveLoadService, 
-            ConfigsProviderService configsProviderService, 
+            ISaveLoadService saveLoadService,
+            ConfigsProviderService configsProviderService,
             ICoroutinesPerformer coroutinesPerformer) : base(saveLoadService, coroutinesPerformer)
         {
             _configsProviderService = configsProviderService;
+        }
+
+        // Единственный писатель флага — IntroBootstrap на завершении/скипе интро.
+        // Через IDataReader/IDataWriter не гоняем: за одним bool отдельный сервис
+        // избыточен, а два писателя дали бы тихий рассинхрон.
+        public bool IntroSeen
+        {
+            get => Data.IntroSeen;
+            set => Data.IntroSeen = value;
         }
 
         protected override PlayerData GetOriginData()
@@ -27,7 +36,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataProviders
                 WalletData = InitWalletData(),
                 Wins = 0,
                 Losses = 0,
-                CompletedLevels = new()
+                CompletedLevels = new(),
+                IntroSeen = false
             };
         }
 

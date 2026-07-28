@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Infrastructure.DI;
+using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataProviders;
@@ -44,7 +44,17 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             else
                 playerDataProvider.Reset();
 
-            yield return sceneSwitcherService.ProcessingSwitchTo(Scenes.MainMenu);
+            // Читаем флаг из in-memory модели, а не перепроверяем файл: Reset() уже
+            // стартовал запись сейва корутиной, и после неё "сейва нет" превратится
+            // в "сейв есть". IntroSeen=true проставляет IntroBootstrap в конце интро.
+            if (playerDataProvider.IntroSeen == false)
+            {
+                yield return sceneSwitcherService.ProcessingSwitchTo(Scenes.Intro);
+            }
+            else
+            {
+                yield return sceneSwitcherService.ProcessingSwitchTo(Scenes.MainMenu);
+            }
         }
     }
 }
