@@ -13,7 +13,10 @@ using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
+using Assets._Project.Develop.Runtime.Configs.Meta.Shop;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern;
+using Assets._Project.Develop.Runtime.Meta.Features.Upgrades;
+using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using System;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
@@ -27,6 +30,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
         private readonly CollidersRegistryService _collidersRegistryService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
 
+        // Апгрейд урона сюрикена. Резолвятся из project-скоупа через родителя —
+        // фабрика живёт в gameplay-скоупе, контейнер иерархический.
+        private readonly PlayerUpgradesService _playerUpgradesService;
+        private readonly ShurikenDamageUpgradeConfig _shurikenDamageUpgradeConfig;
+
         public ProjectileFactory(DIContainer container)
         {
             _container = container;
@@ -35,6 +43,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
             _monoEntitiesFactory = container.Resolve<MonoEntitiesFactory>();
             _collidersRegistryService = container.Resolve<CollidersRegistryService>();
             _coroutinesPerformer = container.Resolve<ICoroutinesPerformer>();
+
+            _playerUpgradesService = container.Resolve<PlayerUpgradesService>();
+            _shurikenDamageUpgradeConfig = container.Resolve<ConfigsProviderService>()
+                .GetConfig<ShurikenDamageUpgradeConfig>();
         }
 
         public Entity CreateChargedSlashProjectile(Transform parent, Entity owner)
@@ -293,8 +305,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
 
             if (throwableConfig is ShurikenConfig shurikenConfig)
             {
+                // ЕДИНСТВЕННАЯ ТОЧКА, ГДЕ АПГРЕЙД ВЛИЯЕТ НА БОЕВОЙ ПУТЬ.
+                //
+                // Бонус плюсуется к урону КОНКРЕТНОГО ЭКЗЕМПЛЯРА снаряда, а сам
+                // ShurikenConfig не мутируется: SO в редакторе переживает
+                // остановку плей-мода, и запись в него копила бы бонус между
+                // сессиями до бесконечности.
+                //
+                // Ветка уже загейчена `is ShurikenConfig`, поэтому sleep dart,
+                // grapple и любой будущий метательный предмет сюда не попадают —
+                // их урон считается как раньше.
+                //
+                // Тир читается на КАЖДОМ спавне, а не кэшируется в поле фабрики:
+                // покупка в главном меню обязана быть видна в ближайшем же забеге.
+                float damageBonus = _shurikenDamageUpgradeConfig == null
+                    ? 0f
+                    : _shurikenDamageUpgradeConfig.GetDamageBonusFor(
+                        _playerUpgradesService.GetTier(_shurikenDamageUpgradeConfig.ItemId));
+
+                float shurikenDamage = shurikenConfig.Damage + damageBonus;
+
                 entity
-                    .AddBodyContactDamage(new ReactiveVariable<float>(shurikenConfig.Damage))
+                    .AddBodyContactDamage(new ReactiveVariable<float>(shurikenDamage))
                     .AddIsTouchDeathMask()
                     .AddDeathMask(shurikenConfig.HitMask);
 
