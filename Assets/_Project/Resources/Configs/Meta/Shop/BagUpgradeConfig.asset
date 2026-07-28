@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier:
   <ItemId>k__BackingField: bag_capacity
   <Currency>k__BackingField: 0
-  <TargetConsumableId>k__BackingField: 123
+  <TargetConsumableId>k__BackingField: shuriken
   _tiers:
   - <Cost>k__BackingField: 150
     <Capacity>k__BackingField: 20

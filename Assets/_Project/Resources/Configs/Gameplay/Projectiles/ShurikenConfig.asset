@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0eeb2b5d3b2a5043b9a5212dade8a54, type: 3}
   m_Name: ShurikenConfig
   m_EditorClassIdentifier: 
-  <Id>k__BackingField: 123
+  <Id>k__BackingField: shuriken
   <ItemName>k__BackingField: shuriken
   <Icon>k__BackingField: {fileID: 21300000, guid: 5a5954d8f87079c45a43726108fa322b, type: 3}
   <MaxCharges>k__BackingField: 15
