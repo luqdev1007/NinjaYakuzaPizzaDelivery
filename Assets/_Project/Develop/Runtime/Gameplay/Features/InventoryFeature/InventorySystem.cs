@@ -1,9 +1,11 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Configs.Inventory;
 using Assets._Project.Develop.Runtime.Configs.Inventory.Potions;
+using Assets._Project.Develop.Runtime.Configs.Meta.Shop;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles;
+using Assets._Project.Develop.Runtime.Meta.Features.Upgrades;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +18,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
 
         private readonly InventoryItemConfig[] _consumables;
         private readonly ProjectileFactory _projectileFactory;
+        private readonly PlayerUpgradesService _playerUpgradesService;
+        private readonly BagUpgradeConfig _bagUpgradeConfig;
 
         private Entity _playerEntity;
 
@@ -33,10 +37,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
 
         public InventorySystem(
             InventoryItemConfig[] consumables,
-            ProjectileFactory projectileFactory)
+            ProjectileFactory projectileFactory,
+            PlayerUpgradesService playerUpgradesService,
+            BagUpgradeConfig bagUpgradeConfig)
         {
             _consumables = consumables;
             _projectileFactory = projectileFactory;
+            _playerUpgradesService = playerUpgradesService;
+            _bagUpgradeConfig = bagUpgradeConfig;
         }
 
         public void OnInit(Entity entity)
@@ -54,10 +62,34 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Inventory
             _chargesList = entity.InventoryCharges;
             _chargesList.Clear();
 
+            // Рефил до капасити на каждом старте уровня. Схема расходников A:
+            // количество не покупается и между забегами не хранится — покупается
+            // вместимость, и забег всегда начинается полным.
             for (int i = 0; i < _consumables.Length; i++)
             {
-                _chargesList.Add(new ReactiveVariable<int>(_consumables[i].MaxCharges));
+                _chargesList.Add(new ReactiveVariable<int>(GetCapacityFor(_consumables[i])));
             }
+        }
+
+        /// <summary>
+        /// Вместимость слота. Апгрейд сумки прокачивает РОВНО ОДИН расходник —
+        /// тот, чей Id совпал с BagUpgradeConfig.TargetConsumableId. Всем
+        /// остальным капасити = MaxCharges из их собственного конфига, как было.
+        /// </summary>
+        private int GetCapacityFor(InventoryItemConfig consumable)
+        {
+            if (consumable == null)
+                return 0;
+
+            if (_bagUpgradeConfig == null)
+                return consumable.MaxCharges;
+
+            if (consumable.Id != _bagUpgradeConfig.TargetConsumableId)
+                return consumable.MaxCharges;
+
+            int tier = _playerUpgradesService.GetTier(_bagUpgradeConfig.ItemId);
+
+            return _bagUpgradeConfig.GetCapacityFor(tier, consumable.MaxCharges);
         }
 
         public void OnUpdate(float deltaTime)

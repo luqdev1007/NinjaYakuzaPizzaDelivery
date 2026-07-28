@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Loot;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Configs.Inventory;
+using Assets._Project.Develop.Runtime.Configs.Meta.Shop;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ApplyDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
@@ -40,6 +41,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Tongue;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies.Lantern;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
+using Assets._Project.Develop.Runtime.Meta.Features.Upgrades;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Visual;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
@@ -588,9 +590,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new LethalContactMovementSystem())
 
                 // inventory
+                // PlayerUpgradesService приезжает из project-скоупа: контейнер
+                // иерархический, gameplay-скоуп резолвит его через родителя.
                 .AddSystem(new InventorySystem(
                     _container.Resolve<ConfigsProviderService>().GetConfig<PlayerInventoryConfig>().StartingConsumables,
-                    _container.Resolve<ProjectileFactory>()))
+                    _container.Resolve<ProjectileFactory>(),
+                    _container.Resolve<PlayerUpgradesService>(),
+                    _container.Resolve<ConfigsProviderService>().GetConfig<BagUpgradeConfig>()))
 
                 // visual
                 .AddSystem(new FlipDirectionSystem()) 
