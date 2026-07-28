@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Style;
 using Assets._Project.Develop.Runtime.Configs.Inventory;
+using Assets._Project.Develop.Runtime.Configs.Meta.Shop;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
@@ -34,6 +35,10 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
             { typeof(AudioLibrary), "Configs/Audio/AudioLibrary" },
 
             { typeof(PlayerInventoryConfig), "Configs/PlayerData/PlayerInventoryConfig" },
+
+            // shop upgrades
+            { typeof(BagUpgradeConfig), "Configs/Meta/Shop/BagUpgradeConfig" },
+            { typeof(ShurikenDamageUpgradeConfig), "Configs/Meta/Shop/ShurikenDamageUpgradeConfig" },
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)

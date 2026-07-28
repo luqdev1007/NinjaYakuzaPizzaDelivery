@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c8d21f7a63b40e4b91c7d0582ea4361, type: 3}
+  m_Name: BagUpgradeConfig
+  m_EditorClassIdentifier:
+  <ItemId>k__BackingField: bag_capacity
+  <Currency>k__BackingField: 0
+  <TargetConsumableId>k__BackingField: 123
+  _tiers:
+  - <Cost>k__BackingField: 150
+    <Capacity>k__BackingField: 20
+  - <Cost>k__BackingField: 400
+    <Capacity>k__BackingField: 26
+  - <Cost>k__BackingField: 900
+    <Capacity>k__BackingField: 33
