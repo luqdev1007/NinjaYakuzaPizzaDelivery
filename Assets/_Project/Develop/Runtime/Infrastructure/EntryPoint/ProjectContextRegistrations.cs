@@ -2,6 +2,7 @@ using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Audio;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
+using Assets._Project.Develop.Runtime.Meta.Features.Shop;
 using Assets._Project.Develop.Runtime.Meta.Features.Stats;
 using Assets._Project.Develop.Runtime.Meta.Features.Upgrades;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
@@ -59,6 +60,8 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
             // GameEntryPoint дёрнет LoadAsync/Reset. Ленивый сервис на момент
             // первого SendDataToReaders ещё не создан и молча пропустит загрузку.
             container.RegisterAsSingle(CreatePlayerUpgradesService).NonLazy();
+
+            container.RegisterAsSingle(CreateShopService).NonLazy();
 
             container.RegisterAsSingle(CreatePlayerDataProvider);
 
@@ -140,6 +143,13 @@ namespace Assets._Project.Develop.Infrastructure.EntryPoint
 
         private static PlayerUpgradesService CreatePlayerUpgradesService(DIContainer container)
             => new PlayerUpgradesService(container.Resolve<PlayerDataProvider>());
+
+        private static ShopService CreateShopService(DIContainer container)
+            => new ShopService(
+                container.Resolve<WalletService>(),
+                container.Resolve<PlayerUpgradesService>(),
+                container.Resolve<PlayerDataProvider>(),
+                container.Resolve<ICoroutinesPerformer>());
 
         private static PlayerDataProvider CreatePlayerDataProvider(DIContainer container)
             => new PlayerDataProvider(
