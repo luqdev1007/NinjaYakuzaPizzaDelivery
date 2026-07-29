@@ -1,5 +1,4 @@
 using Assets._Project.Develop.Runtime.UI.Core;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,20 +14,13 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
 
         [field: SerializeField] public Button BackButton { get; private set; }
 
-        [field: SerializeField] public Button SwitchCurrencyButton { get; private set; }
+        [field: SerializeField] public CurrencySwitchView CurrencySwitchView { get; private set; }
 
-        [SerializeField] private Image _switchCurrencyIcon;
-        [SerializeField] private TMP_Text _switchCurrencyLabel;
-
-        public void SetCurrencyIcon(Sprite icon)
-        {
-            _switchCurrencyIcon.sprite = icon;
-            _switchCurrencyIcon.enabled = icon != null;
-        }
-
-        public void SetCurrencyLabel(string text)
-        {
-            _switchCurrencyLabel.text = text;
-        }
+        /// <summary>
+        /// Кнопка переключения живёт внутри виджета вместе со своей анимацией.
+        /// Проксируем её сюда, чтобы презентер подписывался на все кнопки экрана
+        /// одинаково и не лез в потроха виджета.
+        /// </summary>
+        public Button SwitchCurrencyButton => CurrencySwitchView.SwitchButton;
     }
 }

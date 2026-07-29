@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.Core;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.UI.MainMenu
 {
@@ -68,7 +69,11 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
                 _itemPresenters.Add(itemPresenter);
             }
 
-            SetActiveCurrency(GetFirstAvailableCurrency());
+            // Иконки слотов расставляются ОДИН раз: набор валют за время жизни
+            // экрана не меняется, а переключение вкладки двигает только кнопку.
+            _view.CurrencySwitchView.SetSlotIcons(BuildSlotIcons());
+
+            SetActiveCurrency(GetFirstAvailableCurrency(), animated: false);
         }
 
         public void Dispose()
@@ -77,6 +82,10 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             _view.BackButton.onClick.RemoveListener(OnBackButtonClicked);
 
             _walletService.OnCurrencyChanged -= OnBalanceChanged;
+
+            // Виджет — узел префаба, он переживёт презентера, поэтому недобитый
+            // твин остался бы крутить уже ничей RectTransform.
+            _view.CurrencySwitchView.Cleanup();
 
             foreach (ShopItemPresenter itemPresenter in _itemPresenters)
             {
@@ -115,22 +124,13 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
         }
 
         /// <summary>
-        /// Показать вкладку валюты: карточки чужой валюты гаснут, свои
-        /// пересобирают состояние под текущий баланс.
+        /// Показать вкладку валюты: кнопка виджета едет к слоту активной валюты,
+        /// карточки чужой валюты гаснут, свои пересобирают состояние под текущий
+        /// баланс.
         /// </summary>
         public void SetActiveCurrency(CurrencyTypes currency)
         {
-            _activeCurrency = currency;
-
-            _view.SetCurrencyIcon(_currencyIconsConfig.GetSpriteFor(currency));
-            _view.SetCurrencyLabel(currency.ToString());
-
-            foreach (ShopItemPresenter itemPresenter in _itemPresenters)
-            {
-                itemPresenter.View.gameObject.SetActive(itemPresenter.Config.Currency == currency);
-            }
-
-            RefreshAllStates();
+            SetActiveCurrency(currency, animated: true);
         }
 
         /// <summary>
@@ -144,6 +144,21 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             {
                 itemPresenter.RefreshState();
             }
+        }
+
+        private void SetActiveCurrency(CurrencyTypes currency, bool animated)
+        {
+            _activeCurrency = currency;
+
+            _view.CurrencySwitchView.SetLabel(currency.ToString());
+            _view.CurrencySwitchView.SlideTo(GetSlotIndexFor(currency), animated);
+
+            foreach (ShopItemPresenter itemPresenter in _itemPresenters)
+            {
+                itemPresenter.View.gameObject.SetActive(itemPresenter.Config.Currency == currency);
+            }
+
+            RefreshAllStates();
         }
 
         private void OnSwitchCurrencyClicked()
@@ -169,6 +184,42 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
         private void OnBalanceChanged(CurrencyTypes currency, int delta, int total)
         {
             RefreshAllStates();
+        }
+
+        private List<Sprite> BuildSlotIcons()
+        {
+            List<Sprite> icons = new();
+
+            foreach (CurrencyTypes currency in _walletService.AvailableCurrencies)
+            {
+                icons.Add(_currencyIconsConfig.GetSpriteFor(currency));
+            }
+
+            return icons;
+        }
+
+        /// <summary>
+        /// Слот валюты = её позиция в AvailableCurrencies. Виджет двухслотовый,
+        /// поэтому валюта, не влезшая в разметку, честно садится на последний
+        /// слот вместо тихого промаха мимо несуществующего.
+        /// </summary>
+        private int GetSlotIndexFor(CurrencyTypes currency)
+        {
+            int index = _walletService.AvailableCurrencies.IndexOf(currency);
+
+            if (index < 0)
+            {
+                return 0;
+            }
+
+            int lastSlotIndex = _view.CurrencySwitchView.SlotsCount - 1;
+
+            if (index > lastSlotIndex)
+            {
+                return lastSlotIndex;
+            }
+
+            return index;
         }
 
         private CurrencyTypes GetFirstAvailableCurrency()
