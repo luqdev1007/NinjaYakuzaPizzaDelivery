@@ -1,5 +1,6 @@
 using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+using Assets._Project.Develop.Runtime.Configs.Meta.Shop;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.BuffsFeature;
@@ -8,6 +9,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StatsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
+using Assets._Project.Develop.Runtime.Meta.Features.Upgrades;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
@@ -16,6 +18,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 {
     public class MainHeroFactory
     {
+        private const float MinChancePercent = 0f;
+        private const float MaxChancePercent = 100f;
+
         private readonly DIContainer _container;
 
         private readonly EntitiesFactory _entitiesFactory;
@@ -23,6 +28,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         private readonly ConfigsProviderService _configsProviderService;
         private readonly EntitiesLifeContext _entitiesLifeContext;
         private readonly BuffService _buffService;
+
+        // Перманентные стат-апгрейды из профиля. Резолвятся из project-скоупа
+        // через родителя — фабрика живёт в gameplay-скоупе, контейнер
+        // иерархический (тот же приём, что у ProjectileFactory для урона
+        // сюрикена и у InventorySystem для капасити сумки).
+        //
+        // Товары берутся из ShopCatalogConfig, а не регистрацией каждого конфига
+        // в ResourcesConfigsLoader: ConfigsProviderService ключуется ТИПОМ, а оба
+        // стат-апгрейда — один и тот же тип StatUpgradeConfig, второй просто
+        // затёр бы первый. Каталог заодно остаётся единственным списком того,
+        // что вообще продаётся.
+        private readonly PlayerUpgradesService _playerUpgradesService;
+        private readonly ShopCatalogConfig _shopCatalogConfig;
 
         public MainHeroFactory(DIContainer container)
         {
@@ -33,6 +51,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             _configsProviderService = _container.Resolve<ConfigsProviderService>();
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
             _buffService = _container.Resolve<BuffService>();
+
+            _playerUpgradesService = _container.Resolve<PlayerUpgradesService>();
+            _shopCatalogConfig = _configsProviderService.GetConfig<ShopCatalogConfig>();
         }
 
         public Entity Create(Vector3 at)
@@ -94,9 +115,82 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddSystem(new BuffDistanceCollectSystem(_entitiesLifeContext, _buffService))
                 ;
 
+            ApplyPurchasedStatUpgrades(entity);
+
             _entitiesLifeContext.Add(entity);
 
             return entity;
+        }
+
+        /// <summary>
+        /// Накатывает купленные стат-апгрейды на уже собранного героя.
+        ///
+        /// Зовётся ДО EntitiesLifeContext.Add: именно там entity.Initialize()
+        /// прогоняет OnInit систем, и синхронизатор уклонения делает свой первый
+        /// Recalculate. Добавив модификатор раньше, мы получаем правильное
+        /// значение с первого же кадра и не полагаемся на событие Changed.
+        /// </summary>
+        private void ApplyPurchasedStatUpgrades(Entity entity)
+        {
+            for (int i = 0; i < _shopCatalogConfig.Items.Count; i++)
+            {
+                StatUpgradeConfig statUpgradeConfig = _shopCatalogConfig.Items[i] as StatUpgradeConfig;
+
+                if (statUpgradeConfig == null)
+                {
+                    continue;
+                }
+
+                int tier = _playerUpgradesService.GetTier(statUpgradeConfig.ItemId);
+
+                if (tier == 0)
+                {
+                    continue;
+                }
+
+                float bonus = statUpgradeConfig.GetStatBonusFor(tier);
+
+                ApplyStatBonus(entity, statUpgradeConfig.TargetStat, bonus);
+            }
+        }
+
+        private void ApplyStatBonus(Entity entity, StatUpgradeTarget targetStat, float bonus)
+        {
+            switch (targetStat)
+            {
+                case StatUpgradeTarget.EvasionChance:
+                    // Модификатор ложится В ДОПОЛНЕНИЕ к базе из конфига, второго
+                    // компонента не заводит: база — BaseEvasionChance, покупка —
+                    // строчка в EvasionChanceModifiers, итог считает синхронизатор.
+                    // Он же клампит 0..100, поэтому перебор бонусом безопасен.
+                    //
+                    // Перманентный: Remove не зовётся никогда, апгрейд живёт весь
+                    // забег. Поэтому и не IBuffEffect — снимать нечего.
+                    entity.EvasionChanceModifiers.Add(new AdditiveStatModifier(bonus));
+                    break;
+
+                case StatUpgradeTarget.DoubleAttackChance:
+                    // ВНИМАНИЕ, ВТОРОЙ ПИСАТЕЛЬ. DoubleAttackChance пишется здесь
+                    // (апгрейд) и в EntitiesFactory:278 (база из конфига). У крита
+                    // НЕТ триплета Base/Modifiers/Synchronizer, как у уклонения, —
+                    // значит нет и места, где значение собиралось бы из слагаемых,
+                    // и порядок записей определяет результат. Сейчас это держится
+                    // ровно потому, что писателей два и они упорядочены: фабрика
+                    // сущности залила базу, мы прибавляем поверх.
+                    //
+                    // ПОЯВИТСЯ ТРЕТИЙ ПИСАТЕЛЬ (бафф, дебафф, ещё один товар) —
+                    // строить триплет, а не дописывать сюда: иначе разъедется
+                    // молча, как уже разъезжались CompletedLevels у двух сервисов
+                    // и LootCollectRange у двух Add'ов в этой самой фабрике.
+                    //
+                    // Кламп здесь ручной по той же причине — синхронизатора,
+                    // который сделал бы это за нас, не существует.
+                    entity.DoubleAttackChance.Value = Mathf.Clamp(
+                        entity.DoubleAttackChance.Value + bonus,
+                        MinChancePercent,
+                        MaxChancePercent);
+                    break;
+            }
         }
     }
 }
