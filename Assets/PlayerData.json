@@ -1,14 +1,16 @@
 {
   "WalletData": {
-    "Coins": 750,
-    "SoulShard": 0
+    "Coins": 10000,
+    "SoulShard": 941
   },
   "Wins": 0,
   "Losses": 0,
   "CompletedLevels": [],
   "IntroSeen": true,
   "PurchasedTiers": {
-    "shuriken_damage": 3,
-    "bag_capacity": 3
+    "charged_slash_unlock": 1,
+    "charged_slash_reach": 3,
+    "charged_slash_power": 3,
+    "charged_slash_charges": 3
   }
 }
