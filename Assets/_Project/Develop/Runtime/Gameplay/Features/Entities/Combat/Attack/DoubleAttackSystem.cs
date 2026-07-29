@@ -27,6 +27,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
 
         private const float ExtraAttackDelay = 0.1f;
 
+        private const float MinChancePercent = 0f;
+        private const float MaxChancePercent = 100f;
+
         public DoubleAttackSystem(IGameplayRandom random)
         {
             _random = random;
@@ -50,18 +53,37 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             if (_canDoubleAttack.Evaluate() == false)
                 return;
 
-            // Формула эквивалентна прежней глобальной: Range(0, 100) <= percent,
-            // тот же включающий float-максимум — семантика прока не изменилась,
-            // изменился только источник рандома.
             if (IsChanceProceed(_procChance.Value) == false)
                 return;
 
             DOVirtual.DelayedCall(ExtraAttackDelay, ExecuteExtraHit).SetUpdate(true);
         }
 
-        private bool IsChanceProceed(float percent)
+        /// <summary>
+        /// Бросок шанса в процентах (0..100). Формула СЛОВО В СЛОВО повторяет
+        /// ApplyDamageSystem.IsChanceProceed — оба шансовых стата обязаны
+        /// читаться одинаково.
+        ///
+        /// Раньше здесь было Range(0, 100) &lt;= percent: включающий максимум в
+        /// паре с &lt;= давал щель, при percent == 0 прок формально проходил,
+        /// если выпадал ровно 0.0f. Пока базовый шанс был 45%, это был шум. Но
+        /// теперь крит качается покупкой С НУЛЯ, и «не куплено» обязано означать
+        /// НИКОГДА, без оговорок — иначе игрок изредка получает то, за что не
+        /// платил, и это невозможно объяснить.
+        ///
+        /// Поэтому: 0 и 100 закорочены на константы, а в середине сравнение
+        /// СТРОГОЕ (&lt;), так что верхняя граница диапазона рандома не может
+        /// подарить лишний прок.
+        /// </summary>
+        private bool IsChanceProceed(float chancePercent)
         {
-            return _random.Range(0f, 100f) <= percent;
+            if (chancePercent <= MinChancePercent)
+                return false;
+
+            if (chancePercent >= MaxChancePercent)
+                return true;
+
+            return _random.Range(MinChancePercent, MaxChancePercent) < chancePercent;
         }
 
         private void ExecuteExtraHit()

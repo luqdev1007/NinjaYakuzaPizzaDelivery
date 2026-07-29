@@ -112,7 +112,7 @@ MonoBehaviour:
     <AttackKnockback>k__BackingField: {x: 12, y: 16}
     <AerialHangForce>k__BackingField: {x: 8, y: 16}
     <RecoilForce>k__BackingField: {x: 10, y: 20}
-    <DoubleAttackChance>k__BackingField: 45
+    <DoubleAttackChance>k__BackingField: 0
     <DoubleAttackCooldown>k__BackingField: 0.5
     <SlashAttackChargeRequiredTime>k__BackingField: 0.3
   <LifeCycle>k__BackingField:
@@ -120,7 +120,7 @@ MonoBehaviour:
     <DeathProcessTime>k__BackingField: 1.5
     <SpawnProcessTime>k__BackingField: 1
     <DamageCooldown>k__BackingField: 1
-    <EvasionChance>k__BackingField: 90
+    <EvasionChance>k__BackingField: 10
   <Throwables>k__BackingField:
     <GrappleConfig>k__BackingField: {fileID: 11400000, guid: 6443bd3d003d36342a2d702adbc37789, type: 2}
     <ShurikenConfig>k__BackingField: {fileID: 11400000, guid: b348a5f78cee93b4cbdd19f8eead08a4, type: 2}
