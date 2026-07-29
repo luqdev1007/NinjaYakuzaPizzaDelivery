@@ -34,6 +34,29 @@ namespace Assets._Project.Develop.Runtime.Configs.Meta.Shop
         [field: SerializeField, Tooltip("Иконка товара. Может быть null — карточка это переживёт")]
         public Sprite Icon { get; private set; }
 
+        /// <summary>
+        /// ItemId товара-родителя. Пустая строка = зависимостей нет, товар
+        /// доступен сразу.
+        ///
+        /// Поле на БАЗЕ, а не на конкретном типе: механизм дерева обязан быть
+        /// общим. Магазин про заряженный слэш ничего не знает — он знает только
+        /// «у этого товара есть родитель, куплен ли он». Следующее дерево
+        /// прокачки должно стоить ровно двух новых ассетов и нуля строк кода.
+        ///
+        /// Строка, а не ссылка на ShopItemConfigBase, по той же причине, по
+        /// которой строковый ItemId: это ключ сейва PlayerData.PurchasedTiers,
+        /// и связывать сейв с графом ассетов нельзя — переименование ассета
+        /// стоило бы игрокам покупок.
+        ///
+        /// ЦЕНА РЕШЕНИЯ: это ВТОРОЕ строковое поле-указатель в проекте (первое —
+        /// BagUpgradeConfig.TargetConsumableId), а такие поля промахиваются
+        /// молча. Поэтому ShopPresenter валидирует каждый непустой RequiredItemId
+        /// по каталогу на старте и ругается в лог — без этого опечатка означала
+        /// бы навсегда невидимый товар без единого сообщения.
+        /// </summary>
+        [field: SerializeField, Tooltip("ItemId товара-родителя. Пусто = нет зависимости")]
+        public string RequiredItemId { get; private set; }
+
         public abstract int MaxTier { get; }
 
         public abstract bool TryGetCostForNextTier(int currentTier, out int cost);
