@@ -38,6 +38,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
         // Уставки заряженного слэша (бывшие литералы в теле метода).
         private readonly ChargedSlashConfig _chargedSlashConfig;
 
+        // Ветки прокачки слэша. Берутся из каталога, а не из
+        // ConfigsProviderService: каталог — единственный список того, что
+        // продаётся, и товар, забытый в нём, не должен молча продолжать
+        // действовать в бою.
+        private readonly ChargedSlashPowerUpgradeConfig _chargedSlashPowerUpgradeConfig;
+        private readonly ChargedSlashReachUpgradeConfig _chargedSlashReachUpgradeConfig;
+
         public ProjectileFactory(DIContainer container)
         {
             _container = container;
@@ -53,20 +60,96 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
             _shurikenDamageUpgradeConfig = configsProviderService.GetConfig<ShurikenDamageUpgradeConfig>();
 
             _chargedSlashConfig = configsProviderService.GetConfig<ChargedSlashConfig>();
+
+            ShopCatalogConfig shopCatalogConfig = configsProviderService.GetConfig<ShopCatalogConfig>();
+
+            _chargedSlashPowerUpgradeConfig = FindInCatalog<ChargedSlashPowerUpgradeConfig>(shopCatalogConfig);
+            _chargedSlashReachUpgradeConfig = FindInCatalog<ChargedSlashReachUpgradeConfig>(shopCatalogConfig);
         }
 
+        private static TConfig FindInCatalog<TConfig>(ShopCatalogConfig catalog) where TConfig : ShopItemConfigBase
+        {
+            for (int i = 0; i < catalog.Items.Count; i++)
+            {
+                if (catalog.Items[i] is TConfig typedConfig)
+                {
+                    return typedConfig;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Тир купленного товара. Товара нет в каталоге — нет и тира, бонусы
+        /// схлопываются в ноль и слэш ведёт себя ровно как без покупок.
+        /// </summary>
+        private int GetTierFor(ShopItemConfigBase itemConfig)
+        {
+            if (itemConfig == null)
+            {
+                return 0;
+            }
+
+            return _playerUpgradesService.GetTier(itemConfig.ItemId);
+        }
+
+        /// <summary>
+        /// Заряженный слэш. Числа берутся из ChargedSlashConfig и правятся
+        /// купленными ветками ПРЯМО ЗДЕСЬ, в экземпляре: конфиг не мутируется
+        /// никогда — SO в редакторе переживает остановку плей-мода, и запись в
+        /// него копила бы бонус между сессиями до бесконечности (та же причина,
+        /// что в ветке ShurikenConfig ниже).
+        ///
+        /// Тиры читаются на КАЖДОМ спавне, а не кэшируются в поле фабрики:
+        /// покупка в главном меню обязана быть видна в ближайшем же забеге.
+        /// Кэшированы только ссылки на конфиги — состав каталога в рантайме
+        /// не меняется.
+        /// </summary>
         public Entity CreateChargedSlashProjectile(Transform parent, Entity owner)
         {
+            int powerTier = GetTierFor(_chargedSlashPowerUpgradeConfig);
+            int reachTier = GetTierFor(_chargedSlashReachUpgradeConfig);
+
+            float damageBonus = _chargedSlashPowerUpgradeConfig == null
+                ? 0f
+                : _chargedSlashPowerUpgradeConfig.GetDamageBonusFor(powerTier);
+
+            float speedBonus = _chargedSlashPowerUpgradeConfig == null
+                ? 0f
+                : _chargedSlashPowerUpgradeConfig.GetSpeedBonusFor(powerTier);
+
+            float lifeTimeBonus = _chargedSlashReachUpgradeConfig == null
+                ? 0f
+                : _chargedSlashReachUpgradeConfig.GetLifeTimeBonusFor(reachTier);
+
+            float hitboxBonus = _chargedSlashReachUpgradeConfig == null
+                ? 0f
+                : _chargedSlashReachUpgradeConfig.GetHitboxBonusFor(reachTier);
+
             string prefabPath = _chargedSlashConfig.PrefabPath;
-            float damage = _chargedSlashConfig.Damage;
-            float speed = _chargedSlashConfig.Speed;
-            float lifeTime = _chargedSlashConfig.LifeTime;
+            float damage = _chargedSlashConfig.Damage + damageBonus;
+            float speed = _chargedSlashConfig.Speed + speedBonus;
+            float lifeTime = _chargedSlashConfig.LifeTime + lifeTimeBonus;
             LayerMask hitMask = _chargedSlashConfig.HitMask;
+
+            float hitboxScale = _chargedSlashConfig.HitboxScale * (1f + hitboxBonus);
 
             Entity entity = new Entity();
 
             MonoEntity mono = _monoEntitiesFactory.Create(entity, parent, prefabPath);
             mono.transform.SetParent(null);
+
+            // Размер — через localScale корня, а НЕ через BoxCollider2D.size.
+            //
+            // Масштаб трансформа и так масштабирует коллайдер, поэтому правка
+            // обоих дала бы квадрат множителя. Через трансформ вдобавок едет
+            // визуал (SlashEffect, Trail) — слэш ВЫГЛЯДИТ шире ровно настолько,
+            // насколько шире бьёт, и хитбокс не может разъехаться с картинкой.
+            //
+            // Строго ПОСЛЕ SetParent(null): отвязка сохраняет мировой масштаб,
+            // включая флип героя по оси X, и домножение поверх этот флип бережёт.
+            mono.transform.localScale *= hitboxScale;
 
             entity
                 .AddMoveDirection(new ReactiveVariable<Vector2>(new Vector2(owner.LookDirectionX.Value, 0)))
