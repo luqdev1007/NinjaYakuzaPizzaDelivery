@@ -1,11 +1,14 @@
 {
   "WalletData": {
-    "Coins": 0,
+    "Coins": 750,
     "SoulShard": 0
   },
   "Wins": 0,
   "Losses": 0,
   "CompletedLevels": [],
-  "IntroSeen": false,
-  "PurchasedTiers": {}
+  "IntroSeen": true,
+  "PurchasedTiers": {
+    "shuriken_damage": 3,
+    "bag_capacity": 3
+  }
 }
