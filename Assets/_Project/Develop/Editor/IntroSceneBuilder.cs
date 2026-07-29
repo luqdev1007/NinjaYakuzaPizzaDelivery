@@ -82,6 +82,8 @@ namespace Assets._Project.Develop.Editor
                 return;
             }
 
+            SetupCamera(scene);
+
             RemoveOldCanvas(scene);
 
             RectTransform canvasRoot = CreateCanvas();
@@ -137,6 +139,26 @@ namespace Assets._Project.Develop.Editor
             }
 
             return frames;
+        }
+
+        private static void SetupCamera(Scene scene)
+        {
+            // Кадры — Screen Space Overlay, но на фейдах и стыках под ними видно
+            // фон камеры. Со скайбоксом это светлая заливка вместо затемнения.
+            foreach (GameObject root in scene.GetRootGameObjects())
+            {
+                Camera camera = root.GetComponent<Camera>();
+
+                if (camera == null)
+                {
+                    continue;
+                }
+
+                camera.clearFlags = CameraClearFlags.SolidColor;
+                camera.backgroundColor = Color.black;
+
+                EditorUtility.SetDirty(camera);
+            }
         }
 
         private static void RemoveOldCanvas(Scene scene)
