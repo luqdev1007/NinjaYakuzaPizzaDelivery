@@ -1,4 +1,3 @@
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,24 +13,22 @@ namespace Assets._Project.Develop.Runtime.Configs.Meta.Shop
     /// Отдельный конфиг от BagUpgradeConfig, а не общий с полем-«полезной
     /// нагрузкой»: у тиров разная размерность (штуки против урона), и общий
     /// конфиг заставил бы держать оба поля с одним всегда пустым.
+    ///
+    /// ItemId/Currency и витринные поля живут в ShopItemConfigBase.
     /// </summary>
     [CreateAssetMenu(
         menuName = "Configs/Meta/Shop/New Shuriken Damage Upgrade Config",
         fileName = "ShurikenDamageUpgradeConfig",
         order = 56)]
-    public class ShurikenDamageUpgradeConfig : ScriptableObject, IUpgradeConfig
+    public class ShurikenDamageUpgradeConfig : ShopItemConfigBase
     {
-        [field: SerializeField] public string ItemId { get; private set; } = "shuriken_damage";
-
-        [field: SerializeField] public CurrencyTypes Currency { get; private set; } = CurrencyTypes.Coins;
-
         [SerializeField] private List<DamageUpgradeTier> _tiers = new();
 
         public IReadOnlyList<DamageUpgradeTier> Tiers => _tiers;
 
-        public int MaxTier => _tiers.Count;
+        public override int MaxTier => _tiers.Count;
 
-        public bool TryGetCostForNextTier(int currentTier, out int cost)
+        public override bool TryGetCostForNextTier(int currentTier, out int cost)
         {
             cost = 0;
 
@@ -44,6 +41,22 @@ namespace Assets._Project.Develop.Runtime.Configs.Meta.Shop
             cost = _tiers[currentTier].Cost;
 
             return true;
+        }
+
+        /// <summary>
+        /// Что даст следующий тир. Индексация та же, что у TryGetCostForNextTier:
+        /// _tiers[currentTier] — это и есть следующий тир (тир 1 лежит в [0]),
+        /// то есть тот, чей бонус вернёт GetDamageBonusFor(currentTier + 1).
+        /// </summary>
+        public override string GetTierEffectText(int currentTier)
+        {
+            if (currentTier < 0)
+                return string.Empty;
+
+            if (currentTier >= _tiers.Count)
+                return string.Empty;
+
+            return $"+{_tiers[currentTier].DamageBonus} урона";
         }
 
         /// <summary>

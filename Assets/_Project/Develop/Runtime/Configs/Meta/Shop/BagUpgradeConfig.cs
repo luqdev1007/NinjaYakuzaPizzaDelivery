@@ -1,4 +1,3 @@
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,17 +13,16 @@ namespace Assets._Project.Develop.Runtime.Configs.Meta.Shop
     /// его Id. Матчинг по Id, а не по типу конфига — чтобы не заводить четвёртый
     /// список метательных конфигов: их уже дублируют PlayerInventoryConfig,
     /// InventoryUIPresenter._consumables и MainHeroConfig.ThrowableSettings.
+    ///
+    /// ItemId/Currency и витринные поля живут в ShopItemConfigBase — здесь
+    /// остаётся только то, что специфично для сумки.
     /// </summary>
     [CreateAssetMenu(
         menuName = "Configs/Meta/Shop/New Bag Upgrade Config",
         fileName = "BagUpgradeConfig",
         order = 55)]
-    public class BagUpgradeConfig : ScriptableObject, IUpgradeConfig
+    public class BagUpgradeConfig : ShopItemConfigBase
     {
-        [field: SerializeField] public string ItemId { get; private set; } = "bag_capacity";
-
-        [field: SerializeField] public CurrencyTypes Currency { get; private set; } = CurrencyTypes.Coins;
-
         [field: SerializeField, Tooltip("Id расходника (InventoryItemConfig.Id), чью вместимость качаем")]
         public string TargetConsumableId { get; private set; }
 
@@ -32,9 +30,9 @@ namespace Assets._Project.Develop.Runtime.Configs.Meta.Shop
 
         public IReadOnlyList<BagUpgradeTier> Tiers => _tiers;
 
-        public int MaxTier => _tiers.Count;
+        public override int MaxTier => _tiers.Count;
 
-        public bool TryGetCostForNextTier(int currentTier, out int cost)
+        public override bool TryGetCostForNextTier(int currentTier, out int cost)
         {
             cost = 0;
 
@@ -47,6 +45,22 @@ namespace Assets._Project.Develop.Runtime.Configs.Meta.Shop
             cost = _tiers[currentTier].Cost;
 
             return true;
+        }
+
+        /// <summary>
+        /// Что даст следующий тир. Индексация та же, что у TryGetCostForNextTier:
+        /// _tiers[currentTier] — это и есть следующий тир (тир 1 лежит в [0]),
+        /// то есть тот, чью капасити вернёт GetCapacityFor(currentTier + 1).
+        /// </summary>
+        public override string GetTierEffectText(int currentTier)
+        {
+            if (currentTier < 0)
+                return string.Empty;
+
+            if (currentTier >= _tiers.Count)
+                return string.Empty;
+
+            return $"Вместимость → {_tiers[currentTier].Capacity}";
         }
 
         /// <summary>

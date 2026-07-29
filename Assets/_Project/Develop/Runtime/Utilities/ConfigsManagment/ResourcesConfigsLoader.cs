@@ -39,6 +39,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
             // shop upgrades
             { typeof(BagUpgradeConfig), "Configs/Meta/Shop/BagUpgradeConfig" },
             { typeof(ShurikenDamageUpgradeConfig), "Configs/Meta/Shop/ShurikenDamageUpgradeConfig" },
+            { typeof(ShopCatalogConfig), "Configs/Meta/Shop/ShopCatalogConfig" },
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)
