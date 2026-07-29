@@ -1,0 +1,233 @@
+================================================================================
+001 — Стат-апгрейды за осколки душ (уклонение, крит) + slide-анимация
+      переключателя валют
+================================================================================
+Дата: 2026-07-29
+Ветка: really_actual_develop_branch_mcp
+Коммиты: 03a181ef, d619199d, 55d4f6fc, 2e597553 (поверх e771d2e9 "UI shop fix text")
+
+--------------------------------------------------------------------------------
+СОЗДАННЫЕ ФАЙЛЫ
+--------------------------------------------------------------------------------
+Assets/_Project/Develop/Runtime/Configs/Meta/Shop/StatUpgradeConfig.cs
+    enum StatUpgradeTarget { EvasionChance, DoubleAttackChance }
+    class StatUpgradeConfig : ShopItemConfigBase
+    class StatUpgradeTier { int Cost; float StatBonus; }
+
+Assets/_Project/Develop/Runtime/Gameplay/Features/StatsFeature/AdditiveStatModifier.cs
+    общий аддитивный IStatModifier без привязки к стату и без IBuffEffect
+
+Assets/_Project/Develop/Runtime/UI/MainMenu/Shop/CurrencySwitchView.cs
+    виджет переключателя: SetSlotIcons / SetLabel / SlideTo(slot, animated) / Cleanup
+
+Assets/_Project/Resources/Configs/Meta/Shop/EvasionUpgradeConfig.asset
+Assets/_Project/Resources/Configs/Meta/Shop/DoubleAttackUpgradeConfig.asset
+
+--------------------------------------------------------------------------------
+ИЗМЕНЁННЫЕ ФАЙЛЫ
+--------------------------------------------------------------------------------
+Assets/_Project/Resources/Configs/Entities/MainHero/MainHeroConfig.asset
+    EvasionChance      90 -> 10   (LifeCycleSettings)
+    DoubleAttackChance 45 -> 0    (AttackSettings)
+    ТЕСТОВЫЕ ЧИСЛА, НЕ ФИНАЛЬНЫЙ БАЛАНС.
+
+Assets/_Project/Develop/Runtime/Gameplay/Features/Entities/Combat/Attack/DoubleAttackSystem.cs
+    IsChanceProceed приведён к формуле ApplyDamageSystem.IsChanceProceed
+
+Assets/_Project/Develop/Runtime/Gameplay/Features/MainHero/MainHeroFactory.cs
+    + резолв PlayerUpgradesService и ShopCatalogConfig
+    + ApplyPurchasedStatUpgrades / ApplyStatBonus
+
+Assets/_Project/Develop/Runtime/UI/MainMenu/ShopView.cs
+    _switchCurrencyIcon/_switchCurrencyLabel сняты, вместо них CurrencySwitchView
+
+Assets/_Project/Develop/Runtime/UI/MainMenu/Shop/ShopPresenter.cs
+    SetActiveCurrency(currency, animated), BuildSlotIcons, GetSlotIndexFor,
+    Cleanup виджета в Dispose
+
+Assets/_Project/Resources/Configs/Meta/Shop/ShopCatalogConfig.asset
+    +2 записи (Evasion, DoubleAttack)
+
+Assets/_Project/Resources/UI/MainMenu/MainMenuScreenView.prefab
+    переделан ShopView/Body/SwitchCurrencyTypeView
+
+НЕ ТРОГАЛ: TMP font assets, ShopService, ShopItemPresenter, ShopItemView,
+ShopCatalogConfig.cs, ShopItemConfigBase.cs, LevelsMenuPopup, WalletPresenter,
+CurrencyPresenter, ExtrasView, LeaderBoardView.
+
+--------------------------------------------------------------------------------
+ГДЕ ТРОНУТ БОЕВОЙ ПУТЬ
+--------------------------------------------------------------------------------
+1. DoubleAttackSystem.IsChanceProceed — ролл прока двойного удара.
+   Было:  return _random.Range(0f, 100f) <= percent;
+   Стало: <=0 -> false; >=100 -> true; иначе _random.Range(0,100) < percent.
+   Поведение при percent==0 меняется с «изредка да» на «никогда».
+   При 0 < percent < 100 распределение то же, минус верхняя граница.
+
+2. MainHeroFactory.ApplyStatBonus, ветка EvasionChance — читает боевой стат.
+   entity.EvasionChanceModifiers.Add(new AdditiveStatModifier(bonus));
+   Модификатор перманентный, В ДОПОЛНЕНИЕ к BaseEvasionChance, второго
+   компонента не заводит. Кламп 0..100 делает EvasionChanceStatSynchronizerSystem.
+   EvadedEvent на герое проверен, на месте (MainHeroFactory:76 в старой нумерации).
+
+3. MainHeroFactory.ApplyStatBonus, ветка DoubleAttackChance — ПРЯМАЯ ЗАПИСЬ.
+   entity.DoubleAttackChance.Value = Mathf.Clamp(value + bonus, 0, 100);
+   Триплета Base/Modifiers/Synchronizer у крита нет, поэтому кламп ручной.
+
+Порядок: ApplyPurchasedStatUpgrades зовётся ДО EntitiesLifeContext.Add, то есть
+до entity.Initialize() -> OnInit систем. Синхронизатор уклонения делает первый
+Recalculate уже с модификатором.
+
+--------------------------------------------------------------------------------
+SINGLE-WRITER-КОММЕНТАРИЙ У КРИТА — ПОДТВЕРЖДЕНИЕ
+--------------------------------------------------------------------------------
+MainHeroFactory.ApplyStatBonus, над строкой записи, дословно:
+
+  // ВНИМАНИЕ, ВТОРОЙ ПИСАТЕЛЬ. DoubleAttackChance пишется здесь
+  // (апгрейд) и в EntitiesFactory:278 (база из конфига). У крита
+  // НЕТ триплета Base/Modifiers/Synchronizer, как у уклонения, —
+  // значит нет и места, где значение собиралось бы из слагаемых,
+  // и порядок записей определяет результат. Сейчас это держится
+  // ровно потому, что писателей два и они упорядочены: фабрика
+  // сущности залила базу, мы прибавляем поверх.
+  //
+  // ПОЯВИТСЯ ТРЕТИЙ ПИСАТЕЛЬ (бафф, дебафф, ещё один товар) —
+  // строить триплет, а не дописывать сюда: иначе разъедется
+  // молча, как уже разъезжались CompletedLevels у двух сервисов
+  // и LootCollectRange у двух Add'ов в этой самой фабрике.
+  //
+  // Кламп здесь ручной по той же причине — синхронизатора,
+  // который сделал бы это за нас, не существует.
+
+--------------------------------------------------------------------------------
+ТИРЫ И ИНДЕКСАЦИЯ (проверено на реальных ассетах через execute_code)
+--------------------------------------------------------------------------------
+Семантика тира АБСОЛЮТНАЯ — копия GetDamageBonusFor (Tiers[i] = итоговый бонус
+тира i+1, индекс Mathf.Min(tier, Count) - 1).
+
+Evasion (itemId=evasion_chance, currency=SoulShard, target=EvasionChance, база 10)
+  tier=0 bonus=0  total=10  nextCost=2  effect='+30% уклонения'
+  tier=1 bonus=30 total=40  nextCost=4  effect='+60% уклонения'
+  tier=2 bonus=60 total=70  nextCost=6  effect='+90% уклонения'
+  tier=3 bonus=90 total=100 nextCost=—  effect=''
+
+DoubleAttack (itemId=double_attack_chance, currency=SoulShard, база 0)
+  tier=0 bonus=0   total=0   nextCost=2  effect='+33% шанса двойного удара'
+  tier=1 bonus=33  total=33  nextCost=4  effect='+66% шанса двойного удара'
+  tier=2 bonus=66  total=66  nextCost=6  effect='+100% шанса двойного удара'
+  tier=3 bonus=100 total=100 nextCost=—  effect=''
+
+Off-by-one сходится с урона сюрикена: GetTierEffectText(currentTier) показывает
+бонус СЛЕДУЮЩЕГО тира, GetStatBonusFor(tier) — текущего.
+
+--------------------------------------------------------------------------------
+ПОЧЕМУ КОНФИГИ ЧЕРЕЗ ShopCatalogConfig, А НЕ ЧЕРЕЗ ResourcesConfigsLoader
+--------------------------------------------------------------------------------
+ConfigsProviderService ключуется ТИПОМ (Dictionary<Type, object>), а оба
+стат-апгрейда — один и тот же тип StatUpgradeConfig. Регистрация второго
+затёрла бы первый. MainHeroFactory берёт их из каталога и фильтрует
+`as StatUpgradeConfig`. Каталог заодно остаётся единственным списком того,
+что продаётся.
+
+--------------------------------------------------------------------------------
+ПЕРЕКЛЮЧАТЕЛЬ ВАЛЮТ — РАЗМЕТКА ДО И ПОСЛЕ
+--------------------------------------------------------------------------------
+БЫЛО (250x80):
+  SwitchCurrencyTypeView
+  ├ BackgroundImage          stretch
+  ├ CurrentCurrencyIcon      anchor(0,.5) pos(45,0)  75x75  (свапался спрайтом)
+  ├ SwitchCurrencyTypeButton anchor(1,.5) pos(-25,0) 90x90
+  └ Header                   pos(0,35)
+
+СТАЛО (250x100):
+  SwitchCurrencyTypeView                          [CurrencySwitchView]
+  ├ BackgroundImage          stretch
+  ├ Header                   pos(0,35)            вне маски
+  └ SlideArea                stretch              [RectMask2D]
+    ├ LeftCurrencyIcon       pos(-55,0) 75x75     raycastTarget=false
+    ├ RightCurrencyIcon      pos(55,0)  75x75     raycastTarget=false
+    └ SwitchCurrencyTypeButton pos(-55,0) 90x90   ездит между -55 и 55
+
+Отклонение от ТЗ, осознанное: маска НЕ на SwitchCurrencyTypeView, а на новом
+дочернем SlideArea. Header висит на 35px ВЫШЕ верхней границы контейнера —
+маска на контейнере срезала бы подпись целиком.
+Высота контейнера 80 -> 100, чтобы круглая кнопка 90 влезала без среза;
+клип остаётся чисто горизонтальным.
+
+DOTween: твин полем _slideTween, Kill() перед перезапуском, DOKill() в Cleanup()
+и OnDestroy(), DOAnchorPosX + Ease.OutCubic + SetUpdate(true), 0.25s.
+Целевые X читаются из RectTransform слотов, не из констант.
+
+--------------------------------------------------------------------------------
+КОМПИЛЯЦИЯ
+--------------------------------------------------------------------------------
+Editor: чисто после каждого блока (4 прогона refresh_unity + read_console).
+Типы подтверждены рефлексией в редакторе:
+  StatUpgradeConfig -> Assets._Project.Develop.Runtime.Configs.Meta.Shop.StatUpgradeConfig
+  AdditiveStatModifier -> implements IStatModifier = True
+Build-config в этот раз НЕ прогонялся отдельно (в прошлой задаче
+PlayerBuildInterface.CompilePlayerScripts под StandaloneWindows64 проходил).
+В новом рантайм-коде ссылок на UnityEditor нет.
+Play mode отработал целиком — то есть весь новый код прошёл и рантайм-путь.
+
+--------------------------------------------------------------------------------
+PLAY-MODE — ЧТО ПРОВЕРЕНО, ЧТО НЕТ
+--------------------------------------------------------------------------------
+Заход Init -> MainMenu. Важно: редактор был не в фокусе и runInBackground=false,
+из-за чего игровой цикл стоял на frameCount=2; выставил Application.runInBackground
+= true в рантайме (флаг сессии, PlayerSettings не трогал) — после этого пошло.
+
+Для теста в сейв выдано 50 осколков. Прогон пришлось делать в два захода:
+на первом мост Unity MCP отвалился ровно на шаге покупки (Unity при этом был
+жив и отвечал), после переподключения прогон доведён до конца.
+
+UI МАГАЗИНА:
+  [+] магазин открывается, в каталоге 4 карточки
+  [+] вкладка Coins: 'Сумка сюрикенов' MAX, 'Заточка сюрикенов' MAX
+  [+] вкладка Coins: осколочные карточки погашены (active=False)
+  [+] кириллица в именах/описаниях рендерится (шрифт правил юзер)
+  [+] тексты тиров: 'Тир 0/3 · +30% уклонения',
+                    'Тир 0/3 · +33% шанса двойного удара'
+  [+] вкладка SoulShard: ровно 2 карточки, обе interactable, бордер белый
+
+ПЕРЕКЛЮЧАТЕЛЬ (slide):
+  [+] клик -> buttonX -55 -> 55, label 'Coins' -> 'SoulShard'
+  [+] иконки слотов статичные: icon_coin (левый) / gem_diamond_red (правый)
+  [+] первичная расстановка без анимации (кнопка сразу на -55)
+
+ПОКУПКА:
+  [+] три круга покупок -> обе карточки 'Тир 3/3 · МАКС', cost='MAX',
+      interactable=False, бордер зелёный RGBA(0,1,0,1)
+  [+] сейв записан: SoulShard 50 -> 26 (24 = (2+4+6)*2),
+      PurchasedTiers += evasion_chance:3, double_attack_chance:3
+
+БОЕВОЙ ПУТЬ (Gameplay-сцена, герой заспавнен через MainHeroFactory.Create,
+контейнер получен рефлексией из GameplayBootstrap._container):
+  [+] MainHeroFactory резолвится -> PlayerUpgradesService и ShopCatalogConfig
+      достались из project-скоупа через родителя
+  [+] BaseEvasionChance      = 10   (база из конфига, не тронута)
+  [+] EvasionChanceModifiers = 1 шт, AdditiveStatModifier, Apply(10) = 100
+  [+] EvasionChance (итог)   = 100  (10 + 90, посчитал синхронизатор)
+  [+] DoubleAttackChance     = 100  (0 + 100, ручной кламп)
+  [+] EvadedEvent present    = True (не потерян)
+
+СБРОС:
+  [+] тиры до сброса: evasion=3 double=3
+  [+] PlayerDataProvider.Reset() -> evasion=0 double=0
+  [+] герой, заспавненный после сброса: EvasionChanceModifiers = 0 шт,
+      EvasionChance = 10 (база), DoubleAttackChance = 0 (база)
+
+НЕ ПРОВЕРЕНО ОТДЕЛЬНО (следует из чисел выше, но глазами не смотрел):
+  [ ] визуальный додж в живом бою и частота 'Double attack!' в консоли —
+      проверялись значения статов, а не поведение по ним. При evasion=100
+      ApplyDamageSystem.IsChanceProceed закорачивает >=100 на true, при
+      DoubleAttackChance=100 то же в DoubleAttackSystem, так что оба должны
+      срабатывать всегда.
+
+Сейв восстановлен в исходное состояние из бэкапа (Reset в ходе теста его
+перезаписал): git status по PlayerData.json чист.
+Замечание про окружение: редактор без фокуса не тикает (runInBackground=false,
+frameCount застревает на 2). Для прогонов через MCP нужно выставлять
+Application.runInBackground = true в рантайме — это флаг сессии, PlayerSettings
+не трогается.
+================================================================================
