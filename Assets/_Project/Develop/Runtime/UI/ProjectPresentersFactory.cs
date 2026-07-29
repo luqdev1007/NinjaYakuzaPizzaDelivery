@@ -62,6 +62,7 @@ namespace Assets._Project.Develop.Runtime.UI
                 _container.Resolve<ConfigsProviderService>().GetConfig<ShopCatalogConfig>(),
                 _container.Resolve<ConfigsProviderService>().GetConfig<CurrencyIconsConfig>(),
                 _container.Resolve<WalletService>(),
+                _container.Resolve<PlayerUpgradesService>(),
                 this,
                 _container.Resolve<ViewsFactory>()
                 );

@@ -18,6 +18,8 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
     {
         private const string MaxedCostText = "MAX";
 
+        private static readonly Color LockedColor = new Color(0.45f, 0.45f, 0.45f, 1f);
+
         public event Action Clicked;
 
         [SerializeField] private Button _button;
@@ -79,6 +81,20 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             _button.interactable = false;
             _borderImage.color = Color.green;
             _costText.text = MaxedCostText;
+        }
+
+        /// <summary>
+        /// Родитель товара ещё не куплен.
+        ///
+        /// При динамическом дереве такая карточка обычно вообще не создаётся —
+        /// это состояние-страховка на рассинхрон (переоткрытие экрана, ручная
+        /// правка сейва) и заодно готовая форма, если дерево когда-нибудь
+        /// решат показывать целиком с залоченными ветками.
+        /// </summary>
+        public void SetLocked()
+        {
+            _button.interactable = false;
+            _borderImage.color = LockedColor;
         }
 
         /// <summary>
