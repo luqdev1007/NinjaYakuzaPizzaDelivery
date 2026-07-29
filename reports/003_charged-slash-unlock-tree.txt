@@ -1,0 +1,247 @@
+================================================================================
+003 — Дерево покупок charged slash: анлок + 3 ветки, обобщённо по RequiredItemId
+================================================================================
+Дата: 2026-07-29
+Ветка: really_actual_develop_branch_mcp
+Коммиты: fa5ba58e, 70407f02, 16fcdbc8, 78b14473, 88fc57cb
+
+--------------------------------------------------------------------------------
+СОЗДАННЫЕ ФАЙЛЫ
+--------------------------------------------------------------------------------
+Assets/_Project/Develop/Runtime/Configs/Inventory/Projectiles/ChargedSlashConfig.cs
+Assets/_Project/Develop/Runtime/Configs/Meta/Shop/AbilityUnlockConfig.cs
+    + enum AbilityUnlockTarget { ChargedSlash }
+Assets/_Project/Develop/Runtime/Configs/Meta/Shop/ChargedSlashChargesUpgradeConfig.cs
+Assets/_Project/Develop/Runtime/Configs/Meta/Shop/ChargedSlashPowerUpgradeConfig.cs
+Assets/_Project/Develop/Runtime/Configs/Meta/Shop/ChargedSlashReachUpgradeConfig.cs
+
+Assets/_Project/Resources/Configs/Gameplay/Projectiles/ChargedSlashConfig.asset
+Assets/_Project/Resources/Configs/Meta/Shop/ChargedSlashUnlockConfig.asset
+Assets/_Project/Resources/Configs/Meta/Shop/ChargedSlashChargesUpgradeConfig.asset
+Assets/_Project/Resources/Configs/Meta/Shop/ChargedSlashPowerUpgradeConfig.asset
+Assets/_Project/Resources/Configs/Meta/Shop/ChargedSlashReachUpgradeConfig.asset
+
+--------------------------------------------------------------------------------
+ИЗМЕНЁННЫЕ ФАЙЛЫ
+--------------------------------------------------------------------------------
+Configs/Meta/Shop/ShopItemConfigBase.cs        + RequiredItemId
+Utilities/ConfigsManagment/ResourcesConfigsLoader.cs   + ChargedSlashConfig
+Gameplay/Features/Projectiles/ProjectileFactory.cs     конфиг + ветки + масштаб
+Gameplay/EntitiesCore/EntitiesFactory.cs       + ChargedSlashCharges, + гейт зарядов
+Gameplay/EntitiesCore/Generated/EntityAPI.cs   регенерация (+24 строки)
+Gameplay/Features/.../Attack/AttackComponents.cs       + ChargedSlashCharges
+Gameplay/Features/.../Attack/SlashAttackChargeSystem.cs  списание заряда
+Gameplay/Features/MainHero/MainHeroFactory.cs  анлок + заряды, разбор по типу
+UI/MainMenu/Shop/ShopPresenter.cs              динамические карточки + валидация
+UI/MainMenu/Shop/ShopItemPresenter.cs          + Purchased, + ветка Locked
+UI/MainMenu/Shop/ShopItemView.cs               + SetLocked
+UI/ProjectPresentersFactory.cs                 + PlayerUpgradesService в ShopPresenter
+Resources/Configs/Meta/Shop/ShopCatalogConfig.asset     4 записи -> 8
+
+--------------------------------------------------------------------------------
+BASE CHARGED SLASH БЕЗ ПОКУПОК = ПРЕЖНЕЕ ПОВЕДЕНИЕ — ПОДТВЕРЖДЕНИЕ
+--------------------------------------------------------------------------------
+Числа снаряда. Было (литералы в ProjectileFactory:52-59):
+    damage = 10, speed = 15, lifeTime = 2, hitMask = LayersAPI.LayerMaskEnemies
+Стало (ChargedSlashConfig.asset):
+    Damage 10, Speed 15, LifeTime 2, HitMask m_Bits: 512 (= LayerMaskEnemies),
+    HitboxScale 1, PrefabPath тот же
+Замер в play mode на герое БЕЗ покупок (после Reset):
+    damage=10 speed=15 lifeTime=2 localScale=(1.00, 1.00, 1.00)
+То есть числовое поведение совпадает ровно.
+
+ЧТО ИЗМЕНИЛОСЬ СОЗНАТЕЛЬНО (это и есть фича, а не регрессия):
+доступность. Раньше слэш был у героя всегда и без лимита; теперь он закрыт до
+покупки анлока и ограничен зарядами (база 1 за забег). Формулировка «базовое
+поведение байт-в-байт» относится к ЧИСЛАМ снаряда, не к доступности.
+
+--------------------------------------------------------------------------------
+ГДЕ ТРОНУТ БОЕВОЙ ПУТЬ
+--------------------------------------------------------------------------------
+1. ГЕЙТ АНЛОКА — MainHeroFactory.ApplyChargedSlashUnlockGate:
+       entity.CanChargeSlashAttack.Add(new FuncCondition(() => unlocked));
+   Дописывание в СУЩЕСТВУЮЩИЙ composite (собран EntitiesFactory:471-479,
+   проверяется в SlashAttackChargeSystem.OnUpdate). Новых компонентов нет,
+   EntityAPIGenerator ради анлока не тревожили. unlocked считается один раз и
+   захватывается замыканием.
+
+2. ГЕЙТ ЗАРЯДОВ — EntitiesFactory, в тот же composite:
+       .Add(new FuncCondition(() => entity.ChargedSlashCharges.Value > 0));
+   Оба ограничения способности лежат в одном месте намеренно.
+
+3. СЧЁТЧИК — новый компонент ChargedSlashCharges.
+   База 1 (EntitiesFactory.BaseChargedSlashCharges), прибавка ветки в
+   MainHeroFactory. Списание — SlashAttackChargeSystem, ПОСЛЕ
+   _spawnChargedSlashEvent.Invoke(): Invoke синхронно доходит до
+   SlashAttackSpawnSystem, значит заряд снимается за состоявшийся выстрел.
+   Рефилла на старте нет и не нужно — герой пересобирается каждый забег.
+
+4. ЧИСЛА СНАРЯДА — ProjectileFactory.CreateChargedSlashProjectile.
+   Мутируется ЭКЗЕМПЛЯР (локальные переменные -> Add*), ChargedSlashConfig не
+   трогается: SO переживает остановку плей-мода и копил бы бонус между сессиями.
+   Тиры читаются на КАЖДОМ спавне, кэшированы только ссылки на конфиги.
+
+5. КОЛЛАЙДЕР — mono.transform.localScale *= hitboxScale, строго ПОСЛЕ
+   SetParent(null).
+   ОТКЛОНЕНИЕ ОТ ПОСТАНОВКИ, И ОНО ВАЖНОЕ: в задаче предлагалось
+   mono.GetComponent<BoxCollider2D>().size *= scale. Так делать нельзя —
+   масштаб трансформа И ТАК масштабирует коллайдер, и правка обоих дала бы
+   КВАДРАТ множителя (на максе вышло бы x4 вместо x2). Через трансформ вдобавок
+   едет визуал (SlashEffect, Trail), поэтому хитбокс не может разъехаться с
+   картинкой. Замер: BoxCollider2D.size остаётся (1,2), localScale (2,2,2),
+   мировой размер хитбокса (2,4).
+
+--------------------------------------------------------------------------------
+АТОМАРНОСТЬ РЕГЕНЕРАЦИИ EntityAPI — ПОДТВЕРЖДЕНИЕ
+--------------------------------------------------------------------------------
+ChargedSlashCharges — единственный новый IEntityComponent во всей задаче.
+Порядок был такой:
+  1. компонент добавлен в AttackComponents.cs;
+  2. компиляция -> EntityAPIGenerator ([InitializeOnLoadMethod]) перегенерил
+     Generated/EntityAPI.cs на домен-релоаде;
+  3. ВЕРИФИКАЦИЯ: вручную прогнан Tools/GenerateEntityAPI;
+  4. проверен диф: EntityAPI.cs = 24 вставки, 0 удалений, все строки внутри
+     блока нового компонента; изменений по другим компонентам нет;
+  5. проверено рефлексией в редакторе: Entity.AddChargedSlashCharges(
+     ReactiveVariable<int>) и Entity.ChargedSlashCharges существуют.
+Компонент и регенерированный EntityAPI.cs лежат в ОДНОМ коммите 78b14473
+(git show подтверждает: AttackComponents.cs +18, EntityAPI.cs +24 в одном
+изменении). На шаги не разносилось.
+
+--------------------------------------------------------------------------------
+ОТКЛОНЕНИЯ ОТ ПОСТАНОВКИ (все три — осознанные)
+--------------------------------------------------------------------------------
+1. Коллайдер через localScale, а не BoxCollider2D.size — см. выше, иначе
+   квадрат множителя.
+
+2. Анлок опознаётся по enum AbilityUnlockTarget на конфиге, а НЕ по сверке
+   ItemId со строкой "charged_slash_unlock" в фабрике. ItemId — ключ сейва,
+   его правит тот, кто балансит магазин, и он не обязан знать про строковую
+   константу в MainHeroFactory. Разъехавшись, они не дали бы ни ошибки, ни
+   лога — способность просто перестала бы открываться, причём валидатор
+   магазина этого тоже не поймал бы. Тот же аргумент, по которому
+   StatUpgradeConfig несёт StatUpgradeTarget.
+
+3. Прибавка зарядов применяется в MainHeroFactory, а не в EntitiesFactory
+   (в постановке — «значение = базовый 1 + бонус» прямо в EntitiesFactory).
+   В EntitiesFactory осталась только БАЗА. Причина: EntitiesFactory сейчас
+   резолвит PlayerUpgradesService лишь чтобы ПЕРЕДАТЬ его в InventorySystem,
+   а сама тиры не читает; чтение профиля в двух фабриках дало бы двух
+   читателей покупок на один спавн героя. Форма повторяет уже принятую для
+   DoubleAttackChance: база в EntitiesFactory, покупка в MainHeroFactory.
+
+--------------------------------------------------------------------------------
+ОБОБЩЁННОСТЬ МЕХАНИЗМА
+--------------------------------------------------------------------------------
+ShopPresenter не содержит ни одного упоминания заряженного слэша. Он оперирует
+только ShopItemConfigBase.RequiredItemId:
+  - Initialize: карточка строится, если RequiredItemId пуст ИЛИ GetTier>0;
+    иначе конфиг уходит в _pendingConfigs;
+  - CreateItemCard(config) — публичный путь создания одной карточки в середине
+    жизни (инстанс -> лист -> презентер -> Initialize -> подписка -> фильтр
+    вкладки);
+  - OnItemPurchased(itemId) -> RevealPendingItemsFor(itemId) -> CreateItemCard.
+Следующее дерево прокачки = только новые ассеты, ноль строк в презентере.
+
+Флаг _isSubscribed нужен именно для динамики: общий Subscribe() к моменту
+рождения ветки уже прошёл и её не подхватит — без флага ветка появлялась бы,
+но не кликалась.
+
+--------------------------------------------------------------------------------
+КАНАЛ Purchased (почему не хватило OnCurrencyChanged)
+--------------------------------------------------------------------------------
+WalletService.OnCurrencyChanged поднимается ВНУТРИ TrySpend, то есть ДО
+ShopService.IncrementTier. Подписчик видит ещё СТАРЫЙ тир. Для перекраски цены
+это терпимо, для дерева — нет: ветки проверяют «куплен ли родитель» и остались
+бы закрытыми до следующего случайного обновления, что выглядело бы случайным
+багом.
+ShopItemPresenter.Purchased инвокается ПОСЛЕ TryPurchase (тир уже поднят) и
+после собственного RefreshState. ShopPresenter на нём раскрывает ветки и
+перекрашивает всё.
+
+--------------------------------------------------------------------------------
+ВАЛИДАЦИЯ RequiredItemId
+--------------------------------------------------------------------------------
+ShopPresenter.ValidateRequiredItemIds, #if UNITY_EDITOR, зовётся первым делом
+в Initialize. Ловит два случая:
+  - RequiredItemId не найден среди ItemId каталога;
+  - товар требует сам себя.
+Оба -> Debug.LogError с именами товаров. Причина: это ВТОРОЕ строковое
+поле-указатель в проекте (первое — BagUpgradeConfig.TargetConsumableId), и
+промахивается оно молча: опечатка означала бы навсегда невидимый товар без
+единого сообщения.
+
+--------------------------------------------------------------------------------
+ЧИСЛА ДЕРЕВА (плейсхолдеры, все за SoulShard)
+--------------------------------------------------------------------------------
+charged_slash_unlock  «Катана бури»       MaxTier 1, цена 5
+charged_slash_charges «Дыхание клинка»    3/6/9  -> +1 / +2 / +4 к использованиям
+charged_slash_power   «Ярость волны»      3/6/9  -> +5/+3, +12/+7, +25/+12 (урон/скорость)
+charged_slash_reach   «Широкий размах»    3/6/9  -> +0.5с/+25%, +1.2с/+60%, +2с/+100%
+Три ветки несут RequiredItemId = charged_slash_unlock.
+
+Итоговые числа снаряда по тирам (замер на ассетах):
+  tier=0  damage=10 speed=15 lifeTime=2   scale=1     пробег=30
+  tier=1  damage=15 speed=18 lifeTime=2.5 scale=1.25  пробег=45
+  tier=2  damage=22 speed=22 lifeTime=3.2 scale=1.6   пробег=70.4
+  tier=3  damage=35 speed=27 lifeTime=4   scale=2     пробег=108
+Пересечение веток принято: пробег = speed * lifeTime, power косвенно удлиняет
+полёт.
+
+--------------------------------------------------------------------------------
+КОМПИЛЯЦИЯ
+--------------------------------------------------------------------------------
+Editor: чисто после каждого из пяти блоков (refresh_unity + проверка типов
+рефлексией). Ошибок и варнингов в консоли за всю сессию — ноль.
+Build-config отдельно не прогонялся; в новом рантайм-коде ссылок на UnityEditor
+нет, единственный редакторный кусок — ValidateRequiredItemIds под #if UNITY_EDITOR.
+
+--------------------------------------------------------------------------------
+PLAY-MODE — ПОЛНЫЙ ПРОГОН
+--------------------------------------------------------------------------------
+Заход Init -> MainMenu. Напоминание про окружение: редактор без фокуса не
+тикает (runInBackground=false, frameCount застревает на 1-2), поэтому в рантайме
+выставлялся Application.runInBackground = true — флаг сессии, PlayerSettings
+не трогается.
+
+  [+] БЕЗ ПОКУПОК магазин показывает 5 карточек из 8 — трёх веток нет вовсе
+      (не залочены, а не созданы): Сумка, Заточка, Тень ниндзя, Двойной клинок,
+      Катана бури.
+  [+] Покупка «Катана бури» (5 осколков, 1000 -> 995) -> В ТОТ ЖЕ КАДР карточек
+      стало 8, появились «Широкий размах», «Ярость волны», «Дыхание клинка»,
+      все interactable=True. Анлок стал 'MAX', Тир 1/1.
+  [+] Ветки докуплены до 3/3 — все шесть осколочных карточек 'MAX'.
+  [+] Уровень, герой заспавнен через MainHeroFactory (контейнер получен
+      рефлексией из GameplayBootstrap._container):
+        ChargedSlashCharges  = 5    (база 1 + макс-ветка 4)
+        CanChargeSlashAttack = False сразу после спавна — виноват InSpawnProcess,
+                                     а не анлок; после InSpawnProcess=false -> True
+        ChargedSlashCharges=0  -> Evaluate() = False   (гейт зарядов работает)
+        ChargedSlashCharges=5  -> Evaluate() = True
+  [+] Снаряд с макс-ветками: damage=35, speed=27, lifeTime=4,
+      localScale=(2,2,2), BoxCollider2D.size остался (1,2),
+      мировой размер хитбокса (2,4).
+  [+] СБРОС (PlayerDataProvider.Reset): тиры unlock/charges/power/reach 1/3/3/3
+      -> 0/0/0/0. Новый герой: ChargedSlashCharges=1 (база),
+      CanChargeSlashAttack=False ДАЖЕ при наличии зарядов — то есть закрыл
+      именно анлок.
+  [+] Снаряд после сброса: damage=10 speed=15 lifeTime=2 localScale=(1,1,1) —
+      исходное поведение.
+  [+] Возврат в меню после сброса: магазин снова 5 карточек, ветки исчезли.
+  [+] Ошибок в консоли за весь прогон — ноль.
+
+НЕ ПРОВЕРЕНО ГЛАЗАМИ (следует из чисел, но живьём не игралось):
+  [ ] ощущение способности в бою — что слэш реально шире/дальше, что на N+1
+      удержании заряд не начинается. Проверялись значения и Evaluate(), а не
+      игровой процесс с клавиатуры.
+
+ЗАМЕЧАНИЕ ПО ХОДУ ТЕСТА: первый вариант тест-скрипта упал с
+"Collection was modified" — он перечислял живой ItemsListView.Elements, пока
+покупка анлока добавляла в него ветки. Это баг ТЕСТА, не продукта: в самом
+презентере RefreshAllStates отрабатывает до Add'ов (внутри TrySpend), а
+RevealPendingItemsFor идёт по _pendingConfigs с конца и удаляет элемент до
+создания карточки. Перепроверено на снимке списка.
+
+Сейв восстановлен в исходное состояние из бэкапа (Reset в ходе теста его
+перезаписал): PlayerData.json совпадает с тем, что было до задачи.
+================================================================================

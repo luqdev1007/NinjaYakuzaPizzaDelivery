@@ -1,0 +1,484 @@
+================================================================================
+002 — РЕКОН: дерево покупок под charged slash (анлок + 3 ветки)
+================================================================================
+Дата: 2026-07-29
+Ветка: really_actual_develop_branch_mcp
+Режим: read-only, изменений в проекте нет.
+
+--------------------------------------------------------------------------------
+СНАЧАЛА — ЧЕТЫРЕ РАСХОЖДЕНИЯ С ФОРМУЛИРОВКОЙ ЗАДАЧИ
+--------------------------------------------------------------------------------
+1. ProjectileFactory.cs:291 — это не ветка апгрейда шурикена, а `canMove`.
+   Мутация урона экземпляра лежит в строках 306-338 (блок `is ShurikenConfig`).
+2. GetState у карточки магазина НЕ СУЩЕСТВУЕТ. Enum состояний тоже нет.
+   ShopItemPresenter.RefreshState() напрямую зовёт SetAvailable/SetBlock/SetMaxed.
+3. AttackProcessTimerSystem к заряженной атаке отношения не имеет — это таймер
+   обычной атаки. Заряд ведёт SlashAttackChargeSystem.
+4. «Радиус поражения» — не число в коде, а BoxCollider2D на префабе снаряда.
+   В сущности снаряда компонента размера нет вообще.
+
+================================================================================
+A. СПОСОБНОСТЬ CHARGED SLASH
+================================================================================
+
+A1. ПОЛНЫЙ ПУТЬ
+
+  Ввод -> IntentAttack (PlayerInputSystem)
+    |
+  SlashAttackChargeSystem : IInitializableSystem, IUpdatableSystem
+    Assets/_Project/Develop/Runtime/Gameplay/Features/Entities/Combat/Attack/
+      SlashAttackChargeSystem.cs
+    namespace ...Gameplay.Features.Attack
+    OnUpdate: пока IntentAttack && CanChargeSlashAttack.Evaluate() —
+      IsChargingSlashAttack = true, ChargeSlashAttackCurrentTimer += deltaTime.
+      На отпускании: если таймер >= ChargeSlashAttackRequiredTimer ->
+      SpawnChargedSlashAtackEvent.Invoke(), таймер обнуляется.
+    |
+  SlashAttackSpawnSystem : IInitializableSystem, IDisposableSystem
+    .../Attack/SlashAttackSpawnSystem.cs
+    Подписан на entity.SpawnChargedSlashAtackEvent.
+    SpawnSlashProjectile(): _projectileFactory.CreateChargedSlashProjectile(
+      _shootPoint, _owner); затем ApplyRecoil() (импульс назад по RecoilForce).
+    |
+  ProjectileFactory.CreateChargedSlashProjectile(Transform parent, Entity owner)
+    .../Gameplay/Features/Projectiles/ProjectileFactory.cs:52
+    <-- ЗДЕСЬ ПРИНИМАЕТСЯ РЕШЕНИЕ СОЗДАТЬ ПРОЖЕКТАЙЛ И ЗАДАЮТСЯ ВСЕ ЧИСЛА
+
+  Визуал: ChargedSlashAttackView : EntityView, IRequireAudioService
+    .../Attack/ChargedSlashAttackView.cs — VFX заряда (emission по прогрессу),
+    SFX ChargeStart/ChargeShoot, триггер аниматора "Attack". Логики не несёт.
+
+  Регистрация систем: EntitiesFactory.cs:577-578 (AddHeroSystems)
+      .AddSystem(new SlashAttackChargeSystem())
+      .AddSystem(new SlashAttackSpawnSystem(_container.Resolve<ProjectileFactory>()))
+
+  Компоненты (AttackComponents.cs:13-36):
+      ChargeSlashAttackRequiredTimer, ChargeSlashAttackCurrentTimer,
+      IsChargingSlashAttack, SpawnChargedSlashAtackEvent, CanChargeSlashAttack
+  Заводятся в EntitiesFactory.cs:288-291, RequiredTimer из
+      config.Attack.SlashAttackChargeRequiredTime.
+
+A2. ЕСТЬ ЛИ УСЛОВИЕ — ПРЯМОЙ ОТВЕТ
+
+  ГЕЙТ ЕСТЬ. ICompositeCondition CanChargeSlashAttack, собирается в
+  EntitiesFactory.cs:471-479, вешается строкой 501 (.AddCanChargeSlashAttack).
+
+      ICompositeCondition canChargeSlashAttack = new CompositeCondition()
+          .Add(new FuncCondition(() => entity.IsDead.Value == false))
+          .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+          .Add(new FuncCondition(() => entity.IsDashing.Value == false))
+          .Add(new FuncCondition(() => entity.IsPlunging.Value == false))
+          .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
+          .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
+          .Add(new FuncCondition(() => entity.IsSliding.Value == false))
+          .Add(new FuncCondition(() => entity.InAttackProcess.Value == false));
+
+  Проверяется ровно в одном месте — SlashAttackChargeSystem.OnUpdate:
+
+      if (_intentAttack.Value && _canCharge.Evaluate())
+
+  НО: все восемь условий — про ТЕКУЩЕЕ СОСТОЯНИЕ героя (жив, не в дэше,
+  не висит на стене...). Условия «способность вообще доступна» среди них НЕТ.
+  То есть форма гейта готова, а семантики анлока в ней нет.
+
+  Важно: гейт стоит только на ВХОДЕ в заряд. Точка выстрела
+  (SpawnChargedSlashAtackEvent.Invoke) отдельно не гейтится — но она
+  недостижима без прохода через заряд, так что одной точки хватает.
+
+A3. КАК «ОТОБРАТЬ ПО УМОЛЧАНИЮ» — ЧТО ЛОЖИТСЯ ЧИЩЕ
+
+  Готовой анлок-инфраструктуры в проекте НЕТ: греп по
+  Unlock|unlocked|IsUnlocked|HasAbility|RequiredItem даёт ноль совпадений
+  (кроме Generated). Ни одна механика сейчас не гейтится покупкой —
+  все composite-условия чисто state-based (canPlunge, canGrapple, canDash,
+  canStartAttack, canDoubleAttack, canChargeSlashAttack — все одинаковы по духу).
+
+  Рекомендация: НЕ вводить компонент-маркер, а добавить одно условие в
+  существующий composite. ICompositeCondition.Add доступен после сборки:
+
+      public interface ICompositeCondition : ICondition
+      {
+          ICompositeCondition Add(ICondition condition, int order = 0,
+                                  Func<bool,bool,bool> logicOperation = null);
+          ICompositeCondition Remove(ICondition condition);
+      }
+
+  Прецедент такого дописывания уже есть в самой фабрике снарядов:
+      mustSelfRelease.Add(new FuncCondition(() => entity.IsTouchDeathMask.Value == true));
+      (ProjectileFactory.cs:333)
+
+  То есть MainHeroFactory.Create может после сборки сделать
+      entity.CanChargeSlashAttack.Add(new FuncCondition(() => unlocked));
+  где unlocked — захваченный bool, посчитанный один раз из
+  PlayerUpgradesService.GetTier(unlockConfig.ItemId) > 0.
+
+  Почему это лучше компонента-маркера: маркер потребовал бы нового
+  IEntityComponent -> регенерации EntityAPI (EntityAPIGenerator висит на
+  [InitializeOnLoadMethod] + [MenuItem("Tools/GenerateEntityAPI")] — известный
+  риск нестабильных домен-релоадов из CLAUDE.md), плюс второй источник правды
+  рядом с уже существующим гейтом. Условие в composite — ноль новых типов.
+
+================================================================================
+B. ЧИСЛА СПОСОБНОСТИ
+================================================================================
+
+ГЛАВНОЕ: КОНФИГА У ЗАРЯЖЕННОГО СЛЭША НЕТ. Аналога ShurikenConfig не существует.
+Все числа — локальные переменные в теле фабрики, под комментарием, который сам
+же признаёт проблему:
+
+  ProjectileFactory.cs:52-59
+      public Entity CreateChargedSlashProjectile(Transform parent, Entity owner)
+      {
+          // settings (config)
+          string prefabPath = "Entities/Projectiles/ChargedSlashProjectile";
+          float damage = 10;
+          float speed = 15;
+          float lifeTime = 2;
+          LayerMask hitMask = LayersAPI.LayerMaskEnemies;
+
+(Соседний CreateSlimeTongue прямо пишет в докблоке: «в соседних методах этой
+фабрики они захардкожены под комментарием "// settings (config)" — эту практику
+не наследуем».)
+
+B1. УРОН = 10, локальная переменная, ProjectileFactory.cs:56.
+    Читается в .AddBodyContactDamage(new ReactiveVariable<float>(damage)) (стр. 74).
+
+B2. СКОРОСТЬ = 15, ProjectileFactory.cs:57.
+    .AddMoveSpeed(new ReactiveVariable<float>(speed)) (стр. 70).
+    Двигает TransformMovementSystem.
+
+B3. ДАЛЬНОСТЬ — ограничена ВРЕМЕНЕМ ЖИЗНИ, не дистанцией.
+    lifeTime = 2, ProjectileFactory.cs:58 -> .AddLifeTime (стр. 72).
+    Списывает TimedLifeTimeSystem, освобождает SelfReleaseSystem по условию:
+        mustSelfRelease = new CompositeCondition()
+            .Add(new FuncCondition(() => entity.LifeTime.Value <= 0));
+    ОТЛИЧИЕ ОТ ШУРИКЕНА: у метательных дальность задана дистанцией
+    (throwableConfig.MaxFlyDistance, ProjectileFactory.cs:295), у слэша — секундами.
+    Фактический пробег слэша = speed * lifeTime = 15 * 2 = 30 юнитов.
+    Следствие для ветки «дальность»: качая скорость (ветка 2), вы НЕИЗБЕЖНО
+    качаете и дальность. Ветки 2 и 3 пересекаются по эффекту — либо это принять
+    сознательно, либо переводить слэш на дистанционное ограничение, как у шурикена.
+
+B4. РАДИУС ПОРАЖЕНИЯ — НЕ ЧИСЛО В КОДЕ. Это коллайдер на префабе:
+    Assets/_Project/Resources/Entities/Projectiles/ChargedSlashProjectile.prefab
+        ChargedSlashProjectile [Transform, MonoEntity, TransformEntityRegistrator,
+                                BoxCollider2D, BodyColliderRegistrator,
+                                DisableCollidersOnDeathRegistrator]
+            BoxCollider2D size=(1.00, 2.00) offset=(0.50, 0.00) isTrigger=True
+        ViewContainer / View / SlashEffect (ParticleSystem, scale (-1, 2, 1)) / Trail
+    В сущности снаряда компонента, отвечающего за размер хитбокса, НЕТ —
+    ни AttackRange, ни какого-либо радиуса. Чтобы ветка «радиус» вообще имела
+    точку приложения, надо на спавне либо трогать mono.GetComponent<BoxCollider2D>().size,
+    либо масштабировать transform (тогда поедет и визуал — возможно, это даже
+    желаемо: слэш должен ВЫГЛЯДЕТЬ шире).
+    Для сравнения, Shuriken.prefab: CircleCollider2D radius=0.15.
+
+B5. КАК УРОН ПРИСВАИВАЕТСЯ ЭКЗЕМПЛЯРУ
+
+    Ветка CreateChargedSlashProjectile целиком (ProjectileFactory.cs:52-108):
+    сущность собирается с нуля, урон кладётся в компонент экземпляра
+        .AddBodyContactDamage(new ReactiveVariable<float>(damage))
+    то есть мутировать SO не придётся В ПРИНЦИПЕ — числа и так локальные.
+    Это ПРОЩЕ, чем было с шурикеном: там пришлось аккуратно не трогать SO
+    (ProjectileFactory.cs:306-338):
+
+        if (throwableConfig is ShurikenConfig shurikenConfig)
+        {
+            // ЕДИНСТВЕННАЯ ТОЧКА, ГДЕ АПГРЕЙД ВЛИЯЕТ НА БОЕВОЙ ПУТЬ.
+            // Бонус плюсуется к урону КОНКРЕТНОГО ЭКЗЕМПЛЯРА снаряда, а сам
+            // ShurikenConfig не мутируется: SO в редакторе переживает
+            // остановку плей-мода, и запись в него копила бы бонус между
+            // сессиями до бесконечности.
+            float damageBonus = _shurikenDamageUpgradeConfig == null
+                ? 0f
+                : _shurikenDamageUpgradeConfig.GetDamageBonusFor(
+                    _playerUpgradesService.GetTier(_shurikenDamageUpgradeConfig.ItemId));
+
+            float shurikenDamage = shurikenConfig.Damage + damageBonus;
+
+            entity
+                .AddBodyContactDamage(new ReactiveVariable<float>(shurikenDamage))
+                ...
+        }
+
+    Тир читается на КАЖДОМ спавне, не кэшируется — покупка видна в ближайшем забеге.
+    Для слэша схема повторяется один в один.
+
+    ПРЕРЕКВИЗИТ: прежде чем вешать апгрейды, четыре числа надо вынести в
+    ChargedSlashConfig (аналог ShurikenConfig). Иначе «база» апгрейда — это
+    магические литералы в теле фабрики, и балансить их придётся пересборкой.
+
+================================================================================
+C. КОЛИЧЕСТВО ИСПОЛЬЗОВАНИЙ ЗА УРОВЕНЬ
+================================================================================
+
+C1. ЛИМИТА НЕТ. БЕЗЛИМИТ — ПРЯМОЙ ОТВЕТ.
+
+    Счётчика использований заряженной атаки не существует: ни компонента,
+    ни поля, ни кулдауна. В canChargeSlashAttack (A2) нет ни одного условия,
+    считающего расход. Единственный естественный ограничитель — время заряда
+    (SlashAttackChargeRequiredTime = 0.3 в MainHeroConfig.asset:117) и запрет
+    заряжаться в InAttackProcess.
+    Для сравнения, у двойного удара кулдаун есть (DoubleAttackCurrentCooldown,
+    DoubleAttackCooldownSystem) — у слэша аналога нет.
+
+C2/C3. ПЕРЕИСПОЛЬЗОВАТЬ ИНВЕНТАРНЫЕ CHARGES — НЕ ВЫЙДЕТ. НУЖЕН СВОЙ СЧЁТЧИК.
+
+    Инвентарная инфраструктура (InventoryFeatureComponents.cs:24-27):
+        public class InventoryCharges : IEntityComponent
+        {
+            public List<ReactiveVariable<int>> Value;
+        }
+    Это СПИСОК, индексируемый в лок-степе с массивом _consumables
+    (InventoryItemConfig[]) — см. InventorySystem.OnInit:
+
+        _chargesList = entity.InventoryCharges;
+        _chargesList.Clear();
+        // Рефил до капасити на каждом старте уровня. Схема расходников A:
+        // количество не покупается и между забегами не хранится — покупается
+        // вместимость, и забег всегда начинается полным.
+        for (int i = 0; i < _consumables.Length; i++)
+        {
+            _chargesList.Add(new ReactiveVariable<int>(GetCapacityFor(_consumables[i])));
+        }
+
+    Чтобы засунуть туда слэш, он должен стать InventoryItemConfig. Последствия:
+      - попадёт в ротацию колёсиком (HandleSwitchItem крутит по _consumables);
+      - попадёт в инвентарный HUD (InventoryUIPresenter читает InventoryCharges
+        по тому же индексу, строки 68-71, 87-91, 195-200);
+      - будет «использоваться» через TryUseActiveItem по кнопке предмета,
+        а слэш триггерится удержанием атаки — расход пришлось бы списывать
+        МИМО TryUseActiveItem, то есть инфраструктура дала бы только хранение
+        числа, а всю логику всё равно писать свою;
+      - GetCapacityFor завязан на BagUpgradeConfig.TargetConsumableId — один
+        апгрейд качает РОВНО ОДИН расходник, второй пришлось бы или дублировать
+        конфиг, или ломать это правило.
+    Итого: переиспользование даёт хранение int и забирает три чужих подсистемы.
+    ДЕШЕВЛЕ СВОЁ.
+
+    Форма своего (минимум типов):
+      - компонент ChargedSlashCharges { ReactiveVariable<int> Value; }
+        (один новый IEntityComponent -> потребует Tools/GenerateEntityAPI);
+      - завод и рефилл — в EntitiesFactory.CreateHero рядом со строками 288-291,
+        значением из купленного тира. ОТДЕЛЬНЫЙ ХУК РЕФИЛЛА НЕ НУЖЕН:
+        герой пересобирается на каждый старт уровня, поэтому «рефилл на старте»
+        получается сам собой. Ровно по этой причине рефилл сумки и живёт в
+        InventorySystem.OnInit, а не в отдельной системе старта уровня;
+      - расход — одна строка в SlashAttackChargeSystem там же, где
+        _spawnChargedSlashEvent.Invoke();
+      - гейт — ещё одно FuncCondition(() => charges.Value > 0) в тот же
+        canChargeSlashAttack composite, что и анлок из A3.
+
+================================================================================
+D. КАТАЛОГ И GATING ВИДИМОСТИ
+================================================================================
+
+D1. МЕХАНИЗМА УСЛОВНОЙ ВИДИМОСТИ/БЛОКИРОВКИ НЕТ — ПОДТВЕРЖДАЮ.
+    ShopCatalogConfig — плоский список без какой-либо структуры:
+        [SerializeField] private List<ShopItemConfigBase> _items = new();
+        public IReadOnlyList<ShopItemConfigBase> Items => _items;
+    ShopPresenter.Initialize строит карточку на каждый непустой элемент.
+    Единственная существующая фильтрация — по валюте, и она про ВКЛАДКИ
+    (gameObject.SetActive), а не про доступность.
+
+D2. СОСТОЯНИЙ-ENUM НЕТ. GetState НЕ СУЩЕСТВУЕТ.
+    Состояние карточки выражено тремя методами View, которые презентер зовёт
+    напрямую (ShopItemPresenter.RefreshState, строки 69-92):
+
+        int currentTier = _playerUpgradesService.GetTier(_config.ItemId);
+
+        if (_config.TryGetCostForNextTier(currentTier, out int cost) == false)
+        {
+            _view.SetTierInfo($"Тир {_config.MaxTier}/{_config.MaxTier} · МАКС");
+            _view.SetMaxed();
+            return;
+        }
+
+        _view.SetTierInfo($"Тир {currentTier}/{_config.MaxTier} · {_config.GetTierEffectText(currentTier)}");
+        _view.SetCost(cost);
+
+        if (_shopService.CanPurchase(_config))
+            _view.SetAvailable();
+        else
+            _view.SetBlock();
+
+    Публичная поверхность ShopItemView (ShopItemView.cs):
+        event Action Clicked
+        Init(string itemName, string description, Sprite icon)
+        SetCurrencyIcon(Sprite)  SetTierInfo(string)  SetCost(int)
+        SetAvailable()   // interactable = true,  border белый
+        SetBlock()       // interactable = false, border красный
+        SetMaxed()       // interactable = false, border зелёный, cost = "MAX"
+
+    Добавить 'Locked' = ОДИН новый метод SetLocked() (interactable = false,
+    border, скажем, серый) + одна ветка в начале RefreshState. Enum заводить
+    не обязательно — текущая схема «метод на состояние» уже несёт три штуки
+    и четвёртое ложится симметрично.
+
+D3. ГРИД СТРОИТСЯ ОДИН РАЗ, ПЕРЕСБОРКИ НЕТ.
+    ShopPresenter.Initialize -> цикл по каталогу -> _viewsFactory.Create ->
+    _view.ItemsListView.Add -> presenter.Initialize. Разбор только в Dispose
+    (снять с листа -> Release -> Dispose -> Clear). Метода «пересобрать» нет.
+    ЕСТЬ RefreshAllStates() — цикл по презентерам с RefreshState(), и он уже
+    дёргается после каждой покупки (через WalletService.OnCurrencyChanged).
+
+    (A) Динамически добавлять карточки веток после покупки анлока:
+        требует нового публичного пути создания карточки в середине жизни
+        презентера, аккуратности с подпиской (Subscribe уже прошёл — новую
+        карточку надо подписывать отдельно), с порядком в гриде и с Dispose.
+        Плюс карточка должна появиться в правильном месте GridLayoutGroup.
+        ДОРОГО и с тремя местами, где легко забыть.
+
+    (B) Ветки всегда в каталоге, залочены до покупки родителя:
+        одна ветка в RefreshState + один метод во View. Механизм обновления
+        УЖЕ ЕСТЬ — RefreshAllStates по OnCurrencyChanged. Игрок вдобавок видит,
+        что вообще есть в дереве, а это обычно и нужно от дерева прокачки.
+        ДЕШЕВЛЕ РАЗА В ТРИ. РЕКОМЕНДУЮ (B).
+
+    !!! МИНА ПРИ (B), ТА ЖЕ, ЧТО УЖЕ ЛОВИЛИ:
+    WalletService.OnCurrencyChanged поднимается ВНУТРИ TrySpend, то есть ДО
+    ShopService -> IncrementTier. Значит общая перекраска после покупки родителя
+    прочитает ЕЩЁ СТАРЫЙ тир, и дети останутся залоченными до следующего
+    случайного refresh. Сейчас это лечится тем, что кликнутая карточка сама
+    зовёт RefreshState() после TryPurchase (см. докблок в ShopItemPresenter.
+    OnViewClicked) — но это чинит только СЕБЯ. Для дерева понадобится, чтобы
+    после успешной покупки дёргался ShopPresenter.RefreshAllStates(), то есть
+    карточке нужен канал наверх (событие Purchased у ShopItemPresenter ->
+    подписка в ShopPresenter). Без этого дерево будет «разлочиваться с
+    задержкой» и это будет выглядеть как случайный баг.
+
+D4. ОБЪЯВЛЕНИЕ ЗАВИСИМОСТИ — С НУЛЯ.
+    На ShopItemConfigBase сейчас: ItemId, Currency, ItemName, Description, Icon,
+    abstract MaxTier / TryGetCostForNextTier / GetTierEffectText. Ничего про
+    зависимости нет.
+    Естественное место — поле на базе:
+        [field: SerializeField] public string RequiredItemId { get; private set; }
+    пустая строка = нет родителя. Проверка в RefreshState:
+        locked = string.IsNullOrEmpty(RequiredItemId) == false
+                 && _playerUpgradesService.GetTier(RequiredItemId) == 0;
+    Строка, а не ссылка на ShopItemConfigBase, по той же причине, по которой
+    ItemId — строка: это ключ сейва PurchasedTiers, и он уже строковый.
+    ОСТОРОЖНО: RequiredItemId — второе строковое поле-указатель в проекте
+    (первое — BagUpgradeConfig.TargetConsumableId), и оба дают молчаливый промах
+    при опечатке. У TargetConsumableId это хотя бы ловит дебаг-стенд
+    («РАСХОДНИК НЕ НАЙДЕН»). Стоит завести аналогичную проверку на старте.
+
+================================================================================
+E. КОНФИГИ ПОД ДЕРЕВО
+================================================================================
+
+E1. КОРНЕВОЙ АНЛОК.
+    ShopItemConfigBase уже умеет бинарный товар: MaxTier => 1,
+    TryGetCostForNextTier(0, out cost) => true, (1, ...) => false.
+    Купленный анлок = GetTier(itemId) == 1. Ничего в базе менять не надо.
+    Два варианта:
+      (a) StatUpgradeConfig с одним тиром — врёт про полезную нагрузку
+          (StatBonus не используется, а GetTierEffectText напечатает «+0% ...»),
+          и TargetStat пришлось бы расширять несуществующим статом. ПЛОХО.
+      (b) новый AbilityUnlockConfig : ShopItemConfigBase, поля: int _cost,
+          string _effectText (или просто константа). MaxTier => 1.
+          ~40 строк, ноль вранья. РЕКОМЕНДУЮ (b).
+
+E2. ТРИ ВЕТКИ, ДВЕ НАГРУЗКИ НА ТИР.
+    StatUpgradeConfig держит ОДИН StatBonus на тир:
+        [Serializable] public class StatUpgradeTier
+        {
+            [field: SerializeField, Min(0)] public int Cost { get; private set; }
+            [field: SerializeField, Range(0f,100f)] public float StatBonus { get; private set; }
+        }
+    и его TargetStat = { EvasionChance, DoubleAttackChance }, а текст эффекта
+    жёстко в процентах ($"+{...}% {имя}"). Ни то, ни другое к слэшу не подходит.
+
+    Варианты:
+      (i)  расширить StatUpgradeTier вторым полем — заденет уже работающие
+           уклонение и крит, у которых второе поле будет всегда пустым.
+           Это ровно тот аргумент, которым в проекте обосновано разделение
+           BagUpgradeConfig и ShurikenDamageUpgradeConfig:
+           «у тиров разная размерность ... и общий конфиг заставил бы держать
+            оба поля с одним всегда пустым». ПРОТИВОРЕЧИТ ПРЕЦЕДЕНТУ.
+      (ii) один новый тип с enum-целью { Charges, Power, Reach } и тиром
+           { Cost, BonusA, BonusB } — у ветки Charges BonusB всегда пуст,
+           тот же упрёк, плюс безымянные A/B нечитаемы.
+      (iii) по типу на ветку с осмысленными полями:
+           ChargedSlashChargesUpgradeConfig  тир { Cost, ChargesBonus:int }
+           ChargedSlashPowerUpgradeConfig    тир { Cost, DamageBonus, SpeedBonus }
+           ChargedSlashReachUpgradeConfig    тир { Cost, LifeTimeBonus, HitboxScale }
+           Три типа, каждый честен про свою нагрузку. РЕКОМЕНДУЮ (iii).
+    Итого новых типов конфигов: 1 (анлок) + 3 (ветки) = 4.
+    Это многовато, и если хочется ужаться — (ii) с внятными именами полей
+    вместо A/B — приемлемый компромисс, но прецедент в проекте против него.
+
+E3. КАТАЛОГ ПРИМЕТ — ПОДТВЕРЖДАЮ, И ЭТО ЕДИНСТВЕННЫЙ РАБОЧИЙ ПУТЬ.
+    _items типизирован как List<ShopItemConfigBase>, любой наследник кладётся
+    без правок презентера. Currency = SoulShard (<Currency>k__BackingField: 1)
+    подхватится фильтром вкладок сам — проверено на прошлой итерации.
+    ВАЖНО, ПОВТОРНО: ConfigsProviderService ключуется ТИПОМ —
+        private readonly Dictionary<Type, object> _configs;
+        public T GetConfig<T>() where T : class
+    поэтому ДВА ассета одного типа через ResourcesConfigsLoader зарегистрировать
+    НЕЛЬЗЯ (второй затрёт первый). При варианте (iii) все четыре типа разные,
+    так что теоретически можно и через лоадер — но не надо: MainHeroFactory и
+    ProjectileFactory всё равно должны ходить в каталог, чтобы список товаров
+    остался в одном месте. Так уже сделано для стат-апгрейдов.
+    Сейчас в ShopCatalogConfig.asset 4 записи, станет 8.
+
+================================================================================
+F. ХУКИ ПРИМЕНЕНИЯ
+================================================================================
+
+F1. ВЕТКИ ЧИСЕЛ (урон/скорость/дальность/радиус) -> ProjectileFactory.
+    Подтверждаю: CreateChargedSlashProjectile — единственная точка, где числа
+    попадают в экземпляр. Схема ровно как у шурикена (ProjectileFactory.cs:306-338):
+    в конструкторе уже зарезолвлены из project-скоупа через родителя
+        _playerUpgradesService  (строка ~35)
+        _shurikenDamageUpgradeConfig
+    с комментарием:
+        // Апгрейд урона сюрикена. Резолвятся из project-скоупа через родителя —
+        // фабрика живёт в gameplay-скоупе, контейнер иерархический.
+    Добавляются ещё два-три конфига (или ShopCatalogConfig целиком, как это
+    сделано в MainHeroFactory), тир читается на каждом спавне.
+    Радиус (B4) — отдельная возня: он не в сущности, а на префабе, так что
+    применять придётся к mono/BoxCollider2D после _monoEntitiesFactory.Create.
+
+F2. АНЛОК -> MainHeroFactory.Create, дописыванием условия в существующий
+    composite (A3). Мост там УЖЕ ЕСТЬ и уже резолвит нужное:
+        _playerUpgradesService = _container.Resolve<PlayerUpgradesService>();
+        _shopCatalogConfig = _configsProviderService.GetConfig<ShopCatalogConfig>();
+    и уже есть метод ApplyPurchasedStatUpgrades(entity), который крутит каталог
+    и фильтрует `as StatUpgradeConfig`. Анлок ложится туда же вторым фильтром —
+    новых зависимостей ноль.
+    Место вызова тоже уже правильное: ApplyPurchasedStatUpgrades зовётся ДО
+    _entitiesLifeContext.Add(entity), то есть до Initialize() систем.
+
+F3. ВЕТКА ИСПОЛЬЗОВАНИЙ -> завод счётчика там же, где остальные компоненты
+    заряженной атаки (EntitiesFactory.cs:288-291), значением из тира.
+    ОТДЕЛЬНОГО РЕФИЛЛА НА СТАРТ УРОВНЯ НЕ НУЖНО: герой строится заново на
+    каждый забег, поэтому счётчик и так стартует полным. Списание — в
+    SlashAttackChargeSystem рядом с Invoke, гейт — условие в canChargeSlashAttack.
+    Если счётчик решат показывать в HUD — это единственное место, где
+    инвентарный UI пришлось бы либо трогать, либо дублировать.
+
+================================================================================
+СВОДКА ПО ДВУМ ГЛАВНЫМ ВОПРОСАМ
+================================================================================
+A2: гейт-composite ЕСТЬ (CanChargeSlashAttack, EntitiesFactory.cs:471-479,
+    проверяется в SlashAttackChargeSystem.OnUpdate), но все условия в нём —
+    про текущее состояние героя; анлок-семантики нет. Вводить = одно
+    FuncCondition в существующий composite, новых типов и компонентов ноль.
+
+C:  использований СЕЙЧАС БЕЗЛИМИТ. Инвентарные charges переиспользовать НЕ СТОИТ:
+    они список в лок-степе с _consumables, и вход туда тянет за собой ротацию
+    колёсиком, инвентарный HUD и TryUseActiveItem, из которых слэшу не нужно
+    ничего. Дешевле свой ReactiveVariable<int> + условие в том же composite;
+    рефилл на старт уровня получается бесплатно, потому что герой пересобирается
+    на каждый забег.
+
+ПРЕРЕКВИЗИТ ВСЕЙ ЗАТЕИ: четыре числа слэша (damage 10, speed 15, lifeTime 2,
+хитбокс 1x2 на префабе) сейчас захардкожены в теле фабрики. Пока их не вынесли
+в ChargedSlashConfig, «база + бонус» вешать не на что.
+
+ПОБОЧНОЕ НАБЛЮДЕНИЕ ПО ДИЗАЙНУ: дальность слэша = speed * lifeTime, поэтому
+ветка «урон+скорость» неизбежно качает и дальность, пересекаясь с веткой
+«дальность+радиус». Либо принять, либо перевести слэш на ограничение по
+дистанции (как MaxFlyDistance у метательных).
+================================================================================
