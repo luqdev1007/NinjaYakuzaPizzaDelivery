@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -10,12 +10,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
     {
         private ReactiveVariable<bool> _intentAttack;
         private ReactiveVariable<bool> _isCharging;
-        private ReactiveEvent _spawnChargedSlashEvent; 
+        private ReactiveEvent _spawnChargedSlashEvent;
 
         private ReactiveVariable<float> _chargeTimer;
         private ReactiveVariable<float> _requiredChargeTime;
 
-        private ICompositeCondition _canCharge; 
+        private ReactiveVariable<int> _charges;
+
+        private ICompositeCondition _canCharge;
 
         public void OnInit(Entity entity)
         {
@@ -25,8 +27,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
             _spawnChargedSlashEvent = entity.SpawnChargedSlashAtackEvent;
 
             _chargeTimer = entity.ChargeSlashAttackCurrentTimer;
-            _requiredChargeTime = entity.ChargeSlashAttackRequiredTimer; 
+            _requiredChargeTime = entity.ChargeSlashAttackRequiredTimer;
             _canCharge = entity.CanChargeSlashAttack;
+
+            _charges = entity.ChargedSlashCharges;
         }
 
         public void OnUpdate(float deltaTime)
@@ -45,6 +49,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
                     if (_intentAttack.Value == false && _chargeTimer.Value >= _requiredChargeTime.Value)
                     {
                         _spawnChargedSlashEvent.Invoke();
+
+                        // Списываем ПОСЛЕ Invoke, а не до: Invoke синхронно
+                        // доходит до SlashAttackSpawnSystem и создаёт снаряд,
+                        // так что заряд снимается за состоявшийся выстрел.
+                        // Само «хватает ли зарядов» проверено раньше — условием
+                        // в CanChargeSlashAttack, без которого заряд бы даже не
+                        // начался.
+                        _charges.Value--;
+
                         Debug.Log("Charge Attack!");
                     }
 

@@ -11,6 +11,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.StyleFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.Upgrades;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
@@ -29,16 +30,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         private readonly EntitiesLifeContext _entitiesLifeContext;
         private readonly BuffService _buffService;
 
-        // Перманентные стат-апгрейды из профиля. Резолвятся из project-скоупа
+        // Перманентные покупки из профиля. Резолвятся из project-скоупа
         // через родителя — фабрика живёт в gameplay-скоупе, контейнер
         // иерархический (тот же приём, что у ProjectileFactory для урона
         // сюрикена и у InventorySystem для капасити сумки).
         //
         // Товары берутся из ShopCatalogConfig, а не регистрацией каждого конфига
-        // в ResourcesConfigsLoader: ConfigsProviderService ключуется ТИПОМ, а оба
-        // стат-апгрейда — один и тот же тип StatUpgradeConfig, второй просто
-        // затёр бы первый. Каталог заодно остаётся единственным списком того,
-        // что вообще продаётся.
+        // в ResourcesConfigsLoader: ConfigsProviderService ключуется ТИПОМ, а
+        // стат-апгрейдов два одного типа StatUpgradeConfig, второй просто затёр
+        // бы первый. Каталог заодно остаётся единственным списком того, что
+        // вообще продаётся.
         private readonly PlayerUpgradesService _playerUpgradesService;
         private readonly ShopCatalogConfig _shopCatalogConfig;
 
@@ -115,7 +116,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddSystem(new BuffDistanceCollectSystem(_entitiesLifeContext, _buffService))
                 ;
 
-            ApplyPurchasedStatUpgrades(entity);
+            ApplyPurchasedUpgrades(entity);
 
             _entitiesLifeContext.Add(entity);
 
@@ -123,35 +124,109 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         }
 
         /// <summary>
-        /// Накатывает купленные стат-апгрейды на уже собранного героя.
+        /// Накатывает всё купленное в магазине на уже собранного героя.
         ///
         /// Зовётся ДО EntitiesLifeContext.Add: именно там entity.Initialize()
         /// прогоняет OnInit систем, и синхронизатор уклонения делает свой первый
         /// Recalculate. Добавив модификатор раньше, мы получаем правильное
         /// значение с первого же кадра и не полагаемся на событие Changed.
+        ///
+        /// Один проход по каталогу с разбором по ТИПУ конфига, а не по ItemId:
+        /// строковые id принадлежат сейву и меняются балансом, типы —
+        /// компилятору. Исключение одно — анлок, у которого цель выражена
+        /// собственным enum'ом AbilityUnlockTarget (см. AbilityUnlockConfig).
         /// </summary>
-        private void ApplyPurchasedStatUpgrades(Entity entity)
+        private void ApplyPurchasedUpgrades(Entity entity)
         {
             for (int i = 0; i < _shopCatalogConfig.Items.Count; i++)
             {
-                StatUpgradeConfig statUpgradeConfig = _shopCatalogConfig.Items[i] as StatUpgradeConfig;
+                ShopItemConfigBase itemConfig = _shopCatalogConfig.Items[i];
 
-                if (statUpgradeConfig == null)
+                if (itemConfig == null)
                 {
                     continue;
                 }
 
-                int tier = _playerUpgradesService.GetTier(statUpgradeConfig.ItemId);
+                int tier = _playerUpgradesService.GetTier(itemConfig.ItemId);
 
                 if (tier == 0)
                 {
                     continue;
                 }
 
-                float bonus = statUpgradeConfig.GetStatBonusFor(tier);
-
-                ApplyStatBonus(entity, statUpgradeConfig.TargetStat, bonus);
+                ApplyPurchase(entity, itemConfig, tier);
             }
+
+            ApplyChargedSlashUnlockGate(entity);
+        }
+
+        private void ApplyPurchase(Entity entity, ShopItemConfigBase itemConfig, int tier)
+        {
+            if (itemConfig is StatUpgradeConfig statUpgradeConfig)
+            {
+                ApplyStatBonus(entity, statUpgradeConfig.TargetStat, statUpgradeConfig.GetStatBonusFor(tier));
+
+                return;
+            }
+
+            if (itemConfig is ChargedSlashChargesUpgradeConfig chargesUpgradeConfig)
+            {
+                // База (BaseChargedSlashCharges) уже лежит в компоненте из
+                // EntitiesFactory — здесь только прибавка, как и у остальных
+                // покупок. Второго компонента не заводим.
+                entity.ChargedSlashCharges.Value += chargesUpgradeConfig.GetChargesBonusFor(tier);
+
+                return;
+            }
+
+            // Power и Reach на героя не влияют — они читаются на спавне снаряда
+            // в ProjectileFactory, где живут все его числа.
+        }
+
+        /// <summary>
+        /// Заряженный слэш недоступен, пока не куплен анлок.
+        ///
+        /// Дописываем условие в СУЩЕСТВУЮЩИЙ composite CanChargeSlashAttack
+        /// вместо нового компонента-маркера: гейт способности уже есть и уже
+        /// проверяется в SlashAttackChargeSystem, а новый IEntityComponent
+        /// потребовал бы регенерации EntityAPI и завёл бы второй источник
+        /// правды рядом с первым. Дописывание в собранный composite — приём из
+        /// этого же кода (ProjectileFactory: mustSelfRelease.Add).
+        ///
+        /// unlocked считается ОДИН раз и захватывается замыканием: покупка
+        /// в главном меню применяется со следующего забега, а не посреди
+        /// текущего — герой всё равно пересобирается на каждый старт уровня.
+        /// </summary>
+        private void ApplyChargedSlashUnlockGate(Entity entity)
+        {
+            bool unlocked = IsAbilityUnlocked(AbilityUnlockTarget.ChargedSlash);
+
+            entity.CanChargeSlashAttack.Add(new FuncCondition(() => unlocked));
+        }
+
+        private bool IsAbilityUnlocked(AbilityUnlockTarget target)
+        {
+            for (int i = 0; i < _shopCatalogConfig.Items.Count; i++)
+            {
+                AbilityUnlockConfig unlockConfig = _shopCatalogConfig.Items[i] as AbilityUnlockConfig;
+
+                if (unlockConfig == null)
+                {
+                    continue;
+                }
+
+                if (unlockConfig.TargetAbility != target)
+                {
+                    continue;
+                }
+
+                if (_playerUpgradesService.GetTier(unlockConfig.ItemId) > 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void ApplyStatBonus(Entity entity, StatUpgradeTarget targetStat, float bonus)

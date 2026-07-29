@@ -3,6 +3,21 @@ using UnityEngine;
 namespace Assets._Project.Develop.Runtime.Configs.Meta.Shop
 {
     /// <summary>
+    /// Какую способность открывает покупка.
+    ///
+    /// Enum, а НЕ сверка ItemId со строковой константой в коде фабрики:
+    /// ItemId — ключ сейва, его правит тот, кто балансит магазин, и он не
+    /// обязан знать, что где-то в MainHeroFactory лежит строка, которая должна
+    /// с ним совпадать. Разъехавшись, они не дали бы ни ошибки, ни лога —
+    /// способность просто перестала бы открываться. Ровно тот же аргумент, по
+    /// которому StatUpgradeConfig несёт StatUpgradeTarget, а не имя стата в ItemId.
+    /// </summary>
+    public enum AbilityUnlockTarget
+    {
+        ChargedSlash = 0,
+    }
+
+    /// <summary>
     /// Бинарный товар: куплен или нет, тиров нет. Открывает способность.
     ///
     /// Отдельный тип, а не StatUpgradeConfig с одним тиром: у того есть
@@ -21,10 +36,15 @@ namespace Assets._Project.Develop.Runtime.Configs.Meta.Shop
         order = 59)]
     public class AbilityUnlockConfig : ShopItemConfigBase
     {
+        [SerializeField, Tooltip("Какую способность открывает покупка")]
+        private AbilityUnlockTarget _targetAbility;
+
         [SerializeField, Min(0)] private int _cost;
 
         [SerializeField, Tooltip("Что даёт покупка. Показывается, пока не куплено")]
         private string _effectText;
+
+        public AbilityUnlockTarget TargetAbility => _targetAbility;
 
         public override int MaxTier => 1;
 

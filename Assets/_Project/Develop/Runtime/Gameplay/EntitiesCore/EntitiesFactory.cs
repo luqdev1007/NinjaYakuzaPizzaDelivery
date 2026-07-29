@@ -56,6 +56,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 {
     public class EntitiesFactory
     {
+        /// <summary>
+        /// Сколько заряженных слэшей даёт сама покупка анлока, без ветки
+        /// «использований». Один — чтобы открытая способность работала, но
+        /// ветка имела смысл.
+        /// </summary>
+        private const int BaseChargedSlashCharges = 1;
+
         private readonly DIContainer _container;
 
         private readonly EntitiesLifeContext _entitiesLifeContext;
@@ -290,6 +297,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddChargeSlashAttackCurrentTimer()
                 .AddChargeSlashAttackRequiredTimer(new ReactiveVariable<float>(config.Attack.SlashAttackChargeRequiredTime))
 
+                // Заряды слэша: здесь только БАЗА. Прибавку купленной ветки
+                // накатывает MainHeroFactory — там же, где остальные покупки,
+                // чтобы у профиля был ровно один читатель на весь спавн героя.
+                .AddChargedSlashCharges(new ReactiveVariable<int>(BaseChargedSlashCharges))
+
                 // body contact
                 .AddContactsDetectingMask(config.ContactLayerMask)
                 .AddContactCollidersBuffer(new Buffer<Collider2D>(16))
@@ -476,7 +488,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.IsGrappling.Value == false))
                 .Add(new FuncCondition(() => entity.IsWallHanging.Value == false))
                 .Add(new FuncCondition(() => entity.IsSliding.Value == false))
-                .Add(new FuncCondition(() => entity.InAttackProcess.Value == false));
+                .Add(new FuncCondition(() => entity.InAttackProcess.Value == false))
+
+                // Заряды кончились — заряжаться нельзя. Условие живёт здесь,
+                // рядом с остальными: гейт способности один, и вешать половину
+                // ограничений в другом месте значило бы искать их потом по двум.
+                .Add(new FuncCondition(() => entity.ChargedSlashCharges.Value > 0));
 
             entity
                 .AddCanPlunge(canPlunge)

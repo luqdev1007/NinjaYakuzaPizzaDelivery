@@ -65,6 +65,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack
         public ReactiveVariable<float> Value = new();
     }
 
+    /// <summary>
+    /// Сколько заряженных слэшей осталось на забег.
+    ///
+    /// Рефилла на старте уровня НЕТ и не нужно: герой пересобирается фабрикой
+    /// на каждый забег, поэтому счётчик и так рождается полным. Ровно по этой
+    /// же причине рефил расходников живёт в InventorySystem.OnInit, а не в
+    /// отдельной системе старта уровня.
+    ///
+    /// Свой компонент, а не слот в InventoryCharges: тот — список в лок-степе с
+    /// массивом расходников, и вход туда затащил бы слэш в ротацию колёсиком,
+    /// в инвентарный HUD и в TryUseActiveItem, из которых слэшу не нужно
+    /// ничего. Инвентарь дал бы только хранение int.
+    /// </summary>
+    public class ChargedSlashCharges : IEntityComponent
+    {
+        public ReactiveVariable<int> Value = new();
+    }
+
     public class AttackHitStopScale : IEntityComponent
     {
         public ReactiveVariable<float> Value = new();
