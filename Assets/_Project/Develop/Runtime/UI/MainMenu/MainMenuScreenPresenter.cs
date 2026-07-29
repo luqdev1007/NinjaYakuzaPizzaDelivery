@@ -1,4 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
+using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Wallet;
@@ -21,6 +21,7 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
         private readonly ProjectPresentersFactory _presentersFactory;
 
         private WalletPresenter _walletPresenter;
+        private ShopPresenter _shopPresenter;
         private ICoroutinesPerformer _coroutinesPerformer;
 
         private List<IDisposable> _disposables = new();
@@ -63,6 +64,17 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             _disposables.Add(_walletPresenter);
 
             _walletPresenter.Initialize();
+
+            // Магазин живёт вместе с экраном меню, а не с кнопкой «открыть»:
+            // ShopView — выключённый узел этого же префаба, и пересоздавать его
+            // презентера на каждое открытие значило бы каждый раз заново
+            // инстанцировать карточки. Подписка держится всё время жизни экрана,
+            // кнопка Back внутри магазина сама гасит вьюху.
+            _shopPresenter = _presentersFactory.CreateShopPresenter(_view.ShopView);
+            _disposables.Add(_shopPresenter);
+
+            _shopPresenter.Initialize();
+            _shopPresenter.Subscribe();
         }
 
         private void OnOpenLoadMusicPopupViewButtonClicked()
@@ -70,9 +82,16 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             _mainMenupopupService.OpenLoadMusicPopupView();
         }
 
+        /// <summary>
+        /// Перекраска на открытии, а не только по OnCurrencyChanged: Reset Stats
+        /// перезаливает тиры и кошелёк через PlayerDataProvider.Reset, минуя
+        /// событие кошелька, и без этого вызова магазин показал бы состояние
+        /// до сброса.
+        /// </summary>
         private void OnOpenShopButtonClicked()
         {
             _view.ShopView.gameObject.SetActive(true);
+            _shopPresenter.RefreshAllStates();
         }
 
         private void OnOpenDojoButtonClicked()
@@ -102,6 +121,8 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             _view.OpenShopButton.onClick.RemoveListener(OnOpenShopButtonClicked);
 
             _view.OpenMusicLoaderPopupButton.onClick.RemoveListener(OnOpenLoadMusicPopupViewButtonClicked);
+
+            _shopPresenter.Unsubscribe();
 
             foreach (var disposable in _disposables)
                 disposable.Dispose();

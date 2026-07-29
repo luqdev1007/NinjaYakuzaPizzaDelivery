@@ -1,15 +1,19 @@
 ﻿using Assets._Project.Develop.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Configs.Meta.Shop;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LootFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.LevelsProgression;
+using Assets._Project.Develop.Runtime.Meta.Features.Shop;
+using Assets._Project.Develop.Runtime.Meta.Features.Upgrades;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Core.ConfirmPopup;
 using Assets._Project.Develop.Runtime.UI.Core.GameSettings;
 using Assets._Project.Develop.Runtime.UI.LevelsMenuPopup;
+using Assets._Project.Develop.Runtime.UI.MainMenu;
 using Assets._Project.Develop.Runtime.UI.Wallet;
 using Assets._Project.Develop.Runtime.Utilities.AudioManagment;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
@@ -49,6 +53,28 @@ namespace Assets._Project.Develop.Runtime.UI
                 view,
                 config,
                _container.Resolve<LevelsProgressionService>());
+        }
+
+        public ShopPresenter CreateShopPresenter(ShopView view)
+        {
+            return new ShopPresenter(
+                view,
+                _container.Resolve<ConfigsProviderService>().GetConfig<ShopCatalogConfig>(),
+                _container.Resolve<ConfigsProviderService>().GetConfig<CurrencyIconsConfig>(),
+                _container.Resolve<WalletService>(),
+                this,
+                _container.Resolve<ViewsFactory>()
+                );
+        }
+
+        public ShopItemPresenter CreateShopItemPresenter(ShopItemView view, ShopItemConfigBase config)
+        {
+            return new ShopItemPresenter(
+                view,
+                config,
+                _container.Resolve<ShopService>(),
+                _container.Resolve<PlayerUpgradesService>(),
+                _container.Resolve<ConfigsProviderService>().GetConfig<CurrencyIconsConfig>());
         }
 
         public CurrencyPresenter CreateCurrencyPresenter(

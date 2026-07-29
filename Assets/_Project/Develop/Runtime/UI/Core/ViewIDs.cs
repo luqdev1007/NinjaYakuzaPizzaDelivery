@@ -21,6 +21,7 @@ namespace Assets._Project.Develop.Runtime.UI.Core
         public const string MainMenuScreenView = nameof(MainMenuScreenView);
         public const string LevelTile = nameof(LevelTile);
         public const string LevelsMenuPopup = nameof(LevelsMenuPopup);
+        public const string ShopItemView = nameof(ShopItemView);
 
         // Game Settings
         public const string AudioSettingsPopupView = nameof(AudioSettingsPopupView);
