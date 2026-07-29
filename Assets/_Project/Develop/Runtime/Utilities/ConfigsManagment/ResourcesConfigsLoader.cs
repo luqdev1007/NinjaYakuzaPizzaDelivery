@@ -2,6 +2,7 @@ using Assets._Project.Develop.Runtime.Configs.Audio;
 using Assets._Project.Develop.Runtime.Configs.Dialog;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Projectiles;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Style;
 using Assets._Project.Develop.Runtime.Configs.Inventory;
 using Assets._Project.Develop.Runtime.Configs.Meta.Shop;
@@ -35,6 +36,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
             { typeof(AudioLibrary), "Configs/Audio/AudioLibrary" },
 
             { typeof(PlayerInventoryConfig), "Configs/PlayerData/PlayerInventoryConfig" },
+
+            { typeof(ChargedSlashConfig), "Configs/Gameplay/Projectiles/ChargedSlashConfig" },
 
             // shop upgrades
             { typeof(BagUpgradeConfig), "Configs/Meta/Shop/BagUpgradeConfig" },

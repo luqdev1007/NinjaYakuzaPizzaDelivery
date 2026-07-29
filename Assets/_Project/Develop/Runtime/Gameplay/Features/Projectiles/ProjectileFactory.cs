@@ -35,6 +35,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
         private readonly PlayerUpgradesService _playerUpgradesService;
         private readonly ShurikenDamageUpgradeConfig _shurikenDamageUpgradeConfig;
 
+        // Уставки заряженного слэша (бывшие литералы в теле метода).
+        private readonly ChargedSlashConfig _chargedSlashConfig;
+
         public ProjectileFactory(DIContainer container)
         {
             _container = container;
@@ -44,19 +47,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Projectiles
             _collidersRegistryService = container.Resolve<CollidersRegistryService>();
             _coroutinesPerformer = container.Resolve<ICoroutinesPerformer>();
 
+            ConfigsProviderService configsProviderService = container.Resolve<ConfigsProviderService>();
+
             _playerUpgradesService = container.Resolve<PlayerUpgradesService>();
-            _shurikenDamageUpgradeConfig = container.Resolve<ConfigsProviderService>()
-                .GetConfig<ShurikenDamageUpgradeConfig>();
+            _shurikenDamageUpgradeConfig = configsProviderService.GetConfig<ShurikenDamageUpgradeConfig>();
+
+            _chargedSlashConfig = configsProviderService.GetConfig<ChargedSlashConfig>();
         }
 
         public Entity CreateChargedSlashProjectile(Transform parent, Entity owner)
         {
-            // settings (config)
-            string prefabPath = "Entities/Projectiles/ChargedSlashProjectile";
-            float damage = 10;
-            float speed = 15;
-            float lifeTime = 2;
-            LayerMask hitMask = LayersAPI.LayerMaskEnemies;
+            string prefabPath = _chargedSlashConfig.PrefabPath;
+            float damage = _chargedSlashConfig.Damage;
+            float speed = _chargedSlashConfig.Speed;
+            float lifeTime = _chargedSlashConfig.LifeTime;
+            LayerMask hitMask = _chargedSlashConfig.HitMask;
 
             Entity entity = new Entity();
 
