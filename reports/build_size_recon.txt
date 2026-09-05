@@ -1,0 +1,1142 @@
+================================================================================
+BUILD SIZE RECON - NYPD (Ninja Yakuza Pizza Delivery)
+Режим: РАЗВЕДКА. Ничего не изменено. Дата: 2026-09-05
+================================================================================
+
+КОРОТКО В ОДНУ СТРОКУ: оптимизировать ЕСТЬ что и много - реальный билд весит
+313 МБ, из них ~58 МБ текстур лежат вообще без блочного сжатия и ~78 МБ - это
+музыка, из которой 55 МБ составляют треки чужих коммерческих OST. Реалистично
+снимается 100-160 МБ (32-52% веса) без потери визуала.
+
+--------------------------------------------------------------------------------
+РАЗДЕЛ 0. СВОДКА
+--------------------------------------------------------------------------------
+
+ИСТОЧНИК ДАННЫХ: найден настоящий build report.
+  Library/LastCleanBuild.buildreport (1.8 МБ, полный, с PackedAssets)
+  Library/LastBuild.buildreport (30 КБ, инкрементальный, без разбивки)
+
+Параметры того билда:
+  платформа       StandaloneWindows64
+  дата            29.07.2026 15:02, время сборки 12 сек, result=Succeeded
+  выход           D:/Unity/NYPD/Ninja Yakuza Pizza Delivery.exe
+  scripting       Mono (в билде MonoBleedingEdge + Managed/*.dll, не IL2CPP)
+  ошибок 0, предупреждений 2
+
+ВАЖНО ПРО АКТУАЛЬНОСТЬ: билд собран 29.07.2026, с тех пор 24 коммита,
+47 изменённых файлов в _Project/Resources, добавлены NYPD_DOJO.png (1024x1024,
+сжимается нормально, +~1 МБ) и конфиги ChargedSlash/Shop. Расхождение с текущим
+состоянием оценочно в пределах +1..3 МБ. Общая картина не меняется.
+
+ОБЩИЙ ВЕС:
+  Assets/ на диске               890 МБ
+  Реальный билд (папка на диске) 313.25 МБ  (328 468 593 байт)
+  Из них сериализованные ассеты  220.41 МБ  (70.4%)
+  Из них движок/рантайм          92.84 МБ   (29.6%)
+
+РАЗБИВКА БИЛДА ПО РОЛЯМ ФАЙЛОВ:
+  207.70 МБ  66.3%  StreamingResourceFile (.resS/.resource - пиксели и звук)
+   50.17 МБ  16.0%  нативные dll (UnityPlayer 35.22, mono 7.47, D3D12Core 4.51,
+                    dstoragecore 1.41, MonoPosixHelper 0.58, libonigwrap 0.53,
+                    lib_burst_generated 0.25)
+   16.20 МБ   5.2%  DependentManagedLibrary (BCL: mscorlib, System.Xml, ...)
+   12.75 МБ   4.1%  resources.assets
+    9.16 МБ   2.9%  ManagedEngineAPI (83 файла UnityEngine.*Module.dll)
+    7.22 МБ   2.3%  ManagedLibrary (наши + пакетные сборки)
+    5.65 МБ   1.8%  unity default resources
+    2.16 МБ   0.7%  exe (игра 0.64 + UnityCrashHandler64 1.53)
+    2.24 МБ   0.7%  всё остальное (шейдеры, сцены, конфиги, ini)
+  Папка Managed/ целиком: 32.58 МБ в 145 файлах.
+
+РАЗБИВКА СЕРИАЛИЗОВАННЫХ АССЕТОВ ПО ТИПАМ (220.41 МБ = 100%):
+  136.71 МБ  62.0%  Texture2D          (450 объектов)  = 43.6% всего билда
+   79.11 МБ  35.9%  AudioClip          (308 объектов)  = 25.3% всего билда
+    0.78 МБ   0.4%  ParticleSystem
+    0.56 МБ   0.3%  Sprite
+    0.50 МБ   0.2%  MonoBehaviour (2185 шт)
+    0.50 МБ   0.2%  Cubemap
+    0.34 МБ   0.2%  Font (LiberationSans.ttf)
+    0.30 МБ   0.1%  Shader (12 шт)
+    0.27 МБ   0.1%  MonoScript (2308 шт)
+    ~1.4 МБ   0.6%  всё остальное (Tilemap, SpriteRenderer, GameObject,
+                    RectTransform, AnimationClip, Transform, ...)
+
+ВЫВОД РАЗДЕЛА 0: 97.9% веса ассетов - это ровно две категории, текстуры и звук.
+Меши, анимации, шейдеры, префабы и скрипты в сумме дают меньше 5 МБ и в этой
+задаче не представляют интереса вообще.
+
+РАЗБИВКА ПО ФАЙЛАМ ВЫХОДА:
+  resources.assets.resS         121.62 МБ  (211 объектов) - пиксели текстур
+  resources.resource             79.10 МБ  (154 объекта)  - звук
+  resources.assets               12.37 МБ  (12796 объектов)
+  globalgamemanagers.assets.resS  2.67 МБ  (1 объект - лого сплэша Unity)
+  sharedassets5.assets.resS       2.28 МБ
+  sharedassets3.assets.resS       1.55 МБ
+  sharedassets0.assets.resS       0.50 МБ
+  прочие sharedassets/scene       ~0.4 МБ
+
+  Отдельно отмечу: практически весь контент игры попадает в билд через
+  дерево зависимостей папок Resources, а не через сцены. Из Build Settings
+  сцен достижимо всего 139 ассетов; из Resources - 986. Это не проблема веса
+  сама по себе (в билд попадает то же самое), но это значит, что "почистить
+  сцену" ничего не даст, а любой мусор, положенный в Resources, гарантированно
+  уезжает в билд.
+
+--------------------------------------------------------------------------------
+РАЗДЕЛ 1. ФАКТИЧЕСКИЙ BUILD REPORT - ТОП САМЫХ ТЯЖЁЛЫХ АССЕТОВ
+--------------------------------------------------------------------------------
+
+ТОП-30 ассетов билда (packed, МБ):
+
+  20.001  Texture2D  _Project/Art/Sprites/Gameplay/MainHero/MainHeroAtlas.spriteatlasv2
+  16.000  Texture2D  _Project/Art/Fonts/NotoSansJP-VariableFont_wght SDF.asset
+  10.500  Texture2D  Platformer Tileset/Tilesets/Level_1/Level_1_256x256.png
+   8.000  Texture2D  GUI Pro-FantasyRPG/ResourcesData/Fonts/Alata-Regular-Outline 210 SDF.asset
+   6.956  Texture2D  _Project/Art/Sprites/Gameplay/Projectiles/Shuriken_upgrade.png
+   6.956  Texture2D  _Project/Art/Sprites/Gameplay/Projectiles/Shuriken.png
+   4.000  Texture2D  Cainos/.../Texture/TX Village Props.png
+   4.000  Texture2D  _Project/Art/Sprites/Gameplay/Props/VillageProps.png
+   3.999  AudioClip  SFX/Music/Shinobi Breaker (1).mp3
+   3.886  Texture2D  Freeui/ZOSMA/Set/Back.png
+   3.850  AudioClip  SFX/Music/Hotline Miami - Hydrogen (OST) (lightaudio.ru).mp3
+   3.787  AudioClip  SFX/Music/GhostRunner/Dan Terminus - Road Zero [GR2 OST].mp3
+   3.625  AudioClip  SFX/Music/Perturbator - Sexualizer (Hotline Miami OST).mp3
+   3.472  AudioClip  SFX/Music/El Tigr3 - She Swallowed Burning Coals.mp3
+   3.405  AudioClip  SFX/Music/Hotline Miami 2 OST - Future Club.mp3
+   3.290  AudioClip  SFX/Music/MOON - Paris (Hotline Miami OST).mp3
+   3.280  AudioClip  SFX/Music/Hotline Miami 2 OST - Decade Dance.mp3
+   3.247  AudioClip  SFX/Music/Rurouni Kenshin - Final Fight.mp3
+   2.999  Texture2D  _Project/Art/Sprites/Backgrounds/Gameplay/Background (Full).png
+   2.991  Texture2D  _Project/Art/Sprites/Settings/SettingsBG.png
+   2.898  AudioClip  SFX/Music/Hiten Mitsurugi Ryuu - Amakakeru (Kenshin OST).mp3
+   2.848  AudioClip  SFX/Music/Judy & Mary - Sobakasu (OST Самурай Х).mp3
+   2.799  AudioClip  SFX/Music/Moonlit Paper Boats.mp3
+   2.727  Texture2D  _Project/Art/Sprites/LoadingScreen/3.png
+   2.723  AudioClip  SFX/Music/Iron Dojo Riot (1).mp3
+   2.682  AudioClip  SFX/Music/Shinobi Breaker.mp3
+   2.667  Texture2D  Built-in: Splash Screen Unity Logo
+   2.531  AudioClip  SFX/Music/Iron Dojo Riot.mp3
+   2.488  AudioClip  SFX/Music/GhostRunner/Daniel Deluxe - Let Them Know.mp3
+   2.190  AudioClip  SFX/Music/Paper Crane Path.mp3
+
+Дальше идёт длинный хвост музыки по 1-2 МБ и текстур по 0.3-1.0 МБ.
+Всего в билде 3881 различных ассетов.
+
+ТЕКСТУРЫ ПО ПАПКАМ (packed, МБ):
+   61.44  _Project/Art/Sprites        (76 объектов)
+   23.63  GUI Pro-FantasyRPG          (224)
+   16.00  _Project/Art/Fonts          (2)
+   10.50  Platformer Tileset          (2)
+    6.85  Freeui                      (6)
+    5.15  Cainos                      (6)
+    2.67  Built-in Splash Screen Logo (2)
+    2.56  JMO Assets (Cartoon FX)     (50)
+    2.28  _Project/Art/Intro          (12)
+    1.36  SimpleAssets                (4)
+    1.33  TextMesh Pro                (6)
+    1.14  Hovl Studio                 (22)
+    ~1.4  всё остальное
+
+ЗАМЕЧАНИЕ ПРО СПЛЭШ: в ProjectSettings стоит m_ShowUnitySplashScreen: 0, но
+текстура "Splash Screen Unity Logo" (2.667 МБ) всё равно упакована в
+globalgamemanagers.assets.resS. Это поведение Unity, а не наша ошибка;
+проверить ещё раз на свежем билде, но действовать тут нечем.
+
+--------------------------------------------------------------------------------
+РАЗДЕЛ 2. ТЕКСТУРЫ - ГЛАВНЫЙ БЛОК (136.71 МБ, 43.6% билда)
+--------------------------------------------------------------------------------
+
+Всего в проекте 6687 текстур с TextureImporter. В билд попадает 218 записей
+Texture2D (450 объектов с учётом дублей заголовок/поток).
+
+2.1 ГЛАВНАЯ НАХОДКА: 58.08 МБ текстур в билде НЕ сжаты блочно
+-------------------------------------------------------------
+Метрика: эффективные байты на пиксель (packed / (ширина*высота после Max Size)).
+BC1/DXT1 = 0.5 bpp, BC3/DXT5 = 1.0 bpp, BC7 = 1.0 bpp, RGB24 = 3.0, RGBA32 = 4.0.
+
+  bpp > 1.5 (то есть НЕ блочно сжато):  58.08 МБ в 71 ассете
+  если бы все они были BC3/BC7:         14.98 МБ
+  потенциал:                            43.10 МБ
+
+Три независимые причины, по убыванию вклада:
+
+  а) РАЗМЕРЫ НЕ КРАТНЫ 4  ->  34.96 МБ в 59 ассетах
+     Unity молча откатывается с DXT/BC на RGBA32 или RGB24, если хоть одна
+     сторона не делится на 4. В инспекторе при этом честно написано
+     "Compression: Compressed" - и это ложь по факту.
+
+  б) ЯВНЫЙ Compression = Uncompressed  ->  13.12 МБ в 7 ассетах
+  в) PLATFORM OVERRIDE в RGBA32/RGB24  ->  11.42 МБ в 8 ассетах
+     (пункты б и в частично пересекаются с а)
+
+ПОЛНЫЙ СПИСОК ТЕКСТУР В БИЛДЕ БЕЗ БЛОЧНОГО СЖАТИЯ (сейчас МБ / экономия при
+переводе в BC3-BC7 МБ / размер / причина):
+
+  10.500  /  7.875  1792x1536  Uncompressed  Platformer Tileset/Level_1_256x256.png
+   6.956  /  5.217  1800x1013  не кратно 4   Sprites/Projectiles/Shuriken_upgrade.png
+   6.956  /  5.217  1800x1013  не кратно 4   Sprites/Projectiles/Shuriken.png
+   4.000  /  3.000  1024x1024  ov=RGBA32     Cainos/TX Village Props.png
+   4.000  /  3.000  1024x1024  ov=RGBA32     Sprites/Gameplay/Props/VillageProps.png
+   3.886  /  2.914  1369x744   не кратно 4   Freeui/ZOSMA/Set/Back.png
+   2.999  /  2.000  1365x768   не кратно 4   Backgrounds/Gameplay/Background (Full).png
+   2.991  /  1.994  1361x768   не кратно 4   Sprites/Settings/SettingsBG.png
+   2.727  /  2.045  1024x698   не кратно 4   Sprites/LoadingScreen/3.png
+   1.359  /  1.020  4949x72    Uncompressed  JMO/cfxr font AmazGoDaBold.png
+   1.000  /  0.750  512x512    ov=RGBA32     Cainos/TX Chest Animation.png
+   1.000  /  0.750  512x512    ov=RGBA32     GUI Pro/Particles/fx_circle_line1.png
+   1.000  /  0.750  512x512    ov=RGBA32     GUI Pro/Particles/fx_glow2.png
+   0.938  /  0.704  683x360    не кратно 4   Environment/SakuraTree.png
+   0.932  /  0.699  936x261    не кратно 4   Projectiles/SleepDart.png
+   0.918  /  0.688  494x487    ov=RGBA32     GUI Pro/Particles/fx_star1.png
+   0.563  /  0.422  512x288    Uncompressed  karsiori/Tilesheet - WOODS.png
+   0.416  /  0.312  218x500    не кратно 4   GUI Pro/Demo/Background_Gradient_Panel_02.png
+   0.389  /  0.292  232x439    не кратно 4   Sprites/Gameplay/MainHero/Boss.png
+   0.355  /  0.266  299x311    не кратно 4   GUI Pro/IconMisc/Icon_Gems_Glow.png
+   0.333  /  0.271  256x256    Uncompressed  JMO/Demo Assets/CFXR Demo Btn Arrow R.png
+   0.333  /  0.271  ->256x256  Uncompressed  JMO/cfxr petal normal.png
+   0.293  /  0.220  277x277    не кратно 4   GUI Pro/Demo_Play/Joystick_Direction_Bg.png
+   0.250  /  0.188  256x256    ov=RGBA32     GUI Pro/Fonts/PlayGold Atlas.png
+   0.250  /  0.188  256x256    ov=RGBA32     GUI Pro/Particles/fx_glow3.png
+   0.232  /  0.174  447x136    не кратно 4   SimpleAssets/UI/button_1.png
+   0.172  /  0.129  349x129    не кратно 4   GUI Pro/Label-Title/Title_Ribbon_01_Navy.png
+   0.167  /  0.125  350x125    не кратно 4   GUI Pro/Title_Ribbon_01_White_LIne.png
+   0.153  /  0.115  200x200    (RGBA32)      Cainos/TX FX Flame.png
+   0.150  /  0.112  198x198    не кратно 4   GUI Pro/StageFrame_01_Single_Complete.png
+   0.128  /  0.096  163x205    не кратно 4   GUI Pro/CardFrame_01_BorderGray.png
+   0.107  /  0.080  167x167    не кратно 4   GUI Pro/Image_Glow_Circle_02.png
+   0.094  /  0.071  138x179    не кратно 4   Environment/SakuraLeave.png
+   0.086  /  0.065  150x150    не кратно 4   GUI Pro/Joystick_Direction_Focus_*.png
+   0.080  /  0.060  140x150    не кратно 4   GUI Pro/StageFrame_03_Single_Complete.png
+   0.079  /  0.059  109x189    не кратно 4   GUI Pro/WingBadge_Bottom_Flag_Center.png
+   0.077  /  0.058  142x142    не кратно 4   GUI Pro/BorderFrame_Circle.png
+   0.069  /  0.052  135x134    не кратно 4   GUI Pro/Button_Rectangle_04_Gray.png
+   0.069  /  0.052  134x134    не кратно 4   GUI Pro/SlotFrame_Circle_White_Border.png
+   0.065  /  0.049  130x130    не кратно 4   GUI Pro/SlotFrame_Circle_White_FocusBg.png
+   0.065  /  0.049  130x130    не кратно 4   GUI Pro/ItemFrame_01_Border_Purple.png
+   0.065  /  0.049  130x130    не кратно 4   GUI Pro/ItemFrame_02_Bg_White_Border.png
+   0.063 x7/  0.047 x7  159x104 не кратно 4  GUI Pro/Button_Rectangle_01_Convex_*.Png
+   ... далее ещё ~25 записей GUI Pro / JMO / Plugins по 0.001-0.06 МБ,
+       суммарно ~0.35 МБ, экономия ~0.26 МБ.
+
+2.2 ТЕКСТУРЫ, У КОТОРЫХ MAX SIZE СИЛЬНО БОЛЬШЕ ЭКРАННОГО РАЗМЕРА
+-----------------------------------------------------------------
+Опорные данные для расчёта (взяты из проекта, не выдуманы):
+  - Cinemachine/Camera orthographic size = 8 во всех уровневых префабах
+    (BaseScene, DownAndUp, Village, VillageToChurch) и в Gameplay.unity.
+    Значит видимая высота = 16 world units. При 1080p это 67.5 px на unit.
+  - CanvasScaler в GameplayUIRoot и MainMenuUIRoot: ScaleWithScreenSize,
+    reference 1920x1080, match 0.5.
+
+  Shuriken.png                1800x1013, PPU=1500 -> 1.2 x 0.675 units
+    -> на экране 81 x 46 px при 1080p (162 x 91 при 4K).
+    В билде 6.956 МБ. Пересемплирование примерно в 22 раза.
+    Max Size 128 дал бы 128x72 -> ~0.011 МБ. Экономия 6.94 МБ.
+
+  Shuriken_upgrade.png        1800x1013, PPU=100.
+    Единственная ссылка на неё - поле Icon в
+    _Project/Resources/Configs/Meta/Shop/ShurikenDamageUpgradeConfig.asset,
+    то есть это ИКОНКА ТОВАРА В МАГАЗИНЕ. В ShopItemView.prefab
+    ItemIconImage растягивается по родителю (sizeDelta -30,-30), реальный
+    размер порядка 100-150 px. В билде 6.956 МБ.
+    Max Size 256 -> ~0.06 МБ. Экономия 6.9 МБ.
+
+  MainHeroAtlas.spriteatlasv2  20.001 МБ, ~5 страниц 2048x2048 BC3.
+    Исходники: 101 спрайт в Sprites/Gameplay/MainHero/Actions,
+    типовой кадр 232x439 ... 362x483, PPU = 300.
+    Проверка по префабу MainHero.prefab: SpriteRenderer "View",
+    sprite Idle__000_0 rect 232x439, ppu 300, bounds 0.77 x 1.46 units.
+    1.46 units * 67.5 px/unit = 98.6 px на экране при 1080p,
+    197 px при 4K. Исходник 439 px - пересемплирование 4.45x при 1080p
+    и 2.2x при 4K.
+    Половинное разрешение исходников (при одновременном снижении
+    spritePixelsPerUnit с 300 до 150, чтобы мировой размер не поехал)
+    даёт атлас ~5 МБ. Экономия ~15 МБ.
+
+  SleepDart.png  936x261 при PPU=100 -> 9.36 units в ширину, это больше
+    половины экранной высоты. Почти наверняка спрайт ужимается масштабом
+    в префабе. ТРЕБУЕТ РУЧНОЙ ПРОВЕРКИ, но кандидат на Max Size 256.
+
+  SettingsBG.png (2.991 МБ) и BackGround_Sample_07_Dark.png (0.989 МБ)
+    используются ровно в одном месте - LoadMusicPopupView.prefab.
+    Полноэкранная UI-подложка 1361x768 при reference 1920x1080 - то есть
+    она И ТАК растягивается вверх. Max Size снижать нельзя, но привести к
+    кратности 4 и перевести в BC7 - можно.
+
+2.3 ПОЛНОЭКРАННЫЕ ФОНЫ И ПАНЕЛИ
+-------------------------------
+  Freeui/ZOSMA/Set/Back.png        1369x744  RGBA32  3.886 МБ
+  Backgrounds/Gameplay/Background (Full).png 1365x768 RGB24 2.999 МБ
+  Sprites/Settings/SettingsBG.png  1361x768  RGB24   2.991 МБ
+  Sprites/LoadingScreen/3.png      1024x698  RGBA32  2.727 МБ
+  Freeui/ZOSMA/Set/Black.png       1920x1080 BC1     1.978 МБ  (ок)
+  SimpleAssets/Background (Necromancer).png -> BC1   1.125 МБ  (ок)
+  GUI Pro/Demo/BackGround_Sample_07_Dark.png 1920x1080 BC1 0.989 (ок)
+  Freeui/ZOSMA/Main/Back/Background.png      1920x1080 BC1 0.989 (ок)
+  LoadingScreen 1/2/sauce (1024x1024 BC3)    по 1.000 МБ
+  LoadingScreen salami (920x920 BC3)         0.807 МБ
+  LoadingScreen image (4) (1232x832 BC3)     0.978 МБ
+  Backgrounds/MainMenu/*.jpg и Dojo/*.jpg    по 0.495 МБ (BC1, ок)
+  Backgrounds/Gameplay/Background (Front)    0.981 МБ (BC3, ок)
+
+  Первые четыре - это ровно те, что провалились в RGBA32/RGB24.
+  Итого по фонам ~15 МБ, из которых 9.4 МБ - чистая потеря на сжатии.
+
+2.4 КОМИКС-ИНТРО
+----------------
+  Assets/_Project/Art/Intro/1..6.jpg, 1184x672, BC1, по 0.380 МБ.
+  Суммарно 2.28 МБ на 6 панелей. Здесь всё уже правильно, трогать нечего.
+
+2.5 MIP MAPS
+------------
+  Mipmaps включены на 34 текстурах, суммарный вес в билде 2.60 МБ.
+  Все они - VFX-текстуры из Hovl Studio / Cartoon FX Remaster,
+  используемые в партиклах, где мипы нужны по делу.
+  Ни одной UI/спрайтовой текстуры с включёнными мипами в билде НЕТ.
+  Максимальная экономия от выключения ~0.65 МБ. Не стоит.
+
+2.6 READ/WRITE ENABLED
+----------------------
+  Ноль текстур с isReadable = true во всём проекте. Тут чисто, пункт закрыт.
+
+2.7 ALPHA IS TRANSPARENCY
+-------------------------
+  Проставлено практически везде, отклонений, влияющих на вес, не найдено.
+  На вес влияет не сам флаг, а наличие альфы: текстуры без альфы уходят в
+  BC1 (0.5 bpp), с альфой - в BC3 (1.0 bpp). Ряд UI-подложек
+  (SettingsBG, Background (Full)) уже без альфы - им подойдёт BC1.
+
+2.8 ИСХОДНИКИ (.psd/.tif/.tga/.exr/.bmp) ВНУТРИ ASSETS
+------------------------------------------------------
+  Всего 5 файлов, 24.33 МБ на диске:
+    15 614 118  GUI Pro-FantasyRPG/.../Chest/00_PSD_Chest.psd
+     9 498 691  Hovl Studio/Magic effects pack/Materials/VFXatlas.psd
+       237 811  Hovl Studio/.../Demo scene/ReflectionProbe-0.exr
+       133 554  Hovl Studio/.../Demo scene/ReflectionProbe-1.exr
+        26 311  Hovl Studio/.../Demo scene/Lightmap-0_comp_light.exr
+
+  НИ ОДИН из них не попадает в билд - все пять в множестве недостижимых
+  ассетов. Это вес репозитория (24 МБ), а не вес билда.
+
+--------------------------------------------------------------------------------
+РАЗДЕЛ 3. SPRITE ATLASES
+--------------------------------------------------------------------------------
+
+В проекте ТРИ атласа:
+
+1) Assets/_Project/Art/Sprites/Gameplay/MainHero/MainHeroAtlas.spriteatlasv2
+   спрайтов 103, вариантом не является
+   packing: tight=True, rotation=False, padding=8
+   texture: readable=False, mipmaps=False, filter=Point
+   Standalone: override=False, maxSize=2048, format=AutomaticCompressed,
+               crunch=False, quality=50
+   packables: Sprites/Gameplay/MainHero/Actions, .../Actions/Glide
+   В БИЛДЕ: 20.001 МБ. Это ~5 страниц 2048x2048 в BC3.
+   Отмечаю: crunch выключен. Это единственный самый крупный
+   низкорисковый рычаг по атласу (см. раздел 10).
+
+2) Assets/_Project/Art/Sprites/Gameplay/Enemies/SLIME/Slime.spriteatlasv2
+   спрайтов 88, tight=True, rotation=True, padding=4
+   readable=False, mipmaps=False, filter=Bilinear
+   Standalone: override=False, maxSize=2048, AutomaticCompressed, crunch=False
+   packables: .../SLIME/SlimeSprites
+   В БИЛДЕ: 0.125 МБ. Здесь всё хорошо.
+
+3) Assets/_Project/Resources/UI/Gameplay/ResultPopups/WinPopupSpriteAtlas.spriteatlas
+   спрайтов 4, tight=True, padding=8, readable=False, mipmaps=False
+   Standalone: override=False, maxSize=2048, AutomaticCompressed, crunch=False
+   packables (4 отдельные png из GUI Pro):
+     Demo_Image/Image_Glow_Oval_01.png
+     Label-Title/Title_Ribbon_03_Purple.png
+     IconMisc/Icon_Star_Result_d.png
+     IconMisc/Icon_Star_Result_n.png
+   В БИЛДЕ: 0.500 МБ (страница 512x1024 DXT5).
+   Этот атлас лежит ВНУТРИ Resources - то есть он и его страницы попадают
+   в билд безусловно. Это нормально, но означает, что четыре исходные png
+   тоже тянутся в дерево зависимостей.
+
+ЧТО ОСТАЛОСЬ ВНЕ АТЛАСОВ:
+  Всё остальное. В атласы упакованы только герой, слайм и 4 спрайта
+  Win-попапа. Все враги (AngryGhost 0.990, Ghost 0.515), окружение
+  (SakuraTree, StarHouse, Lights, Water, SakuraLeave), снаряды
+  (Shuriken, SleepDart, GrappleHook), весь UI из GUI Pro / Freeui /
+  SimpleAssets, все фоны и лоадскрины идут отдельными текстурами.
+  Для веса это скорее плюс, чем минус (атлас добавляет padding и пустоту),
+  а вот для батчинга/draw calls - минус. Но это уже не тема этой разведки.
+
+ДУБЛИРОВАНИЕ "АТЛАС + ПРЯМАЯ ССЫЛКА В БИЛД": НЕ ОБНАРУЖЕНО.
+  Проверено по build report: отдельных записей Texture2D на исходные png,
+  входящие в любой из трёх атласов, в билде нет. Unity корректно заменил
+  их страницами атласов.
+
+--------------------------------------------------------------------------------
+РАЗДЕЛ 4. ПАПКИ RESOURCES
+--------------------------------------------------------------------------------
+
+Папок Resources в проекте три:
+
+  Assets/Resources               9 КБ    - 1 файл: DOTweenSettings.asset
+  Assets/TextMesh Pro/Resources  3.0 МБ  - стандартный TMP-набор
+  Assets/_Project/Resources      21 МБ   - 207 файлов, основное содержимое
+
+Assets/GUI Pro-FantasyRPG/ResourcesData - НЕ папка Resources (имя другое),
+Unity её как Resources не трактует. Но её содержимое всё равно уезжает в
+билд, потому что на него ссылаются наши UI-префабы из _Project/Resources.
+
+Структура _Project/Resources (207 файлов):
+  Configs/          82 файла  - Audio (плейлисты + 46 SFX-конфигов),
+                                Dialogs, Entities, Gameplay (уровни, лут,
+                                снаряды, стадии, стиль), Meta (Shop, Wallet),
+                                PlayerData
+  Prefabs/          46 файлов - Levels (BaseScene, DownAndUp, Village,
+                                VillageToChurch, Blocks, Props), Buffs, UI
+  UI/               41 файл   - MainMenu, Gameplay, GameSettings, Meta, Common
+  Entities/         17 файлов - MainHero, Enemies, Loot, Projectiles, Common
+  VFX/               1 файл
+  Utilities/         4 файла
+  Content/           1 файл   - loading_hints.json
+  DOTweenSettings.asset
+
+4.1 ЧТО ЗАГРУЖАЕТСЯ ПО СТРОКОВЫМ ПУТЯМ
+---------------------------------------
+grep по Resources.Load во всём рантайм-коде даёт РОВНО ТРИ места:
+
+  Runtime/Utilities/AssetsManagment/ResourcesAssetsLoader.cs:8
+      => Resources.Load<T>(resourcePath);
+      Это общий загрузчик. Пути в него приходят снаружи, статически их
+      не проследить. Именно он - причина, по которой эвристика
+      "недостижимых ассетов" ниже помечена как требующая проверки.
+
+  Runtime/Gameplay/Features/ThrowableFeature/ThrowableProjectile.cs:25
+      Resources.Load<GameObject>(Config.PrefabPath);
+      Путь берётся из ScriptableObject-конфига (сериализованная строка).
+
+  Runtime/Utilities/Hints/LoadingHintsService.cs:32
+      Resources.Load<TextAsset>(HintsResourcePath);
+      -> Assets/_Project/Resources/Content/loading_hints.json
+
+ViewsFactory: захардкоженных путей вида "UI/..." через прямой Resources.Load
+в коде фабрики нет - фабрика идёт через ResourcesAssetsLoader. То есть пути
+живут в конфигах и полях, а не в коде, и грепом по коду их не собрать.
+
+4.2 МЁРТВЫЙ ВЕС В RESOURCES
+----------------------------
+  Assets/Resources/DOTweenSettings.asset (1306 байт) ДУБЛИРУЕТ
+  Assets/_Project/Resources/DOTweenSettings.asset.
+  DOTween грузит настройки по имени "DOTweenSettings" - две штуки в двух
+  разных Resources это как минимум неопределённость, какая победит.
+  Вес мизерный (1.3 КБ), но это грязь и потенциальный источник
+  "почему настройки не применились".
+
+  Кроме этого - ФАЙЛОВ БЕЗ ЕДИНОЙ ССЫЛКИ ВНУТРИ RESOURCES НЕТ.
+  Все 207 файлов _Project/Resources либо ссылаются друг на друга, либо
+  на них ссылаются конфиги/префабы из того же дерева. Мусора уровня
+  "забытый префаб" там не нашлось.
+
+  Ранее в Assets/Resources лежали PerformanceTestRunInfo.json и
+  PerformanceTestRunSettings.json (артефакты Unity PerformanceTesting) -
+  сейчас в рабочем дереве их нет. Стоит проверить, что они не появляются
+  заново после прогона тестов: они попадали бы в билд гарантированно.
+
+4.3 ЧТО ТЯНЕТСЯ В БИЛД ИМЕННО ЧЕРЕЗ RESOURCES, А НЕ ЧЕРЕЗ СЦЕНЫ
+----------------------------------------------------------------
+(размеры НА ДИСКЕ, не в билде)
+  226.37 МБ в 154 файлах  _Project/Art/SFX      <- вся музыка и SFX
+   32.40 МБ в 1 файле     _Project/Art/Fonts    <- NotoSansJP SDF
+   13.86 МБ в 92 файлах   _Project/Art/Sprites
+    7.21 МБ в 46 файлах   _Project/Resources/Prefabs
+    4.84 МБ в 17 файлах   _Project/Resources/Entities
+    4.53 МБ в 110 файлах  GUI Pro-FantasyRPG
+    4.41 МБ в 2 файлах    SimpleAssets
+    3.81 МБ в 41 файле    _Project/Resources/UI
+    3.37 МБ в 14 файлах   TextMesh Pro
+    2.26 МБ в 1 файле     _Project/Resources/VFX
+
+  Смысл: 100% тяжёлого контента подтягивается деревом Resources.
+  Практический вывод - любая экономия должна делаться на уровне
+  импорт-сеттингов и содержимого конфигов/префабов из Resources;
+  чистка сцен бессмысленна.
+
+--------------------------------------------------------------------------------
+РАЗДЕЛ 5. АУДИО (79.11 МБ, 25.3% билда)
+--------------------------------------------------------------------------------
+
+В билде 154 AudioClip. Разделение однозначное:
+
+  МУЗЫКА    33 клипа   77.73 МБ  (98.3% всего аудио-веса)
+  SFX      121 клип     1.38 МБ  (1.7%)
+
+Общая длительность музыки в билде: 7000 сек = 116.7 минут.
+Средний битрейт: 93.1 kbps, mono, Vorbis.
+
+НАСТРОЙКИ ИМПОРТА - ОНИ ОДИНАКОВЫ У ВСЕХ 154 КЛИПОВ:
+  Load Type            DecompressOnLoad   (у всех 154)
+  Compression Format   Vorbis             (у всех 154)
+  Quality              1.00 = 100%        (у всех 154)
+  Preload Audio Data   False              (у всех 154)
+  Sample Rate          44100 Hz
+  Force To Mono        True у 33 музыкальных, False у 121 SFX
+  Platform override    отсутствует у всех - всё на defaultSampleSettings
+  PCM / ADPCM          НЕТ НИ ОДНОГО
+
+ОТДЕЛЬНО ПО ЗАПРОШЕННЫМ КАТЕГОРИЯМ:
+
+  а) Клипы длиннее 10 сек НЕ в Streaming: 77.73 МБ в 33 клипах.
+     Это вся музыка. ВАЖНАЯ ОГОВОРКА: перевод в Streaming НЕ УМЕНЬШИТ
+     ВЕС БИЛДА - сжатые Vorbis-данные те же самые. Streaming уменьшает
+     ОПЕРАТИВНУЮ ПАМЯТЬ (сейчас DecompressOnLoad распаковывает трек в PCM
+     целиком: 5 минут mono 44.1k 16 бит = ~26 МБ RAM на трек).
+     Делать это надо, но ради памяти, не ради веса. См. раздел 11.
+
+  б) PCM/ADPCM: ноль клипов. Пункт закрыт.
+
+  в) Стерео короткие SFX (кандидаты на Force To Mono):
+     всего 14 стерео-клипов, все короче 5 сек, суммарно 0.19 МБ.
+     Максимальная экономия 0.10 МБ. Экономически бессмысленно.
+
+  г) Quality выше 70%: ВСЕ 154 клипа на 100%.
+     Для SFX это 1.38 МБ, там резать нечего.
+     Для музыки это 77.73 МБ - и вот это главный рычаг по аудио.
+
+  д) Preload Audio Data: выключен везде. Хорошо, ничего делать не надо.
+
+ДУБЛИ И ЛИШНИЕ ВЕРСИИ ТРЕКОВ В БИЛДЕ:
+  Shinobi Breaker.mp3         239.4s / 2.682 МБ
+  Shinobi Breaker (1).mp3     358.2s / 3.999 МБ
+  Iron Dojo Riot.mp3          238.3s / 2.531 МБ
+  Iron Dojo Riot (1).mp3      249.9s / 2.723 МБ
+  Neon Rust Pulse.mp3         188.1s / 1.944 МБ
+  Neon Rust Pulse (1).mp3     209.7s / 2.181 МБ
+  Moonlit Paper Boats.mp3     274.0s / 2.799 МБ
+  Moonlit Paper Boats (1).mp3 163.8s / 1.466 МБ
+  Это НЕ побайтовые дубли (разная длина), а варианты одного трека.
+  Обе версии каждой пары лежат в билде. Суммарно пары дают 20.3 МБ,
+  оставив по одной версии - экономия ~10 МБ.
+
+ПЛЕЙЛИСТЫ:
+  GameplayThemesPlaylist.asset  -> 18 клипов
+  MainMenuThemesPlaylist.asset  -> 15 клипов
+  AudioLibrary.asset            -> 152 клипа (SFX + всё остальное)
+  Итого 33 музыкальных трека на 3 уровня + меню = 117 минут музыки.
+
+ПРЯМО, БЕЗ ПРИУКРАШИВАНИЯ - ЮРИДИЧЕСКИЙ РИСК, КОТОРЫЙ ОДНОВРЕМЕННО
+ЯВЛЯЕТСЯ КРУПНЕЙШИМ РЫЧАГОМ ПО ВЕСУ:
+  Из 33 треков в билде 24 (55.21 МБ, 71% аудио-веса) - это коммерческие
+  саундтреки чужих игр и аниме: Hotline Miami 1/2, Ghostrunner 1/2,
+  Rurouni Kenshin. У 20 из них прямо в имени файла стоит
+  "(www.lightaudio.ru)" - маркер пиратской качалки.
+  Для релиза в Steam это блокер, а не "потом разберёмся".
+  Их замена на собственную/сгенерированную музыку - это одновременно
+  снятие юридического риска и минус ~40-55 МБ веса.
+  Собственные треки (Shinobi Breaker, Iron Dojo Riot, Neon Rust Pulse,
+  Moonlit Paper Boats, Paper Crane Path) - 9 клипов, 22.5 МБ.
+
+--------------------------------------------------------------------------------
+РАЗДЕЛ 6. ШРИФТЫ И TMP
+--------------------------------------------------------------------------------
+
+Всего 16 TMP_FontAsset в проекте. В билд попадает 7 из них.
+Суммарный вклад шрифтов в билд: ~14.9 МБ Texture2D + 0.34 МБ Font
+(LiberationSans.ttf) + шейдеры TMP.
+
+СПИСОК (размер на диске / режим / атлас / глифов):
+
+  33 181 КБ  Static  4096x4096  SDFAA_HINTED  173 глифа  fallback 0
+             _Project/Art/Fonts/NotoSansJP-VariableFont_wght SDF.asset
+             В БИЛДЕ 16.000 МБ. Атлас 4096x4096 в Alpha8 = ровно 16 МБ.
+
+  16 494 КБ  Static  2048x4096  SMOOTH_HINTED 230 глифов
+             GUI Pro/Fonts/Alata-Regular-Outline 210 SDF.asset
+             В БИЛДЕ 8.000 МБ (встроенный саб-ассет Texture2D)
+             ПЛЮС отдельная Alata-Regular-Outline 210 SDF Atlas.png - 2.000 МБ.
+             ЭТО ДУБЛИРОВАНИЕ, см. 6.2.
+
+   8 301 КБ  Static  2048x2048  Alata-Regular-Outline 120 SDF   - НЕ в билде
+   4 205 КБ  Static  1024x2048  Alata-Regular-Outline 72 SDF    - НЕ в билде
+   4 204 КБ  Static  1024x2048  Alata-Regular-Outline 64 SDF    - НЕ в билде
+   2 156 КБ  Static  1024x1024  Alata-Regular-Outline 40 SDF    - НЕ в билде
+   2 155 КБ  Static  1024x1024  Alata-Regular-Outline 54 SDF    - НЕ в билде
+   2 154 КБ  Static  1024x1024  Alata-Regular-Outline 50 SDF    - НЕ в билде
+   2 161 КБ  Static  1024x1024  Alata-Regular-Outline 28 SDF    - В БИЛДЕ 1.000 МБ
+                                (+ 28 SDF Atlas.png - ещё 1.000 МБ)
+   2 154 КБ  Static  1024x1024  Alata-Regular-Outline 32 SDF    - В БИЛДЕ 1.000 МБ
+                                (+ 32 SDF Atlas.png - ещё 1.000 МБ)
+     567 КБ  Static  512x512    JosefinSans-Bold SDF            - В БИЛДЕ 0.250 МБ
+     565 КБ  Static  512x512    Alata-Regular SDF               - В БИЛДЕ 0.250 МБ
+     522 КБ  Static  512x512    PlayCombo (11 глифов)           - НЕ в билде
+     138 КБ  Static  256x256    PlayGold (11 глифов)            - В БИЛДЕ 0.063
+                                (+ PlayGold Atlas.png RGBA32 - ещё 0.250 МБ)
+   2 211 КБ  Static  1024x1024  TMP/LiberationSans SDF          - В БИЛДЕ 1.000 МБ
+     740 КБ  Dynamic 512x512    TMP/LiberationSans SDF-Fallback - в билде мелочь
+
+TMP Settings: defaultFontAsset = Alata-Regular-Outline 210 SDF.
+Глобальных fallback-шрифтов НЕТ (fallbackFontAssets пуст).
+
+6.1 NotoSansJP - 16 МБ ради одного префаба
+-------------------------------------------
+  Атлас 4096x4096 при ВСЕГО 173 глифах. Это ~78x78 пикселей полезной
+  площади на глиф, где реально забита малая доля площади - остальное
+  пустота, но она всё равно занимает 16 МБ в Alpha8.
+  ПОЛНОГО CJK-НАБОРА ТАМ НЕТ: 173 глифа - это латиница + пунктуация +
+  небольшая горстка знаков. Полный японский был бы 3000+ глифов.
+  Обратные ссылки: РОВНО ОДИН ПОТРЕБИТЕЛЬ -
+    Assets/_Project/Resources/UI/MainMenu/LevelTile.prefab
+  16 МБ (5.1% всего билда) ради подписей на плитках уровней.
+  Перегенерация того же набора глифов в атлас 1024x1024 -> ~1 МБ.
+
+6.2 Alata-Regular-Outline 210 - 10 МБ на один шрифт, из них 2 МБ дубль
+-----------------------------------------------------------------------
+  Проверено через LoadAllAssetsAtPath: файл .asset содержит
+    TMP_FontAsset  "Alata-Regular-Outline 210 SDF"
+    Material       "Alata-Regular Material"
+    Texture2D      "Alata-Regular-Outline 210 SDF Atlas"   <- 8 МБ, встроенный
+  А material._MainTex указывает на ВНЕШНИЙ файл
+    GUI Pro/Fonts/Alata-Regular-Outline 210 SDF Atlas.png  <- 2 МБ, отдельный
+  Шейдер: TMP_Bitmap-Custom-Atlas.
+  Итог: в билде лежат ОБА атласа, 8 МБ + 2 МБ. Рендерится при этом только
+  внешний png. 8 МБ встроенного саб-ассета - кандидат на устранение.
+  ТРЕБУЕТ ПРОВЕРКИ: TMP может обращаться к atlasTextures[] напрямую,
+  так что просто вырезать нельзя - надо пересобирать font asset.
+  Та же схема у 28 SDF (1+1 МБ), 32 SDF (1+1 МБ) и PlayGold (0.063+0.25).
+
+  Отдельно: 210 SDF - это RENDER MODE SMOOTH_HINTED, то есть БИТМАП,
+  а не SDF, несмотря на "SDF" в имени. Поэтому пак и содержит десяток
+  копий одного шрифта под разные кегли (28/32/40/50/54/64/72/120/210).
+  Настоящий SDF-шрифт масштабируется одним атласом 1024x1024 на все кегли.
+  Это архитектурно неправильная настройка текста в проекте, и она стоит
+  ~13 МБ билда.
+
+6.3 Осталось ли лишнее из TMP
+------------------------------
+  Assets/TextMesh Pro содержит только Fonts, Resources, Shaders, Sprites.
+  Папки "Examples & Extras" НЕТ - её уже вычистили. Хорошо.
+  В билд из TMP уходит: LiberationSans SDF 1.000 МБ, EmojiOne.png 0.333 МБ,
+  LiberationSans.ttf 0.336 МБ, шейдеры 0.30 МБ. EmojiOne и LiberationSans
+  нужны только как дефолт/fallback; если они не используются в UI - это
+  ~1.7 МБ, но снимать надо аккуратно (TMP ругается без дефолтного шрифта).
+
+--------------------------------------------------------------------------------
+РАЗДЕЛ 7-8. ПАКЕТЫ, ПЛАГИНЫ, СБОРКИ В БИЛДЕ
+--------------------------------------------------------------------------------
+
+СБОРКИ В Managed/ (32.58 МБ всего). Крупнейшие:
+
+  DependentManagedLibrary (BCL, 16.20 МБ в 23 файлах):
+    4524 КБ  mscorlib.dll
+    3086 КБ  System.Xml.dll
+    2580 КБ  System.dll
+    2076 КБ  System.Data.dll
+    1087 КБ  System.Core.dll
+     913 КБ  System.Runtime.Serialization.dll
+     479 КБ  System.Drawing.dll
+     313 КБ  System.Security.dll
+     251 КБ  System.ComponentModel.Composition.dll
+     236 КБ  Mono.Security.dll
+     210 КБ  System.ServiceModel.Internals.dll
+     ... + мелочь (Configuration, Net.Http, Numerics, IO.Compression,
+         netstandard, Transactions, EnterpriseServices, Xml.Linq)
+
+  Причина: ProjectSettings/ProjectSettings.asset -> apiCompatibilityLevel: 6
+  (.NET Framework), scriptingBackend пуст (= Mono2x по умолчанию),
+  managedStrippingLevel пуст (для Mono по умолчанию = Disabled).
+  stripEngineCode: 1 стоит, но на Mono standalone он не работает.
+  Именно поэтому System.Data / System.Xml / System.Drawing /
+  ComponentModel.Composition уезжают в билд, хотя игра их не использует.
+
+  ManagedLibrary (7.22 МБ в 39 файлах), наши и пакетные:
+    1111 КБ  Unity.InputSystem.dll
+     735 КБ  Unity.Mathematics.dll
+     701 КБ  Newtonsoft.Json.dll
+     670 КБ  Assembly-CSharp.dll
+     615 КБ  Unity.VisualScripting.Core.dll     <- визуальный скриптинг
+     470 КБ  Unity.Cinemachine.dll
+     444 КБ  Unity.Collections.dll
+     438 КБ  Unity.TextMeshPro.dll
+     398 КБ  Unity.VisualScripting.Flow.dll     <- визуальный скриптинг
+     298 КБ  Unity.Burst.dll
+     271 КБ  UnityEngine.UI.dll
+     172 КБ  DOTween.dll
+     149 КБ  Unity.Splines.dll
+     132 КБ  Unity.Timeline.dll                 <- НУЖЕН, комикс-интро
+     111 КБ  Unity.2D.SpriteShape.Runtime.dll
+      84 КБ  Unity.VisualScripting.Antlr3.Runtime.dll
+      54 КБ  Coffee.UIParticle.dll
+      45 КБ  Assembly-CSharp-firstpass.dll
+      39 КБ  SimpleInput.Runtime.dll
+      32 КБ  Unity.VisualScripting.State.dll
+      31 КБ  MCPForUnity.Runtime.dll            <- инструмент разработки
+      19 КБ  CFXRRuntime.dll
+      11 КБ  Unity.Multiplayer.Center.Common.dll
+      10 КБ  CFXRDemo.dll                       <- демо ассет-пака
+       7 КБ  Unity.VisualScripting.DocCodeExamples.dll  <- примеры документации
+
+  ManagedEngineAPI - 9.16 МБ в 83 файлах UnityEngine.*Module.dll.
+  Крупнейшие: UIElementsModule 2.160, CoreModule 1.905,
+  Physics2DModule 0.564, TextCoreTextEngineModule 0.309,
+  VectorGraphicsModule 0.218, AnimationModule 0.206, PhysicsModule 0.170,
+  ParticleSystemModule 0.160, AudioModule 0.133, TerrainModule 0.124.
+
+ПАКЕТЫ В manifest.json - что заведомо не нужно в рантайме PC-игры:
+  com.unity.visualscripting          1.13 МБ managed. Использования Visual
+                                     Scripting в проекте не найдено.
+  com.unity.multiplayer.center       0.011 МБ, чисто редакторный "центр".
+  com.coplaydev.unity-mcp            0.031 МБ рантайм-часть УЕЗЖАЕТ В БИЛД.
+                                     Это dev-инструмент, в релизном билде
+                                     ему не место (дело не столько в весе,
+                                     сколько в лишней поверхности).
+  com.unity.collab-proxy             редакторный, в билд не попал. ОК.
+  com.unity.test-framework           редакторный, в билд не попал. ОК.
+  Модули движка, скорее всего лишние:
+    modules.terrain (0.124), terrainphysics, vehicles, cloth, vr, xr,
+    umbra, wind, androidjni, adaptiveperformance, accessibility,
+    unityanalytics, video, screencapture, imageconversion, ai.
+    Их совокупный вклад в Managed/ - порядка 1.5-2 МБ.
+  Analytics / Ads / In-App Purchasing / ProBuilder / Particle Pack
+  в проекте ОТСУТСТВУЮТ. Проверено по manifest.json. Вычищать нечего.
+
+  TIMELINE - ПОДТВЕРЖДАЮ, НЕ ТРОГАТЬ. com.unity.timeline присутствует,
+  Unity.Timeline.dll (132 КБ) в билде. Комикс-интро на нём. 132 КБ -
+  цена, которую платить надо.
+
+  Assets/Plugins: Demigiant (DOTween) и SimpleInput. SimpleInput - это
+  экранный джойстик для мобильных. В билде SimpleInput.Runtime.dll 39 КБ
+  и Plugins/SimpleInput/Sprites/FlatDark/Joystick/flatDark00.png (0.036 МБ).
+  Плюс из GUI Pro в билд попал Joystick_Direction_Bg.png (0.293 МБ) и
+  Joystick_Direction_Focus_Demo_RightBottom.png (0.086 МБ).
+  В PC-игре виртуального джойстика быть не должно - это ~0.45 МБ мусора,
+  который к тому же намекает, что где-то в UI-префабе висит живой
+  мобильный джойстик. ТРЕБУЕТ ПРОВЕРКИ.
+
+--------------------------------------------------------------------------------
+РАЗДЕЛ 9. МУСОР В ASSETS
+--------------------------------------------------------------------------------
+
+9.1 ПАПКИ DEMO / EXAMPLE / SAMPLE (вес на диске)
+-------------------------------------------------
+   34 МБ  GUI Pro-FantasyRPG/ResourcesData/Sprites/Demo
+   22 МБ  GUI Pro-FantasyRPG/Prefabs/Prefabs_DemoScene_Panels
+   11 МБ  GUI Pro-FantasyRPG/Prefabs/Prefabs_DemoScene_Particle
+  822 КБ  Hovl Studio/Magic effects pack/Demo scene
+  433 КБ  JMO Assets/Cartoon FX Remaster/Demo Assets
+  157 КБ  RGP icons free start pack/demo
+   94 КБ  TooCubeForest/demoScenes
+   79 КБ  Plugins/SimpleInput/Example
+
+  ВАЖНО: часть Demo-контента ПОПАДАЕТ В БИЛД, потому что наши собственные
+  UI-префабы ссылаются на демо-спрайты ассет-пака:
+    Demo_Background/BackGround_Sample_07_Dark.png  0.989 МБ
+      <- _Project/Resources/UI/MainMenu/LoadMusicPopupView.prefab
+    Demo_Background/Background_Gradient_Panel_02.png 0.416 МБ
+    Demo_Play/Joystick_Direction_Bg.png            0.293 МБ
+    Demo_Image/Image_Glow_Circle_02.png            0.107 МБ
+    Demo_Play/Joystick_Direction_Focus_*.png       0.086 МБ
+    Demo_Image/WingBadge_Bottom_Flag_Center.png    0.079 МБ
+    JMO Demo Assets/CFXR Demo Btn Arrow R.png      0.333 МБ
+  Итого ~2.3 МБ демо-графики в релизном билде. Не смертельно по весу,
+  но означает, что удалять папки Demo НЕЛЬЗЯ без предварительного
+  переназначения этих спрайтов.
+
+9.2 ПОБАЙТОВЫЕ ДУБЛИКАТЫ (md5 по всем файлам > 200 КБ, 451 файл)
+-----------------------------------------------------------------
+  ДУБЛЬ 1 (ОБА В БИЛДЕ, реальная потеря 4 МБ):
+    Assets/Cainos/Pixel Art Platformer - Village Props/Texture/TX Village Props.png
+    Assets/_Project/Art/Sprites/Gameplay/Props/VillageProps.png
+    Оба 1024x1024, оба с platform override RGBA32, оба по 4.000 МБ в билде.
+    Ссылки идут на РАЗНЫЕ копии из разных префабов:
+      VillageProps.png     <- Prop_Grave_var2, Prop_Grave_var3, DownAndUp
+      TX Village Props.png <- Prop_Crate_var2, Prop_GunnyBag_var1,
+                              Prop_Wheelbarrow_var1 (+ префабы самого Cainos)
+    Свести на одну текстуру = минус 4 МБ (а после снятия RGBA32 override
+    оставшаяся будет весить 1 МБ вместо 4).
+
+  ДУБЛЬ 2 (в билде только одна копия, потери нет):
+    SimpleAssets/Common/Sprites/Background (Necromancer).png  <- в билде 1.125 МБ
+    _Project/Art/Sprites/Backgrounds/CommonBackground.png     <- НЕ в билде
+
+  ДУБЛЬ 3 (в билде только _Project-копии, по 0.125 МБ):
+    Five Seamless Tileable Ground Textures/Textures/Water Deep Blue.png
+    _Project/Art/Sprites/Gameplay/Environment/Water/Water Deep Blue.png
+    (то же для Water Light Blue.png)
+
+  ДУБЛЬ 4 (в билде одна копия):
+    Freeui/ZOSMA/Main/Back/Background.png
+    Freeui/ZOSMA/Stage/Back/Background.png
+    (то же для Foldingpaper.png)
+
+  ДУБЛЬ 5 (не в билде):
+    JMO/CFXR Prefabs/Texts/CFXR3 _KSHH_.prefab (в двух папках)
+
+9.3 НЕДОСТИЖИМЫЕ АССЕТЫ (эвристика, ТРЕБУЕТ РУЧНОЙ ВЕРИФИКАЦИИ)
+----------------------------------------------------------------
+Метод: AssetDatabase.GetDependencies(recursive) по 6 сценам из Build Settings
+(139 ассетов) + по всем 217 файлам во всех папках Resources (986 ассетов).
+Объединение = 1021 ассет. Всё остальное в Assets/ (кроме .cs/.asmdef/.dll)
+считается недостижимым.
+
+  ИТОГО НЕДОСТИЖИМО: 6525 файлов, 504.51 МБ на диске.
+
+  Разбивка:
+    225.02 МБ  n=4779  GUI Pro-FantasyRPG
+    107.27 МБ  n=  94  _Project/Art/SFX          (см. ниже)
+     69.43 МБ  n= 143  Hovl Studio
+     26.64 МБ  n= 281  JMO Assets
+     16.16 МБ  n= 261  TooCubeForest
+      9.85 МБ  n=  16  SimpleAssets
+      8.96 МБ  n=  43  GUI_Parts
+      8.71 МБ  n=   2  _Project/Art/Fonts
+      6.65 МБ  n=  98  Platformer Tileset
+      6.03 МБ  n=  33  _Project/Art/Sprites
+      4.92 МБ  n=  36  RGP icons free start pack
+      3.59 МБ  n= 314  Cainos
+      3.46 МБ  n=  71  Freeui
+      2.31 МБ  n=  18  Five Seamless Tileable Ground Textures
+      1.38 МБ  n=  43  Plugins
+      1.17 МБ  n=  22  TextMesh Pro
+      0.92 МБ  n=   5  _Project/Art/VFX
+      0.71 МБ  n=   5  Packages (Newtonsoft)
+      0.55 МБ  n=  59  PlatformerSet1
+      0.41 МБ  n=  94  Backyard - Free
+      0.23 МБ  n=  84  karsiori
+      ... остальное < 0.1 МБ
+
+  Крупнейшая недостижимая группа - неиспользуемая музыка, 107.27 МБ в
+  94 файлах, из них топ:
+      8.09 МБ  SFX/Music/GhostRunner/Ghostrunner (OST) - Infiltrator.mp3
+      7.98 МБ  SFX/Music/GhostRunner/Ghostrunner DEMO (OST) - Firewall.mp3
+      6.85 МБ  SFX/Music/GhostRunner/... Air (Main Menu Theme).mp3
+      6.85 МБ  SFX/Music/GhostRunner/Ghostrunner OST - Air.mp3
+      6.83 МБ  SFX/Music/GhostRunner/Daniel Deluxe - Razor.mp3
+      6.77 МБ  SFX/Music/GhostRunner/Ghostrunner OST - Sundown.mp3
+      6.55 МБ  SFX/Music/GhostRunner/Daniel Deluxe - Overdrive.mp3
+      6.21 МБ  SFX/Music/GhostRunner/Daniel Deluxe - Dharma.mp3
+      6.21 МБ  SFX/Music/GhostRunner/... Dharma (вторая копия).mp3
+      6.00 МБ  SFX/Music/GhostRunner/... Blaster.mp3
+      5.60 МБ  SFX/Music/Generated/MainMenuTheme1.mp3
+      5.12 МБ  SFX/Music/Generated/GameplayTheme.mp3
+      4.58 МБ  SFX/Music/Generated/MainMenuTheme2.mp3
+      4.21 МБ  SFX/Music/GhostRunner/... Dive Into The Void.mp3
+      3.45 МБ  SFX/Music/GhostRunner/... Truth to Power (тень).mp3
+      3.25 МБ  SFX/Music/Generated/GameplayTheme (3).mp3
+      2.90 МБ  SFX/Music/Generated/GameplayTheme (1).mp3
+      2.66 МБ  SFX/Music/GhostRunner/Project_Hel OST - Tank.mp3
+      2.65 МБ  SFX/Music/Generated/GameplayTheme (2).mp3
+      2.30 МБ  SFX/Music/Rurouni Kenshin - Warriors Suite.mp3
+      ... + 74 файла поменьше
+  Все 94 в билд НЕ попадают. Это чистый вес репозитория.
+
+  ОГОВОРКА ПО ЭВРИСТИКЕ (обязательна к прочтению перед любым удалением):
+  метод НЕ ВИДИТ загрузку по строковым путям. В проекте есть
+  ResourcesAssetsLoader.Load<T>(resourcePath), которому пути приходят
+  из полей и конфигов. Но: он умеет грузить ТОЛЬКО из папок Resources,
+  а всё содержимое Resources я уже взял корнем обхода. Значит для
+  ассетов ВНЕ Resources список надёжен, а внутри Resources
+  недостижимых нет вовсе. Addressables в проекте не используются.
+  Тем не менее НИЧЕГО НЕ УДАЛЯТЬ АВТОМАТИЧЕСКИ.
+
+9.4 СЦЕНЫ В BUILD SETTINGS
+---------------------------
+  1  Assets/_Project/Scenes/Init.unity        enabled
+  2  Assets/_Project/Scenes/Empty.unity       enabled
+  3  Assets/_Project/Scenes/MainMenu.unity    enabled
+  4  Assets/_Project/Scenes/Gameplay.unity    enabled
+  5  Assets/_Project/Scenes/Tutorial.unity    enabled
+  6  Assets/_Project/Scenes/Intro.unity       enabled
+
+  Тестовых/песочных сцен в списке НЕТ. Все шесть - боевые
+  (Empty - служебная, используется во флоу загрузки).
+  В билде 6 сцен общим весом 0.11 МБ. Сцены сами по себе почти ничего
+  не весят - весь контент грузится из Resources.
+  Демо-сцены ассет-паков (DemoScene_FantasyRPG.unity, SampleScene.unity
+  из Platformer Tileset, FreeUI.unity, Set.unity, Cainos SC Demo Scene,
+  Hovl Demo scene) в Build Settings не входят и в билд не попадают.
+
+--------------------------------------------------------------------------------
+РАЗДЕЛ 10. РАНЖИРОВАННЫЙ СПИСОК КАНДИДАТОВ
+--------------------------------------------------------------------------------
+
+Обозначения риска: В=визуал, П=производительность/память, Пв=поведение.
+Обратимость: "да" = откат правкой импорт-сеттингов, "частично" = нужен
+пересбор ассета, "нет" = нужны новые исходники.
+
+ТИР A - НИЗКИЙ РИСК, ДЕЛАЕТСЯ ЗА ДЕНЬ
+--------------------------------------------------------------------------
+ №   Что делаем                            Эконом.   Риск        Труд  Обрат.
+--------------------------------------------------------------------------
+A1   Музыка: Quality 100% -> 55-65% на      24-32 МБ  В: низкий   30мин  да
+     всех 33 треках. Сейчас 93.1 kbps                 (фоновая
+     mono Vorbis; цель 60-65 kbps mono.                музыка)
+     ТОЧНУЮ цифру дать нельзя без
+     переимпорта: маппинг слайдера
+     quality на битрейт у Unity
+     нелинейный. Мерить на одном
+     треке, потом применять на всех.
+
+A2   NotoSansJP SDF: перегенерировать       15.0 МБ   В: низкий   1 час  частично
+     те же 173 глифа в атлас 1024x1024                (проверить
+     вместо 4096x4096.                                чёткость
+     16.000 -> ~1.0 МБ. Потребитель                   на LevelTile)
+     ровно один - LevelTile.prefab.
+
+A3   Shuriken.png Max Size 2048 -> 128      13.8 МБ   В: очень    10мин  да
+     (на экране 81x46 px при PPU 1500)                низкий
+     Shuriken_upgrade.png 2048 -> 256
+     (иконка магазина ~100-150 px).
+     13.912 -> ~0.07 МБ.
+
+A4   Снять platform override RGBA32 у       8.5 МБ    В: средний  20мин  да
+     8 текстур: VillageProps,                         на пиксель-
+     TX Village Props, TX Chest                       арте;
+     Animation, fx_glow2,                             на частицах
+     fx_circle_line1, fx_glow3,                       нулевой
+     fx_star1, PlayGold Atlas.
+     Рекомендую BC7 (Compressed High
+     Quality), а не BC3 - артефактов меньше.
+
+A5   Level_1_256x256.png:                   7.9 МБ    В: средний  5 мин  да
+     Uncompressed -> BC7.                             (пиксель-арт
+     10.500 -> ~2.63 МБ.                              тайлы, надо
+     Тайлсет уровня 1, пиксель-арт.                   смотреть
+     ОБЯЗАТЕЛЬНО сравнить глазами.                    глазами)
+
+A6   Четыре крупных NPOT-фона привести      9.4 МБ    В: низкий-  2 часа частично
+     к кратности 4 (допад прозрачным                  средний
+     справа/сверху либо Max Size,                     (градиенты
+     дающий кратный результат) + BC7/BC1:             -> бандинг,
+       Freeui/ZOSMA/Set/Back  3.886->0.97             лечится BC7)
+       Background (Full)      2.999->0.75
+       SettingsBG             2.991->0.75
+       LoadingScreen/3.png    2.727->0.68
+
+A7   Остальные ~55 NPOT-текстур мелочью     3.5 МБ    В: низкий   3 часа частично
+     (GUI Pro фреймы/кнопки/иконки,
+     SakuraTree, SleepDart, Boss,
+     cfxr font AmazGoDaBold, karsiori
+     Tilesheet, button_1 и т.д.).
+     Нудно, но безопасно.
+
+A8   Crunch Compression на MainHeroAtlas    8-11 МБ   В: средний  15мин  да
+     (quality ~60). Crunch режет ИМЕННО               (crunch
+     вес билда, в VRAM остаётся BC3.                  лоссовый
+     20.001 -> ~9-12 МБ.                              поверх BC3)
+                                                      П: дольше
+                                                      грузится
+
+A9   Свести VillageProps и TX Village       1.0 МБ    Пв: средний 1 час  да
+     Props на одну текстуру (после A4                 (переназна-
+     обе весят по 1 МБ вместо 4).                     чить спрайты
+                                                      в 3-6 префабах)
+
+A10  Оставить по одной версии из            10.0 МБ   Пв: низкий  30мин  да
+     четырёх пар музыкальных дублей                   (правка
+     (Shinobi Breaker, Iron Dojo Riot,                плейлистов)
+     Neon Rust Pulse, Moonlit Paper Boats).
+     20.3 -> ~10.3 МБ.
+
+     ИТОГО ТИР A:  101-112 МБ.  Билд 313 -> ~201-212 МБ.
+
+ТИР B - СРЕДНИЙ РИСК / БОЛЬШЕ РАБОТЫ
+--------------------------------------------------------------------------
+B1   Заменить 24 трека чужих коммерческих   25-40 МБ  Пв: высокий недели нет
+     OST (55.21 МБ) на собственные.                   (нужен новый
+     Экономия зависит от того, сколько                саундтрек)
+     останется. При 12 треках вместо 33
+     и quality 60% аудио станет ~22 МБ
+     вместо 77.73.
+     ЭТО ОБЯЗАТЕЛЬНО ДЛЯ РЕЛИЗА В STEAM
+     НЕЗАВИСИМО ОТ ВЕСА.
+
+B2   MainHeroAtlas: половинное разрешение   15.0 МБ   В: средний  1 день частично
+     исходников (101 png, 439px -> ~220px)            (при 1080p
+     ОДНОВРЕМЕННО с spritePixelsPerUnit               остаётся
+     300 -> 150, иначе герой станет вдвое             2.2x запас,
+     меньше в мире.                                   при 4K 1:1)
+     ЧАСТИЧНО ВЗАИМОИСКЛЮЧАЕТСЯ С A8.
+
+B3   Alata-Regular-Outline: перевести       9-11 МБ   В: высокий  2-3дня частично
+     текст на ОДИН настоящий SDF-шрифт                (меняется вид
+     1024x1024 вместо битмап-семейства                ВСЕГО текста,
+     28/32/210. Убирает и дублирующие                 обводки надо
+     *Atlas.png. Сейчас 8+2+1+1+1+1 = 14 МБ,          настраивать
+     после ~1 МБ.                                     заново)
+
+B4   apiCompatibilityLevel: .NET Framework  8-11 МБ   Пв: средний 1 день да
+     -> .NET Standard 2.1.                            (возможны
+     Уносит System.Data, System.Xml,                  ошибки
+     System.Drawing, ComponentModel.                  компиляции;
+     Composition, ServiceModel.Internals,             проверить
+     Runtime.Serialization и часть mscorlib.          Newtonsoft.Json)
+
+B5   Убрать com.unity.visualscripting из    1.2 МБ    Пв: низкий  30мин  да
+     manifest.json (использований нет)                (убедиться,
+     + com.unity.multiplayer.center.                  что нет
+                                                      ScriptGraph)
+
+B6   Исключить MCPForUnity.Runtime из       0.03 МБ   Пв: низкий  1 час  да
+     релизного билда (asmdef -> Editor-only
+     или define-гейт). Дело не в весе, а в
+     том, что dev-инструмент не должен
+     ехать игрокам.
+
+B7   Выпилить неиспользуемые модули         1.5-2 МБ  Пв: низкий  1 час  да
+     движка из manifest (terrain,
+     terrainphysics, vehicles, cloth, vr,
+     xr, umbra, wind, androidjni,
+     adaptiveperformance, unityanalytics,
+     video, ai).
+
+B8   Убрать мобильный виртуальный           0.45 МБ   Пв: средний 2 часа да
+     джойстик (SimpleInput +                          (сначала
+     Joystick_Direction_* из GUI Pro),                выяснить,
+     если он не нужен на PC.                          где он висит)
+
+     ИТОГО ТИР B (без пересечения с A):  ~50-65 МБ.
+
+--------------------------------------------------------------------------
+СУММАРНАЯ РЕАЛИСТИЧНО ДОСТИЖИМАЯ ЭКОНОМИЯ
+--------------------------------------------------------------------------
+  Только Тир A (низкий риск, ~1 день работы):      101-112 МБ
+    билд 313.25 -> ~201-212 МБ  (-32...-36%)
+
+  Тир A + Тир B (с заменой музыки и правкой шрифтов):
+    билд 313.25 -> ~150-165 МБ  (-47...-52%)
+
+  Контрольная арифметика по категориям после Тира A+B:
+    Текстуры  136.71 -> ~50-58 МБ
+    Аудио      79.11 -> ~22-30 МБ
+    Движок     92.84 -> ~82-85 МБ
+    Прочее      ~4.6 -> ~4.6 МБ
+    Итого                ~160-178 МБ
+
+  Ниже ~140 МБ на Mono-билде не спуститься в принципе: 92.84 МБ
+  занимает сам рантайм Unity (UnityPlayer.dll 35 МБ, mono 7.5 МБ,
+  D3D12Core 4.5 МБ, unity default resources 5.65 МБ, Managed/ 32.6 МБ).
+  Это пол, ниже него - только смена scripting backend, и то не факт
+  (см. 11.10).
+
+--------------------------------------------------------------------------------
+РАЗДЕЛ 11. ЧЕГО ДЕЛАТЬ НЕ СТОИТ
+--------------------------------------------------------------------------------
+
+11.1 FORCE TO MONO НА SFX. Стерео-клипов всего 14, все короче 5 сек,
+     суммарно 0.19 МБ. Максимум -0.10 МБ. При этом можно испортить
+     панораму у ударов/шагов. Соотношение выгоды к риску отвратительное.
+
+11.2 STREAMING ДЛЯ МУЗЫКИ РАДИ ВЕСА. Не работает: Streaming не меняет
+     размер сжатых Vorbis-данных на диске. ДЕЛАТЬ ЭТО НАДО, но по другой
+     причине - сейчас у всех 33 треков стоит DecompressOnLoad, то есть
+     каждый играющий трек разворачивается в PCM целиком (~26 МБ RAM
+     на пятиминутный mono-трек). Это память, не вес. Не смешивать
+     эти две задачи в одном отчёте об экономии мегабайт.
+
+11.3 ВЫКЛЮЧЕНИЕ MIP MAPS. Мипы включены на 34 текстурах общим весом
+     2.60 МБ, и все они - VFX-текстуры для частиц, где мипы уместны.
+     Ни одной UI/спрайтовой текстуры с мипами в билде нет. Максимум
+     -0.65 МБ ценой алиасинга на партиклах. Не трогать.
+
+11.4 READ/WRITE ENABLED. Ноль текстур во всём проекте.
+     Нечего оптимизировать, пункт можно закрыть навсегда.
+
+11.5 УДАЛЕНИЕ ПАПОК DEMO/EXAMPLE ИЗ АССЕТ-ПАКОВ РАДИ ВЕСА БИЛДА.
+     В билд из них попадает всего ~2.3 МБ, И ЭТИ ФАЙЛЫ РЕАЛЬНО
+     ИСПОЛЬЗУЮТСЯ нашими UI-префабами (LoadMusicPopupView ссылается
+     на Demo_Background/BackGround_Sample_07_Dark.png и т.д.).
+     Удаление сломает UI. Чистить их имеет смысл ради веса репозитория
+     (34+22+11 МБ) и только после переназначения спрайтов.
+
+11.6 УДАЛЕНИЕ .PSD/.EXR ИЗ ASSETS РАДИ ВЕСА БИЛДА. Все 5 найденных
+     исходников (24.33 МБ) в билд не попадают. Это только вес git.
+
+11.7 ЧИСТКА СЦЕН. Все 6 сцен в билде весят 0.11 МБ суммарно.
+     Тестовых сцен в Build Settings нет. Оптимизировать нечего.
+
+11.8 УДАЛЕНИЕ TIMELINE. Используется в комикс-интро (пакет в manifest,
+     Unity.Timeline.dll 132 КБ в билде). Не трогать.
+
+11.9 CRUNCH НА TMP-АТЛАСЫ. TMP-атласы лежат в Alpha8; crunch работает
+     только с DXT1/DXT5. Не сработает. Для шрифтов путь один -
+     уменьшать размер атласа (A2/B3).
+
+11.10 ПЕРЕХОД НА IL2CPP РАДИ ВЕСА. Убирает Managed/ (32.58 МБ), но
+      добавляет GameAssembly.dll, который на проекте такого размера
+      обычно выходит 25-45 МБ. Итог непредсказуем и может оказаться
+      ХУЖЕ. На IL2CPP имеет смысл переходить ради производительности
+      и защиты от тривиальной декомпиляции, но не ради мегабайт.
+      Если всё же переходить - тогда managedStrippingLevel: High
+      даст реальный выигрыш, но потребует link.xml для рефлексии
+      (DI-контейнер, Newtonsoft.Json, ScriptableObject-конфиги).
+
+11.11 ОПТИМИЗАЦИЯ КОМИКС-ИНТРО. Шесть панелей 1184x672 в BC1 по
+      0.380 МБ, итого 2.28 МБ на всю сцену. Уже сделано правильно.
+      Трогать нечего.
+
+11.12 СПЛЭШ-ЛОГО UNITY (2.667 МБ). m_ShowUnitySplashScreen уже 0,
+      а текстура всё равно упакована. Это поведение движка/лицензии,
+      руками не убирается. Проверить ещё раз на свежем билде и забыть.
+
+11.13 SPRITE ATLAS ДЛЯ ВСЕГО ОСТАЛЬНОГО. Атласы не уменьшают вес -
+      они его чаще УВЕЛИЧИВАЮТ (padding + незанятая площадь страницы).
+      MainHeroAtlas - хороший пример: 101 спрайт суммарной полезной
+      площадью ~15.9 Мпикс занимает 5 страниц по 4 Мпикс = 20 Мпикс.
+      Атласы делаются ради draw calls, не ради веса.
+
+11.14 ОБЩЕЕ СНИЖЕНИЕ MAX SIZE ПО ВСЕМУ ПРОЕКТУ "НА ГЛАЗОК".
+      Опасно: у спрайтов уменьшение текстуры меняет размер спрайта
+      в world units при неизменном PPU, то есть едет визуальный масштаб
+      объектов и рассинхронизируется с коллайдерами, которые заданы
+      отдельно. Каждое снижение Max Size на спрайте надо делать
+      вместе с пересчётом spritePixelsPerUnit. Только точечно и
+      с проверкой, как в A3/B2.
+
+--------------------------------------------------------------------------------
+ОДНА СТРОКА ПРО ADDRESSABLES (как и просили, не разворачиваю)
+--------------------------------------------------------------------------------
+Аргумент за Addressables тут есть, и он сильный, но он НЕ ПРО ВЕС: 100%
+контента игры тянется деревом зависимостей Resources, а Resources
+загружается движком на старте целиком и не выгружается по частям - то есть
+проблема не в 313 МБ на диске, а в том, что вся музыка и все текстуры всех
+уровней резидентны сразу. Отдельная задача, вне этой разведки.
+
+--------------------------------------------------------------------------------
+МЕТОДОЛОГИЯ И ОГОВОРКИ
+--------------------------------------------------------------------------------
+- Данные о билде взяты из настоящего Library/LastCleanBuild.buildreport,
+  прочитанного через InternalEditorUtility.LoadSerializedFileAndForget
+  (только чтение). Это фактические байты в билде, а не оценка.
+- Данные об импорт-сеттингах собраны через AssetDatabase/AssetImporter
+  в живом редакторе (Unity 6000.4.11f1) на чтение.
+- Классификация "не сжато блочно" вычислена как packedBytes / (пиксели
+  после применения Max Size). 4.00 bpp = RGBA32, 3.00 = RGB24,
+  1.33 = BC3+мипы, 1.00 = BC3/BC7/Alpha8, 0.50 = BC1.
+- Экранные размеры посчитаны от orthographic size 8 (= 16 world units
+  по высоте) и CanvasScaler reference 1920x1080, взятых из проекта.
+- Билд от 29.07.2026, проект от 05.09.2026. Расхождение оценочно
+  +1..3 МБ, картину не меняет.
+- Всё, где данных нет, помечено как "требует ручной проверки".
+  Ни одна цифра здесь не выдумана - все посчитаны из build report
+  или из импортеров.
+
+--------------------------------------------------------------------------------
+ВРЕМЕННЫЕ ФАЙЛЫ
+--------------------------------------------------------------------------------
+Assets/Editor/_Recon/BuildSizeRecon.cs СОЗДАН НЕ БЫЛ, и удалять его не надо.
+Вся статистика собрана через MCP execute_code (компиляция в память, файлов
+в проекте не создаётся), поэтому в Assets/ не появилось ни одного нового
+файла и лишний домен-релоад не запускался.
+
+В проекте мной не изменён ни один файл: ни импорт-сеттинги, ни ассеты,
+ни ProjectSettings, ни код, ни префабы. Ничего не удалено.
+
+ОДНА ОГОВОРКА ПО ЧИСТОТЕ РАБОЧЕГО ДЕРЕВА. На момент окончания разведки
+git status показывает изменённым файл
+  Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
+Диff: TMP дописал в динамический fallback-шрифт два глифа (U+2026 "…"
+и U+005F "_") с их GlyphRect'ами. Это штатное поведение TMP при работе
+редактора (Dynamic atlas population дописывает недостающие глифы по мере
+рендера текста), метка времени файла 10:52 - до начала сбора статистики.
+Мои запросы работали только на чтение и SaveAssets не вызывали.
+На вес билда эти два глифа не влияют (сотни байт).
+Решение о том, откатывать это изменение или закоммитить, оставляю за тобой -
+трогать файл вне скоупа задачи я не стал.
+Промежуточные дампы (textures.tsv, audio.tsv, buildreport_assets.tsv,
+atlases.txt, unreferenced.tsv, only_via_resources.tsv, hashes.txt) лежат
+вне проекта, в сессионном scratchpad, и в репозиторий не попадают.
+================================================================================
